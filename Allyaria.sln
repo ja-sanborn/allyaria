@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ". root", ". root", "{6126D2C4-AD6A-4628-9273-AFC17CFAFA31}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		CHANGELOG.md = CHANGELOG.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		GOVERNANCE.md = GOVERNANCE.md
+		LICENSE = LICENSE
+		README.md = README.md
+		SECURITY.md = SECURITY.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1B86380D-66BD-4FD7-85ED-484DE3340089}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODEOWNERS = .github\CODEOWNERS
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{38DECD57-882D-484C-A729-22BD05B403BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "standards", "standards", "{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC}"
+	ProjectSection(SolutionItems) = preProject
+		docs\standards\Accessibility.md = docs\standards\Accessibility.md
+		docs\standards\CSharp.md = docs\standards\CSharp.md
+		docs\standards\CSS.md = docs\standards\CSS.md
+		docs\standards\JavaScript.md = docs\standards\JavaScript.md
+		docs\standards\Localization.md = docs\standards\Localization.md
+		docs\standards\Razor.md = docs\standards\Razor.md
+		docs\standards\Testing.md = docs\standards\Testing.md
+		docs\standards\Theming.md = docs\standards\Theming.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "playground", "playground", "{A9E4274A-5FA8-4FEC-90B8-232D525762D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E2F0EFD-E782-4449-9BCB-C9BD12D3F551}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9ACFAA1D-C725-4453-9191-00B144B9BDC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "projects", "projects", "{B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECDE3431-E937-4408-97F8-11225D5B5CF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F78BD15B-27A3-4A31-86DA-8389EBDADFAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core", "projects\src\Allyaria.Core\Allyaria.Core.csproj", "{623180A5-E47C-475A-86B9-F8A0A4620C8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core.UnitTests", "projects\tests\Allyaria.Core.UnitTests\Allyaria.Core.UnitTests.csproj", "{32442E92-2BF4-4B75-B69A-7721338D04E1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC} = {1B86380D-66BD-4FD7-85ED-484DE3340089}
+		{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC} = {38DECD57-882D-484C-A729-22BD05B403BD}
+		{7E2F0EFD-E782-4449-9BCB-C9BD12D3F551} = {A9E4274A-5FA8-4FEC-90B8-232D525762D8}
+		{9ACFAA1D-C725-4453-9191-00B144B9BDC7} = {A9E4274A-5FA8-4FEC-90B8-232D525762D8}
+		{ECDE3431-E937-4408-97F8-11225D5B5CF7} = {B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}
+		{F78BD15B-27A3-4A31-86DA-8389EBDADFAC} = {B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}
+		{623180A5-E47C-475A-86B9-F8A0A4620C8C} = {ECDE3431-E937-4408-97F8-11225D5B5CF7}
+		{32442E92-2BF4-4B75-B69A-7721338D04E1} = {F78BD15B-27A3-4A31-86DA-8389EBDADFAC}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
