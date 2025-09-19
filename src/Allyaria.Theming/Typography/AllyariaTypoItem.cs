@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace Allyaria.Theming.Typography;
 
@@ -13,12 +13,35 @@ namespace Allyaria.Theming.Typography;
 /// </remarks>
 public readonly record struct AllyariaTypoItem
 {
+    /// <summary>Allowed keyword set for <see cref="FontSize" />.</summary>
+    private static readonly HashSet<string> AllowedFontSizes = new(StringComparer.Ordinal)
+    {
+        "xx-small",
+        "x-small",
+        "small",
+        "medium",
+        "large",
+        "x-large",
+        "xx-large",
+        "smaller",
+        "larger"
+    };
+
     /// <summary>Allowed keyword set for <see cref="FontStyle" />.</summary>
     private static readonly HashSet<string> AllowedFontStyle = new(StringComparer.Ordinal)
     {
         "normal",
         "italic",
         "oblique"
+    };
+
+    /// <summary>Allowed keyword set for <see cref="FontWeight" />.</summary>
+    private static readonly HashSet<string> AllowedFontWeight = new(StringComparer.Ordinal)
+    {
+        "normal",
+        "bold",
+        "lighter",
+        "bolder"
     };
 
     /// <summary>Allowed keyword set for <see cref="TextAlign" />.</summary>
@@ -32,6 +55,15 @@ public readonly record struct AllyariaTypoItem
         "end"
     };
 
+    /// <summary>Allowed keyword set for <see cref="TextDecoration" />.</summary>
+    private static readonly HashSet<string> AllowedTextDecoration = new(StringComparer.Ordinal)
+    {
+        "none",
+        "underline",
+        "overline",
+        "line-through"
+    };
+
     /// <summary>Allowed keyword set for <see cref="TextTransform" />.</summary>
     private static readonly HashSet<string> AllowedTextTransform = new(StringComparer.Ordinal)
     {
@@ -41,11 +73,22 @@ public readonly record struct AllyariaTypoItem
         "lowercase"
     };
 
+    /// <summary>Allowed keyword set for <see cref="VerticalAlign" />.</summary>
+    private static readonly HashSet<string> AllowedVerticalAlign = new(StringComparer.Ordinal)
+    {
+        "baseline",
+        "top",
+        "middle",
+        "bottom",
+        "sub",
+        "text-top"
+    };
+
     /// <summary>
     /// Creates a validated, immutable instance. All parameters are optional (nullable). Invalid inputs throw
     /// <see cref="ArgumentException" />.
     /// </summary>
-    /// <param name="fontFamily">Font family list; null or empty after filtering → omit <c>font-family</c>.</param>
+    /// <param name="fontFamily">Font family string list.</param>
     /// <param name="fontSize">Font size.</param>
     /// <param name="fontStyle">Font style.</param>
     /// <param name="fontWeight">Font weight.</param>
@@ -54,6 +97,7 @@ public readonly record struct AllyariaTypoItem
     /// <param name="textAlign">Text alignment.</param>
     /// <param name="textDecoration">Text decoration keywords.</param>
     /// <param name="textTransform">Text transform.</param>
+    /// <param name="verticalAlign">Vertical alignment.</param>
     /// <param name="wordSpacing">Word spacing.</param>
     /// <exception cref="ArgumentException">Thrown when a value fails validation.</exception>
     public AllyariaTypoItem(string[]? fontFamily = null,
@@ -65,6 +109,7 @@ public readonly record struct AllyariaTypoItem
         string? textAlign = null,
         string? textDecoration = null,
         string? textTransform = null,
+        string? verticalAlign = null,
         string? wordSpacing = null)
     {
         // Normalize keywords (trim + lower) except font families.
@@ -73,6 +118,7 @@ public readonly record struct AllyariaTypoItem
         var la = NormalizeTrimToLower(textAlign);
         var td = NormalizeTrimToLower(textDecoration);
         var tt = NormalizeTrimToLower(textTransform);
+        var va = NormalizeTrimToLower(verticalAlign);
 
         // Validate & normalize each.
         var normalizedFontFamily = NormalizeFontFamily(fontFamily);
@@ -92,6 +138,10 @@ public readonly record struct AllyariaTypoItem
             tt, AllowedTextTransform, nameof(TextTransform), "none,capitalize,uppercase,lowercase"
         );
 
+        var normalizedVerticalAlign = ValidateFromSet(
+            va, AllowedVerticalAlign, nameof(VerticalAlign), "baseline,top,middle,bottom,sub,text-top"
+        );
+
         var normalizedWordSpacing = NormalizeTrack(wordSpacing, nameof(WordSpacing));
 
         // Assign properties (init).
@@ -104,6 +154,7 @@ public readonly record struct AllyariaTypoItem
         TextAlign = normalizedTextAlign;
         TextDecoration = normalizedTextDecoration;
         TextTransform = normalizedTextTransform;
+        VerticalAlign = normalizedVerticalAlign;
         WordSpacing = normalizedWordSpacing;
     }
 
@@ -149,6 +200,12 @@ public readonly record struct AllyariaTypoItem
     public string? TextTransform { get; init; }
 
     /// <summary>
+    /// Vertical alignment: allowed values are <c>baseline</c>, <c>top</c>, <c>middle</c>, <c>bottom</c>, <c>sub</c>, and
+    /// <c>text-top</c>.
+    /// </summary>
+    public string? VerticalAlign { get; init; }
+
+    /// <summary>
     /// Word spacing: <c>normal</c> or length (<c>px</c>/<c>em</c>/<c>rem</c>) or <c>var()</c>/<c>calc()</c>. Bare number →
     /// <c>px</c>.
     /// </summary>
@@ -165,13 +222,6 @@ public readonly record struct AllyariaTypoItem
             parts.Add($"{name}:{value};");
         }
     }
-
-    /// <summary>Determines if a string represents a generic CSS font-family keyword.</summary>
-    /// <param name="s">The candidate family name.</param>
-    /// <returns>True if <paramref name="s" /> is a generic family; otherwise false.</returns>
-    internal static bool IsGenericFamily(string s)
-        => s is "serif" or "sans-serif" or "monospace" or "cursive" or "fantasy" or "system-ui"
-            or "ui-serif" or "ui-sans-serif" or "ui-monospace" or "emoji" or "math" or "fangsong";
 
     /// <summary>Determines whether the given value is a length token (px|em|rem|%).</summary>
     /// <param name="s">The token.</param>
@@ -223,11 +273,7 @@ public readonly record struct AllyariaTypoItem
                 continue;
             }
 
-            var trimmed = raw.Trim();
-
-            var canonical = IsGenericFamily(trimmed)
-                ? trimmed
-                : QuoteIfNeeded(trimmed);
+            var canonical = QuoteIfNeeded(raw.Trim());
 
             if (seen.Add(canonical))
             {
@@ -262,20 +308,7 @@ public readonly record struct AllyariaTypoItem
 
         var lower = v.ToLowerInvariant();
 
-        var keywordSizes = new HashSet<string>(StringComparer.Ordinal)
-        {
-            "xx-small",
-            "x-small",
-            "small",
-            "medium",
-            "large",
-            "x-large",
-            "xx-large",
-            "smaller",
-            "larger"
-        };
-
-        if (keywordSizes.Contains(lower))
+        if (AllowedFontSizes.Contains(lower))
         {
             return lower;
         }
@@ -309,7 +342,7 @@ public readonly record struct AllyariaTypoItem
 
         var v = value.Trim().ToLowerInvariant();
 
-        if (v is "normal" or "bold" or "lighter" or "bolder")
+        if (AllowedFontWeight.Contains(v))
         {
             return v;
         }
@@ -403,15 +436,7 @@ public readonly record struct AllyariaTypoItem
             return null;
         }
 
-        var allowed = new HashSet<string>(StringComparer.Ordinal)
-        {
-            "none",
-            "underline",
-            "overline",
-            "line-through"
-        };
-
-        if (tokens.Any(t => !allowed.Contains(t)))
+        if (tokens.Any(t => !AllowedTextDecoration.Contains(t)))
         {
             throw new ArgumentException(
                 "TextDecoration allows only: none, underline, overline, line-through.", nameof(TextDecoration)
@@ -513,12 +538,17 @@ public readonly record struct AllyariaTypoItem
     /// Produces a single-line CSS declaration string in fixed order, skipping null/whitespace properties. Format:
     /// <c>prop:value;prop:value;</c> (no spaces around <c>:</c> or <c>;</c>).
     /// </summary>
+    /// <remarks>
+    /// Order: <c>font-family</c>; <c>font-size</c>; <c>font-weight</c>; <c>line-height</c>; <c>font-style</c>;
+    /// <c>text-align</c>; <c>letter-spacing</c>; <c>word-spacing</c>; <c>text-transform</c>; <c>text-decoration</c>;
+    /// <c>vertical-align</c>.
+    /// </remarks>
     /// <returns>CSS declarations string.</returns>
     internal string ToCss()
     {
-        var parts = new List<string>(10);
+        var parts = new List<string>(11);
 
-        // Order: font-family;font-size;font-weight;line-height;font-style;text-align;letter-spacing;word-spacing;text-transform;text-decoration
+        // Order: font-family;font-size;font-weight;line-height;font-style;text-align;letter-spacing;word-spacing;text-transform;text-decoration;vertical-align
         if (FontFamily is
         {
             Length: > 0
@@ -536,9 +566,14 @@ public readonly record struct AllyariaTypoItem
         Append(parts, "word-spacing", WordSpacing);
         Append(parts, "text-transform", TextTransform);
         Append(parts, "text-decoration", TextDecoration);
+        Append(parts, "vertical-align", VerticalAlign);
 
         return string.Concat(parts);
     }
+
+    /// <summary>Renders the current typography state as a CSS declaration.</summary>
+    /// <returns>CSS declarations suitable for inclusion in a <c>style</c> attribute or block.</returns>
+    public override string ToString() => ToCss();
 
     /// <summary>Validates that a value exists in an allowed set; returns the value or throws.</summary>
     /// <param name="value">Candidate value (already trimmed/lowercased).</param>
