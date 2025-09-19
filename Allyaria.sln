@@ -23,6 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1B86
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\tests.yml = .github\workflows\tests.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{38DECD57-882D-484C-A729-22BD05B403BD}"
 EndProject
@@ -38,35 +41,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "standards", "standards", "{
 		docs\standards\Theming.md = docs\standards\Theming.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "playground", "playground", "{A9E4274A-5FA8-4FEC-90B8-232D525762D8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A098DD75-A348-4042-BB1A-360FF4547FAD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E2F0EFD-E782-4449-9BCB-C9BD12D3F551}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core", "src\Allyaria.Core\Allyaria.Core.csproj", "{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9ACFAA1D-C725-4453-9191-00B144B9BDC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Primitives", "src\Allyaria.Primitives\Allyaria.Primitives.csproj", "{36659A49-FA94-4456-B187-1441DA79A245}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming", "src\Allyaria.Theming\Allyaria.Theming.csproj", "{AF51AB5D-4C0C-4069-A1DA-3926999E7641}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}"
 	ProjectSection(SolutionItems) = preProject
-		playground\tests\.editorconfig = playground\tests\.editorconfig
+		tests\.editorconfig = tests\.editorconfig
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "projects", "projects", "{B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core.UnitTests", "tests\Allyaria.Core.UnitTests\Allyaria.Core.UnitTests.csproj", "{A3F9A7A5-C715-438C-9C9D-B94594FC46AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECDE3431-E937-4408-97F8-11225D5B5CF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Primitives.UnitTests", "tests\Allyaria.Primitives.UnitTests\Allyaria.Primitives.UnitTests.csproj", "{9BF51EFB-D9D6-4987-8F32-03B2881273A1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F78BD15B-27A3-4A31-86DA-8389EBDADFAC}"
-	ProjectSection(SolutionItems) = preProject
-		projects\tests\.editorconfig = projects\tests\.editorconfig
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core", "projects\src\Allyaria.Core\Allyaria.Core.csproj", "{623180A5-E47C-475A-86B9-F8A0A4620C8C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core.UnitTests", "projects\tests\Allyaria.Core.UnitTests\Allyaria.Core.UnitTests.csproj", "{32442E92-2BF4-4B75-B69A-7721338D04E1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Primitives", "projects\src\Allyaria.Primitives\Allyaria.Primitives.csproj", "{A52D203B-3D78-4EBB-9DFA-ACBC07773022}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Primitives.UnitTests", "projects\tests\Allyaria.Primitives.UnitTests\Allyaria.Primitives.UnitTests.csproj", "{679ED61A-A12B-420E-AB38-10294B02D9A1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming", "projects\src\Allyaria.Theming\Allyaria.Theming.csproj", "{D66EEA9C-E224-46EF-B85A-17CB67FE9456}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.UnitTests", "projects\tests\Allyaria.Theming.UnitTests\Allyaria.Theming.UnitTests.csproj", "{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.UnitTests", "tests\Allyaria.Theming.UnitTests\Allyaria.Theming.UnitTests.csproj", "{F1658959-606D-4B4A-A768-89741991B4B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,41 +68,37 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC} = {1B86380D-66BD-4FD7-85ED-484DE3340089}
 		{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC} = {38DECD57-882D-484C-A729-22BD05B403BD}
-		{7E2F0EFD-E782-4449-9BCB-C9BD12D3F551} = {A9E4274A-5FA8-4FEC-90B8-232D525762D8}
-		{9ACFAA1D-C725-4453-9191-00B144B9BDC7} = {A9E4274A-5FA8-4FEC-90B8-232D525762D8}
-		{ECDE3431-E937-4408-97F8-11225D5B5CF7} = {B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}
-		{F78BD15B-27A3-4A31-86DA-8389EBDADFAC} = {B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}
-		{623180A5-E47C-475A-86B9-F8A0A4620C8C} = {ECDE3431-E937-4408-97F8-11225D5B5CF7}
-		{32442E92-2BF4-4B75-B69A-7721338D04E1} = {F78BD15B-27A3-4A31-86DA-8389EBDADFAC}
-		{A52D203B-3D78-4EBB-9DFA-ACBC07773022} = {ECDE3431-E937-4408-97F8-11225D5B5CF7}
-		{679ED61A-A12B-420E-AB38-10294B02D9A1} = {F78BD15B-27A3-4A31-86DA-8389EBDADFAC}
-		{D66EEA9C-E224-46EF-B85A-17CB67FE9456} = {ECDE3431-E937-4408-97F8-11225D5B5CF7}
-		{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9} = {F78BD15B-27A3-4A31-86DA-8389EBDADFAC}
+		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{36659A49-FA94-4456-B187-1441DA79A245} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+		{9BF51EFB-D9D6-4987-8F32-03B2881273A1} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+		{F1658959-606D-4B4A-A768-89741991B4B9} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{623180A5-E47C-475A-86B9-F8A0A4620C8C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32442E92-2BF4-4B75-B69A-7721338D04E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A52D203B-3D78-4EBB-9DFA-ACBC07773022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A52D203B-3D78-4EBB-9DFA-ACBC07773022}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A52D203B-3D78-4EBB-9DFA-ACBC07773022}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A52D203B-3D78-4EBB-9DFA-ACBC07773022}.Release|Any CPU.Build.0 = Release|Any CPU
-		{679ED61A-A12B-420E-AB38-10294B02D9A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{679ED61A-A12B-420E-AB38-10294B02D9A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{679ED61A-A12B-420E-AB38-10294B02D9A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{679ED61A-A12B-420E-AB38-10294B02D9A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D66EEA9C-E224-46EF-B85A-17CB67FE9456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D66EEA9C-E224-46EF-B85A-17CB67FE9456}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D66EEA9C-E224-46EF-B85A-17CB67FE9456}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D66EEA9C-E224-46EF-B85A-17CB67FE9456}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F4425B3-2C8E-4AB2-BE0F-93481168D3E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36659A49-FA94-4456-B187-1441DA79A245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36659A49-FA94-4456-B187-1441DA79A245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36659A49-FA94-4456-B187-1441DA79A245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36659A49-FA94-4456-B187-1441DA79A245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BF51EFB-D9D6-4987-8F32-03B2881273A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BF51EFB-D9D6-4987-8F32-03B2881273A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BF51EFB-D9D6-4987-8F32-03B2881273A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BF51EFB-D9D6-4987-8F32-03B2881273A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1658959-606D-4B4A-A768-89741991B4B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1658959-606D-4B4A-A768-89741991B4B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1658959-606D-4B4A-A768-89741991B4B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1658959-606D-4B4A-A768-89741991B4B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

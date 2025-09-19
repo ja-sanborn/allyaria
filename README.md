@@ -1,6 +1,8 @@
 # Allyaria
 
 > *Version 1: 2025-09-18*
+> 
+> [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
 
 **Allyaria** is a *Blazor Component Library* for modern .NET apps, built with accessibility and localization at its
 core. It is flexible, customizable, and extensible, written entirely in Blazor with minimal JavaScript interop.
