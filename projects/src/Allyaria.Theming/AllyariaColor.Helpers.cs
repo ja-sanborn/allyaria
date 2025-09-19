@@ -38,7 +38,7 @@ public readonly partial struct AllyariaColor
     /// Thrown when <paramref name="s" /> is not a supported hex format or does not begin
     /// with <c>#</c>.
     /// </exception>
-    internal static void FromHex(string s, out byte r, out byte g, out byte b, out double a)
+    internal static void FromHexString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var hex = s.Trim();
 
@@ -87,10 +87,19 @@ public readonly partial struct AllyariaColor
     /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
     internal static AllyariaColor FromHexInline(string hex)
     {
-        FromHex(hex, out var r, out var g, out var b, out var a);
+        FromHexString(hex, out var r, out var g, out var b, out var a);
 
         return new AllyariaColor(r, g, b, a);
     }
+
+    /// <summary>Returns a color from HSVA channels.</summary>
+    /// <param name="h">Hue in degrees, clamped to [0..360].</param>
+    /// <param name="s">Saturation in percent, clamped to [0..100].</param>
+    /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
+    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <returns>The AllyariaColor from the HSVA channels.</returns>
+    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0)
+        => new(h, s, v, a);
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -102,7 +111,7 @@ public readonly partial struct AllyariaColor
     /// Thrown when the string is not in <c>hsv()</c>/<c>hsva()</c> form or contains
     /// out-of-range values.
     /// </exception>
-    internal static void FromHsvFunction(string s, out byte r, out byte g, out byte b, out double a)
+    internal static void FromHsvString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var m = RxHsv.Match(s);
 
@@ -113,16 +122,25 @@ public readonly partial struct AllyariaColor
             );
         }
 
-        var h = Clamp(ParseDouble(m.Groups["h"].Value, "H"), 0, 360);
-        var sp = Clamp(ParseDouble(m.Groups["s"].Value, "S%"), 0, 100);
-        var vp = Clamp(ParseDouble(m.Groups["v"].Value, "V%"), 0, 100);
+        var h = Clamp(ParseDouble(m.Groups["h"].Value, "H", 0, 360), 0, 360);
+        var sp = Clamp(ParseDouble(m.Groups["s"].Value, "S%", 0, 100), 0, 100);
+        var vp = Clamp(ParseDouble(m.Groups["v"].Value, "V%", 0, 100), 0, 100);
 
         a = m.Groups["a"].Success
-            ? Clamp01(ParseDouble(m.Groups["a"].Value, "A"))
+            ? Clamp01(ParseDouble(m.Groups["a"].Value, "A", 0, 1))
             : 1.0;
 
         HsvToRgb(h, sp, vp, out r, out g, out b);
     }
+
+    /// <summary>Returns a color from RGBA channels.</summary>
+    /// <param name="r">Red in [0..255].</param>
+    /// <param name="g">Green in [0..255].</param>
+    /// <param name="b">Blue in [0..255].</param>
+    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <returns>The AllyariaColor from the RGBA channels.</returns>
+    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0)
+        => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -134,7 +152,7 @@ public readonly partial struct AllyariaColor
     /// Thrown when the string is not in <c>rgb()</c>/<c>rgba()</c> form or contains
     /// out-of-range values.
     /// </exception>
-    internal static void FromRgbFunction(string s, out byte r, out byte g, out byte b, out double a)
+    internal static void FromRgbString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var m = RxRgb.Match(s);
 
@@ -150,7 +168,7 @@ public readonly partial struct AllyariaColor
         b = ClampByte(ParseInt(m.Groups["b"].Value, "b", 0, 255));
 
         a = m.Groups["a"].Success
-            ? Clamp01(ParseDouble(m.Groups["a"].Value, "a"))
+            ? Clamp01(ParseDouble(m.Groups["a"].Value, "a", 0, 1))
             : 1.0;
     }
 
@@ -255,12 +273,25 @@ public readonly partial struct AllyariaColor
     /// <summary>Parses a floating-point number using invariant culture.</summary>
     /// <param name="s">The source text.</param>
     /// <param name="param">A parameter name used in exception messages.</param>
+    /// <param name="min">The minimum allowed value (inclusive).</param>
+    /// <param name="max">The maximum allowed value (inclusive).</param>
     /// <returns>The parsed number.</returns>
     /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
-    internal static double ParseDouble(string s, string param)
-        => !double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var v)
-            ? throw new ArgumentException($"Could not parse number {param}='{s}'.", param)
-            : v;
+    internal static double ParseDouble(string s, string param, int min, int max)
+    {
+        if (!double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var v))
+        {
+            throw new ArgumentException($"Could not parse number {param}='{s}'.", param);
+        }
+
+        if (v < min || v > max)
+        {
+            throw new ArgumentOutOfRangeException(param, v, $"Expected {param} in [{min}..{max}].");
+
+        }
+
+        return v;
+    }
 
     /// <summary>Parses an integer and validates it against the provided inclusive range.</summary>
     /// <param name="s">The source text.</param>

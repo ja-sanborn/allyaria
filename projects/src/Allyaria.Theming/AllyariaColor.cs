@@ -34,7 +34,7 @@ public readonly partial struct AllyariaColor : IComparable<AllyariaColor>, IEqua
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    public AllyariaColor(double h, double s, double v, double a = 1.0)
+    private AllyariaColor(double h, double s, double v, double a = 1.0)
     {
         HsvToRgb(Clamp(h, 0, 360), Clamp(s, 0, 100), Clamp(v, 0, 100), out var r, out var g, out var b);
         R = r;
@@ -48,7 +48,7 @@ public readonly partial struct AllyariaColor : IComparable<AllyariaColor>, IEqua
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    public AllyariaColor(byte r, byte g, byte b, double a = 1.0)
+    private AllyariaColor(byte r, byte g, byte b, double a = 1.0)
     {
         R = r;
         G = g;
@@ -65,70 +65,75 @@ public readonly partial struct AllyariaColor : IComparable<AllyariaColor>, IEqua
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
     public AllyariaColor(string value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-
-        var s = value.Trim();
-
-        // Hex forms
-        if (s.StartsWith("#", StringComparison.Ordinal))
+        try
         {
-            FromHex(s, out var r, out var g, out var b, out var a);
-            R = r;
-            G = g;
-            B = b;
-            A = a;
+            ArgumentNullException.ThrowIfNull(value);
 
-            return;
+            var s = value.Trim();
+
+            // Hex forms
+            if (s.StartsWith("#", StringComparison.Ordinal))
+            {
+                FromHexString(s, out var r, out var g, out var b, out var a);
+                R = r;
+                G = g;
+                B = b;
+                A = a;
+
+                return;
+            }
+
+            // rgb()/rgba()
+            if (s.StartsWith("rgb", StringComparison.OrdinalIgnoreCase))
+            {
+                FromRgbString(s, out var r, out var g, out var b, out var a);
+                R = r;
+                G = g;
+                B = b;
+                A = a;
+
+                return;
+            }
+
+            // hsv()/hsva()
+            if (s.StartsWith("hsv", StringComparison.OrdinalIgnoreCase))
+            {
+                FromHsvString(s, out var r, out var g, out var b, out var a);
+                R = r;
+                G = g;
+                B = b;
+                A = a;
+
+                return;
+            }
+
+            // Named palettes
+            if (TryFromWebName(s, out var web))
+            {
+                R = web.R;
+                G = web.G;
+                B = web.B;
+                A = web.A;
+
+                return;
+            }
+
+            if (TryFromMaterialName(s, out var mat))
+            {
+                R = mat.R;
+                G = mat.G;
+                B = mat.B;
+                A = mat.A;
+
+                return;
+            }
+
+            throw new ArgumentException("Color not found.", nameof(value));
         }
 
-        // rgb()/rgba()
-        if (s.StartsWith("rgb", StringComparison.OrdinalIgnoreCase))
+        catch (Exception exception)
         {
-            FromRgbFunction(s, out var r, out var g, out var b, out var a);
-            R = r;
-            G = g;
-            B = b;
-            A = a;
-
-            return;
+            throw new ArgumentException($"Unrecognized color: '{value}'. Expected #RRGGBB, #RRGGBBAA, rgb(), rgba(), hsv(), hsva(), a CSS Web color name, or a Material color name.", nameof(value), exception);
         }
-
-        // hsv()/hsva()
-        if (s.StartsWith("hsv", StringComparison.OrdinalIgnoreCase))
-        {
-            FromHsvFunction(s, out var r, out var g, out var b, out var a);
-            R = r;
-            G = g;
-            B = b;
-            A = a;
-
-            return;
-        }
-
-        // Named palettes
-        if (TryFromWebName(s, out var web))
-        {
-            R = web.R;
-            G = web.G;
-            B = web.B;
-            A = web.A;
-
-            return;
-        }
-
-        if (TryFromMaterialName(s, out var mat))
-        {
-            R = mat.R;
-            G = mat.G;
-            B = mat.B;
-            A = mat.A;
-
-            return;
-        }
-
-        throw new ArgumentException(
-            $"Unrecognized color: '{value}'. Expected #RRGGBB, #RRGGBBAA, rgb(), rgba(), hsv(), hsva(), a CSS Web color name, or a Material color name.",
-            nameof(value)
-        );
     }
 }
