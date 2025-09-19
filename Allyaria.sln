@@ -60,6 +60,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Primitives.UnitTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.UnitTests", "tests\Allyaria.Theming.UnitTests\Allyaria.Theming.UnitTests.csproj", "{F1658959-606D-4B4A-A768-89741991B4B9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", "{87ECEB69-9E94-4136-B906-1322CA050981}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Allyaria.Theming.AllyariaColor.md = docs\references\Allyaria.Theming.AllyariaColor.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +79,7 @@ Global
 		{A3F9A7A5-C715-438C-9C9D-B94594FC46AF} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 		{9BF51EFB-D9D6-4987-8F32-03B2881273A1} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 		{F1658959-606D-4B4A-A768-89741991B4B9} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+		{87ECEB69-9E94-4136-B906-1322CA050981} = {38DECD57-882D-484C-A729-22BD05B403BD}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

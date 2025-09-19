@@ -21,6 +21,22 @@ public readonly partial struct AllyariaColor
     public bool Equals(AllyariaColor other)
         => R == other.R && G == other.G && B == other.B && AlphaByte == other.AlphaByte;
 
+    /// <summary>Returns a color from HSVA channels.</summary>
+    /// <param name="h">Hue in degrees, clamped to [0..360].</param>
+    /// <param name="s">Saturation in percent, clamped to [0..100].</param>
+    /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
+    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <returns>The AllyariaColor from the HSVA channels.</returns>
+    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
+
+    /// <summary>Returns a color from RGBA channels.</summary>
+    /// <param name="r">Red in [0..255].</param>
+    /// <param name="g">Green in [0..255].</param>
+    /// <param name="b">Blue in [0..255].</param>
+    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <returns>The AllyariaColor from the RGBA channels.</returns>
+    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
+
     /// <summary>Returns a hash code suitable for hashing in collections. Uses RGBA (alpha rounded to a byte).</summary>
     public override int GetHashCode() => HashCode.Combine(R, G, B, AlphaByte);
 

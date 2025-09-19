@@ -92,14 +92,6 @@ public readonly partial struct AllyariaColor
         throw new ArgumentException($"Hex color must be #RGB, #RGBA, #RRGGBB, or #RRGGBBAA: '{s}'.", nameof(s));
     }
 
-    /// <summary>Returns a color from HSVA channels.</summary>
-    /// <param name="h">Hue in degrees, clamped to [0..360].</param>
-    /// <param name="s">Saturation in percent, clamped to [0..100].</param>
-    /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
-    /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the HSVA channels.</returns>
-    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
-
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
     /// <param name="r">Outputs the red channel (0–255).</param>
@@ -131,14 +123,6 @@ public readonly partial struct AllyariaColor
 
         HsvToRgb(h, sp, vp, out r, out g, out b);
     }
-
-    /// <summary>Returns a color from RGBA channels.</summary>
-    /// <param name="r">Red in [0..255].</param>
-    /// <param name="g">Green in [0..255].</param>
-    /// <param name="b">Blue in [0..255].</param>
-    /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the RGBA channels.</returns>
-    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
