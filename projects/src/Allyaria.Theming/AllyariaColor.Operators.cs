@@ -11,7 +11,9 @@ public readonly partial struct AllyariaColor
     /// </summary>
     public static bool operator >(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) > 0;
 
-    /// <summary>Returns <c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />.</summary>
+    /// <summary>
+    /// Returns <c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />.
+    /// </summary>
     public static bool operator >=(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) >= 0;
 
     /// <summary>Implicit conversion from <see cref="string" /> by parsing.</summary>

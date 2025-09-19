@@ -28,6 +28,16 @@ public readonly partial struct AllyariaColor
     /// <returns>The clamped byte.</returns>
     internal static byte ClampByte(int v) => (byte)Math.Clamp(v, 0, 255);
 
+    /// <summary>Creates an <see cref="AllyariaColor" /> from a hex literal (helper used by color tables).</summary>
+    /// <param name="hex">A hex color string of the form <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.</param>
+    /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
+    internal static AllyariaColor FromHexInline(string hex)
+    {
+        FromHexString(hex, out var r, out var g, out var b, out var a);
+
+        return new AllyariaColor(r, g, b, a);
+    }
+
     /// <summary>Parses a hexadecimal CSS color literal.</summary>
     /// <param name="s">A hex color string of the form <c>#RGB</c>, <c>#RGBA</c>, <c>#RRGGBB</c>, or <c>#RRGGBBAA</c>.</param>
     /// <param name="r">Outputs the red channel (0–255).</param>
@@ -82,24 +92,13 @@ public readonly partial struct AllyariaColor
         throw new ArgumentException($"Hex color must be #RGB, #RGBA, #RRGGBB, or #RRGGBBAA: '{s}'.", nameof(s));
     }
 
-    /// <summary>Creates an <see cref="AllyariaColor" /> from a hex literal (helper used by color tables).</summary>
-    /// <param name="hex">A hex color string of the form <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.</param>
-    /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
-    internal static AllyariaColor FromHexInline(string hex)
-    {
-        FromHexString(hex, out var r, out var g, out var b, out var a);
-
-        return new AllyariaColor(r, g, b, a);
-    }
-
     /// <summary>Returns a color from HSVA channels.</summary>
     /// <param name="h">Hue in degrees, clamped to [0..360].</param>
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
     /// <returns>The AllyariaColor from the HSVA channels.</returns>
-    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0)
-        => new(h, s, v, a);
+    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -139,8 +138,7 @@ public readonly partial struct AllyariaColor
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
     /// <returns>The AllyariaColor from the RGBA channels.</returns>
-    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0)
-        => new(r, g, b, a);
+    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -287,7 +285,6 @@ public readonly partial struct AllyariaColor
         if (v < min || v > max)
         {
             throw new ArgumentOutOfRangeException(param, v, $"Expected {param} in [{min}..{max}].");
-
         }
 
         return v;

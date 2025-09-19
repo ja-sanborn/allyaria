@@ -133,7 +133,10 @@ public readonly partial struct AllyariaColor : IComparable<AllyariaColor>, IEqua
 
         catch (Exception exception)
         {
-            throw new ArgumentException($"Unrecognized color: '{value}'. Expected #RRGGBB, #RRGGBBAA, rgb(), rgba(), hsv(), hsva(), a CSS Web color name, or a Material color name.", nameof(value), exception);
+            throw new ArgumentException(
+                $"Unrecognized color: '{value}'. Expected #RRGGBB, #RRGGBBAA, rgb(), rgba(), hsv(), hsva(), a CSS Web color name, or a Material color name.",
+                nameof(value), exception
+            );
         }
     }
 }

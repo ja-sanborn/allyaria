@@ -43,12 +43,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E2F0EFD-E782-4449-9BCB-C9BD12D3F551}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9ACFAA1D-C725-4453-9191-00B144B9BDC7}"
+	ProjectSection(SolutionItems) = preProject
+		playground\tests\.editorconfig = playground\tests\.editorconfig
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "projects", "projects", "{B2A00E3C-9F45-4109-BFD1-DB3BFC62746B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECDE3431-E937-4408-97F8-11225D5B5CF7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F78BD15B-27A3-4A31-86DA-8389EBDADFAC}"
+	ProjectSection(SolutionItems) = preProject
+		projects\tests\.editorconfig = projects\tests\.editorconfig
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Core", "projects\src\Allyaria.Core\Allyaria.Core.csproj", "{623180A5-E47C-475A-86B9-F8A0A4620C8C}"
 EndProject
