@@ -57,7 +57,6 @@ web color names, and Material Design colors, and provides conversions between RG
 
 ---
 
-~~~~
 ## Operators
 
 * `==`, `!=` — Equality/inequality (by RGBA).
