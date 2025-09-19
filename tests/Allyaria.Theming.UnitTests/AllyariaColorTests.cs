@@ -1,4 +1,6 @@
-﻿namespace Allyaria.Theming.UnitTests;
+﻿using Allyaria.Theming.Palette;
+
+namespace Allyaria.Theming.UnitTests;
 
 public class AllyariaColorTests
 {

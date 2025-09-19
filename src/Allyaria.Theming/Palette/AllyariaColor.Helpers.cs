@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Allyaria.Theming;
+namespace Allyaria.Theming.Palette;
 
 public readonly partial struct AllyariaColor
 {
