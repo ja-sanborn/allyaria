@@ -78,7 +78,7 @@ public readonly partial struct AllyariaColor
             ? "color"
             : name.Trim();
 
-        return $"{prop}: {HexRgba};";
+        return $"{prop}:{HexRgba};";
     }
 
     /// <summary>Returns the canonical uppercase <c>#RRGGBBAA</c> string for this color.</summary>

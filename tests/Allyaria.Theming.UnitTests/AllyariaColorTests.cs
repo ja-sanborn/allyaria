@@ -678,11 +678,11 @@ public class AllyariaColorTests
 
         c.ToCss()
             .Should()
-            .Be("color: #FF8800C0;");
+            .Be("color:#FF8800C0;");
 
         c.ToCss("background-color")
             .Should()
-            .Be("background-color: #FF8800C0;");
+            .Be("background-color:#FF8800C0;");
     }
 
     [Fact]
