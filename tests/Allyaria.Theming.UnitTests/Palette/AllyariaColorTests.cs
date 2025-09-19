@@ -1,6 +1,6 @@
 ﻿using Allyaria.Theming.Palette;
 
-namespace Allyaria.Theming.UnitTests;
+namespace Allyaria.Theming.UnitTests.Palette;
 
 public class AllyariaColorTests
 {
