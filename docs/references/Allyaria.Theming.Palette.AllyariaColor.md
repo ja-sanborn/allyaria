@@ -1,4 +1,4 @@
-# Allyaria.Theming.AllyariaColor
+# Allyaria.Theming.Palette.AllyariaColor
 
 `AllyariaColor` represents a framework-agnostic color value with CSS-oriented parsing and formatting, immutable value
 semantics, and ordering based on the canonical uppercase `#RRGGBBAA` form. It supports parsing from CSS-style strings,
