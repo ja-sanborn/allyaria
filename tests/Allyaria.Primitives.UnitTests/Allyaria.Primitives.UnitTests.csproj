@@ -17,6 +17,7 @@
         <PackageReference Include="xunit.runner.visualstudio"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Allyaria.Core\Allyaria.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Allyaria.Primitives\Allyaria.Primitives.csproj"/>
     </ItemGroup>
+
 </Project>
