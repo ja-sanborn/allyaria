@@ -18,10 +18,6 @@ public readonly struct AllyariaTextTransform : IEquatable<AllyariaTextTransform>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaTextTransform" /> struct from a raw CSS value.</summary>
     /// <param name="value">Raw CSS value (e.g., <c>"uppercase"</c>, <c>"capitalize"</c>, <c>"var(--tt)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not valid for
-    /// <c>text-transform</c>.
-    /// </exception>
     public AllyariaTextTransform(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -42,7 +38,10 @@ public readonly struct AllyariaTextTransform : IEquatable<AllyariaTextTransform>
     /// <summary>Normalizes and validates a <c>text-transform</c> value.</summary>
     private static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -62,7 +61,7 @@ public readonly struct AllyariaTextTransform : IEquatable<AllyariaTextTransform>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize text-transform: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a CSS declaration in the form <c>text-transform:value;</c> (no spaces).</summary>

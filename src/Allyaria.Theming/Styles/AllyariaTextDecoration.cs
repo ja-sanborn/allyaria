@@ -22,9 +22,6 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// The raw CSS value, possibly containing space-separated tokens such as <c>"underline overline"</c> or a single token
     /// like <c>"none"</c>.
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>text-decoration</c> value.
-    /// </exception>
     public AllyariaTextDecoration(string value) => Value = Normalize(value);
 
     /// <summary>
@@ -57,19 +54,18 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// <summary>Normalizes and validates a <c>text-decoration</c> value.</summary>
     /// <param name="value">The raw input string containing one or more tokens.</param>
     /// <returns>The normalized, space-separated token string.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when the value contains tokens that are not allowed or combines <c>none</c> with other tokens.
-    /// </exception>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
-        // Normalize multiple tokens.
         var normalized = NormalizeTokens(value);
 
         return !string.IsNullOrEmpty(normalized)
             ? normalized
-            : throw new ArgumentException($"Unable to normalize text-decoration: {value}.", nameof(value));
+            : string.Empty;
     }
 
     /// <summary>
@@ -153,13 +149,6 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaTextDecoration" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaTextDecoration" /> created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="value" /> is <see langword="null" /> or consists
-    /// only of whitespace.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> contains tokens that are not allowed or combines <c>none</c> with other tokens.
-    /// </exception>
     public static implicit operator AllyariaTextDecoration(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaTextDecoration" /> to <see cref="string" />.</summary>

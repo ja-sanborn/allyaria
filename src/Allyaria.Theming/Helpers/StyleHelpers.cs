@@ -13,7 +13,7 @@ internal static class StyleHelpers
     /// A comprehensive set of CSS length units recognized by <see cref="IsLength(string)" />. Includes absolute, relative, and
     /// viewport units.
     /// </summary>
-    public static readonly string[] LengthUnits =
+    private static readonly string[] LengthUnits =
     {
         // Relative font & element units
         "em",

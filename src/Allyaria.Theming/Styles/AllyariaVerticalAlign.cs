@@ -31,9 +31,6 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaVerticalAlign" /> struct from a raw CSS value.</summary>
     /// <param name="value">Raw CSS value (e.g., <c>"middle"</c>, <c>"-2px"</c>, <c>"15%"</c>, <c>"var(--va)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>vertical-align</c> value.
-    /// </exception>
     public AllyariaVerticalAlign(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -64,10 +61,12 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
     /// <summary>Normalizes and validates a <c>vertical-align</c> value.</summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input is not a valid <c>vertical-align</c> form.</exception>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -94,7 +93,7 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize vertical-align: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a CSS declaration in the form <c>vertical-align:value;</c> (no spaces).</summary>
@@ -119,8 +118,6 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaVerticalAlign" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaVerticalAlign" /> created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not valid for <c>vertical-align</c>.</exception>
     public static implicit operator AllyariaVerticalAlign(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaVerticalAlign" /> to <see cref="string" />.</summary>

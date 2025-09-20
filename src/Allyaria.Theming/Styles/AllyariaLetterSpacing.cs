@@ -36,9 +36,6 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
     /// <param name="value">
     /// The raw CSS value (e.g., <c>"normal"</c>, <c>"0.05em"</c>, <c>"2px"</c>, <c>"calc(1px + 0.1em)"</c>).
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>letter-spacing</c> value.
-    /// </exception>
     public AllyariaLetterSpacing(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -69,10 +66,12 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
     /// <summary>Normalizes and validates a <c>letter-spacing</c> value using shared helper logic.</summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the value is not valid for <c>letter-spacing</c>.</exception>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -104,7 +103,7 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize letter-spacing: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a CSS declaration in the form <c>letter-spacing:value;</c> (no spaces).</summary>
@@ -129,8 +128,6 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaLetterSpacing" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaLetterSpacing" /> created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>letter-spacing</c> value.</exception>
     public static implicit operator AllyariaLetterSpacing(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaLetterSpacing" /> to <see cref="string" />.</summary>

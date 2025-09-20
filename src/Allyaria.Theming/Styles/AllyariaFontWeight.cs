@@ -22,10 +22,6 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <param name="value">
     /// Raw input value (e.g., <c>"normal"</c>, <c>"bold"</c>, <c>"400"</c>, <c>"700"</c>, or <c>"var(--fw)"</c>).
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>font-weight</c> value according to
-    /// Allyaria rules.
-    /// </exception>
     public AllyariaFontWeight(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -71,10 +67,12 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// </summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input is not valid for <c>font-weight</c>.</exception>
     internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -101,7 +99,7 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize font-weight: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Generates a CSS declaration string in the form <c>font-weight:value;</c> with no spaces.</summary>
@@ -126,8 +124,6 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontWeight" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaFontWeight" /> created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-weight</c>.</exception>
     public static implicit operator AllyariaFontWeight(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaFontWeight" /> to <see cref="string" />.</summary>

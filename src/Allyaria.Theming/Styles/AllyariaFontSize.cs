@@ -44,7 +44,6 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <param name="value">
     /// The raw CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"calc(12px + 1vw)"</c> ).
     /// </param>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-size</c> value.</exception>
     public AllyariaFontSize(string value) => Value = Normalize(value);
 
     /// <summary>
@@ -79,10 +78,12 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <summary>Normalizes and validates a <c>font-size</c> value.</summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input does not represent a valid CSS <c>font-size</c>.</exception>
     internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -115,7 +116,7 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize font-size: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a <c>font-size</c> CSS declaration in the form <c>font-size:value;</c> (no spaces).</summary>
@@ -140,8 +141,6 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontSize" />.</summary>
     /// <param name="value">The raw CSS value to normalize.</param>
     /// <returns>An <see cref="AllyariaFontSize" /> instance created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-size</c>.</exception>
     public static implicit operator AllyariaFontSize(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaFontSize" /> to <see cref="string" />.</summary>

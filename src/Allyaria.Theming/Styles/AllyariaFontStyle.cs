@@ -32,10 +32,6 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaFontStyle" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"italic"</c>, <c>"oblique 12deg"</c>, <c>"var(--style)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid
-    /// <c>font-style</c> value.
-    /// </exception>
     public AllyariaFontStyle(string value) => Value = Normalize(value);
 
     /// <summary>
@@ -107,10 +103,12 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// </summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input is invalid for <c>font-style</c>.</exception>
     internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -148,7 +146,7 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize font-style: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Returns a CSS declaration in the form <c>font-style:value;</c> (no spaces).</summary>
@@ -171,10 +169,6 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontStyle" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaFontStyle" /> instance.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is empty/whitespace or not a valid
-    /// <c>font-style</c>.
-    /// </exception>
     public static implicit operator AllyariaFontStyle(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaFontStyle" /> to <see cref="string" />.</summary>

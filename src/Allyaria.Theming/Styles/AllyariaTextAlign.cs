@@ -18,10 +18,6 @@ public readonly struct AllyariaTextAlign : IEquatable<AllyariaTextAlign>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaTextAlign" /> struct from a raw CSS value.</summary>
     /// <param name="value">Raw CSS value (e.g., <c>"left"</c>, <c>"center"</c>, <c>"var(--align)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not valid for
-    /// <c>text-align</c>.
-    /// </exception>
     public AllyariaTextAlign(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -40,9 +36,12 @@ public readonly struct AllyariaTextAlign : IEquatable<AllyariaTextAlign>
             : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>Normalizes and validates a <c>text-align</c> value.</summary>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();

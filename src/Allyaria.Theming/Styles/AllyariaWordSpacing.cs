@@ -31,10 +31,6 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaWordSpacing" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"normal"</c>, <c>"5px"</c>, <c>"10%"</c>, <c>"calc(1px + 0.5em)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid
-    /// <c>word-spacing</c> value.
-    /// </exception>
     public AllyariaWordSpacing(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
@@ -67,10 +63,12 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
     /// </summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the value is not valid for <c>word-spacing</c>.</exception>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -102,7 +100,7 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize word-spacing: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a CSS declaration in the form <c>word-spacing:value;</c> (no spaces).</summary>

@@ -23,8 +23,6 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// containing commas will be split into multiple family names.
     /// </summary>
     /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="families" /> is <see langword="null" /> or empty.</exception>
-    /// <exception cref="ArgumentException">Thrown when no valid family names remain after normalization.</exception>
     public AllyariaFontFamily(params string[] families) => _families = Normalize(families);
 
     /// <summary>Gets the normalized font family array.</summary>
@@ -116,26 +114,20 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// applies canonicalization and de-duplication.
     /// </summary>
     /// <param name="families">The raw family names supplied to the constructor.</param>
-    /// <returns>A non-empty, normalized array of font family names.</returns>
-    /// <exception cref="ArgumentException">Thrown when null or empty or no valid family names remain after normalization.</exception>
-    private static string[] Normalize(string[] families)
+    /// <returns>A normalized array of font family names.</returns>
+    private static string[] Normalize(string[]? families = null)
     {
         if (families is null || families.Length is 0)
         {
-            throw new ArgumentException("font-family input cannot be null or empty.", nameof(families));
+            return Array.Empty<string>();
         }
 
         var flattened = FlattenCommaSeparated(families);
         var normalized = NormalizeFontFamily(flattened);
 
-        if (normalized is null || normalized.Length is 0)
-        {
-            throw new ArgumentException(
-                "font-family input produced no valid names after normalization.", nameof(families)
-            );
-        }
-
-        return normalized;
+        return normalized is null || normalized.Length is 0
+            ? Array.Empty<string>()
+            : normalized;
     }
 
     /// <summary>

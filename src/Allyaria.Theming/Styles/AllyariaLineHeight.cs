@@ -33,10 +33,6 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
 {
     /// <summary>Initializes a new instance of the <see cref="AllyariaLineHeight" /> struct from a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"normal"</c>, <c>"1.5"</c>, <c>"20px"</c>, <c>"var(--lh)"</c>).</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid
-    /// <c>line-height</c> value.
-    /// </exception>
     public AllyariaLineHeight(string value) => Value = Normalize(value);
 
     /// <summary>
@@ -69,10 +65,12 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
     /// <summary>Normalizes and validates a <c>line-height</c> value.</summary>
     /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input is invalid or negative.</exception>
-    private static string Normalize(string value)
+    internal static string Normalize(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
 
         // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
         var trim = value.Trim();
@@ -104,7 +102,7 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
         }
 
         // Failed normalization.
-        throw new ArgumentException($"Unable to normalize line-height: {value}.", nameof(value));
+        return string.Empty;
     }
 
     /// <summary>Produces a CSS declaration in the form <c>line-height:value;</c> (no spaces).</summary>
@@ -127,8 +125,6 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaLineHeight" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaLineHeight" /> created from <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>line-height</c> value.</exception>
     public static implicit operator AllyariaLineHeight(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaLineHeight" /> to <see cref="string" />.</summary>
