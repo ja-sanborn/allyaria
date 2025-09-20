@@ -64,6 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", 
 	ProjectSection(SolutionItems) = preProject
 		docs\references\Allyaria.Theming.Palette.AllyariaColor.md = docs\references\Allyaria.Theming.Palette.AllyariaColor.md
 		docs\references\Allyaria.Theming.Palette.AllyariaPaletteItem.md = docs\references\Allyaria.Theming.Palette.AllyariaPaletteItem.md
+		docs\references\Allyaria.Theming.Typography.AllyariaTypoItem.md = docs\references\Allyaria.Theming.Typography.AllyariaTypoItem.md
 	EndProjectSection
 EndProject
 Global

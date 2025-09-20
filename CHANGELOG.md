@@ -18,6 +18,14 @@
         * Hover color and background image support with overlay handling.
         * `HasBackground` and `HasBorder` flags controlling rendering.
         * Methods `ToCss`, `ToHoverCss`, `ToCssVars`, and `ToString` for dynamic CSS generation.
+    * New `AllyariaTypoItem` implementation, including:
+        * Constructor with optional parameters for font family, size, style, weight, spacing, line-height, alignment,
+          decoration, transform, vertical-align, and word-spacing.
+        * Validation and normalization of values (keywords lowercased, bare numbers assumed `px`, `var()` and `calc()`
+          passed through).
+        * Properties throw `ArgumentException` on invalid inputs.
+        * `ToCss` builds single-line CSS declarations in fixed order, skipping null/whitespace.
+        * `ToString` returns the same as `ToCss`.
 
 ### Updated/Fixed
 
