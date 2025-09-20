@@ -42,21 +42,6 @@ internal static class StyleHelpers
     };
 
     /// <summary>
-    /// Appends a CSS declaration in the form <c>name:value;</c> (no spaces) to the supplied list, when
-    /// <paramref name="value" /> is not null/whitespace.
-    /// </summary>
-    /// <param name="parts">The list of accumulated declarations.</param>
-    /// <param name="name">The CSS property name.</param>
-    /// <param name="value">The CSS value.</param>
-    public static void AppendCssDeclaration(List<string> parts, string name, string? value)
-    {
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            parts.Add($"{name}:{value};");
-        }
-    }
-
-    /// <summary>
     /// Determines whether the token starts with a supported CSS function name. Typical examples are <c>var(…)</c>,
     /// <c>calc(…)</c>, <c>min(…)</c>, <c>max(…)</c>, <c>clamp(…)</c>.
     /// </summary>
@@ -147,42 +132,6 @@ internal static class StyleHelpers
     /// <param name="s">The token to evaluate.</param>
     /// <returns><c>true</c> when the token starts with <c>var(</c> or <c>calc(</c>; otherwise <c>false</c>.</returns>
     public static bool IsVarOrCalc(string? s) => IsCssFunction(s, "var", "calc");
-
-    /// <summary>
-    /// Normalizes an array of font family names: trims tokens, applies quoting when needed, removes duplicates while
-    /// preserving order, and returns <c>null</c> if nothing remains.
-    /// </summary>
-    /// <param name="families">The input array of font family names.</param>
-    /// <returns>A canonicalized array or <c>null</c>.</returns>
-    public static string[]? NormalizeFontFamily(string[]? families)
-    {
-        if (families is null || families.Length == 0)
-        {
-            return null;
-        }
-
-        var seen = new HashSet<string>(StringComparer.Ordinal);
-        var result = new List<string>(families.Length);
-
-        foreach (var raw in families)
-        {
-            if (string.IsNullOrWhiteSpace(raw))
-            {
-                continue;
-            }
-
-            var canonical = QuoteFontFamilyIfNeeded(raw.Trim());
-
-            if (seen.Add(canonical))
-            {
-                result.Add(canonical);
-            }
-        }
-
-        return result.Count > 0
-            ? result.ToArray()
-            : null;
-    }
 
     /// <summary>
     /// Normalizes a <c>line-height</c>-like value: accepts <c>normal</c>, unitless positive numbers, arbitrary lengths,
@@ -376,27 +325,6 @@ internal static class StyleHelpers
         => string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
-
-    /// <summary>
-    /// Quotes a font-family token when necessary according to CSS rules: tokens containing whitespace, commas, or quotes are
-    /// wrapped in double quotes, with inner double-quotes escaped.
-    /// </summary>
-    /// <param name="family">A single font family name.</param>
-    /// <returns>The possibly quoted family token.</returns>
-    public static string QuoteFontFamilyIfNeeded(string family)
-    {
-        var needsQuotes = family.Any(char.IsWhiteSpace) || family.Contains(',') || family.Contains('"') ||
-            family.Contains('\'');
-
-        if (!needsQuotes)
-        {
-            return family;
-        }
-
-        var escaped = family.Replace("\"", "\\\"", StringComparison.Ordinal);
-
-        return $"\"{escaped}\"";
-    }
 
     /// <summary>
     /// Validates that a candidate value appears in the provided allowed set; returns the value when valid, or <c>null</c> if

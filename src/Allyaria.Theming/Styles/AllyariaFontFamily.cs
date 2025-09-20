@@ -1,13 +1,11 @@
-﻿using Allyaria.Theming.Helpers;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a validated, immutable <c>font-family</c> CSS value.
 /// <para>
 /// This <see langword="readonly" /> <see langword="struct" /> implements value-based equality and accepts a sequence of
-/// font family names. Each name is normalized by trimming whitespace, applying quotes when necessary, and deduplicating
-/// while preserving order.
+/// font family names. Each name is normalized by trimming whitespace, splitting comma-separated lists, applying quotes
+/// when necessary, and de-duplicating while preserving order.
 /// </para>
 /// <para>
 /// Rendering: <see cref="ToCss" /> returns <c>font-family:value1,value2,...;</c> (no spaces after commas).
@@ -16,36 +14,24 @@ namespace Allyaria.Theming.Styles;
 /// </summary>
 public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
 {
-    /// <summary>Backing field that stores the normalized font families.</summary>
-    private readonly string[] _families;
+    /// <summary>Backing field for the font family array.</summary>
+    private readonly string[]? _families;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> struct from an array of raw family names.
+    /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> struct from one or more raw family names. This
+    /// constructor accepts either a single comma-separated string, multiple strings, or an array of strings. Any string
+    /// containing commas will be split into multiple family names.
     /// </summary>
-    /// <param name="families">An array of font family names.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="families" /> is null or empty.</exception>
+    /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="families" /> is <see langword="null" /> or empty.</exception>
     /// <exception cref="ArgumentException">Thrown when no valid family names remain after normalization.</exception>
-    public AllyariaFontFamily(string[] families)
-    {
-        if (families is null || families.Length == 0)
-        {
-            throw new ArgumentNullException(nameof(families), "font-family array cannot be null or empty.");
-        }
-
-        var normalized = StyleHelpers.NormalizeFontFamily(families);
-
-        if (normalized is null || normalized.Length == 0)
-        {
-            throw new ArgumentException(
-                "font-family array produced no valid names after normalization.", nameof(families)
-            );
-        }
-
-        _families = normalized;
-    }
+    public AllyariaFontFamily(params string[] families) => _families = NormalizeFromParams(families);
 
     /// <summary>Gets the normalized font family array.</summary>
-    public string[] Families => _families;
+    public string[] Families => _families ?? Array.Empty<string>();
+
+    /// <summary>Gets the normalized font family list joined with commas (no spaces).</summary>
+    public string Value => string.Join(",", Families);
 
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
@@ -61,12 +47,54 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// </returns>
     public bool Equals(AllyariaFontFamily other)
     {
-        if (_families.Length != other._families.Length)
+        var a = Families;
+        var b = other.Families;
+
+        if (a.Length != b.Length)
         {
             return false;
         }
 
-        return !_families.Where((t, i) => !string.Equals(t, other._families[i], StringComparison.Ordinal)).Any();
+        for (var i = 0; i < a.Length; i++)
+        {
+            if (!string.Equals(a[i], b[i], StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Flattens an array of raw family strings, splitting any items that contain commas into separate entries, trimming
+    /// whitespace from each resulting token, and removing empty results.
+    /// </summary>
+    /// <param name="families">The raw sequence of family strings (some entries may contain commas).</param>
+    /// <returns>A flattened array of family name tokens, not yet quoted or de-duplicated.</returns>
+    private static string[] FlattenCommaSeparated(IEnumerable<string> families)
+    {
+        var tokens = new List<string>();
+
+        foreach (var raw in families)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                continue;
+            }
+
+            var parts = raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (var p in parts)
+            {
+                if (!string.IsNullOrWhiteSpace(p))
+                {
+                    tokens.Add(p);
+                }
+            }
+        }
+
+        return tokens.ToArray();
     }
 
     /// <summary>Returns a hash code for this instance based on all normalized family names.</summary>
@@ -75,19 +103,115 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     {
         var hash = new HashCode();
 
-        foreach (var f in _families)
+        foreach (var family in Families)
         {
-            hash.Add(f, StringComparer.Ordinal);
+            hash.Add(family, StringComparer.Ordinal);
         }
 
         return hash.ToHashCode();
     }
 
     /// <summary>
+    /// Normalizes an array of font family names: trims tokens, applies quoting when needed, removes duplicates while
+    /// preserving order, and returns <c>null</c> if nothing remains.
+    /// </summary>
+    /// <param name="families">The input array of font family names (already flattened).</param>
+    /// <returns>A canonicalized array or <c>null</c>.</returns>
+    internal static string[]? NormalizeFontFamily(string[]? families)
+    {
+        if (families is null || families.Length == 0)
+        {
+            return null;
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var result = new List<string>(families.Length);
+
+        foreach (var raw in families)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                continue;
+            }
+
+            var canonical = QuoteFontFamilyIfNeeded(raw.Trim());
+
+            if (seen.Add(canonical))
+            {
+                result.Add(canonical);
+            }
+        }
+
+        return result.Count > 0
+            ? result.ToArray()
+            : null;
+    }
+
+    /// <summary>
+    /// Normalizes input provided via the <c>params</c> constructor: validates arguments, splits comma-separated items, and
+    /// applies canonicalization and de-duplication.
+    /// </summary>
+    /// <param name="families">The raw family names supplied to the constructor.</param>
+    /// <returns>A non-empty, normalized array of font family names.</returns>
+    /// <exception cref="ArgumentException">Thrown when null or empty or no valid family names remain after normalization.</exception>
+    private static string[] NormalizeFromParams(string[] families)
+    {
+        if (families is null || families.Length is 0)
+        {
+            throw new ArgumentException("font-family input cannot be null or empty.", nameof(families));
+        }
+
+        var flattened = FlattenCommaSeparated(families);
+        var normalized = NormalizeFontFamily(flattened);
+
+        if (normalized is null || normalized.Length is 0)
+        {
+            throw new ArgumentException(
+                "font-family input produced no valid names after normalization.", nameof(families)
+            );
+        }
+
+        return normalized;
+    }
+
+    /// <summary>
+    /// Quotes a font-family token when necessary according to CSS rules: tokens containing whitespace, commas, or quotes are
+    /// wrapped in double quotes, with inner double-quotes escaped.
+    /// </summary>
+    /// <param name="family">A single font family name.</param>
+    /// <returns>The possibly quoted family token.</returns>
+    internal static string QuoteFontFamilyIfNeeded(string family)
+    {
+        var hasWhitespace = family.IndexOfAny(
+            [
+                ' ',
+                '\t',
+                '\r',
+                '\n',
+                '\f'
+            ]
+        ) >= 0;
+
+        var needsQuotes = hasWhitespace || family.Contains(',') || family.Contains('"') || family.Contains('\'');
+
+        if (!needsQuotes)
+        {
+            return family;
+        }
+
+        var escaped = family.Replace("\"", "\\\"", StringComparison.Ordinal);
+
+        return $"\"{escaped}\"";
+    }
+
+    /// <summary>
     /// Generates a CSS declaration in the form <c>font-family:value1,value2,...;</c> (no spaces after commas).
     /// </summary>
     /// <returns>The CSS declaration for the font families.</returns>
-    public string ToCss() => $"font-family:{string.Join(",", _families)};";
+    public string ToCss()
+        => Families.Length == 0
+            ? string.Empty
+            : $"font-family:{Value};";
 
     /// <summary>Returns the same output as <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -99,15 +223,33 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
     public static bool operator ==(AllyariaFontFamily left, AllyariaFontFamily right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontFamily" />.</summary>
+    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="AllyariaFontFamily" />.</summary>
     /// <param name="families">The raw font family array to convert.</param>
     /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
     public static implicit operator AllyariaFontFamily(string[] families) => new(families);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaFontFamily" /> to <see cref="string" />.</summary>
+    /// <summary>
+    /// Implicit conversion from <see langword="string" /> to <see cref="AllyariaFontFamily" />. Accepts a single
+    /// comma-separated string of font family names.
+    /// </summary>
+    /// <param name="families">A single string containing one or more comma-separated font family names.</param>
+    /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
+    public static implicit operator AllyariaFontFamily(string families) => new(families);
+
+    /// <summary>
+    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string[]" /> (the normalized array).
+    /// </summary>
     /// <param name="fontFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family array.</returns>
-    public static implicit operator string[](AllyariaFontFamily fontFamily) => fontFamily._families;
+    public static implicit operator string[](AllyariaFontFamily fontFamily) => fontFamily.Families;
+
+    /// <summary>
+    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string" /> (the normalized, comma-joined
+    /// value).
+    /// </summary>
+    /// <param name="fontFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
+    /// <returns>The normalized font family list joined by commas with no spaces.</returns>
+    public static implicit operator string(AllyariaFontFamily fontFamily) => fontFamily.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaFontFamily" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>

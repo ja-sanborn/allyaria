@@ -37,12 +37,15 @@ public readonly record struct AllyariaTypoItem
         string? verticalAlign = null,
         string? wordSpacing = null)
     {
-        FontFamily = fontFamily is
+        if (fontFamily?.Length > 0)
         {
-            Length: > 0
+            FontFamily = new AllyariaFontFamily(fontFamily);
         }
-            ? new AllyariaFontFamily(fontFamily)
-            : null!;
+
+        if (FontFamily?.Families.Length is 0)
+        {
+            FontFamily = null;
+        }
 
         FontSize = !string.IsNullOrWhiteSpace(fontSize)
             ? new AllyariaFontSize(fontSize)
