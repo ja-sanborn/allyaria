@@ -30,30 +30,18 @@ namespace Allyaria.Theming.Styles;
 /// </summary>
 public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
 {
-    /// <summary>
-    /// Backing field that stores the normalized CSS value (e.g., <c>"italic"</c>, <c>"oblique 10deg"</c>,
-    /// <c>"var(--fs-style)"</c>).
-    /// </summary>
-    private readonly string _value;
-
     /// <summary>Initializes a new instance of the <see cref="AllyariaFontStyle" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"italic"</c>, <c>"oblique 12deg"</c>, <c>"var(--style)"</c>).</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-style</c> value.</exception>
-    public AllyariaFontStyle(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value), "font-style value cannot be null or whitespace.");
-        }
-
-        _value = Normalize(value);
-    }
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid
+    /// <c>font-style</c> value.
+    /// </exception>
+    public AllyariaFontStyle(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized CSS value represented by this instance (e.g., <c>"italic"</c>, <c>"oblique 10deg"</c>).
     /// </summary>
-    public string Value => _value;
+    public string Value { get; }
 
     /// <summary>Determines whether the specified object is equal to the current instance using value equality.</summary>
     /// <param name="obj">The object to compare.</param>
@@ -66,11 +54,11 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// </summary>
     /// <param name="other">The other instance.</param>
     /// <returns><see langword="true" /> if the normalized values match; otherwise, <see langword="false" />.</returns>
-    public bool Equals(AllyariaFontStyle other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaFontStyle other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
+    public override int GetHashCode() => Value is null ? 0 : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>
     /// Determines whether a token is a valid CSS angle: number + unit in {deg, rad, grad, turn}, using invariant culture. The
@@ -78,7 +66,7 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// </summary>
     /// <param name="token">The candidate angle token.</param>
     /// <returns><see langword="true" /> if the token is a valid angle; otherwise, <see langword="false" />.</returns>
-    private static bool IsAngle(string token)
+    internal static bool IsAngle(string token)
     {
         if (string.IsNullOrEmpty(token))
         {
@@ -114,12 +102,14 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// Normalizes and validates a <c>font-style</c> value. Accepts keywords (<c>normal</c>|<c>italic</c>|<c>oblique</c>),
     /// <c>oblique &lt;angle&gt;</c>, and <c>var()</c>.
     /// </summary>
-    /// <param name="raw">The raw input string.</param>
+    /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
     /// <exception cref="ArgumentException">Thrown when the input is invalid for <c>font-style</c>.</exception>
-    private static string Normalize(string raw)
+    internal static string Normalize(string value)
     {
-        var v = raw.Trim();
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+
+        var v = value.Trim();
 
         // Allow custom properties: var(...) passes through.
         if (StyleHelpers.IsCssFunction(v, "var"))
@@ -155,14 +145,17 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
         }
 
         throw new ArgumentException(
-            "font-style must be 'normal', 'italic', 'oblique', 'oblique <angle>' (deg|rad|grad|turn), or var(--*).",
-            nameof(raw)
+            "font-style must be a keyword (normal|italic|oblique), 'oblique <angle>' (deg|rad|grad|turn), or var(--*).",
+            nameof(value)
         );
     }
 
     /// <summary>Returns a CSS declaration in the form <c>font-style:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration for this value.</returns>
-    public string ToCss() => $"font-style:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"font-style:{Value};";
 
     /// <summary>Returns the same string as <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -177,14 +170,15 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontStyle" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaFontStyle" /> instance.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-style</c>.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is empty/whitespace or not a valid <c>font-style</c>.
+    /// </exception>
     public static implicit operator AllyariaFontStyle(string value) => new(value);
 
     /// <summary>Implicit conversion from <see cref="AllyariaFontStyle" /> to <see cref="string" />.</summary>
     /// <param name="fontStyle">The <see cref="AllyariaFontStyle" /> instance.</param>
     /// <returns>The normalized CSS value.</returns>
-    public static implicit operator string(AllyariaFontStyle fontStyle) => fontStyle._value;
+    public static implicit operator string(AllyariaFontStyle fontStyle) => fontStyle.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaFontStyle" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>

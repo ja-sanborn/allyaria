@@ -62,11 +62,7 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// The raw CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"calc(12px + 1vw)"</c> ).
     /// </param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-size</c> value.</exception>
-    public AllyariaFontSize(string value)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-        Value = StyleHelpers.Normalize(nameof(value), value, AllowedKeywords);
-    }
+    public AllyariaFontSize(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"var(--fs)"</c>).
@@ -92,7 +88,51 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
 
     /// <summary>Returns a hash code for this instance, based on the normalized CSS value using ordinal comparison.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Value);
+    public override int GetHashCode() => Value is null ? 0 : StringComparer.Ordinal.GetHashCode(Value);
+
+    /// <summary>Normalizes and validates a <c>font-size</c> value.</summary>
+    /// <param name="value">The raw input string.</param>
+    /// <returns>The normalized value.</returns>
+    /// <exception cref="ArgumentException">Thrown when the input does not represent a valid CSS <c>font-size</c>.</exception>
+    internal static string Normalize(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var v = value.Trim();
+
+        // Accept common CSS function forms without altering the content.
+        if (StyleHelpers.IsVarOrCalc(v) || StyleHelpers.IsCssFunction(v, "min", "max", "clamp"))
+        {
+            return v;
+        }
+
+        // Keyword path (lower-case & validate).
+        var lower = v.ToLowerInvariant();
+
+        if (AllowedKeywords.Contains(lower))
+        {
+            return lower;
+        }
+
+        // Length/percentage path (accepts px, em, rem, ch, ex, lh, rlh, cm, mm, q, in, pt, pc, vw, vh, vi, vb, vmin, vmax, and %).
+        if (StyleHelpers.IsLengthOrPercentage(lower))
+        {
+            return lower;
+        }
+
+        // Bare numeric → px (culture-invariant).
+        if (StyleHelpers.IsNumeric(lower))
+        {
+            return string.Concat(lower, "px");
+        }
+
+        // Failed normalization.
+        throw new ArgumentException(
+            $"font-size must be a keyword ({string.Join('|', AllowedKeywords)}), a length/percentage, a bare number (→ px), or a supported CSS function such as var()/calc()/min()/max()/clamp().",
+            nameof(value)
+        );
+    }
 
     /// <summary>Produces a <c>font-size</c> CSS declaration in the form <c>font-size:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration string.</returns>
