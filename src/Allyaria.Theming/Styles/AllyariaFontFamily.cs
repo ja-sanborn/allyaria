@@ -25,7 +25,7 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="families" /> is <see langword="null" /> or empty.</exception>
     /// <exception cref="ArgumentException">Thrown when no valid family names remain after normalization.</exception>
-    public AllyariaFontFamily(params string[] families) => _families = NormalizeFromParams(families);
+    public AllyariaFontFamily(params string[] families) => _families = Normalize(families);
 
     /// <summary>Gets the normalized font family array.</summary>
     public string[] Families => _families ?? Array.Empty<string>();
@@ -112,6 +112,33 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     }
 
     /// <summary>
+    /// Normalizes input provided via the <c>params</c> constructor: validates arguments, splits comma-separated items, and
+    /// applies canonicalization and de-duplication.
+    /// </summary>
+    /// <param name="families">The raw family names supplied to the constructor.</param>
+    /// <returns>A non-empty, normalized array of font family names.</returns>
+    /// <exception cref="ArgumentException">Thrown when null or empty or no valid family names remain after normalization.</exception>
+    private static string[] Normalize(string[] families)
+    {
+        if (families is null || families.Length is 0)
+        {
+            throw new ArgumentException("font-family input cannot be null or empty.", nameof(families));
+        }
+
+        var flattened = FlattenCommaSeparated(families);
+        var normalized = NormalizeFontFamily(flattened);
+
+        if (normalized is null || normalized.Length is 0)
+        {
+            throw new ArgumentException(
+                "font-family input produced no valid names after normalization.", nameof(families)
+            );
+        }
+
+        return normalized;
+    }
+
+    /// <summary>
     /// Normalizes an array of font family names: trims tokens, applies quoting when needed, removes duplicates while
     /// preserving order, and returns <c>null</c> if nothing remains.
     /// </summary>
@@ -145,33 +172,6 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
         return result.Count > 0
             ? result.ToArray()
             : null;
-    }
-
-    /// <summary>
-    /// Normalizes input provided via the <c>params</c> constructor: validates arguments, splits comma-separated items, and
-    /// applies canonicalization and de-duplication.
-    /// </summary>
-    /// <param name="families">The raw family names supplied to the constructor.</param>
-    /// <returns>A non-empty, normalized array of font family names.</returns>
-    /// <exception cref="ArgumentException">Thrown when null or empty or no valid family names remain after normalization.</exception>
-    private static string[] NormalizeFromParams(string[] families)
-    {
-        if (families is null || families.Length is 0)
-        {
-            throw new ArgumentException("font-family input cannot be null or empty.", nameof(families));
-        }
-
-        var flattened = FlattenCommaSeparated(families);
-        var normalized = NormalizeFontFamily(flattened);
-
-        if (normalized is null || normalized.Length is 0)
-        {
-            throw new ArgumentException(
-                "font-family input produced no valid names after normalization.", nameof(families)
-            );
-        }
-
-        return normalized;
     }
 
     /// <summary>

@@ -45,20 +45,21 @@ internal static class StyleHelpers
     /// Determines whether the token starts with a supported CSS function name. Typical examples are <c>var(…)</c>,
     /// <c>calc(…)</c>, <c>min(…)</c>, <c>max(…)</c>, <c>clamp(…)</c>.
     /// </summary>
-    /// <param name="s">The token to evaluate.</param>
+    /// <param name="value">The token to evaluate.</param>
     /// <param name="functionNames">Function names to check, without the trailing parenthesis (e.g., "var").</param>
     /// <returns>
     /// <c>true</c> if the token starts with any of the provided function names followed by '('; otherwise <c>false</c>.
     /// </returns>
-    public static bool IsCssFunction(string? s, params string[]? functionNames)
+    public static bool IsCssFunction(string? value, params string[]? functionNames)
     {
-        if (s is null || functionNames is null || functionNames.Length == 0)
+        if (value is null || functionNames is null || functionNames.Length == 0)
         {
             return false;
         }
 
-        return functionNames.Any(name => s.StartsWith(name, StringComparison.Ordinal) && s.Length > name.Length &&
-            s[name.Length] == '('
+        return functionNames.Any(name => value.StartsWith(name, StringComparison.OrdinalIgnoreCase) &&
+            value.Length > name.Length &&
+            value[name.Length] == '('
         );
     }
 
@@ -125,232 +126,4 @@ internal static class StyleHelpers
     /// <returns><c>true</c> when unitless and positive; otherwise <c>false</c>.</returns>
     public static bool IsUnitlessPositive(string s)
         => double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var d) && d > 0;
-
-    /// <summary>
-    /// Shorthand for common function checks: returns <c>true</c> if the token is <c>var(…)</c> or <c>calc(…)</c>.
-    /// </summary>
-    /// <param name="s">The token to evaluate.</param>
-    /// <returns><c>true</c> when the token starts with <c>var(</c> or <c>calc(</c>; otherwise <c>false</c>.</returns>
-    public static bool IsVarOrCalc(string? s) => IsCssFunction(s, "var", "calc");
-
-    /// <summary>
-    /// Normalizes a <c>line-height</c>-like value: accepts <c>normal</c>, unitless positive numbers, arbitrary lengths,
-    /// percentages, and <c>var()</c>/<c>calc()</c>. Negative values are rejected.
-    /// </summary>
-    /// <param name="value">The raw input value.</param>
-    /// <returns>Canonicalized value or <c>null</c>.</returns>
-    /// <exception cref="ArgumentException">Thrown when the value is invalid.</exception>
-    public static string? NormalizeLineHeight(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-
-        var v = value.Trim();
-
-        if (IsVarOrCalc(v))
-        {
-            return v;
-        }
-
-        var lower = v.ToLowerInvariant();
-
-        if (lower == "normal")
-        {
-            return lower;
-        }
-
-        if (IsUnitlessPositive(lower))
-        {
-            // Canonicalize numeric formatting (e.g., "1.0" => "1")
-            return double.Parse(lower, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
-        }
-
-        if (IsLengthOrPercentage(lower))
-        {
-            if (lower.StartsWith("-", StringComparison.Ordinal))
-            {
-                throw new ArgumentException("Line height must not be negative.");
-            }
-
-            return lower;
-        }
-
-        throw new ArgumentException(
-            "Line height must be 'normal', a positive unitless number, a length/percentage, or var()/calc()."
-        );
-    }
-
-    /// <summary>
-    /// Normalizes a space-separated token list by validating against an allowed set, optionally disallowing combinations with
-    /// the <paramref name="noneKeyword" />. The resulting tokens are lowercased, de-duplicated (order-preserving), and joined
-    /// with a single space.
-    /// </summary>
-    /// <param name="value">The input string containing tokens.</param>
-    /// <param name="allowed">The allowed token set.</param>
-    /// <param name="paramName">Parameter/property name used in exception messages.</param>
-    /// <param name="disallowNoneCombination">
-    /// When <c>true</c>, prevents combining <paramref name="noneKeyword" /> with other
-    /// tokens.
-    /// </param>
-    /// <param name="noneKeyword">
-    /// The special token that cannot be combined if <paramref name="disallowNoneCombination" /> is <c>true</c>.
-    /// </param>
-    /// <param name="allowedHint">Human-readable hint used in exception messages.</param>
-    /// <returns>
-    /// The canonicalized token string or <c>null</c> if <paramref name="value" /> is <c>null</c> or empty after trimming.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when an invalid token is present or when <paramref name="noneKeyword" /> is combined with other tokens while
-    /// disallowed.
-    /// </exception>
-    public static string? NormalizeSpaceSeparatedTokens(string? value,
-        ISet<string> allowed,
-        string paramName,
-        bool disallowNoneCombination,
-        string noneKeyword,
-        string allowedHint)
-    {
-        if (value is null)
-        {
-            return null;
-        }
-
-        var tokens = value
-            .Split(
-                new[]
-                {
-                    ' ',
-                    '\t',
-                    '\r',
-                    '\n'
-                }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
-            )
-            .Select(t => t.ToLowerInvariant())
-            .ToArray();
-
-        if (tokens.Length == 0)
-        {
-            return null;
-        }
-
-        if (tokens.Any(t => !allowed.Contains(t)))
-        {
-            throw new ArgumentException($"{paramName} allows only: {allowedHint}.", paramName);
-        }
-
-        if (disallowNoneCombination && tokens.Length > 1 && tokens.Contains(noneKeyword))
-        {
-            throw new ArgumentException(
-                $"{paramName} '{noneKeyword}' cannot be combined with other values.", paramName
-            );
-        }
-
-        var ordered = new List<string>(tokens.Length);
-        var seen = new HashSet<string>(StringComparer.Ordinal);
-
-        foreach (var t in tokens)
-        {
-            if (seen.Add(t))
-            {
-                ordered.Add(t);
-            }
-        }
-
-        return string.Join(' ', ordered);
-    }
-
-    /// <summary>Lowercases a non-null string using invariant culture.</summary>
-    /// <param name="value">The input value.</param>
-    /// <returns>Lowercased value.</returns>
-    public static string NormalizeToLowerInvariant(string value) => value.ToLowerInvariant();
-
-    /// <summary>
-    /// Normalizes tracking-like values (e.g., <c>letter-spacing</c>, <c>word-spacing</c>). Accepts <c>normal</c>, arbitrary
-    /// lengths, percentages, <c>var()</c>/<c>calc()</c>, or bare numeric values (which are treated as pixels).
-    /// </summary>
-    /// <param name="value">The raw input value.</param>
-    /// <param name="paramName">Parameter/property name used in exception messages.</param>
-    /// <returns>Canonicalized value or <c>null</c>.</returns>
-    /// <exception cref="ArgumentException">Thrown when the value is invalid.</exception>
-    public static string? NormalizeTrack(string? value, string paramName)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-
-        var v = value.Trim();
-
-        if (IsVarOrCalc(v))
-        {
-            return v;
-        }
-
-        var lower = v.ToLowerInvariant();
-
-        if (lower == "normal")
-        {
-            return lower;
-        }
-
-        if (IsLengthOrPercentage(lower))
-        {
-            return lower;
-        }
-
-        if (IsNumeric(lower))
-        {
-            return string.Create(CultureInfo.InvariantCulture, $"{lower}px");
-        }
-
-        throw new ArgumentException($"{paramName} must be 'normal', a length/percentage, or var()/calc().", paramName);
-    }
-
-    /// <summary>Trims and lowercases a value; returns <c>null</c> if the input is <c>null</c> or whitespace.</summary>
-    /// <param name="value">The input value.</param>
-    /// <returns>Lowercased and trimmed string or <c>null</c>.</returns>
-    public static string? NormalizeTrimToLower(string? value)
-        => string.IsNullOrWhiteSpace(value)
-            ? null
-            : value.Trim().ToLowerInvariant();
-
-    /// <summary>
-    /// Returns <c>null</c> when the input is <c>null</c> or whitespace; otherwise returns the trimmed string.
-    /// </summary>
-    /// <param name="value">The input value.</param>
-    /// <returns>Trimmed string or <c>null</c>.</returns>
-    public static string? NormalizeWhitespaceToNull(string? value)
-        => string.IsNullOrWhiteSpace(value)
-            ? null
-            : value.Trim();
-
-    /// <summary>
-    /// Validates that a candidate value appears in the provided allowed set; returns the value when valid, or <c>null</c> if
-    /// the candidate is <c>null</c>. Throws <see cref="ArgumentException" /> when invalid. This helper centralizes set-based
-    /// validation for keyword-like properties.
-    /// </summary>
-    /// <param name="value">Candidate value (already normalized as needed by the caller).</param>
-    /// <param name="allowed">Allowed set (typically provided by the style struct).</param>
-    /// <param name="paramName">Parameter/property name used in exception messages.</param>
-    /// <param name="allowedHint">Human-readable list used in exception messages.</param>
-    /// <returns>
-    /// The same <paramref name="value" /> when valid, or <c>null</c> if <paramref name="value" /> is <c>null</c>.
-    /// </returns>
-    /// <exception cref="ArgumentException">Thrown when the value is not contained in <paramref name="allowed" />.</exception>
-    public static string? ValidateFromSet(string? value, ISet<string> allowed, string paramName, string allowedHint)
-    {
-        if (value is null)
-        {
-            return null;
-        }
-
-        if (!allowed.Contains(value))
-        {
-            throw new ArgumentException($"{paramName} must be one of: {allowedHint}.", paramName);
-        }
-
-        return value;
-    }
 }

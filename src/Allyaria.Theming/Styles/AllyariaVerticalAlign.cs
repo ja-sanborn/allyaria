@@ -29,41 +29,15 @@ namespace Allyaria.Theming.Styles;
 /// </summary>
 public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
 {
-    /// <summary>
-    /// Holds the normalized CSS value for this instance (e.g., <c>"baseline"</c>, <c>"top"</c>, <c>"-2px"</c>,
-    /// <c>"var(--va)"</c>).
-    /// </summary>
-    private readonly string _value;
-
-    /// <summary>Allowed keyword set for <c>vertical-align</c>.</summary>
-    private static readonly HashSet<string> AllowedKeywords = new(StringComparer.Ordinal)
-    {
-        "baseline",
-        "sub",
-        "super",
-        "text-top",
-        "text-bottom",
-        "middle",
-        "top",
-        "bottom"
-    };
-
     /// <summary>Initializes a new instance of the <see cref="AllyariaVerticalAlign" /> struct from a raw CSS value.</summary>
     /// <param name="value">Raw CSS value (e.g., <c>"middle"</c>, <c>"-2px"</c>, <c>"15%"</c>, <c>"var(--va)"</c>).</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>vertical-align</c> value.</exception>
-    public AllyariaVerticalAlign(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value), "vertical-align value cannot be null or whitespace.");
-        }
-
-        _value = Normalize(value);
-    }
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>vertical-align</c> value.
+    /// </exception>
+    public AllyariaVerticalAlign(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
-    public string Value => _value;
+    public string Value { get; }
 
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
@@ -78,30 +52,37 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaVerticalAlign other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaVerticalAlign other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
+    public override int GetHashCode()
+        => Value is null
+            ? 0
+            : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>Normalizes and validates a <c>vertical-align</c> value.</summary>
-    /// <param name="raw">The raw input string.</param>
+    /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
     /// <exception cref="ArgumentException">Thrown when the input is not a valid <c>vertical-align</c> form.</exception>
-    private static string Normalize(string raw)
+    private static string Normalize(string value)
     {
-        var v = raw.Trim();
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        // CSS custom properties / calculations pass through unchanged.
-        if (StyleHelpers.IsVarOrCalc(v))
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var trim = value.Trim();
+
+        // Accept common CSS function forms without altering the content.
+        if (StyleHelpers.IsCssFunction(trim, "var", "calc"))
         {
-            return v;
+            return trim;
         }
 
-        var lower = v.ToLowerInvariant();
+        // Keyword path (lower-case & validate).
+        var lower = trim.ToLowerInvariant();
 
-        // Keyword path.
-        if (AllowedKeywords.Contains(lower))
+        if (lower is "baseline" or "sub" or "crow" or "super" or "text-top" or "text-bottom" or "middle" or "top" or
+            "bottom")
         {
             return lower;
         }
@@ -112,15 +93,16 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
             return lower;
         }
 
-        throw new ArgumentException(
-            "vertical-align must be a keyword (baseline, sub, super, text-top, text-bottom, middle, top, bottom), a length/percentage (may be negative), or var()/calc().",
-            nameof(raw)
-        );
+        // Failed normalization.
+        throw new ArgumentException($"Unable to normalize vertical-align: {value}.", nameof(value));
     }
 
     /// <summary>Produces a CSS declaration in the form <c>vertical-align:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration string.</returns>
-    public string ToCss() => $"vertical-align:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"vertical-align:{Value};";
 
     /// <summary>Returns the CSS declaration produced by <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -144,7 +126,7 @@ public readonly struct AllyariaVerticalAlign : IEquatable<AllyariaVerticalAlign>
     /// <summary>Implicit conversion from <see cref="AllyariaVerticalAlign" /> to <see cref="string" />.</summary>
     /// <param name="verticalAlign">The <see cref="AllyariaVerticalAlign" /> instance.</param>
     /// <returns>The normalized CSS value represented by <paramref name="verticalAlign" />.</returns>
-    public static implicit operator string(AllyariaVerticalAlign verticalAlign) => verticalAlign._value;
+    public static implicit operator string(AllyariaVerticalAlign verticalAlign) => verticalAlign.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaVerticalAlign" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>

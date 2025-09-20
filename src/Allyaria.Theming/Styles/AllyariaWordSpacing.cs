@@ -29,28 +29,16 @@ namespace Allyaria.Theming.Styles;
 /// </summary>
 public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
 {
-    /// <summary>
-    /// Backing field that stores the normalized CSS value (e.g., <c>"normal"</c>, <c>"5px"</c>, <c>"10%"</c>,
-    /// <c>"var(--ws)"</c>).
-    /// </summary>
-    private readonly string _value;
-
     /// <summary>Initializes a new instance of the <see cref="AllyariaWordSpacing" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"normal"</c>, <c>"5px"</c>, <c>"10%"</c>, <c>"calc(1px + 0.5em)"</c>).</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>word-spacing</c> value.</exception>
-    public AllyariaWordSpacing(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value), "word-spacing value cannot be null or whitespace.");
-        }
-
-        _value = Normalize(value);
-    }
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid
+    /// <c>word-spacing</c> value.
+    /// </exception>
+    public AllyariaWordSpacing(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
-    public string Value => _value;
+    public string Value { get; }
 
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
@@ -64,35 +52,65 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaWordSpacing other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaWordSpacing other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
+    public override int GetHashCode()
+        => Value is null
+            ? 0
+            : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>
     /// Normalizes and validates a <c>word-spacing</c> value. Uses the shared tracking normalization helper for consistency
     /// with <c>letter-spacing</c>.
     /// </summary>
-    /// <param name="raw">The raw input string.</param>
+    /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
     /// <exception cref="ArgumentException">Thrown when the value is not valid for <c>word-spacing</c>.</exception>
-    private static string Normalize(string raw)
+    private static string Normalize(string value)
     {
-        var normalized = StyleHelpers.NormalizeTrack(raw, "word-spacing");
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        if (normalized is null)
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var trim = value.Trim();
+
+        // Accept common CSS function forms without altering the content.
+        if (StyleHelpers.IsCssFunction(trim, "var", "calc"))
         {
-            // Defensive guard — constructor already rejects null/whitespace.
-            throw new ArgumentException("word-spacing produced no value after normalization.", nameof(raw));
+            return trim;
         }
 
-        return normalized;
+        // Keyword path (lower-case & validate).
+        var lower = trim.ToLowerInvariant();
+
+        if (lower is "normal")
+        {
+            return lower;
+        }
+
+        // Check if length or percentage.
+        if (StyleHelpers.IsLengthOrPercentage(lower))
+        {
+            return lower;
+        }
+
+        // Check if bare number.
+        if (StyleHelpers.IsNumeric(lower))
+        {
+            return string.Concat(lower, "px");
+        }
+
+        // Failed normalization.
+        throw new ArgumentException($"Unable to normalize word-spacing: {value}.", nameof(value));
     }
 
     /// <summary>Produces a CSS declaration in the form <c>word-spacing:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration for this value.</returns>
-    public string ToCss() => $"word-spacing:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"word-spacing:{Value};";
 
     /// <summary>Returns the CSS declaration string produced by <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -109,7 +127,7 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
     /// <summary>Implicit conversion from <see cref="AllyariaWordSpacing" /> to <see cref="string" />.</summary>
     /// <param name="wordSpacing">The <see cref="AllyariaWordSpacing" /> instance.</param>
     /// <returns>The normalized CSS value represented by <paramref name="wordSpacing" />.</returns>
-    public static implicit operator string(AllyariaWordSpacing wordSpacing) => wordSpacing._value;
+    public static implicit operator string(AllyariaWordSpacing wordSpacing) => wordSpacing.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaWordSpacing" /> using value equality.</summary>
     public static bool operator !=(AllyariaWordSpacing left, AllyariaWordSpacing right) => !left.Equals(right);

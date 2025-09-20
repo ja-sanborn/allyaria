@@ -41,7 +41,7 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <summary>
     /// Gets the normalized CSS value represented by this instance (e.g., <c>"italic"</c>, <c>"oblique 10deg"</c>).
     /// </summary>
-    public string Value { get; }
+    public string Value { get; } = string.Empty;
 
     /// <summary>Determines whether the specified object is equal to the current instance using value equality.</summary>
     /// <param name="obj">The object to compare.</param>
@@ -58,7 +58,10 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => Value is null ? 0 : StringComparer.Ordinal.GetHashCode(Value);
+    public override int GetHashCode()
+        => Value is null
+            ? 0
+            : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>
     /// Determines whether a token is a valid CSS angle: number + unit in {deg, rad, grad, turn}, using invariant culture. The
@@ -109,18 +112,18 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        var v = value.Trim();
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var trim = value.Trim();
 
-        // Allow custom properties: var(...) passes through.
-        if (StyleHelpers.IsCssFunction(v, "var"))
+        // Accept common CSS function forms without altering the content.
+        if (StyleHelpers.IsCssFunction(trim, "var"))
         {
-            return v;
+            return trim;
         }
 
-        // Lowercase for keyword comparisons; preserve original where needed for functions/units.
-        var lower = v.ToLowerInvariant();
+        // Keyword path (lower-case & validate).
+        var lower = trim.ToLowerInvariant();
 
-        // Plain keywords.
         if (lower is "normal" or "italic" or "oblique")
         {
             return lower;
@@ -144,10 +147,8 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
             }
         }
 
-        throw new ArgumentException(
-            "font-style must be a keyword (normal|italic|oblique), 'oblique <angle>' (deg|rad|grad|turn), or var(--*).",
-            nameof(value)
-        );
+        // Failed normalization.
+        throw new ArgumentException($"Unable to normalize font-style: {value}.", nameof(value));
     }
 
     /// <summary>Returns a CSS declaration in the form <c>font-style:value;</c> (no spaces).</summary>
@@ -171,7 +172,8 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <param name="value">The raw CSS value to convert.</param>
     /// <returns>An <see cref="AllyariaFontStyle" /> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is empty/whitespace or not a valid <c>font-style</c>.
+    /// Thrown when <paramref name="value" /> is empty/whitespace or not a valid
+    /// <c>font-style</c>.
     /// </exception>
     public static implicit operator AllyariaFontStyle(string value) => new(value);
 

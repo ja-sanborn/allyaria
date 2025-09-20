@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Helpers;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a validated, immutable <c>text-decoration</c> CSS value consisting of a space-separated list of decoration
@@ -18,48 +16,21 @@ namespace Allyaria.Theming.Styles;
 public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoration>
 {
     /// <summary>
-    /// Backing field containing the normalized, space-separated token string (e.g., <c>"underline"</c>,
-    /// <c>"underline overline"</c>, <c>"none"</c>).
-    /// </summary>
-    private readonly string _value;
-
-    /// <summary>The set of allowed tokens for <c>text-decoration</c>. This set is used during normalization.</summary>
-    private static readonly HashSet<string> AllowedTokens = new(StringComparer.Ordinal)
-    {
-        "none",
-        "underline",
-        "overline",
-        "line-through"
-    };
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="AllyariaTextDecoration" /> struct from a raw CSS value.
     /// </summary>
     /// <param name="value">
     /// The raw CSS value, possibly containing space-separated tokens such as <c>"underline overline"</c> or a single token
     /// like <c>"none"</c>.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="value" /> is <see langword="null" /> or consists
-    /// only of whitespace.
-    /// </exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> contains tokens that are not allowed or combines <c>none</c> with other tokens.
+    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>text-decoration</c> value.
     /// </exception>
-    public AllyariaTextDecoration(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value), "text-decoration value cannot be null or whitespace.");
-        }
-
-        _value = Normalize(value);
-    }
+    public AllyariaTextDecoration(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized, space-separated token string that represents this <c>text-decoration</c> value.
     /// </summary>
-    public string Value => _value;
+    public string Value { get; }
 
     /// <summary>
     /// Determines whether the specified object is equal to the current instance by comparing normalized values.
@@ -74,43 +45,100 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// </summary>
     /// <param name="other">The other instance to compare with.</param>
     /// <returns><see langword="true" /> if equal; otherwise <see langword="false" />.</returns>
-    public bool Equals(AllyariaTextDecoration other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaTextDecoration other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
+    public override int GetHashCode()
+        => Value is null
+            ? 0
+            : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>Normalizes and validates a <c>text-decoration</c> value.</summary>
-    /// <param name="raw">The raw input string containing one or more tokens.</param>
+    /// <param name="value">The raw input string containing one or more tokens.</param>
     /// <returns>The normalized, space-separated token string.</returns>
     /// <exception cref="ArgumentException">
     /// Thrown when the value contains tokens that are not allowed or combines <c>none</c> with other tokens.
     /// </exception>
-    private static string Normalize(string raw)
+    private static string Normalize(string value)
     {
-        // Use shared token normalizer: trims, lowercases, validates, dedupes, preserves order,
-        // and disallows "none" combinations when requested.
-        var normalized = StyleHelpers.NormalizeSpaceSeparatedTokens(
-            raw,
-            AllowedTokens,
-            "text-decoration",
-            true,
-            "none",
-            "none, underline, overline, line-through"
-        );
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        if (string.IsNullOrEmpty(normalized))
+        // Normalize multiple tokens.
+        var normalized = NormalizeTokens(value);
+
+        return !string.IsNullOrEmpty(normalized)
+            ? normalized
+            : throw new ArgumentException($"Unable to normalize text-decoration: {value}.", nameof(value));
+    }
+
+    /// <summary>
+    /// Normalizes a space-separated token list by validating against an allowed set. The resulting tokens are lowercased,
+    /// de-duplicated (order-preserving), and joined with a single space.
+    /// </summary>
+    /// <param name="value">The input string containing tokens.</param>
+    /// <returns>
+    /// The canonicalized token string or <c>null</c> if <paramref name="value" /> is <c>null</c> or empty after trimming.
+    /// </returns>
+    internal static string? NormalizeTokens(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
         {
-            // Constructor already rejects null/whitespace, this is defensive.
-            throw new ArgumentException("text-decoration produced no tokens after normalization.", nameof(raw));
+            return null;
         }
 
-        return normalized;
+        var tokens = value
+            .Split(
+                new[]
+                {
+                    ' ',
+                    '\t',
+                    '\r',
+                    '\n'
+                }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            )
+            .Select(t => t.ToLowerInvariant())
+            .ToArray();
+
+        if (tokens.Length == 0)
+        {
+            return null;
+        }
+
+        HashSet<string> allowed = new(StringComparer.Ordinal)
+        {
+            "none",
+            "underline",
+            "overline",
+            "line-through"
+        };
+
+        if (tokens.Any(t => !allowed.Contains(t)))
+        {
+            return null;
+        }
+
+        if (tokens.Contains("none") && tokens.Length > 1)
+        {
+            return null;
+        }
+
+        var list = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var token in tokens)
+        {
+            list.Add(token);
+        }
+
+        return string.Join(' ', list).Trim();
     }
 
     /// <summary>Produces a CSS declaration in the form <c>text-decoration:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration string for this value.</returns>
-    public string ToCss() => $"text-decoration:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"text-decoration:{Value};";
 
     /// <summary>Returns the CSS declaration produced by <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -137,7 +165,7 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// <summary>Implicit conversion from <see cref="AllyariaTextDecoration" /> to <see cref="string" />.</summary>
     /// <param name="decoration">The <see cref="AllyariaTextDecoration" /> instance.</param>
     /// <returns>The normalized, space-separated token string represented by <paramref name="decoration" />.</returns>
-    public static implicit operator string(AllyariaTextDecoration decoration) => decoration._value;
+    public static implicit operator string(AllyariaTextDecoration decoration) => decoration.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaTextDecoration" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>

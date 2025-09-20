@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Allyaria.Theming.Helpers;
+using System.Globalization;
 
 namespace Allyaria.Theming.Styles;
 
@@ -17,32 +18,18 @@ namespace Allyaria.Theming.Styles;
 /// </summary>
 public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
 {
-    /// <summary>
-    /// Holds the normalized CSS value for this instance (e.g., <c>"normal"</c>, <c>"bold"</c>, <c>"400"</c>,
-    /// <c>"var(--fw)"</c>).
-    /// </summary>
-    private readonly string _value;
-
     /// <summary>Initializes a new instance of the <see cref="AllyariaFontWeight" /> struct from a raw CSS value.</summary>
     /// <param name="value">
     /// Raw input value (e.g., <c>"normal"</c>, <c>"bold"</c>, <c>"400"</c>, <c>"700"</c>, or <c>"var(--fw)"</c>).
     /// </param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" /> or whitespace.</exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is not a valid <c>font-weight</c> value according to Allyaria rules.
+    /// Thrown when <paramref name="value" /> is null, whitespace, or not a valid <c>font-weight</c> value according to
+    /// Allyaria rules.
     /// </exception>
-    public AllyariaFontWeight(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(nameof(value), "font-weight value cannot be null or whitespace.");
-        }
-
-        _value = Normalize(value);
-    }
+    public AllyariaFontWeight(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
-    public string Value => _value;
+    public string Value { get; } = string.Empty;
 
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare with the current instance.</param>
@@ -59,11 +46,14 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaFontWeight other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaFontWeight other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
+    public override int GetHashCode()
+        => Value is null
+            ? 0
+            : StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>
     /// Normalizes and validates a <c>font-weight</c> value according to Allyaria rules.
@@ -79,22 +69,25 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     ///     </item>
     /// </list>
     /// </summary>
-    /// <param name="raw">The raw input string.</param>
+    /// <param name="value">The raw input string.</param>
     /// <returns>The normalized value.</returns>
     /// <exception cref="ArgumentException">Thrown when the input is not valid for <c>font-weight</c>.</exception>
-    private static string Normalize(string raw)
+    internal static string Normalize(string value)
     {
-        var v = raw.Trim();
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        // Allow CSS custom properties (var()) to pass through unchanged.
-        if (v.StartsWith("var(", StringComparison.Ordinal))
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var trim = value.Trim();
+
+        // Accept common CSS function forms without altering the content.
+        if (StyleHelpers.IsCssFunction(trim, "var"))
         {
-            return v;
+            return trim;
         }
 
-        var lower = v.ToLowerInvariant();
+        // Keyword path (lower-case & validate).
+        var lower = trim.ToLowerInvariant();
 
-        // Keyword path.
         if (lower is "normal" or "bold" or "lighter" or "bolder")
         {
             return lower;
@@ -107,15 +100,16 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
             return n.ToString(CultureInfo.InvariantCulture);
         }
 
-        throw new ArgumentException(
-            "font-weight must be normal|bold|lighter|bolder, a multiple of 100 between 100 and 900, or var(--*).",
-            nameof(raw)
-        );
+        // Failed normalization.
+        throw new ArgumentException($"Unable to normalize font-weight: {value}.", nameof(value));
     }
 
     /// <summary>Generates a CSS declaration string in the form <c>font-weight:value;</c> with no spaces.</summary>
     /// <returns>The CSS declaration for this instance.</returns>
-    public string ToCss() => $"font-weight:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"font-weight:{Value};";
 
     /// <summary>Returns the CSS declaration produced by <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -139,7 +133,7 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <summary>Implicit conversion from <see cref="AllyariaFontWeight" /> to <see cref="string" />.</summary>
     /// <param name="fontWeight">The <see cref="AllyariaFontWeight" /> instance.</param>
     /// <returns>The normalized CSS value contained in <paramref name="fontWeight" />.</returns>
-    public static implicit operator string(AllyariaFontWeight fontWeight) => fontWeight._value;
+    public static implicit operator string(AllyariaFontWeight fontWeight) => fontWeight.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaFontWeight" /> (value inequality).</summary>
     /// <param name="left">The left operand.</param>

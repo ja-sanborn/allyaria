@@ -1126,8 +1126,9 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
             _ => throw new ArgumentException($"Invalid hex digit '{c}'.")
         };
 
-    /// <summary>Returns the canonical uppercase <c>#RRGGBBAA</c> string for this color.</summary>
-    public override string ToString() => HexRgba;
+    /// <summary>Returns the same output as <see cref="ToCss" />.</summary>
+    /// <returns>The CSS declaration string.</returns>
+    public override string ToString() => ToCss();
 
     /// <summary>Attempts to parse a Material color name of the form <c>{Hue}{Tone}</c>.</summary>
     /// <param name="name">
