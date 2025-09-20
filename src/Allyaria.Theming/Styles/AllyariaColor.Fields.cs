@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Allyaria.Theming.Palette;
+namespace Allyaria.Theming.Styles;
 
 public readonly partial struct AllyariaColor
 {

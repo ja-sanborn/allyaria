@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Allyaria.Theming.Styles;
+using System.Text;
 
 namespace Allyaria.Theming.Palette;
 

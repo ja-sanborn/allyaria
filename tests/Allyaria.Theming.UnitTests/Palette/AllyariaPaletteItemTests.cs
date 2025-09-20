@@ -1,4 +1,5 @@
 ﻿using Allyaria.Theming.Palette;
+using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Palette;
 

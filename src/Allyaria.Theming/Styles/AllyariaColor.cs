@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Allyaria.Theming.Palette;
+namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a framework-agnostic color value with CSS-oriented parsing and formatting, immutable value semantics, and
