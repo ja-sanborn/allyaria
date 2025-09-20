@@ -35,6 +35,24 @@ core. It is flexible, customizable, and extensible, written entirely in Blazor w
         * `ToCssVars()` — emits CSS custom properties (`--aa-*`) for component-scoped theming.
         * `ToString()` — delegates to `ToCss()`.
 
+* `AllyariaTypoItem` type for encapsulating validated typography (non-color) settings.
+    * Constructor accepts optional parameters for:
+        * `FontFamily` (string array, deduped, quoted if needed, omits if none).
+        * `FontSize` (`xx-small`..`larger`, lengths `px|em|rem|%`, bare numbers → `px`, `var()`/`calc()`).
+        * `FontStyle` (`normal`, `italic`, `oblique`).
+        * `FontWeight` (`normal`, `bold`, `lighter`, `bolder`, or multiples of 100 between 100–900).
+        * `LetterSpacing` (`normal`, length, `var()`, `calc()`, bare numbers → `px`).
+        * `LineHeight` (`normal`, positive unitless, length, percentage, `var()`, `calc()`, rejects negatives).
+        * `TextAlign` (`left`, `right`, `center`, `justify`, `start`, `end`).
+        * `TextDecoration` (subset of `none`, `underline`, `overline`, `line-through`; `none` not combinable).
+        * `TextTransform` (`none`, `capitalize`, `uppercase`, `lowercase`).
+        * `VerticalAlign` (`baseline`, `top`, `middle`, `bottom`, `sub`, `text-top`).
+        * `WordSpacing` (`normal`, length, `var()`, `calc()`, bare numbers → `px`).
+    * Throws `ArgumentException` when invalid inputs are provided.
+    * Methods:
+        * `ToCss()` — builds a single-line CSS declaration string in fixed order, omitting null/whitespace.
+        * `ToString()` — returns the same value as `ToCss()`.
+
 ## License
 
 * **Allyaria** is licensed under the *Mozilla Public License Version 2.0*.

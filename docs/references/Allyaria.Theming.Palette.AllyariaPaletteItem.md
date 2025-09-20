@@ -5,8 +5,6 @@ hover variants and an optional background image. It applies documented precedenc
 non-null color while setters accept explicit overrides. Hover, border, and background-image behaviors are rendered as
 CSS through helper methods.
 
-> Template adapted from the AllyariaColor API doc.
-
 ---
 
 ## Constructors
