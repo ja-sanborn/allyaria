@@ -10,6 +10,7 @@ contentReference[oaicite:0]{index=0}
 ## Constructors
 
 *
+
 `AllyariaTypoItem(string[]? fontFamily = null, string? fontSize = null, string? fontStyle = null, string? fontWeight = null, string? letterSpacing = null, string? lineHeight = null, string? textAlign = null, string? textDecoration = null, string? textTransform = null, string? verticalAlign = null, string? wordSpacing = null)`  
 Initializes a new, immutable instance. All parameters are **nullable**; invalid inputs throw `ArgumentException`.  
 *Keywords are trimmed and lower-cased (except `fontFamily` entries). Bare numbers are assumed `px` where lengths are
