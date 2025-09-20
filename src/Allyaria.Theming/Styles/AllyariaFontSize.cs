@@ -17,7 +17,7 @@ namespace Allyaria.Theming.Styles;
 ///         <description>Keywords are lower-cased and validated against a known set.</description>
 ///     </item>
 ///     <item>
-///         <description>Lengths and percentages are validated and kept as provided (units are case-sensitive).</description>
+///         <description>Lengths and percentages are validated; units are normalized to lowercase.</description>
 ///     </item>
 ///     <item>
 ///         <description>
@@ -41,12 +41,6 @@ namespace Allyaria.Theming.Styles;
 public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
 {
     /// <summary>
-    /// Backing field holding the normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>,
-    /// <c>"var(--fs)"</c>).
-    /// </summary>
-    private readonly string _value;
-
-    /// <summary>
     /// Allowed keyword set for <c>font-size</c>. The set is kept within this style and may be supplied to helper methods that
     /// require an allowed set.
     /// </summary>
@@ -65,20 +59,19 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
 
     /// <summary>Initializes a new instance of the <see cref="AllyariaFontSize" /> struct from a raw CSS value.</summary>
     /// <param name="value">
-    /// The raw CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"calc(12px + 1vw)"</c>
-    /// ).
+    /// The raw CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"calc(12px + 1vw)"</c> ).
     /// </param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is not a valid <c>font-size</c> value.</exception>
     public AllyariaFontSize(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-        _value = Normalize(value);
+        Value = StyleHelpers.Normalize(nameof(value), value, AllowedKeywords);
     }
 
     /// <summary>
     /// Gets the normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"var(--fs)"</c>).
     /// </summary>
-    public string Value => _value;
+    public string Value { get; } = string.Empty;
 
     /// <summary>Indicates whether this instance and a specified object are equal (value equality).</summary>
     /// <param name="obj">Another object to compare to.</param>
@@ -95,56 +88,18 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaFontSize other) => string.Equals(_value, other._value, StringComparison.Ordinal);
+    public bool Equals(AllyariaFontSize other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance, based on the normalized CSS value using ordinal comparison.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_value);
-
-    /// <summary>Normalizes and validates a <c>font-size</c> value.</summary>
-    /// <param name="raw">The raw input string.</param>
-    /// <returns>The normalized value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the input does not represent a valid CSS <c>font-size</c>.</exception>
-    private static string Normalize(string raw)
-    {
-        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
-        var v = raw.Trim();
-
-        // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsVarOrCalc(v) || StyleHelpers.IsCssFunction(v, "min", "max", "clamp"))
-        {
-            return v;
-        }
-
-        // Keyword path (lower-case & validate).
-        var lower = v.ToLowerInvariant();
-
-        if (AllowedKeywords.Contains(lower))
-        {
-            return lower;
-        }
-
-        // Length/percentage path (accepts px, em, rem, ch, ex, lh, rlh, cm, mm, q, in, pt, pc, vw, vh, vi, vb, vmin, vmax, and %).
-        if (StyleHelpers.IsLengthOrPercentage(lower))
-        {
-            return lower;
-        }
-
-        // Bare numeric → px (culture-invariant).
-        if (StyleHelpers.IsNumeric(lower))
-        {
-            return string.Create(CultureInfo.InvariantCulture, $"{lower}px");
-        }
-
-        throw new ArgumentException(
-            "font-size must be a keyword (xx-small..larger), a length/percentage, a bare number (→ px), or a supported CSS function such as var()/calc()/min()/max()/clamp().",
-            nameof(raw)
-        );
-    }
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Value);
 
     /// <summary>Produces a <c>font-size</c> CSS declaration in the form <c>font-size:value;</c> (no spaces).</summary>
     /// <returns>The CSS declaration string.</returns>
-    public string ToCss() => $"font-size:{_value};";
+    public string ToCss()
+        => string.IsNullOrWhiteSpace(Value)
+            ? string.Empty
+            : $"font-size:{Value};";
 
     /// <summary>Returns the CSS declaration produced by <see cref="ToCss" />.</summary>
     /// <returns>The CSS declaration string.</returns>
@@ -168,7 +123,7 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <summary>Implicit conversion from <see cref="AllyariaFontSize" /> to <see cref="string" />.</summary>
     /// <param name="fontSize">The <see cref="AllyariaFontSize" /> value.</param>
     /// <returns>The normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>).</returns>
-    public static implicit operator string(AllyariaFontSize fontSize) => fontSize._value;
+    public static implicit operator string(AllyariaFontSize fontSize) => fontSize.Value;
 
     /// <summary>Inequality operator for <see cref="AllyariaFontSize" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>

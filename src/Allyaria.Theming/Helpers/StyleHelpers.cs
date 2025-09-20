@@ -133,6 +133,50 @@ internal static class StyleHelpers
     /// <returns><c>true</c> when the token starts with <c>var(</c> or <c>calc(</c>; otherwise <c>false</c>.</returns>
     public static bool IsVarOrCalc(string? s) => IsCssFunction(s, "var", "calc");
 
+    /// <summary>Normalizes and validates a <c>font-size</c> value.</summary>
+    /// <param name="param">Parameter/property name used in exception messages.</param>
+    /// <param name="raw">The raw input string.</param>
+    /// <param name="allowed">The allowed set of keywords.</param>
+    /// <returns>The normalized value.</returns>
+    /// <exception cref="ArgumentException">Thrown when the input does not represent a valid CSS <c>font-size</c>.</exception>
+    public static string Normalize(string param, string raw, HashSet<string> allowed)
+    {
+        // Preserve original casing for function identifiers; lower-case only when treating as keywords or unit tokens.
+        var v = raw.Trim();
+
+        // Accept common CSS function forms without altering the content.
+        if (IsVarOrCalc(v) || IsCssFunction(v, "min", "max", "clamp"))
+        {
+            return v;
+        }
+
+        // Keyword path (lower-case & validate).
+        var lower = v.ToLowerInvariant();
+
+        if (allowed.Contains(lower))
+        {
+            return lower;
+        }
+
+        // Length/percentage path (accepts px, em, rem, ch, ex, lh, rlh, cm, mm, q, in, pt, pc, vw, vh, vi, vb, vmin, vmax, and %).
+        if (IsLengthOrPercentage(lower))
+        {
+            return lower;
+        }
+
+        // Bare numeric → px (culture-invariant).
+        if (IsNumeric(lower))
+        {
+            return string.Concat(lower, "px");
+        }
+
+        // Failed normalization.
+        throw new ArgumentException(
+            $"{param} must be a keyword {string.Join(',', allowed)}, a length/percentage, a bare number (→ px), or a supported CSS function such as var()/calc()/min()/max()/clamp().",
+            nameof(param)
+        );
+    }
+
     /// <summary>
     /// Normalizes a <c>line-height</c>-like value: accepts <c>normal</c>, unitless positive numbers, arbitrary lengths,
     /// percentages, and <c>var()</c>/<c>calc()</c>. Negative values are rejected.
