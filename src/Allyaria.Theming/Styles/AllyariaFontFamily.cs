@@ -14,19 +14,16 @@
 /// </summary>
 public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
 {
-    /// <summary>Backing field for the font family array.</summary>
-    private readonly string[]? _families;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> struct from one or more raw family names. This
     /// constructor accepts either a single comma-separated string, multiple strings, or an array of strings. Any string
     /// containing commas will be split into multiple family names.
     /// </summary>
     /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
-    public AllyariaFontFamily(params string[] families) => _families = Normalize(families);
+    public AllyariaFontFamily(params string[] families) => Families = Normalize(families);
 
     /// <summary>Gets the normalized font family array.</summary>
-    public string[] Families => _families ?? Array.Empty<string>();
+    public string[] Families { get; } = Array.Empty<string>();
 
     /// <summary>Gets the normalized font family list joined with commas (no spaces).</summary>
     public string Value => string.Join(",", Families);
