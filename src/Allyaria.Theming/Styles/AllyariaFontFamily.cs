@@ -14,16 +14,19 @@
 /// </summary>
 public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
 {
+    /// <summary>Backing field for <see cref="Families" />.</summary>
+    private readonly string[]? _families;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> struct from one or more raw family names. This
     /// constructor accepts either a single comma-separated string, multiple strings, or an array of strings. Any string
     /// containing commas will be split into multiple family names.
     /// </summary>
     /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
-    public AllyariaFontFamily(params string[] families) => Families = Normalize(families);
+    public AllyariaFontFamily(params string[] families) => _families = Normalize(families);
 
     /// <summary>Gets the normalized font family array.</summary>
-    public string[] Families { get; } = Array.Empty<string>();
+    public string[] Families => _families ?? Array.Empty<string>();
 
     /// <summary>Gets the normalized font family list joined with commas (no spaces).</summary>
     public string Value => string.Join(",", Families);
@@ -62,23 +65,27 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     }
 
     /// <summary>
-    /// Flattens an array of raw family strings, splitting any items that contain commas into separate entries, trimming
+    /// Flattens a sequence of raw family strings, splitting any items that contain commas into separate entries, trimming
     /// whitespace from each resulting token, and removing empty results.
     /// </summary>
     /// <param name="families">The raw sequence of family strings (some entries may contain commas).</param>
-    /// <returns>A flattened array of family name tokens, not yet quoted or de-duplicated.</returns>
-    private static string[] FlattenCommaSeparated(IEnumerable<string> families)
+    internal static string[] FlattenCommaSeparated(IEnumerable<string> families)
     {
+        if (families is null)
+        {
+            throw new ArgumentNullException(nameof(families));
+        }
+
         var tokens = new List<string>();
 
-        foreach (var raw in families)
+        foreach (var family in families)
         {
-            if (string.IsNullOrWhiteSpace(raw))
+            if (string.IsNullOrWhiteSpace(family))
             {
                 continue;
             }
 
-            var parts = raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var parts = family.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             foreach (var p in parts)
             {
@@ -112,55 +119,33 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// </summary>
     /// <param name="families">The raw family names supplied to the constructor.</param>
     /// <returns>A normalized array of font family names.</returns>
-    private static string[] Normalize(string[]? families = null)
+    internal static string[] Normalize(string[]? families = null)
     {
-        if (families is null || families.Length is 0)
+        if (families is null || families.Length == 0)
         {
             return Array.Empty<string>();
         }
 
         var flattened = FlattenCommaSeparated(families);
-        var normalized = NormalizeFontFamily(flattened);
-
-        return normalized is null || normalized.Length is 0
-            ? Array.Empty<string>()
-            : normalized;
-    }
-
-    /// <summary>
-    /// Normalizes an array of font family names: trims tokens, applies quoting when needed, removes duplicates while
-    /// preserving order, and returns <c>null</c> if nothing remains.
-    /// </summary>
-    /// <param name="families">The input array of font family names (already flattened).</param>
-    /// <returns>A canonicalized array or <c>null</c>.</returns>
-    internal static string[]? NormalizeFontFamily(string[]? families)
-    {
-        if (families is null || families.Length == 0)
-        {
-            return null;
-        }
-
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        var result = new List<string>(families.Length);
+        var ordered = new List<string>(flattened.Length);
 
-        foreach (var raw in families)
+        foreach (var family in flattened)
         {
-            if (string.IsNullOrWhiteSpace(raw))
+            if (string.IsNullOrWhiteSpace(family))
             {
                 continue;
             }
 
-            var canonical = QuoteFontFamilyIfNeeded(raw.Trim());
+            var normalized = NormalizeQuotes(family.Trim());
 
-            if (seen.Add(canonical))
+            if (seen.Add(normalized))
             {
-                result.Add(canonical);
+                ordered.Add(normalized);
             }
         }
 
-        return result.Count > 0
-            ? result.ToArray()
-            : null;
+        return ordered.ToArray();
     }
 
     /// <summary>
@@ -169,16 +154,30 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// </summary>
     /// <param name="family">A single font family name.</param>
     /// <returns>The possibly quoted family token.</returns>
-    internal static string QuoteFontFamilyIfNeeded(string family)
+    internal static string NormalizeQuotes(string family)
     {
+        if (string.IsNullOrEmpty(family))
+        {
+            return family;
+        }
+
+        // If already wrapped in matching quotes, strip them before canonicalizing.
+        if (family.Length >= 2 &&
+            ((family[0] == '"' && family[^1] == '"') ||
+                (family[0] == '\'' && family[^1] == '\'')))
+        {
+            family = family.Substring(1, family.Length - 2);
+        }
+
         var hasWhitespace = family.IndexOfAny(
-            [
+            new[]
+            {
                 ' ',
                 '\t',
                 '\r',
                 '\n',
                 '\f'
-            ]
+            }
         ) >= 0;
 
         var needsQuotes = hasWhitespace || family.Contains(',') || family.Contains('"') || family.Contains('\'');
