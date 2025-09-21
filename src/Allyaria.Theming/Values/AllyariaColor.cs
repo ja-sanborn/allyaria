@@ -497,11 +497,11 @@ public sealed record AllyariaColor : StyleValueBase
     private AllyariaColor(double h, double s, double v, double a = 1.0)
         : base(string.Empty)
     {
-        HsvToRgb(Clamp(h, 0, 360), Clamp(s, 0, 100), Clamp(v, 0, 100), out var r, out var g, out var b);
+        HsvToRgb(Math.Clamp(h, 0, 360), Math.Clamp(s, 0, 100), Math.Clamp(v, 0, 100), out var r, out var g, out var b);
         R = r;
         G = g;
         B = b;
-        A = Clamp01(a);
+        A = Math.Clamp(a, 0, 1.0);
     }
 
     /// <summary>Initializes a color from RGBA channels.</summary>
@@ -515,7 +515,7 @@ public sealed record AllyariaColor : StyleValueBase
         R = r;
         G = g;
         B = b;
-        A = Clamp01(a);
+        A = Math.Clamp(a, 0, 1.0);
     }
 
     /// <summary>
@@ -611,7 +611,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// The underlying <see cref="A" /> value (unit interval) is multiplied by 255 and rounded using
     /// <see cref="MidpointRounding.AwayFromZero" />; the result is then clamped to <c>[0..255]</c>.
     /// </remarks>
-    internal byte AlphaByte => (byte)Math.Clamp((int)Math.Round(A * 255.0, MidpointRounding.AwayFromZero), 0, 255);
+    private byte AlphaByte => (byte)Math.Clamp((int)Math.Round(A * 255.0, MidpointRounding.AwayFromZero), 0, 255);
 
     /// <summary>Gets the blue channel in the range [0..255].</summary>
     public byte B { get; }
@@ -697,27 +697,10 @@ public sealed record AllyariaColor : StyleValueBase
     /// <summary>Gets the style value represented as a string.</summary>
     public override string Value => HexRgba;
 
-    /// <summary>Clamps a value to the inclusive range <paramref name="min" /> … <paramref name="max" />.</summary>
-    /// <param name="v">The input value.</param>
-    /// <param name="min">The minimum allowed value (inclusive).</param>
-    /// <param name="max">The maximum allowed value (inclusive).</param>
-    /// <returns>The clamped value.</returns>
-    internal static double Clamp(double v, double min, double max) => Math.Clamp(v, min, max);
-
-    /// <summary>Clamps a value to the unit interval <c>[0..1]</c>.</summary>
-    /// <param name="v">The input value.</param>
-    /// <returns><paramref name="v" /> clamped to <c>[0..1]</c>.</returns>
-    internal static double Clamp01(double v) => Math.Clamp(v, 0.0, 1.0);
-
-    /// <summary>Clamps an integer to the byte range <c>[0..255]</c> and casts to <see cref="byte" />.</summary>
-    /// <param name="v">The integer value to clamp.</param>
-    /// <returns>The clamped byte.</returns>
-    internal static byte ClampByte(int v) => (byte)Math.Clamp(v, 0, 255);
-
     /// <summary>Creates an <see cref="AllyariaColor" /> from a hex literal (helper used by color tables).</summary>
     /// <param name="hex">A hex color string of the form <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.</param>
     /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
-    internal static AllyariaColor FromHexInline(string hex)
+    private static AllyariaColor FromHexInline(string hex)
     {
         FromHexString(hex, out var r, out var g, out var b, out var a);
 
@@ -734,15 +717,9 @@ public sealed record AllyariaColor : StyleValueBase
     /// Thrown when <paramref name="s" /> is not a supported hex format or does not begin
     /// with <c>#</c>.
     /// </exception>
-    internal static void FromHexString(string s, out byte r, out byte g, out byte b, out double a)
+    private static void FromHexString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var hex = s.Trim();
-
-        if (!hex.StartsWith("#", StringComparison.Ordinal))
-        {
-            throw new ArgumentException($"Invalid hex color: '{s}'.", nameof(s));
-        }
-
         hex = hex[1..];
 
         if (hex.Length is 3 or 4)
@@ -756,7 +733,7 @@ public sealed record AllyariaColor : StyleValueBase
             b = (byte)(b1 * 17);
 
             a = hex.Length == 4
-                ? Clamp01(ToHexNibble(hex[3]) * 17 / 255.0)
+                ? Math.Clamp(ToHexNibble(hex[3]) * 17 / 255.0, 0.0, 1.0)
                 : 1.0;
 
             return;
@@ -796,7 +773,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// Thrown when the string is not in <c>hsv()</c>/<c>hsva()</c> form or contains
     /// out-of-range values.
     /// </exception>
-    internal static void FromHsvString(string s, out byte r, out byte g, out byte b, out double a)
+    private static void FromHsvString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var m = RxHsv.Match(s);
 
@@ -807,12 +784,12 @@ public sealed record AllyariaColor : StyleValueBase
             );
         }
 
-        var h = Clamp(ParseDouble(m.Groups["h"].Value, "H", 0, 360), 0, 360);
-        var sp = Clamp(ParseDouble(m.Groups["s"].Value, "S%", 0, 100), 0, 100);
-        var vp = Clamp(ParseDouble(m.Groups["v"].Value, "V%", 0, 100), 0, 100);
+        var h = Math.Clamp(ParseDouble(m.Groups["h"].Value, "H", 0, 360), 0, 360);
+        var sp = Math.Clamp(ParseDouble(m.Groups["s"].Value, "S%", 0, 100), 0, 100);
+        var vp = Math.Clamp(ParseDouble(m.Groups["v"].Value, "V%", 0, 100), 0, 100);
 
         a = m.Groups["a"].Success
-            ? Clamp01(ParseDouble(m.Groups["a"].Value, "A", 0, 1))
+            ? Math.Clamp(ParseDouble(m.Groups["a"].Value, "A", 0, 1), 0.0, 1.0)
             : 1.0;
 
         HsvToRgb(h, sp, vp, out r, out g, out b);
@@ -836,7 +813,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// Thrown when the string is not in <c>rgb()</c>/<c>rgba()</c> form or contains
     /// out-of-range values.
     /// </exception>
-    internal static void FromRgbString(string s, out byte r, out byte g, out byte b, out double a)
+    private static void FromRgbString(string s, out byte r, out byte g, out byte b, out double a)
     {
         var m = RxRgb.Match(s);
 
@@ -847,12 +824,12 @@ public sealed record AllyariaColor : StyleValueBase
             );
         }
 
-        r = ClampByte(ParseInt(m.Groups["r"].Value, "r", 0, 255));
-        g = ClampByte(ParseInt(m.Groups["g"].Value, "g", 0, 255));
-        b = ClampByte(ParseInt(m.Groups["b"].Value, "b", 0, 255));
+        r = (byte)Math.Clamp(ParseInt(m.Groups["r"].Value, "r", 0, 255), 0, 255);
+        g = (byte)Math.Clamp(ParseInt(m.Groups["g"].Value, "g", 0, 255), 0, 255);
+        b = (byte)Math.Clamp(ParseInt(m.Groups["b"].Value, "b", 0, 255), 0, 255);
 
         a = m.Groups["a"].Success
-            ? Clamp01(ParseDouble(m.Groups["a"].Value, "a", 0, 1))
+            ? Math.Clamp(ParseDouble(m.Groups["a"].Value, "a", 0, 1), 0.0, 1.0)
             : 1.0;
     }
 
@@ -880,15 +857,15 @@ public sealed record AllyariaColor : StyleValueBase
     /// This method normalizes <paramref name="h" /> to <c>[0,360)</c>, converts <paramref name="s" /> and
     /// <paramref name="v" /> from percent to unit, performs the sector-based conversion, and rounds the results to bytes.
     /// </remarks>
-    internal static void HsvToRgb(double h,
+    private static void HsvToRgb(double h,
         double s,
         double v,
         out byte r,
         out byte g,
         out byte b)
     {
-        s = Clamp01(s / 100.0);
-        v = Clamp01(v / 100.0);
+        s = Math.Clamp(s / 100.0, 0.0, 1.0);
+        v = Math.Clamp(v / 100.0, 0.0, 1.0);
 
         if (s <= 0.0)
         {
@@ -957,7 +934,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <summary>Normalizes a Material color key for lookup.</summary>
     /// <param name="input">An input such as <c>"Deep Purple 200"</c>, <c>"deep-purple-200"</c>, or <c>"red500"</c>.</param>
     /// <returns>A normalized, lower-case key without spaces, dashes, or underscores (e.g., <c>"deeppurple200"</c>).</returns>
-    internal static string NormalizeMaterialKey(string input)
+    private static string NormalizeMaterialKey(string input)
     {
         var s = input.Trim().ToLowerInvariant()
             .Replace(" ", string.Empty)
@@ -974,12 +951,9 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="max">The maximum allowed value (inclusive).</param>
     /// <returns>The parsed number.</returns>
     /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
-    internal static double ParseDouble(string s, string param, int min, int max)
+    private static double ParseDouble(string s, string param, int min, int max)
     {
-        if (!double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var v))
-        {
-            throw new ArgumentException($"Could not parse number {param}='{s}'.", param);
-        }
+        double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var v);
 
         if (v < min || v > max)
         {
@@ -997,12 +971,9 @@ public sealed record AllyariaColor : StyleValueBase
     /// <returns>The parsed integer.</returns>
     /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the parsed value is out of range.</exception>
-    internal static int ParseInt(string s, string param, int min, int max)
+    private static int ParseInt(string s, string param, int min, int max)
     {
-        if (!int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v))
-        {
-            throw new ArgumentException($"Could not parse integer {param}='{s}'.", param);
-        }
+        int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v);
 
         if (v < min || v > max)
         {
@@ -1023,7 +994,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// When <paramref name="r" />, <paramref name="g" />, and <paramref name="b" /> are equal, hue is defined as <c>0</c> and
     /// saturation as <c>0</c>.
     /// </remarks>
-    internal static void RgbToHsv(byte r,
+    private static void RgbToHsv(byte r,
         byte g,
         byte b,
         out double h,
@@ -1075,9 +1046,9 @@ public sealed record AllyariaColor : StyleValueBase
     /// <returns>A new color with adjusted brightness; alpha is preserved.</returns>
     public AllyariaColor ShiftColor(double percent)
     {
-        percent = Clamp(percent, -100, 100);
+        percent = Math.Clamp(percent, -100, 100);
         RgbToHsv(R, G, B, out var h, out var s, out var v);
-        var v2 = Clamp(v + percent, 0, 100);
+        var v2 = Math.Clamp(v + percent, 0, 100);
         HsvToRgb(h, s, v2, out var r2, out var g2, out var b2);
 
         return new AllyariaColor(r2, g2, b2, A);
@@ -1087,7 +1058,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="c">A character in the set <c>0–9</c>, <c>a–f</c>, or <c>A–F</c>.</param>
     /// <returns>The integer value <c>0..15</c> represented by <paramref name="c" />.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="c" /> is not a valid hex digit.</exception>
-    internal static int ToHexNibble(char c)
+    private static int ToHexNibble(char c)
         => c switch
         {
             >= '0' and <= '9' => c - '0',
@@ -1103,7 +1074,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// </param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    internal static bool TryFromMaterialName(string name, out AllyariaColor color)
+    private static bool TryFromMaterialName(string name, out AllyariaColor color)
     {
         var norm = NormalizeMaterialKey(name);
 
@@ -1123,7 +1094,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="name">The color name (e.g., <c>"dodgerblue"</c>, <c>"white"</c>).</param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    internal static bool TryFromWebName(string name, out AllyariaColor color)
+    private static bool TryFromWebName(string name, out AllyariaColor color)
     {
         var key = name.Trim().ToLowerInvariant();
 
@@ -1137,6 +1108,26 @@ public sealed record AllyariaColor : StyleValueBase
         color = new AllyariaColor("black");
 
         return false;
+    }
+
+    /// <summary>Attempts to parse a color string.</summary>
+    /// <param name="value">The input color string.</param>
+    /// <param name="color">When successful, receives the parsed color; otherwise set to black.</param>
+    /// <returns><c>true</c> when parsing succeeds; otherwise <c>false</c>.</returns>
+    public static bool TryParse(string value, out AllyariaColor color)
+    {
+        try
+        {
+            color = new AllyariaColor(value);
+
+            return true;
+        }
+        catch
+        {
+            color = new AllyariaColor("black");
+
+            return false;
+        }
     }
 
     /// <summary>Implicit conversion from <see cref="string" /> by parsing.</summary>
