@@ -5,115 +5,15 @@ namespace Allyaria.Theming.UnitTests.Values;
 public sealed class AllyariaCssFunctionTests
 {
     [Theory]
-    [InlineData("--x", "var(--x)")]
-    [InlineData("--LONG_token", "var(--LONG_token)")]
-    public void DoubleDashShortcut_ShouldOnlyApply_WhenNoExplicitName(string input, string expected)
+    [InlineData("scalc(1)", "scalc(1)")] // arbitrary identifier allowed
+    [InlineData("my_func(42)", "my_func(42)")] // underscore
+    [InlineData("my-func(42)", "my-func(42)")] // hyphen
+    public void ArbitraryIdentifier_Names_AreAccepted_AndLowercased(string input, string expected)
     {
         // Arrange
 
         // Act
-        var noName = new AllyariaCssFunction(input);
-        var calcName = new AllyariaCssFunction("calc", input);
-        var varName = new AllyariaCssFunction("var", input);
-
-        // Assert
-        ((string)noName).Should()
-            .Be(expected);
-
-        ((string)calcName).Should()
-            .BeEmpty();
-
-        ((string)varName).Should()
-            .BeEmpty();
-    }
-
-    [Theory]
-    [InlineData("calc", " calc(1+2) ")]
-    [InlineData("min", "   min( 1 , 2 )   ")]
-    public void ExplicitName_InputMayHaveOuterWhitespace_ButShapeMustStillBeStrict(string name, string padded)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssFunction(name, padded);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .NotBeEmpty();
-    }
-
-    [Fact]
-    public void ExplicitName_MustMatchFunction_AndBeStrictlyShaped()
-    {
-        // Arrange
-        var matchInput = "calc(1+2)";
-        var mismatchInput = "min(1,2)";
-        var spacedInput = "calc (1+2)";
-
-        // Act
-        var ok = new AllyariaCssFunction("calc", matchInput);
-        var mismatch = new AllyariaCssFunction("calc", mismatchInput);
-        var spaced = new AllyariaCssFunction("calc", spacedInput);
-
-        // Assert
-        ((string)ok).Should()
-            .Be("calc(1+2)");
-
-        ((string)mismatch).Should()
-            .BeEmpty();
-
-        ((string)spaced).Should()
-            .Be("calc(1+2)");
-    }
-
-    [Fact]
-    public void ExplicitName_Var_ShouldAcceptVarFunctionShapeOnly()
-    {
-        // Arrange
-        var input1 = "var(--primary)";
-        var input2 = "VAR(  --x  )";
-
-        // Act
-        var ok = new AllyariaCssFunction("var", input1);
-        var bad = new AllyariaCssFunction("var", input2);
-
-        // Assert
-        ((string)ok).Should()
-            .Be("var(--primary)");
-
-        ((string)bad).Should()
-            .Be("var(--x)");
-    }
-
-    [Theory]
-    [InlineData("calc", "min(1,2)")]
-    [InlineData("min", "max(1,2)")]
-    [InlineData("max", "calc(1+2)")]
-    [InlineData("var", "calc(--x)")]
-    public void ExplicitName_WhenFuncNameMismatch_ShouldBeEmpty(string name, string value)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssFunction(name, value);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Theory]
-    [InlineData("CALC", "calc(1+2)", "calc(1+2)")]
-    [InlineData("mIn", "MIN( 1rem , 2rem )", "min(1rem , 2rem)")]
-    [InlineData("MaX", "MaX(--x , 10px)", "max(--x , 10px)")]
-    public void ExplicitName_WhenNameMatches_IgnoresCase_AndNormalizes(string name, string value, string expected)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssFunction(name, value);
+        var sut = new AllyariaCssFunction(input);
         var result = (string)sut;
 
         // Assert
@@ -122,15 +22,14 @@ public sealed class AllyariaCssFunctionTests
     }
 
     [Theory]
-    [InlineData("max", "max(1,2")]
-    [InlineData("var", "var()")]
-    [InlineData("calc", "background")]
-    public void ExplicitName_WhenNotStrictFuncShape_ShouldBeEmpty(string name, string value)
+    [InlineData("--x")]
+    [InlineData("--LONG_token")]
+    public void DoubleDash_Shorthand_IsNotSupported_ShouldNormalizeToEmpty(string input)
     {
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(name, value);
+        var sut = new AllyariaCssFunction(input);
         var result = (string)sut;
 
         // Assert
@@ -138,51 +37,19 @@ public sealed class AllyariaCssFunctionTests
             .BeEmpty();
     }
 
-    [Theory]
-    [InlineData("min", "minmax(1)")]
-    [InlineData("max", "maximum(2,3)")]
-    [InlineData("calc", "calcx(100% - 2rem)")]
-    [InlineData("var", "variant(--x)")]
-    public void ExplicitName_WhenStartsWithNameButDifferentFunction_ShouldBeEmpty(string name, string value)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssFunction(name, value);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Theory]
-    [InlineData("calc", "calc( 100% - var(--Gap) )", "calc(100% - var(--Gap))")]
-    [InlineData("min", "min( 10px ,  20px )", "min(10px ,  20px)")]
-    public void ExplicitName_WhenStrictShape_ShouldPreserveInnerSpacing(string name, string value, string expected)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssFunction(name, value);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .Be(expected);
-    }
+    // --- Name normalization and acceptance ---
 
     [Theory]
     [InlineData("Min(1rem,2rem)", "min(1rem,2rem)")]
     [InlineData("MAX(10px, 20px)", "max(10px, 20px)")]
-    [InlineData("calc ( 100% - var(--Gap) )", "calc(100% - var(--Gap))")]
+    [InlineData("calc( 100% - var(--Gap) )", "calc(100% - var(--Gap))")]
     public void GeneralFunction_ShouldLowercaseName_AndPreserveInner(string input, string expected)
     {
         // Arrange
 
         // Act
-        var f = new AllyariaCssFunction(input);
-        var result = (string)f;
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
 
         // Assert
         result.Should()
@@ -190,11 +57,42 @@ public sealed class AllyariaCssFunctionTests
     }
 
     [Fact]
-    public void GreaterThan_WhenLeftValid_AndRightExplicitNameMismatch_ShouldBeTrue()
+    public void GeneralFunction_WithNestedParentheses_ShouldUseFirstOpenAndLastClose()
+    {
+        // Arrange
+        var input = "calc( min(10px, 20px) + max(1rem, 2rem) )";
+
+        // Act
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
+
+        // Assert
+        result.Should()
+            .Be("calc(min(10px, 20px) + max(1rem, 2rem))");
+    }
+
+    [Theory]
+    [InlineData("calc( 1 + 2 )", "calc(1 + 2)")]
+    [InlineData("min( 1rem , 2rem )", "min(1rem , 2rem)")]
+    public void GeneralFunction_WithOuterWhitespace_ShouldNormalize(string input, string expected)
+    {
+        // Arrange
+
+        // Act
+        var sut = new AllyariaCssFunction($"   {input}   ");
+        var result = (string)sut;
+
+        // Assert
+        result.Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void GreaterThan_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
     {
         // Arrange
         var left = new AllyariaCssFunction("calc(100% - 2rem)");
-        var right = new AllyariaCssFunction("calc", "calculus(100% - 2rem)");
+        var right = new AllyariaCssFunction("calc ulus(100% - 2rem)"); // invalid
 
         // Act
         var result = left > right;
@@ -209,7 +107,7 @@ public sealed class AllyariaCssFunctionTests
     {
         // Arrange
         var left = new AllyariaCssFunction("var(--ok)");
-        var right = new AllyariaCssFunction("var", "variant(--ok)");
+        var right = new AllyariaCssFunction("var iant(--ok)"); // invalid
 
         // Act
         var result = left >= right;
@@ -220,17 +118,17 @@ public sealed class AllyariaCssFunctionTests
     }
 
     [Fact]
-    public void ImplicitOperators_ShouldRoundTrip()
+    public void ImplicitOperators_ShouldRoundTrip_ForValidFunction()
     {
         // Arrange
-        AllyariaCssFunction f = "--gap";
+        AllyariaCssFunction sut = "calc(1+2)";
 
         // Act
-        string result = f;
+        string result = sut;
 
         // Assert
         result.Should()
-            .Be("var(--gap)");
+            .Be("calc(1+2)");
     }
 
     [Theory]
@@ -242,8 +140,8 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var f = new AllyariaCssFunction(input);
-        var result = (string)f;
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
 
         // Assert
         result.Should()
@@ -251,10 +149,10 @@ public sealed class AllyariaCssFunctionTests
     }
 
     [Fact]
-    public void LessThan_WhenLeftExplicitNameMismatch_AndRightValid_ShouldBeTrue()
+    public void LessThan_WhenLeftInvalid_AndRightValid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("min", "minmax(1)");
+        var left = new AllyariaCssFunction("min max(1)"); // invalid
         var right = new AllyariaCssFunction("min(1)");
 
         // Act
@@ -269,7 +167,7 @@ public sealed class AllyariaCssFunctionTests
     public void LessThanOrEqual_WhenNormalizedValuesEqual_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("MAX", "MaX( 2 )");
+        var left = new AllyariaCssFunction("MaX( 2 )");
         var right = new AllyariaCssFunction("max(2)");
 
         // Act
@@ -281,14 +179,44 @@ public sealed class AllyariaCssFunctionTests
     }
 
     [Fact]
+    public void MissingFinalParen_ShouldBeInvalid()
+    {
+        // Arrange
+        var input = "max(10px, 20px";
+
+        // Act
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
+
+        // Assert
+        result.Should()
+            .BeEmpty();
+    }
+
+    [Fact]
     public void NullValue_ShouldNormalizeToEmpty()
     {
         // Arrange
         string? input = null;
 
         // Act
-        var f = new AllyariaCssFunction(input!);
-        var result = (string)f;
+        var sut = new AllyariaCssFunction(input!);
+        var result = (string)sut;
+
+        // Assert
+        result.Should()
+            .BeEmpty();
+    }
+
+    [Fact]
+    public void SpaceBetweenNameAndParen_ShouldBeInvalid()
+    {
+        // Arrange
+        var input = "calc (1+2)";
+
+        // Act
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
 
         // Assert
         result.Should()
@@ -302,8 +230,8 @@ public sealed class AllyariaCssFunctionTests
         var input = "  max( 10px ,  20px )  ";
 
         // Act
-        var f = new AllyariaCssFunction(input);
-        var result = (string)f;
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
 
         // Assert
         result.Should()
@@ -314,31 +242,16 @@ public sealed class AllyariaCssFunctionTests
     [InlineData("var(--X)", "var(--X)")]
     [InlineData("VAR(--x)", "var(--x)")]
     [InlineData(" Var(--Gap) ", "var(--Gap)")]
-    public void VarFunction_WithParens_ShouldLowercaseNameAndPreserveInner(string input, string expected)
+    public void VarFunction_ShouldLowercaseName_AndPreserveInner(string input, string expected)
     {
         // Arrange
 
         // Act
-        var f = new AllyariaCssFunction(input);
-        var result = (string)f;
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
 
         // Assert
         result.Should()
             .Be(expected);
-    }
-
-    [Fact]
-    public void VarShorthand_WhenNoName_ShouldNormalizeToVar()
-    {
-        // Arrange
-        var input = "--main-color";
-
-        // Act
-        var f = new AllyariaCssFunction(input);
-        var result = (string)f;
-
-        // Assert
-        result.Should()
-            .Be("var(--main-color)");
     }
 }

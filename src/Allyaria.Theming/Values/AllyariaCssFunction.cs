@@ -4,8 +4,9 @@ using System.Text.RegularExpressions;
 namespace Allyaria.Theming.Values;
 
 /// <summary>
-/// Represents a CSS function expression (e.g., <c>calc(...)</c>, <c>min(...)</c>, <c>max(...)</c>) and also supports CSS
-/// custom properties via <c>var(--...)</c>. Ensures the stored value is normalized to a standard format.
+/// Represents a normalized CSS function expression of the strict form <c>{funcName}({inner})</c>. This type validates the
+/// function identifier and canonicalizes the stored value to <c>name(inner)</c>. No other forms (e.g., raw tokens like
+/// <c>--token</c>) are accepted.
 /// </summary>
 public sealed record AllyariaCssFunction : StyleValueBase
 {
@@ -16,50 +17,19 @@ public sealed record AllyariaCssFunction : StyleValueBase
     private static readonly Regex IdentifierRegex = new("^[-A-Za-z_][-A-Za-z0-9_]*$", RegexOptions.Compiled);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaCssFunction" /> class. Accepts a raw CSS function or variable
-    /// string and normalizes/validates it.
+    /// Initializes a new instance of the <see cref="AllyariaCssFunction" /> class from a raw string. The input must be in the
+    /// exact shape <c>{funcName}({inner})</c>. Nested parentheses are allowed inside <c>{inner}</c>; only the first <c>(</c>
+    /// and the final trailing <c>)</c> are considered delimiters for the outer function.
     /// </summary>
-    /// <param name="value">
-    /// Raw CSS text. Supported forms when no function name is supplied:
-    /// <list type="bullet">
-    ///     <item>
-    ///         <description><c>--token</c> → normalized to <c>var(--token)</c></description>
-    ///     </item>
-    ///     <item>
-    ///         <description><c>func(inner)</c> (no space before <c>(</c>) → preserved if <c>func</c> is a valid identifier</description>
-    ///     </item>
-    /// </list>
-    /// Invalid input yields <see cref="string.Empty" />.
-    /// </param>
+    /// <param name="value">Raw CSS text in the form <c>name(inner)</c>.</param>
+    /// <remarks>Invalid input yields <see cref="string.Empty" />.</remarks>
     public AllyariaCssFunction(string value)
-        : base(Normalize(string.Empty, value)) { }
+        : base(Normalize(value)) { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaCssFunction" /> class with an explicit function name.
-    /// </summary>
-    /// <param name="name">CSS function name (e.g., <c>calc</c>, <c>min</c>, <c>max</c>, or <c>var</c>).</param>
-    /// <param name="value">
-    /// Raw CSS text. Must start with <paramref name="name" /> immediately followed by <c>(</c> and end with <c>)</c>, unless
-    /// <paramref name="name" /> is <c>var</c>, in which case either <c>--token</c> or <c>var(...)</c> are accepted.
-    /// </param>
-    public AllyariaCssFunction(string name, string value)
-        : base(Normalize(name, value)) { }
-
-    /// <summary>Normalizes a raw CSS function/variable string to a standard format.</summary>
-    /// <param name="name">
-    /// Function name. When blank:
-    /// <list type="bullet">
-    ///     <item>
-    ///         <description><c>--token</c> → <c>var(--token)</c></description>
-    ///     </item>
-    ///     <item>
-    ///         <description><c>func(inner)</c> → preserved if valid and well-formed</description>
-    ///     </item>
-    /// </list>
-    /// </param>
+    /// <summary>Normalizes a raw CSS function string to a standard <c>name(inner)</c> format.</summary>
     /// <param name="value">Raw CSS text to normalize.</param>
     /// <returns>Normalized CSS string or <see cref="string.Empty" /> if invalid.</returns>
-    private static string Normalize(string name, string value)
+    private static string Normalize(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -68,59 +38,30 @@ public sealed record AllyariaCssFunction : StyleValueBase
 
         var trimmedValue = value.Trim();
 
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            if (trimmedValue.StartsWith("--", StringComparison.Ordinal))
-            {
-                return $"var({trimmedValue})";
-            }
-
-            if (!TrySplitFunc(trimmedValue, out var funcName1, out var innerExpr1))
-            {
-                return string.Empty;
-            }
-
-            if (!IdentifierRegex.IsMatch(funcName1))
-            {
-                return string.Empty;
-            }
-
-            if (string.IsNullOrWhiteSpace(funcName1) || string.IsNullOrWhiteSpace(innerExpr1))
-            {
-                return string.Empty;
-            }
-
-            return $"{funcName1}({innerExpr1})";
-        }
-
-        var trimmedName = name.Trim().ToLowerInvariant();
-
-        if (!trimmedValue.StartsWith(trimmedName, StringComparison.OrdinalIgnoreCase))
+        if (!TrySplitFunc(trimmedValue, out var funcName, out var innerExpr))
         {
             return string.Empty;
         }
 
-        if (!TrySplitFunc(trimmedValue, out var funcName2, out var innerExpr2))
+        if (!IdentifierRegex.IsMatch(funcName) || string.IsNullOrWhiteSpace(innerExpr))
         {
             return string.Empty;
         }
 
-        if (!funcName2.Equals(trimmedName, StringComparison.Ordinal))
-        {
-            return string.Empty;
-        }
-
-        innerExpr2 = innerExpr2.Trim();
-
-        return innerExpr2.Length == 0
-            ? string.Empty
-            : $"{trimmedName}({innerExpr2})";
+        return $"{funcName}({innerExpr})";
     }
 
     /// <summary>
-    /// Splits a candidate function string into <c>name</c> and <c>inner</c>. Requires no space between name and <c>(</c>, and
-    /// a trailing <c>)</c>.
+    /// Splits a candidate function string into <c>name</c> and <c>inner</c>. Uses the position of the FIRST <c>(</c> and the
+    /// LAST <c>)</c> as the outer delimiters, so any parentheses inside <c>inner</c> are ignored for the purpose of splitting.
+    /// Requires no space between the name and the first <c>(</c>, and the last character of the string must be <c>)</c>.
     /// </summary>
+    /// <param name="text">Input text that should represent a function call.</param>
+    /// <param name="name">Outputs the normalized (lowercase, trimmed) function name.</param>
+    /// <param name="inner">Outputs the inner expression (trimmed), excluding the outer parentheses.</param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="text" /> is well-formed; otherwise <see langword="false" />.
+    /// </returns>
     private static bool TrySplitFunc(string text, out string name, out string inner)
     {
         name = string.Empty;
@@ -129,19 +70,30 @@ public sealed record AllyariaCssFunction : StyleValueBase
         var start = text.IndexOf('(');
         var end = text.LastIndexOf(')');
 
+        // Must have at least: n( )
         if (start <= 0 || end != text.Length - 1 || end <= start)
         {
             return false;
         }
 
-        name = text[..start].ToLowerInvariant().Trim();
+        // Name: everything before the first '(' (no whitespace allowed between name and '(').
+        var rawName = text[..start];
+
+        if (rawName.EndsWith(' ') || rawName.EndsWith('\t'))
+        {
+            return false;
+        }
+
+        name = rawName.ToLowerInvariant().Trim();
+
+        // Inner: everything between first '(' and last ')', trimmed. Nested parens are allowed and ignored here.
         inner = text.Substring(start + 1, end - start - 1).Trim();
 
         return true;
     }
 
     /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaCssFunction" />.</summary>
-    /// <param name="value">Raw CSS function/variable string.</param>
+    /// <param name="value">Raw CSS function string <c>name(inner)</c>.</param>
     /// <returns>An instance with a normalized value or empty when invalid.</returns>
     public static implicit operator AllyariaCssFunction(string value) => new(value);
 
