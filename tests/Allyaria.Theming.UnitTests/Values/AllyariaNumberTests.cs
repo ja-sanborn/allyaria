@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Values;
+﻿﻿using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Values;
 
@@ -25,11 +25,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Theory]
@@ -61,11 +58,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Theory]
@@ -85,11 +79,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Fact]
@@ -103,11 +94,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be("15.5pt");
-
-        number.Should()
-            .Be(15.5m);
+        value.Should().Be("15.5pt");
+        number.Should().Be(15.5m);
     }
 
     [Fact]
@@ -120,11 +108,8 @@ public sealed class AllyariaNumberTests
         string value = sut;
 
         // Assert
-        value.Should()
-            .Be("-2.25ex");
-
-        sut.Number.Should()
-            .Be(-2.25m);
+        value.Should().Be("-2.25ex");
+        sut.Number.Should().Be(-2.25m);
     }
 
     [Theory]
@@ -146,11 +131,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Theory]
@@ -175,11 +157,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Fact]
@@ -194,11 +173,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .BeEmpty();
-
-        number.Should()
-            .Be(0);
+        value.Should().BeEmpty();
+        number.Should().Be(0);
     }
 
     [Theory]
@@ -217,11 +193,8 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
     }
 
     [Theory]
@@ -240,10 +213,52 @@ public sealed class AllyariaNumberTests
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
+        value.Should().Be(expectedValue);
+        number.Should().Be(expectedNumber);
+    }
 
-        number.Should()
-            .Be(expectedNumber);
+    [Fact]
+    public void TryParse_ValidInput_ReturnsTrue_And_Normalized()
+    {
+        // Arrange
+
+        // Act
+        var ok = AllyariaNumber.TryParse("  1.5rem  ", out var sut);
+        var value = (string)sut;
+        var number = sut.Number;
+
+        // Assert
+        ok.Should().BeTrue();
+        value.Should().Be("1.5rem");
+        number.Should().Be(1.5m);
+    }
+
+    [Fact]
+    public void TryParse_InvalidInput_ReturnsFalse_And_Empty()
+    {
+        // Arrange
+
+        // Act
+        var ok = AllyariaNumber.TryParse("12 %", out var sut);
+        var value = (string)sut;
+        var number = sut.Number;
+
+        // Assert
+        ok.Should().BeFalse();
+        value.Should().BeEmpty();
+        number.Should().Be(0m);
+    }
+
+    [Fact]
+    public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
+    {
+        // Arrange
+        AllyariaNumber? sut = null;
+
+        // Act
+        string value = sut;
+
+        // Assert
+        value.Should().BeEmpty();
     }
 }

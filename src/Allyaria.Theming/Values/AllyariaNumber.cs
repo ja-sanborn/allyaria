@@ -15,55 +15,55 @@ public sealed record AllyariaNumber : StyleValueBase
     /// </summary>
     private static readonly string[] LengthUnits =
     {
-        "em",
-        "rem",
-        "ex",
-        "rex",
         "cap",
-        "rcap",
-        "ch",
-        "rch",
-        "ic",
-        "ric",
-        "lh",
-        "rlh",
-        "vw",
-        "vh",
-        "vi",
-        "vb",
-        "vmin",
-        "vmax",
-        "svw",
-        "svh",
-        "svi",
-        "svb",
-        "svmin",
-        "svmax",
-        "lvw",
-        "lvh",
-        "lvi",
-        "lvb",
-        "lvmin",
-        "lvmax",
-        "dvw",
-        "dvh",
-        "dvi",
-        "dvb",
-        "dvmin",
-        "dvmax",
-        "cqw",
+        "cqb",
         "cqh",
         "cqi",
-        "cqb",
-        "cqmin",
         "cqmax",
-        "px",
+        "cqmin",
+        "cqw",
+        "ch",
         "cm",
-        "mm",
-        "q",
+        "dvb",
+        "dvh",
+        "dvi",
+        "dvmax",
+        "dvmin",
+        "dvw",
+        "em",
+        "ex",
+        "ic",
         "in",
+        "lh",
+        "lvb",
+        "lvh",
+        "lvi",
+        "lvmax",
+        "lvmin",
+        "lvw",
+        "mm",
         "pc",
-        "pt"
+        "pt",
+        "px",
+        "q",
+        "rcap",
+        "rch",
+        "rem",
+        "rex",
+        "ric",
+        "rlh",
+        "vb",
+        "vh",
+        "vi",
+        "vmax",
+        "vmin",
+        "vw",
+        "svb",
+        "svh",
+        "svi",
+        "svmax",
+        "svmin",
+        "svw"
     };
 
     /// <summary>
@@ -71,8 +71,7 @@ public sealed record AllyariaNumber : StyleValueBase
     /// valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
     /// </summary>
     /// <param name="value">The raw CSS value to parse.</param>
-    public AllyariaNumber(string value)
-        : base(Normalize(value)) { }
+    public AllyariaNumber(string value) : base(Normalize(value)) { }
 
     /// <summary>
     /// Gets the numeric portion of the value as a <see cref="decimal" />. Returns <c>0</c> when the value is invalid or cannot
@@ -95,7 +94,11 @@ public sealed record AllyariaNumber : StyleValueBase
         }
     }
 
-    /// <summary>Determines whether the input is a valid CSS length with a supported unit.</summary>
+    /// <summary>
+    /// Determines whether the input is a valid CSS length with a supported unit.
+    /// </summary>
+    /// <param name="value">The candidate string to test.</param>
+    /// <returns><see langword="true"/> if the string ends with a supported unit and has a valid numeric prefix; otherwise <see langword="false"/>.</returns>
     private static bool IsLength(string value)
         => LengthUnits.Any(u =>
             value.EndsWith(u, StringComparison.Ordinal) &&
@@ -103,11 +106,18 @@ public sealed record AllyariaNumber : StyleValueBase
             double.TryParse(value[..^u.Length], NumberStyles.Float, CultureInfo.InvariantCulture, out _)
         );
 
-    /// <summary>Determines whether the input is a plain numeric value.</summary>
-    private static bool IsNumeric(string value)
-        => double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
+    /// <summary>
+    /// Determines whether the input is a plain numeric value.
+    /// </summary>
+    /// <param name="value">The candidate string to test.</param>
+    /// <returns><see langword="true"/> if the string is a valid number; otherwise <see langword="false"/>.</returns>
+    private static bool IsNumeric(string value) => double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
 
-    /// <summary>Determines whether the input is a percentage value.</summary>
+    /// <summary>
+    /// Determines whether the input is a percentage value.
+    /// </summary>
+    /// <param name="value">The candidate string to test.</param>
+    /// <returns><see langword="true"/> if the string is a valid percentage; otherwise <see langword="false"/>.</returns>
     private static bool IsPercentage(string value)
     {
         if (!value.EndsWith('%'))
@@ -120,12 +130,18 @@ public sealed record AllyariaNumber : StyleValueBase
         return double.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
     }
 
-    /// <summary>Determines whether the input is a valid CSS number, percentage, or length value.</summary>
+    /// <summary>
+    /// Determines whether the input contains only characters valid for numbers, percentages, or lengths.
+    /// </summary>
+    /// <param name="value">The candidate string to test.</param>
+    /// <returns><see langword="true"/> if the string matches the allowed character set; otherwise <see langword="false"/>.</returns>
     private static bool IsValid(string value) => Regex.IsMatch(value, @"^[A-Za-z0-9%+.\-]+$");
 
     /// <summary>
     /// Normalizes a raw CSS number, percentage, or length value. Returns <see cref="string.Empty" /> if invalid.
     /// </summary>
+    /// <param name="value">The raw CSS value to normalize.</param>
+    /// <returns>A normalized string or <see cref="string.Empty"/> when invalid.</returns>
     private static string Normalize(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -156,10 +172,32 @@ public sealed record AllyariaNumber : StyleValueBase
     }
 
     /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaNumber" />.</summary>
+    /// <param name="value">The raw CSS value to normalize.</param>
+    /// <returns>An <see cref="AllyariaNumber"/> representing the normalized value (or empty when invalid).</returns>
     public static implicit operator AllyariaNumber(string value) => new(value);
 
     /// <summary>
     /// Implicitly converts an <see cref="AllyariaNumber" /> to its normalized <see cref="string" /> representation.
     /// </summary>
+    /// <param name="number">The instance to convert.</param>
+    /// <returns>The normalized string value or <see cref="string.Empty"/> when <paramref name="number"/> is <c>null</c>.</returns>
     public static implicit operator string(AllyariaNumber? number) => number?.Value ?? string.Empty;
+
+    /// <summary>
+    /// Attempts to parse and normalize a CSS number, percentage, or length value.
+    /// </summary>
+    /// <param name="value">The raw CSS value to parse.</param>
+    /// <param name="number">
+    /// When this method returns, contains an <see cref="AllyariaNumber"/> whose <see cref="StyleValueBase.Value"/>
+    /// is the normalized representation, or <see cref="string.Empty"/> if parsing fails.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="value"/> was successfully normalized into a non-empty canonical form;
+    /// otherwise <see langword="false"/>.
+    /// </returns>
+    public static bool TryParse(string value, out AllyariaNumber number)
+    {
+        number = new AllyariaNumber(value);
+        return !string.IsNullOrWhiteSpace(number.Value);
+    }
 }
