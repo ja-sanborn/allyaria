@@ -5,24 +5,6 @@ namespace Allyaria.Theming.UnitTests.Values;
 public sealed class AllyariaCssGlobalTests
 {
     [Theory]
-    [InlineData("inherit", "inherit")]
-    [InlineData("INITIAL", "initial")]
-    [InlineData("UnSeT", "unset")]
-    [InlineData("revert", "revert")]
-    [InlineData("  ReVeRt-LaYeR  ", "revert-layer")]
-    public void Ctor_Normalizes_Valid_Keywords_To_Lowercase(string input, string expected)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaCssGlobal(input);
-        string value = sut;
-
-        // Assert
-        value.Should().Be(expected);
-    }
-
-    [Theory]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("initial-value")]
@@ -37,7 +19,27 @@ public sealed class AllyariaCssGlobalTests
         string value = sut;
 
         // Assert
-        value.Should().BeEmpty();
+        value.Should()
+            .BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("inherit", "inherit")]
+    [InlineData("INITIAL", "initial")]
+    [InlineData("UnSeT", "unset")]
+    [InlineData("revert", "revert")]
+    [InlineData("  ReVeRt-LaYeR  ", "revert-layer")]
+    public void Ctor_Normalizes_Valid_Keywords_To_Lowercase(string input, string expected)
+    {
+        // Arrange
+
+        // Act
+        var sut = new AllyariaCssGlobal(input);
+        string value = sut;
+
+        // Assert
+        value.Should()
+            .Be(expected);
     }
 
     [Fact]
@@ -51,37 +53,8 @@ public sealed class AllyariaCssGlobalTests
         string value = sut;
 
         // Assert
-        value.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void TryParse_Valid_Returns_True_And_Normalized_Instance()
-    {
-        // Arrange
-        var input = "  INITIAL  ";
-
-        // Act
-        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
-        string value = sut;
-
-        // Assert
-        ok.Should().BeTrue();
-        value.Should().Be("initial");
-    }
-
-    [Fact]
-    public void TryParse_Invalid_Returns_False_And_Empty_Instance()
-    {
-        // Arrange
-        var input = "initial-value";
-
-        // Act
-        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
-        string value = sut;
-
-        // Assert
-        ok.Should().BeFalse();
-        value.Should().BeEmpty();
+        value.Should()
+            .BeEmpty();
     }
 
     [Fact]
@@ -94,7 +67,8 @@ public sealed class AllyariaCssGlobalTests
         string value = sut;
 
         // Assert
-        value.Should().Be("revert-layer");
+        value.Should()
+            .Be("revert-layer");
     }
 
     [Fact]
@@ -107,7 +81,8 @@ public sealed class AllyariaCssGlobalTests
         string value = sut;
 
         // Assert
-        value.Should().BeEmpty();
+        value.Should()
+            .BeEmpty();
     }
 
     [Fact]
@@ -121,7 +96,46 @@ public sealed class AllyariaCssGlobalTests
         AllyariaCssGlobal round = back;
 
         // Assert
-        back.Should().Be("unset");
-        ((string)round).Should().Be("unset");
+        back.Should()
+            .Be("unset");
+
+        ((string)round).Should()
+            .Be("unset");
+    }
+
+    [Fact]
+    public void TryParse_Invalid_Returns_False_And_Empty_Instance()
+    {
+        // Arrange
+        var input = "initial-value";
+
+        // Act
+        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
+        string value = sut;
+
+        // Assert
+        ok.Should()
+            .BeFalse();
+
+        value.Should()
+            .BeEmpty();
+    }
+
+    [Fact]
+    public void TryParse_Valid_Returns_True_And_Normalized_Instance()
+    {
+        // Arrange
+        var input = "  INITIAL  ";
+
+        // Act
+        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
+        string value = sut;
+
+        // Assert
+        ok.Should()
+            .BeTrue();
+
+        value.Should()
+            .Be("initial");
     }
 }

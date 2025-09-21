@@ -29,10 +29,10 @@ namespace Allyaria.Theming.Values;
 /// </list>
 /// All numeric parsing/formatting uses <see cref="CultureInfo.InvariantCulture" />.
 /// </remarks>
-public sealed record AllyariaColor : StyleValueBase
+public sealed record AllyariaCssColor : StyleValueBase
 {
     /// <summary>Material Design color lookup table.</summary>
-    private static readonly Dictionary<string, AllyariaColor> MaterialMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, AllyariaCssColor> MaterialMap = new(StringComparer.OrdinalIgnoreCase)
     {
         // Red
         ["red50"] = FromHexInline("#FFEBEEFF"),
@@ -344,7 +344,7 @@ public sealed record AllyariaColor : StyleValueBase
     );
 
     /// <summary>CSS Web color lookup table.</summary>
-    private static readonly Dictionary<string, AllyariaColor> WebNameMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, AllyariaCssColor> WebNameMap = new(StringComparer.OrdinalIgnoreCase)
     {
         ["aliceblue"] = FromHexInline("#F0F8FFFF"),
         ["antiquewhite"] = FromHexInline("#FAEBD7FF"),
@@ -486,7 +486,7 @@ public sealed record AllyariaColor : StyleValueBase
         ["whitesmoke"] = FromHexInline("#F5F5F5FF"),
         ["yellow"] = FromHexInline("#FFFF00FF"),
         ["yellowgreen"] = FromHexInline("#9ACD32FF"),
-        ["transparent"] = new AllyariaColor(0, 0, 0, 0)
+        ["transparent"] = new AllyariaCssColor(0, 0, 0, 0)
     };
 
     /// <summary>Initializes a color from HSVA channels.</summary>
@@ -494,7 +494,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    private AllyariaColor(double h, double s, double v, double a = 1.0)
+    private AllyariaCssColor(double h, double s, double v, double a = 1.0)
         : base(string.Empty)
     {
         HsvToRgb(Math.Clamp(h, 0, 360), Math.Clamp(s, 0, 100), Math.Clamp(v, 0, 100), out var r, out var g, out var b);
@@ -509,7 +509,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    private AllyariaColor(byte r, byte g, byte b, double a = 1.0)
+    private AllyariaCssColor(byte r, byte g, byte b, double a = 1.0)
         : base(string.Empty)
     {
         R = r;
@@ -525,7 +525,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="value">The input string to parse.</param>
     /// <exception cref="ArgumentException">Thrown when the value is not a recognized color format or name.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
-    public AllyariaColor(string value)
+    public AllyariaCssColor(string value)
         : base(string.Empty)
     {
         try
@@ -697,14 +697,14 @@ public sealed record AllyariaColor : StyleValueBase
     /// <summary>Gets the style value represented as a string.</summary>
     public override string Value => HexRgba;
 
-    /// <summary>Creates an <see cref="AllyariaColor" /> from a hex literal (helper used by color tables).</summary>
+    /// <summary>Creates an <see cref="AllyariaCssColor" /> from a hex literal (helper used by color tables).</summary>
     /// <param name="hex">A hex color string of the form <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.</param>
-    /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
-    private static AllyariaColor FromHexInline(string hex)
+    /// <returns>A new <see cref="AllyariaCssColor" /> parsed from <paramref name="hex" />.</returns>
+    private static AllyariaCssColor FromHexInline(string hex)
     {
         FromHexString(hex, out var r, out var g, out var b, out var a);
 
-        return new AllyariaColor(r, g, b, a);
+        return new AllyariaCssColor(r, g, b, a);
     }
 
     /// <summary>Parses a hexadecimal CSS color literal.</summary>
@@ -760,8 +760,8 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the HSVA channels.</returns>
-    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
+    /// <returns>The AllyariaCssColor from the HSVA channels.</returns>
+    public static AllyariaCssColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -800,8 +800,8 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the RGBA channels.</returns>
-    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
+    /// <returns>The AllyariaCssColor from the RGBA channels.</returns>
+    public static AllyariaCssColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -837,7 +837,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// Produces a hover-friendly variant: if <see cref="V" /> &lt; 50, lightens by 20; otherwise darkens by 20. Alpha is
     /// preserved.
     /// </summary>
-    public AllyariaColor HoverColor()
+    public AllyariaCssColor HoverColor()
     {
         var delta = V < 50
             ? 20
@@ -1044,14 +1044,14 @@ public sealed record AllyariaColor : StyleValueBase
     /// <summary>Adjusts <see cref="V" /> (value/brightness) by the specified percentage.</summary>
     /// <param name="percent">A value in [-100..100]. Positive to lighten; negative to darken.</param>
     /// <returns>A new color with adjusted brightness; alpha is preserved.</returns>
-    public AllyariaColor ShiftColor(double percent)
+    public AllyariaCssColor ShiftColor(double percent)
     {
         percent = Math.Clamp(percent, -100, 100);
         RgbToHsv(R, G, B, out var h, out var s, out var v);
         var v2 = Math.Clamp(v + percent, 0, 100);
         HsvToRgb(h, s, v2, out var r2, out var g2, out var b2);
 
-        return new AllyariaColor(r2, g2, b2, A);
+        return new AllyariaCssColor(r2, g2, b2, A);
     }
 
     /// <summary>Converts a single hexadecimal digit to its numeric nibble value.</summary>
@@ -1074,7 +1074,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// </param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    private static bool TryFromMaterialName(string name, out AllyariaColor color)
+    private static bool TryFromMaterialName(string name, out AllyariaCssColor color)
     {
         var norm = NormalizeMaterialKey(name);
 
@@ -1085,7 +1085,7 @@ public sealed record AllyariaColor : StyleValueBase
             return true;
         }
 
-        color = new AllyariaColor("black");
+        color = new AllyariaCssColor("black");
 
         return false;
     }
@@ -1094,7 +1094,7 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="name">The color name (e.g., <c>"dodgerblue"</c>, <c>"white"</c>).</param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    private static bool TryFromWebName(string name, out AllyariaColor color)
+    private static bool TryFromWebName(string name, out AllyariaCssColor color)
     {
         var key = name.Trim().ToLowerInvariant();
 
@@ -1105,7 +1105,7 @@ public sealed record AllyariaColor : StyleValueBase
             return true;
         }
 
-        color = new AllyariaColor("black");
+        color = new AllyariaCssColor("black");
 
         return false;
     }
@@ -1114,17 +1114,17 @@ public sealed record AllyariaColor : StyleValueBase
     /// <param name="value">The input color string.</param>
     /// <param name="color">When successful, receives the parsed color; otherwise set to black.</param>
     /// <returns><c>true</c> when parsing succeeds; otherwise <c>false</c>.</returns>
-    public static bool TryParse(string value, out AllyariaColor color)
+    public static bool TryParse(string value, out AllyariaCssColor color)
     {
         try
         {
-            color = new AllyariaColor(value);
+            color = new AllyariaCssColor(value);
 
             return true;
         }
         catch
         {
-            color = new AllyariaColor("black");
+            color = new AllyariaCssColor("black");
 
             return false;
         }
@@ -1132,8 +1132,8 @@ public sealed record AllyariaColor : StyleValueBase
 
     /// <summary>Implicit conversion from <see cref="string" /> by parsing.</summary>
     /// <param name="value">A supported color string.</param>
-    public static implicit operator AllyariaColor(string value) => new(value);
+    public static implicit operator AllyariaCssColor(string value) => new(value);
 
     /// <summary>Implicit conversion to <see cref="string" /> using <see cref="ToString" /> (i.e., <c>#RRGGBBAA</c>).</summary>
-    public static implicit operator string(AllyariaColor value) => value.HexRgba;
+    public static implicit operator string(AllyariaCssColor value) => value.HexRgba;
 }

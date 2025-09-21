@@ -8,7 +8,7 @@ namespace Allyaria.Theming.Values;
 /// Represents a CSS <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> value. Ensures
 /// normalization according to CSS syntax rules and provides access to the numeric component.
 /// </summary>
-public sealed record AllyariaNumber : StyleValueBase
+public sealed record AllyariaCssNumber : StyleValueBase
 {
     /// <summary>
     /// Supported CSS length units (case-insensitive). Includes relative, viewport, container query, and absolute units.
@@ -67,11 +67,11 @@ public sealed record AllyariaNumber : StyleValueBase
     };
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaNumber" /> class. Accepts a raw CSS string and normalizes it to a
-    /// valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
+    /// Initializes a new instance of the <see cref="AllyariaCssNumber" /> class. Accepts a raw CSS string and normalizes it to
+    /// a valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
     /// </summary>
     /// <param name="value">The raw CSS value to parse.</param>
-    public AllyariaNumber(string value)
+    public AllyariaCssNumber(string value)
         : base(Normalize(value)) { }
 
     /// <summary>
@@ -173,31 +173,31 @@ public sealed record AllyariaNumber : StyleValueBase
     /// <summary>Attempts to parse and normalize a CSS number, percentage, or length value.</summary>
     /// <param name="value">The raw CSS value to parse.</param>
     /// <param name="number">
-    /// When this method returns, contains an <see cref="AllyariaNumber" /> whose <see cref="StyleValueBase.Value" /> is the
+    /// When this method returns, contains an <see cref="AllyariaCssNumber" /> whose <see cref="StyleValueBase.Value" /> is the
     /// normalized representation, or <see cref="string.Empty" /> if parsing fails.
     /// </param>
     /// <returns>
     /// <see langword="true" /> if <paramref name="value" /> was successfully normalized into a non-empty canonical form;
     /// otherwise <see langword="false" />.
     /// </returns>
-    public static bool TryParse(string value, out AllyariaNumber number)
+    public static bool TryParse(string value, out AllyariaCssNumber number)
     {
-        number = new AllyariaNumber(value);
+        number = new AllyariaCssNumber(value);
 
         return !string.IsNullOrWhiteSpace(number.Value);
     }
 
-    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaNumber" />.</summary>
+    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaCssNumber" />.</summary>
     /// <param name="value">The raw CSS value to normalize.</param>
-    /// <returns>An <see cref="AllyariaNumber" /> representing the normalized value (or empty when invalid).</returns>
-    public static implicit operator AllyariaNumber(string value) => new(value);
+    /// <returns>An <see cref="AllyariaCssNumber" /> representing the normalized value (or empty when invalid).</returns>
+    public static implicit operator AllyariaCssNumber(string value) => new(value);
 
     /// <summary>
-    /// Implicitly converts an <see cref="AllyariaNumber" /> to its normalized <see cref="string" /> representation.
+    /// Implicitly converts an <see cref="AllyariaCssNumber" /> to its normalized <see cref="string" /> representation.
     /// </summary>
     /// <param name="number">The instance to convert.</param>
     /// <returns>
     /// The normalized string value or <see cref="string.Empty" /> when <paramref name="number" /> is <c>null</c>.
     /// </returns>
-    public static implicit operator string(AllyariaNumber? number) => number?.Value ?? string.Empty;
+    public static implicit operator string(AllyariaCssNumber? number) => number?.Value ?? string.Empty;
 }
