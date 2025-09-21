@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public class AllyariaStyleFunctionTests
+public sealed class AllyariaStyleFunctionTests
 {
     [Theory]
     [InlineData("--x", "var(--x)")]

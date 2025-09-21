@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Values;
 /// Represents a CSS function expression (e.g., <c>calc(...)</c>, <c>min(...)</c>, <c>max(...)</c>) and also supports CSS
 /// custom properties via <c>var(--...)</c>. Ensures the stored value is normalized to a standard format.
 /// </summary>
-public record AllyariaStyleFunction : StyleValueBase
+public sealed record AllyariaStyleFunction : StyleValueBase
 {
     /// <summary>
     /// Conservative CSS-like function identifier: starts with a letter/underscore/hyphen, followed by letters, digits,
