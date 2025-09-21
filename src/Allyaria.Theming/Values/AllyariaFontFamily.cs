@@ -7,14 +7,14 @@ namespace Allyaria.Theming.Values;
 /// comma-separated), applies quoting rules per CSS (quote tokens that contain whitespace, commas, or quotes),
 /// de-duplicates, trims, and produces a canonical comma-separated <see cref="StyleValueBase.Value" />.
 /// </summary>
-public sealed record AllyariaStyleFont : StyleValueBase
+public sealed record AllyariaFontFamily : StyleValueBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaStyleFont" /> class from one or more raw family names. Any
+    /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> class from one or more raw family names. Any
     /// argument that contains commas is split into multiple names before normalization.
     /// </summary>
     /// <param name="families">One or more raw font family names. Items containing commas will be split into separate names.</param>
-    public AllyariaStyleFont(params string[] families)
+    public AllyariaFontFamily(params string[] families)
         : base(Normalize(families)) { }
 
     /// <summary>
@@ -130,31 +130,31 @@ public sealed record AllyariaStyleFont : StyleValueBase
         return $"\"{escaped}\"";
     }
 
-    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="AllyariaStyleFont" />.</summary>
+    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="AllyariaFontFamily" />.</summary>
     /// <param name="families">The raw font family array to convert.</param>
-    /// <returns>An <see cref="AllyariaStyleFont" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaStyleFont(string[] families) => new(families);
+    /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
+    public static implicit operator AllyariaFontFamily(string[] families) => new(families);
 
     /// <summary>
-    /// Implicit conversion from <see langword="string" /> to <see cref="AllyariaStyleFont" />. Accepts a single
+    /// Implicit conversion from <see langword="string" /> to <see cref="AllyariaFontFamily" />. Accepts a single
     /// comma-separated string of font family names.
     /// </summary>
     /// <param name="families">A single string containing one or more comma-separated font family names.</param>
-    /// <returns>An <see cref="AllyariaStyleFont" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaStyleFont(string families) => new(families);
+    /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
+    public static implicit operator AllyariaFontFamily(string families) => new(families);
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaStyleFont" /> to <see langword="string[]" /> (the normalized array).
+    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string[]" /> (the normalized array).
     /// </summary>
-    /// <param name="fontFamily">The <see cref="AllyariaStyleFont" /> instance.</param>
+    /// <param name="fontFamilyFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family array.</returns>
-    public static implicit operator string[](AllyariaStyleFont fontFamily) => fontFamily.Families;
+    public static implicit operator string[](AllyariaFontFamily fontFamilyFamily) => fontFamilyFamily.Families;
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaStyleFont" /> to <see langword="string" /> (the normalized, comma-joined
+    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string" /> (the normalized, comma-joined
     /// value).
     /// </summary>
-    /// <param name="fontFamily">The <see cref="AllyariaStyleFont" /> instance.</param>
+    /// <param name="fontFamilyFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family list joined by commas with no spaces.</returns>
-    public static implicit operator string(AllyariaStyleFont fontFamily) => fontFamily.Value;
+    public static implicit operator string(AllyariaFontFamily fontFamilyFamily) => fontFamilyFamily.Value;
 }

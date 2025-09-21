@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Values;
 /// Represents a CSS function expression (e.g., <c>calc(...)</c>, <c>min(...)</c>, <c>max(...)</c>) and also supports CSS
 /// custom properties via <c>var(--...)</c>. Ensures the stored value is normalized to a standard format.
 /// </summary>
-public sealed record AllyariaStyleFunction : StyleValueBase
+public sealed record AllyariaCssFunction : StyleValueBase
 {
     /// <summary>
     /// Conservative CSS-like function identifier: starts with a letter/underscore/hyphen, followed by letters, digits,
@@ -16,7 +16,7 @@ public sealed record AllyariaStyleFunction : StyleValueBase
     private static readonly Regex IdentifierRegex = new("^[-A-Za-z_][-A-Za-z0-9_]*$", RegexOptions.Compiled);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaStyleFunction" /> class. Accepts a raw CSS function or variable
+    /// Initializes a new instance of the <see cref="AllyariaCssFunction" /> class. Accepts a raw CSS function or variable
     /// string and normalizes/validates it.
     /// </summary>
     /// <param name="value">
@@ -31,18 +31,18 @@ public sealed record AllyariaStyleFunction : StyleValueBase
     /// </list>
     /// Invalid input yields <see cref="string.Empty" />.
     /// </param>
-    public AllyariaStyleFunction(string value)
+    public AllyariaCssFunction(string value)
         : base(Normalize(string.Empty, value)) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaStyleFunction" /> class with an explicit function name.
+    /// Initializes a new instance of the <see cref="AllyariaCssFunction" /> class with an explicit function name.
     /// </summary>
     /// <param name="name">CSS function name (e.g., <c>calc</c>, <c>min</c>, <c>max</c>, or <c>var</c>).</param>
     /// <param name="value">
     /// Raw CSS text. Must start with <paramref name="name" /> immediately followed by <c>(</c> and end with <c>)</c>, unless
     /// <paramref name="name" /> is <c>var</c>, in which case either <c>--token</c> or <c>var(...)</c> are accepted.
     /// </param>
-    public AllyariaStyleFunction(string name, string value)
+    public AllyariaCssFunction(string name, string value)
         : base(Normalize(name, value)) { }
 
     /// <summary>Normalizes a raw CSS function/variable string to a standard format.</summary>
@@ -140,15 +140,15 @@ public sealed record AllyariaStyleFunction : StyleValueBase
         return true;
     }
 
-    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaStyleFunction" />.</summary>
+    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaCssFunction" />.</summary>
     /// <param name="value">Raw CSS function/variable string.</param>
     /// <returns>An instance with a normalized value or empty when invalid.</returns>
-    public static implicit operator AllyariaStyleFunction(string value) => new(value);
+    public static implicit operator AllyariaCssFunction(string value) => new(value);
 
-    /// <summary>Implicitly converts an <see cref="AllyariaStyleFunction" /> to <see cref="string" />.</summary>
+    /// <summary>Implicitly converts an <see cref="AllyariaCssFunction" /> to <see cref="string" />.</summary>
     /// <param name="calc">Instance to convert.</param>
     /// <returns>
     /// Normalized CSS string or <see cref="string.Empty" /> if <paramref name="calc" /> is <c>null</c> or invalid.
     /// </returns>
-    public static implicit operator string(AllyariaStyleFunction? calc) => calc?.Value ?? string.Empty;
+    public static implicit operator string(AllyariaCssFunction? calc) => calc?.Value ?? string.Empty;
 }

@@ -8,7 +8,7 @@ namespace Allyaria.Theming.Values;
 /// Represents a CSS <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> value. Ensures
 /// normalization according to CSS syntax rules and provides access to the numeric component.
 /// </summary>
-public sealed record AllyariaStyleNumber : StyleValueBase
+public sealed record AllyariaNumber : StyleValueBase
 {
     /// <summary>
     /// Supported CSS length units (case-insensitive). Includes relative, viewport, container query, and absolute units.
@@ -67,11 +67,11 @@ public sealed record AllyariaStyleNumber : StyleValueBase
     };
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaStyleNumber" /> class. Accepts a raw CSS string and normalizes it
-    /// to a valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
+    /// Initializes a new instance of the <see cref="AllyariaNumber" /> class. Accepts a raw CSS string and normalizes it to a
+    /// valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
     /// </summary>
     /// <param name="value">The raw CSS value to parse.</param>
-    public AllyariaStyleNumber(string value)
+    public AllyariaNumber(string value)
         : base(Normalize(value)) { }
 
     /// <summary>
@@ -155,11 +155,11 @@ public sealed record AllyariaStyleNumber : StyleValueBase
         return string.Empty;
     }
 
-    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaStyleNumber" />.</summary>
-    public static implicit operator AllyariaStyleNumber(string value) => new(value);
+    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaNumber" />.</summary>
+    public static implicit operator AllyariaNumber(string value) => new(value);
 
     /// <summary>
-    /// Implicitly converts an <see cref="AllyariaStyleNumber" /> to its normalized <see cref="string" /> representation.
+    /// Implicitly converts an <see cref="AllyariaNumber" /> to its normalized <see cref="string" /> representation.
     /// </summary>
-    public static implicit operator string(AllyariaStyleNumber? number) => number?.Value ?? string.Empty;
+    public static implicit operator string(AllyariaNumber? number) => number?.Value ?? string.Empty;
 }

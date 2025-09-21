@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaStyleFunctionTests
+public sealed class AllyariaCssFunctionTests
 {
     [Theory]
     [InlineData("--x", "var(--x)")]
@@ -12,9 +12,9 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var noName = new AllyariaStyleFunction(input);
-        var calcName = new AllyariaStyleFunction("calc", input);
-        var varName = new AllyariaStyleFunction("var", input);
+        var noName = new AllyariaCssFunction(input);
+        var calcName = new AllyariaCssFunction("calc", input);
+        var varName = new AllyariaCssFunction("var", input);
 
         // Assert
         ((string)noName).Should()
@@ -35,7 +35,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, padded);
+        var sut = new AllyariaCssFunction(name, padded);
         var result = (string)sut;
 
         // Assert
@@ -52,9 +52,9 @@ public sealed class AllyariaStyleFunctionTests
         var spacedInput = "calc (1+2)";
 
         // Act
-        var ok = new AllyariaStyleFunction("calc", matchInput);
-        var mismatch = new AllyariaStyleFunction("calc", mismatchInput);
-        var spaced = new AllyariaStyleFunction("calc", spacedInput);
+        var ok = new AllyariaCssFunction("calc", matchInput);
+        var mismatch = new AllyariaCssFunction("calc", mismatchInput);
+        var spaced = new AllyariaCssFunction("calc", spacedInput);
 
         // Assert
         ((string)ok).Should()
@@ -75,8 +75,8 @@ public sealed class AllyariaStyleFunctionTests
         var input2 = "VAR(  --x  )";
 
         // Act
-        var ok = new AllyariaStyleFunction("var", input1);
-        var bad = new AllyariaStyleFunction("var", input2);
+        var ok = new AllyariaCssFunction("var", input1);
+        var bad = new AllyariaCssFunction("var", input2);
 
         // Assert
         ((string)ok).Should()
@@ -96,7 +96,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, value);
+        var sut = new AllyariaCssFunction(name, value);
         var result = (string)sut;
 
         // Assert
@@ -113,7 +113,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, value);
+        var sut = new AllyariaCssFunction(name, value);
         var result = (string)sut;
 
         // Assert
@@ -130,7 +130,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, value);
+        var sut = new AllyariaCssFunction(name, value);
         var result = (string)sut;
 
         // Assert
@@ -148,7 +148,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, value);
+        var sut = new AllyariaCssFunction(name, value);
         var result = (string)sut;
 
         // Assert
@@ -164,7 +164,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleFunction(name, value);
+        var sut = new AllyariaCssFunction(name, value);
         var result = (string)sut;
 
         // Assert
@@ -181,7 +181,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var f = new AllyariaStyleFunction(input);
+        var f = new AllyariaCssFunction(input);
         var result = (string)f;
 
         // Assert
@@ -193,8 +193,8 @@ public sealed class AllyariaStyleFunctionTests
     public void GreaterThan_WhenLeftValid_AndRightExplicitNameMismatch_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaStyleFunction("calc(100% - 2rem)");
-        var right = new AllyariaStyleFunction("calc", "calculus(100% - 2rem)");
+        var left = new AllyariaCssFunction("calc(100% - 2rem)");
+        var right = new AllyariaCssFunction("calc", "calculus(100% - 2rem)");
 
         // Act
         var result = left > right;
@@ -208,8 +208,8 @@ public sealed class AllyariaStyleFunctionTests
     public void GreaterThanOrEqual_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaStyleFunction("var(--ok)");
-        var right = new AllyariaStyleFunction("var", "variant(--ok)");
+        var left = new AllyariaCssFunction("var(--ok)");
+        var right = new AllyariaCssFunction("var", "variant(--ok)");
 
         // Act
         var result = left >= right;
@@ -223,7 +223,7 @@ public sealed class AllyariaStyleFunctionTests
     public void ImplicitOperators_ShouldRoundTrip()
     {
         // Arrange
-        AllyariaStyleFunction f = "--gap";
+        AllyariaCssFunction f = "--gap";
 
         // Act
         string result = f;
@@ -242,7 +242,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var f = new AllyariaStyleFunction(input);
+        var f = new AllyariaCssFunction(input);
         var result = (string)f;
 
         // Assert
@@ -254,8 +254,8 @@ public sealed class AllyariaStyleFunctionTests
     public void LessThan_WhenLeftExplicitNameMismatch_AndRightValid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaStyleFunction("min", "minmax(1)");
-        var right = new AllyariaStyleFunction("min(1)");
+        var left = new AllyariaCssFunction("min", "minmax(1)");
+        var right = new AllyariaCssFunction("min(1)");
 
         // Act
         var result = left < right;
@@ -269,8 +269,8 @@ public sealed class AllyariaStyleFunctionTests
     public void LessThanOrEqual_WhenNormalizedValuesEqual_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaStyleFunction("MAX", "MaX( 2 )");
-        var right = new AllyariaStyleFunction("max(2)");
+        var left = new AllyariaCssFunction("MAX", "MaX( 2 )");
+        var right = new AllyariaCssFunction("max(2)");
 
         // Act
         var result = left <= right;
@@ -287,7 +287,7 @@ public sealed class AllyariaStyleFunctionTests
         string? input = null;
 
         // Act
-        var f = new AllyariaStyleFunction(input!);
+        var f = new AllyariaCssFunction(input!);
         var result = (string)f;
 
         // Assert
@@ -302,7 +302,7 @@ public sealed class AllyariaStyleFunctionTests
         var input = "  max( 10px ,  20px )  ";
 
         // Act
-        var f = new AllyariaStyleFunction(input);
+        var f = new AllyariaCssFunction(input);
         var result = (string)f;
 
         // Assert
@@ -319,7 +319,7 @@ public sealed class AllyariaStyleFunctionTests
         // Arrange
 
         // Act
-        var f = new AllyariaStyleFunction(input);
+        var f = new AllyariaCssFunction(input);
         var result = (string)f;
 
         // Assert
@@ -334,7 +334,7 @@ public sealed class AllyariaStyleFunctionTests
         var input = "--main-color";
 
         // Act
-        var f = new AllyariaStyleFunction(input);
+        var f = new AllyariaCssFunction(input);
         var result = (string)f;
 
         // Assert

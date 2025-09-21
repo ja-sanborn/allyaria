@@ -2,13 +2,13 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaStyleFont_PublicSurfaceTests
+public sealed class AllyariaStyleFontPublicSurfaceTests
 {
     [Fact]
     public void Ctor_EscapesInnerDoubleQuotes_AndQuotesOverall()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Foo\"Bar");
+        var sut = new AllyariaFontFamily("Foo\"Bar");
 
         // Act
         var families = sut.Families;
@@ -25,7 +25,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Ctor_QuotesWhenWhitespaceOrCommaOrQuotesPresent()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Open Sans", "A,B", "A'B");
+        var sut = new AllyariaFontFamily("Open Sans", "A,B", "A'B");
 
         // Act
         var families = sut.Families;
@@ -42,7 +42,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Ctor_RemovesWhitespaceOnlyAndEmptyCommaTokens()
     {
         // Arrange
-        var sut = new AllyariaStyleFont(" , ,  , A  ,  ,  B ", "  ", ",,,", " C ");
+        var sut = new AllyariaFontFamily(" , ,  , A  ,  ,  B ", "  ", ",,,", " C ");
 
         // Act
         var families = sut.Families;
@@ -68,7 +68,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
         };
 
         // Act
-        var sut = new AllyariaStyleFont(input);
+        var sut = new AllyariaFontFamily(input);
 
         // Assert
         sut.Value.Should()
@@ -82,7 +82,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Ctor_StripsOuterQuotes_ThenCanonicalizes()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("'Open Sans'", "\"Already Quoted\"", "'Inter'");
+        var sut = new AllyariaFontFamily("'Open Sans'", "\"Already Quoted\"", "'Inter'");
 
         // Act
         var families = sut.Families;
@@ -99,7 +99,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Ctor_WhitespaceCharactersTriggerQuoting()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Tab\tHere", "New\nLine", "FormFeed\fHere");
+        var sut = new AllyariaFontFamily("Tab\tHere", "New\nLine", "FormFeed\fHere");
 
         // Act
         var families = sut.Families;
@@ -116,7 +116,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Ctor_WithNoArgs_YieldsEmptyValueAndNoFamilies()
     {
         // Arrange // Act
-        var sut = new AllyariaStyleFont();
+        var sut = new AllyariaFontFamily();
 
         // Assert
         sut.Value.Should()
@@ -133,7 +133,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
         string[]? raw = null;
 
         // Act
-        var sut = new AllyariaStyleFont(raw!);
+        var sut = new AllyariaFontFamily(raw!);
 
         // Assert
         sut.Value.Should()
@@ -147,7 +147,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void DeDuplication_IsCaseInsensitive_AndOrderPreserving()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Inter", "inter", "\"Inter\"", "Open Sans", "\"open sans\"");
+        var sut = new AllyariaFontFamily("Inter", "inter", "\"Inter\"", "Open Sans", "\"open sans\"");
 
         // Act
         var families = sut.Families;
@@ -164,7 +164,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Families_SplitsByComma_AndTrimsEntries()
     {
         // Arrange
-        var sut = new AllyariaStyleFont(" A ,  B  ,  \"C C\" ");
+        var sut = new AllyariaFontFamily(" A ,  B  ,  \"C C\" ");
 
         // Act
         var families = sut.Families;
@@ -181,7 +181,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
         var raw = "";
 
         // Act
-        AllyariaStyleFont sut = raw;
+        AllyariaFontFamily sut = raw;
 
         // Assert
         ((string)sut).Should()
@@ -198,7 +198,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
         string[]? nullArray = null;
 
         // Act
-        AllyariaStyleFont sut = nullArray!;
+        AllyariaFontFamily sut = nullArray!;
 
         // Assert
         ((string)sut).Should()
@@ -212,7 +212,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Implicit_FromString_CommaSeparated_NormalizesAndQuotes()
     {
         // Arrange
-        AllyariaStyleFont sut = "Inter, Open Sans";
+        AllyariaFontFamily sut = "Inter, Open Sans";
 
         // Act
         string value = sut;
@@ -236,7 +236,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
         };
 
         // Act
-        AllyariaStyleFont sut = raw;
+        AllyariaFontFamily sut = raw;
 
         // Assert
         ((string)sut).Should()
@@ -250,7 +250,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Implicit_ToString_ReturnsNormalizedCommaJoinedValue()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Inter", "Open  Sans");
+        var sut = new AllyariaFontFamily("Inter", "Open  Sans");
 
         // Act
         string value = sut;
@@ -264,7 +264,7 @@ public sealed class AllyariaStyleFont_PublicSurfaceTests
     public void Implicit_ToStringArray_ReturnsNormalizedArray()
     {
         // Arrange
-        var sut = new AllyariaStyleFont("Inter,  Roboto", "Open Sans");
+        var sut = new AllyariaFontFamily("Inter,  Roboto", "Open Sans");
 
         // Act
         string[] families = sut;

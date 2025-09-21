@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaStyleNumberTests
+public sealed class AllyariaNumberTests
 {
     [Theory]
     [InlineData("1rex", "1rex", 1)]
@@ -20,7 +20,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -56,7 +56,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -80,7 +80,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -96,7 +96,7 @@ public sealed class AllyariaStyleNumberTests
     public void Implicit_FromString_ShouldNormalize_AndParseNumber()
     {
         // Arrange
-        AllyariaStyleNumber sut = "  15.5PT  ";
+        AllyariaNumber sut = "  15.5PT  ";
 
         // Act
         var value = (string)sut;
@@ -114,7 +114,7 @@ public sealed class AllyariaStyleNumberTests
     public void Implicit_ToString_ShouldReturnNormalizedValue()
     {
         // Arrange
-        var sut = new AllyariaStyleNumber("  -2.25ex  ");
+        var sut = new AllyariaNumber("  -2.25ex  ");
 
         // Act
         string value = sut;
@@ -141,7 +141,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -170,7 +170,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -189,7 +189,7 @@ public sealed class AllyariaStyleNumberTests
         string? input = null;
 
         // Act
-        var sut = new AllyariaStyleNumber(input!);
+        var sut = new AllyariaNumber(input!);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -212,7 +212,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -235,7 +235,7 @@ public sealed class AllyariaStyleNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaStyleNumber(input);
+        var sut = new AllyariaNumber(input);
         var value = (string)sut;
         var number = sut.Number;
 
