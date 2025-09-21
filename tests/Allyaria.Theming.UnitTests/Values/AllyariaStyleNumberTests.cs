@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public class AllyariaStyleNumberTests
+public sealed class AllyariaStyleNumberTests
 {
     [Theory]
     [InlineData("1rex", "1rex", 1)]
