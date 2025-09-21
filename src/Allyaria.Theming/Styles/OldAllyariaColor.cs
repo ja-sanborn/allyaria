@@ -28,10 +28,10 @@ namespace Allyaria.Theming.Styles;
 /// </list>
 /// All numeric parsing/formatting uses <see cref="CultureInfo.InvariantCulture" />.
 /// </remarks>
-public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<AllyariaColor>
+public readonly struct OldAllyariaColor : IComparable<OldAllyariaColor>, IEquatable<OldAllyariaColor>
 {
     /// <summary>Material Design color lookup table.</summary>
-    private static readonly Dictionary<string, AllyariaColor> MaterialMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, OldAllyariaColor> MaterialMap = new(StringComparer.OrdinalIgnoreCase)
     {
         // Red
         ["red50"] = FromHexInline("#FFEBEEFF"),
@@ -343,7 +343,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     );
 
     /// <summary>CSS Web color lookup table.</summary>
-    private static readonly Dictionary<string, AllyariaColor> WebNameMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, OldAllyariaColor> WebNameMap = new(StringComparer.OrdinalIgnoreCase)
     {
         ["aliceblue"] = FromHexInline("#F0F8FFFF"),
         ["antiquewhite"] = FromHexInline("#FAEBD7FF"),
@@ -485,7 +485,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
         ["whitesmoke"] = FromHexInline("#F5F5F5FF"),
         ["yellow"] = FromHexInline("#FFFF00FF"),
         ["yellowgreen"] = FromHexInline("#9ACD32FF"),
-        ["transparent"] = new AllyariaColor(0, 0, 0, 0)
+        ["transparent"] = new OldAllyariaColor(0, 0, 0, 0)
     };
 
     /// <summary>Initializes a color from HSVA channels.</summary>
@@ -493,7 +493,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    private AllyariaColor(double h, double s, double v, double a = 1.0)
+    private OldAllyariaColor(double h, double s, double v, double a = 1.0)
     {
         HsvToRgb(Clamp(h, 0, 360), Clamp(s, 0, 100), Clamp(v, 0, 100), out var r, out var g, out var b);
         R = r;
@@ -507,7 +507,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    private AllyariaColor(byte r, byte g, byte b, double a = 1.0)
+    private OldAllyariaColor(byte r, byte g, byte b, double a = 1.0)
     {
         R = r;
         G = g;
@@ -522,7 +522,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="value">The input string to parse.</param>
     /// <exception cref="ArgumentException">Thrown when the value is not a recognized color format or name.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
-    public AllyariaColor(string value)
+    public OldAllyariaColor(string value)
     {
         try
         {
@@ -713,27 +713,27 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// A signed integer indicating the relative order. Less than zero if this instance is less; greater than zero if this
     /// instance is greater; zero if equal.
     /// </returns>
-    public int CompareTo(AllyariaColor other) => string.Compare(HexRgba, other.HexRgba, StringComparison.Ordinal);
+    public int CompareTo(OldAllyariaColor other) => string.Compare(HexRgba, other.HexRgba, StringComparison.Ordinal);
 
     /// <summary>Determines whether the specified object is equal to the current color.</summary>
     /// <param name="obj">The object to compare with.</param>
     /// <returns><c>true</c> if equal; otherwise <c>false</c>.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaColor c && Equals(c);
+    public override bool Equals(object? obj) => obj is OldAllyariaColor c && Equals(c);
 
     /// <summary>Determines whether another color is equal to this instance.</summary>
     /// <param name="other">The other color.</param>
     /// <returns><c>true</c> if all channels (including alpha) are equal; otherwise <c>false</c>.</returns>
-    public bool Equals(AllyariaColor other)
+    public bool Equals(OldAllyariaColor other)
         => R == other.R && G == other.G && B == other.B && AlphaByte == other.AlphaByte;
 
-    /// <summary>Creates an <see cref="AllyariaColor" /> from a hex literal (helper used by color tables).</summary>
+    /// <summary>Creates an <see cref="OldAllyariaColor" /> from a hex literal (helper used by color tables).</summary>
     /// <param name="hex">A hex color string of the form <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.</param>
-    /// <returns>A new <see cref="AllyariaColor" /> parsed from <paramref name="hex" />.</returns>
-    internal static AllyariaColor FromHexInline(string hex)
+    /// <returns>A new <see cref="OldAllyariaColor" /> parsed from <paramref name="hex" />.</returns>
+    internal static OldAllyariaColor FromHexInline(string hex)
     {
         FromHexString(hex, out var r, out var g, out var b, out var a);
 
-        return new AllyariaColor(r, g, b, a);
+        return new OldAllyariaColor(r, g, b, a);
     }
 
     /// <summary>Parses a hexadecimal CSS color literal.</summary>
@@ -795,8 +795,8 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the HSVA channels.</returns>
-    public static AllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
+    /// <returns>The OldAllyariaColor from the HSVA channels.</returns>
+    public static OldAllyariaColor FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -835,8 +835,8 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColor from the RGBA channels.</returns>
-    public static AllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
+    /// <returns>The OldAllyariaColor from the RGBA channels.</returns>
+    public static OldAllyariaColor FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -875,7 +875,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// Produces a hover-friendly variant: if <see cref="V" /> &lt; 50, lightens by 20; otherwise darkens by 20. Alpha is
     /// preserved.
     /// </summary>
-    public AllyariaColor HoverColor()
+    public OldAllyariaColor HoverColor()
     {
         var delta = V < 50
             ? 20
@@ -1088,14 +1088,14 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <summary>Adjusts <see cref="V" /> (value/brightness) by the specified percentage.</summary>
     /// <param name="percent">A value in [-100..100]. Positive to lighten; negative to darken.</param>
     /// <returns>A new color with adjusted brightness; alpha is preserved.</returns>
-    public AllyariaColor ShiftColor(double percent)
+    public OldAllyariaColor ShiftColor(double percent)
     {
         percent = Clamp(percent, -100, 100);
         RgbToHsv(R, G, B, out var h, out var s, out var v);
         var v2 = Clamp(v + percent, 0, 100);
         HsvToRgb(h, s, v2, out var r2, out var g2, out var b2);
 
-        return new AllyariaColor(r2, g2, b2, A);
+        return new OldAllyariaColor(r2, g2, b2, A);
     }
 
     /// <summary>Converts the color to a CSS declaration using the specified property name.</summary>
@@ -1137,7 +1137,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// </param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    internal static bool TryFromMaterialName(string name, out AllyariaColor color)
+    internal static bool TryFromMaterialName(string name, out OldAllyariaColor color)
     {
         var norm = NormalizeMaterialKey(name);
 
@@ -1148,7 +1148,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
             return true;
         }
 
-        color = default(AllyariaColor);
+        color = default(OldAllyariaColor);
 
         return false;
     }
@@ -1157,7 +1157,7 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
     /// <param name="name">The color name (e.g., <c>"dodgerblue"</c>, <c>"white"</c>).</param>
     /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    internal static bool TryFromWebName(string name, out AllyariaColor color)
+    internal static bool TryFromWebName(string name, out OldAllyariaColor color)
     {
         var key = name.Trim().ToLowerInvariant();
 
@@ -1168,40 +1168,40 @@ public readonly struct AllyariaColor : IComparable<AllyariaColor>, IEquatable<Al
             return true;
         }
 
-        color = default(AllyariaColor);
+        color = default(OldAllyariaColor);
 
         return false;
     }
 
     /// <summary>Returns <c>true</c> if the two colors are equal.</summary>
-    public static bool operator ==(AllyariaColor left, AllyariaColor right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaColor left, OldAllyariaColor right) => left.Equals(right);
 
     /// <summary>
     /// Returns <c>true</c> if <paramref name="left" /> is greater than <paramref name="right" /> (by <c>#RRGGBBAA</c>
     /// ordering).
     /// </summary>
-    public static bool operator >(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) > 0;
+    public static bool operator >(OldAllyariaColor left, OldAllyariaColor right) => left.CompareTo(right) > 0;
 
     /// <summary>
     /// Returns <c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />.
     /// </summary>
-    public static bool operator >=(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) >= 0;
+    public static bool operator >=(OldAllyariaColor left, OldAllyariaColor right) => left.CompareTo(right) >= 0;
 
     /// <summary>Implicit conversion from <see cref="string" /> by parsing.</summary>
     /// <param name="value">A supported color string.</param>
-    public static implicit operator AllyariaColor(string value) => new(value);
+    public static implicit operator OldAllyariaColor(string value) => new(value);
 
     /// <summary>Implicit conversion to <see cref="string" /> using <see cref="ToString" /> (i.e., <c>#RRGGBBAA</c>).</summary>
-    public static implicit operator string(AllyariaColor value) => value.ToString();
+    public static implicit operator string(OldAllyariaColor value) => value.ToString();
 
     /// <summary>Returns <c>true</c> if the two colors are not equal.</summary>
-    public static bool operator !=(AllyariaColor left, AllyariaColor right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaColor left, OldAllyariaColor right) => !left.Equals(right);
 
     /// <summary>
     /// Returns <c>true</c> if <paramref name="left" /> is less than <paramref name="right" /> (by <c>#RRGGBBAA</c> ordering).
     /// </summary>
-    public static bool operator <(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) < 0;
+    public static bool operator <(OldAllyariaColor left, OldAllyariaColor right) => left.CompareTo(right) < 0;
 
     /// <summary>Returns <c>true</c> if <paramref name="left" /> is less than or equal to <paramref name="right" />.</summary>
-    public static bool operator <=(AllyariaColor left, AllyariaColor right) => left.CompareTo(right) <= 0;
+    public static bool operator <=(OldAllyariaColor left, OldAllyariaColor right) => left.CompareTo(right) <= 0;
 }

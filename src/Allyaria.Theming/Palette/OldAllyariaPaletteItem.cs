@@ -31,13 +31,13 @@ namespace Allyaria.Theming.Palette;
 ///     <item>
 ///         <description>
 ///         If <see cref="BackgroundHoverColor" /> is unset, it is <see cref="BackgroundColor" />.
-///         <see cref="AllyariaColor.HoverColor" />().
+///         <see cref="OldAllyariaColor.HoverColor" />().
 ///         </description>
 ///     </item>
 ///     <item>
 ///         <description>
 ///         If <see cref="ForegroundHoverColor" /> is unset, it is <see cref="ForegroundColor" />.
-///         <see cref="AllyariaColor.HoverColor" />().
+///         <see cref="OldAllyariaColor.HoverColor" />().
 ///         </description>
 ///     </item>
 ///     <item>
@@ -48,19 +48,19 @@ namespace Allyaria.Theming.Palette;
 ///     </item>
 /// </list>
 /// </remarks>
-public sealed class AllyariaPaletteItem
+public sealed class OldAllyariaPaletteItem
 {
     /// <summary>
     /// Backing field for <see cref="BackgroundColor" />. May be <c>null</c> until set; when null, resolves to
     /// <see cref="White" />.
     /// </summary>
-    private AllyariaColor? _backgroundColor;
+    private OldAllyariaColor? _backgroundColor;
 
     /// <summary>
     /// Backing field for <see cref="BackgroundHoverColor" />. May be <c>null</c>; when null, resolves to
-    /// <see cref="BackgroundColor" />.<see cref="AllyariaColor.HoverColor()" />.
+    /// <see cref="BackgroundColor" />.<see cref="OldAllyariaColor.HoverColor()" />.
     /// </summary>
-    private AllyariaColor? _backgroundHoverColor;
+    private OldAllyariaColor? _backgroundHoverColor;
 
     /// <summary>Backing field for <see cref="BackgroundImage" />. May be <c>null</c> when no image is assigned.</summary>
     private string? _backgroundImage;
@@ -69,42 +69,42 @@ public sealed class AllyariaPaletteItem
     /// Backing field for <see cref="BorderColor" />. May be <c>null</c>; when null, resolves to <see cref="BackgroundColor" />
     /// .
     /// </summary>
-    private AllyariaColor? _borderColor;
+    private OldAllyariaColor? _borderColor;
 
     /// <summary>
     /// Backing field for <see cref="ForegroundColor" />. May be <c>null</c>; when null, resolves based on
-    /// <see cref="BackgroundColor" />.<see cref="AllyariaColor.V" />.
+    /// <see cref="BackgroundColor" />.<see cref="OldAllyariaColor.V" />.
     /// </summary>
-    private AllyariaColor? _foregroundColor;
+    private OldAllyariaColor? _foregroundColor;
 
     /// <summary>
     /// Backing field for <see cref="ForegroundHoverColor" />. May be <c>null</c>; when null, resolves to
-    /// <see cref="ForegroundColor" />.<see cref="AllyariaColor.HoverColor()" />.
+    /// <see cref="ForegroundColor" />.<see cref="OldAllyariaColor.HoverColor()" />.
     /// </summary>
-    private AllyariaColor? _foregroundHoverColor;
+    private OldAllyariaColor? _foregroundHoverColor;
 
     /// <summary>
     /// Shared black color instance for fallbacks (used when <see cref="ForegroundColor" /> requires black).
     /// </summary>
-    private static readonly AllyariaColor Black = new("black");
+    private static readonly OldAllyariaColor Black = new("black");
 
     /// <summary>
     /// Shared white color instance for fallbacks (used when <see cref="_backgroundColor" /> is <c>null</c> or when
     /// <see cref="ForegroundColor" /> requires white).
     /// </summary>
-    private static readonly AllyariaColor White = new("white");
+    private static readonly OldAllyariaColor White = new("white");
 
     /// <summary>Initializes a new instance with defaults.</summary>
-    public AllyariaPaletteItem() { }
+    public OldAllyariaPaletteItem() { }
 
     /// <summary>Initializes a new instance with a background color.</summary>
     /// <param name="backgroundColor">The base background color.</param>
-    public AllyariaPaletteItem(AllyariaColor backgroundColor) => _backgroundColor = backgroundColor;
+    public OldAllyariaPaletteItem(OldAllyariaColor backgroundColor) => _backgroundColor = backgroundColor;
 
     /// <summary>Initializes a new instance with a background and foreground color.</summary>
     /// <param name="backgroundColor">The base background color.</param>
     /// <param name="foregroundColor">The foreground color.</param>
-    public AllyariaPaletteItem(AllyariaColor backgroundColor, AllyariaColor foregroundColor)
+    public OldAllyariaPaletteItem(OldAllyariaColor backgroundColor, OldAllyariaColor foregroundColor)
     {
         _backgroundColor = backgroundColor;
         _foregroundColor = foregroundColor;
@@ -114,7 +114,7 @@ public sealed class AllyariaPaletteItem
     /// Gets or sets the <b>effective</b> background color. The setter sets the base background; the getter applies precedence:
     /// base → white if unset, then if <see cref="HasBorder" /> is true, returns the hover variant.
     /// </summary>
-    public AllyariaColor BackgroundColor
+    public OldAllyariaColor BackgroundColor
     {
         get
         {
@@ -130,9 +130,9 @@ public sealed class AllyariaPaletteItem
 
     /// <summary>
     /// Gets or sets the background color used on hover. If unset, derives from <see cref="BackgroundColor" /> via
-    /// <see cref="AllyariaColor.HoverColor" />().
+    /// <see cref="OldAllyariaColor.HoverColor" />().
     /// </summary>
-    public AllyariaColor BackgroundHoverColor
+    public OldAllyariaColor BackgroundHoverColor
     {
         get => _backgroundHoverColor ?? BackgroundColor.HoverColor();
         set => _backgroundHoverColor = value;
@@ -155,7 +155,7 @@ public sealed class AllyariaPaletteItem
     /// Gets or sets the border color. If unset, falls back to the <b>base</b> background (pre-shift), per precedence list
     /// order.
     /// </summary>
-    public AllyariaColor BorderColor
+    public OldAllyariaColor BorderColor
     {
         get
         {
@@ -177,7 +177,7 @@ public sealed class AllyariaPaletteItem
     /// Gets or sets the foreground (text) color. If unset, computed for contrast against the <b>effective</b>
     /// <see cref="BackgroundColor" />: <c>V &lt; 50</c> → white; otherwise black.
     /// </summary>
-    public AllyariaColor ForegroundColor
+    public OldAllyariaColor ForegroundColor
     {
         get
         {
@@ -198,9 +198,9 @@ public sealed class AllyariaPaletteItem
 
     /// <summary>
     /// Gets or sets the foreground color used on hover. If unset, derives from <see cref="ForegroundColor" /> via
-    /// <see cref="AllyariaColor.HoverColor" />().
+    /// <see cref="OldAllyariaColor.HoverColor" />().
     /// </summary>
-    public AllyariaColor ForegroundHoverColor
+    public OldAllyariaColor ForegroundHoverColor
     {
         get => _foregroundHoverColor ?? ForegroundColor.HoverColor();
         set => _foregroundHoverColor = value;
@@ -236,7 +236,7 @@ public sealed class AllyariaPaletteItem
     ///         </description>
     ///     </item>
     /// </list>
-    /// Uses <see cref="AllyariaColor.ToCss(string)" /> for color declarations.
+    /// Uses <see cref="OldAllyariaColor.ToCss(string)" /> for color declarations.
     /// </summary>
     /// <returns>CSS declarations suitable for inclusion in a <c>style</c> attribute or block.</returns>
     public string ToCss()
@@ -346,7 +346,7 @@ public sealed class AllyariaPaletteItem
     ///         </description>
     ///     </item>
     /// </list>
-    /// Uses <see cref="AllyariaColor.ToCss(string)" /> for color declarations.
+    /// Uses <see cref="OldAllyariaColor.ToCss(string)" /> for color declarations.
     /// </summary>
     /// <returns>CSS declarations suitable for inclusion in a <c>style</c> attribute or block.</returns>
     public string ToHoverCss()

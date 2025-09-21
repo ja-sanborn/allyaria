@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Typography;
 /// CSS when null or whitespace. This struct now composes the strongly typed style structs under
 /// <see cref="Allyaria.Theming.Styles" />.
 /// </summary>
-public readonly record struct AllyariaTypoItem
+public readonly record struct OldAllyariaTypoItem
 {
     /// <summary>
     /// Creates a validated, immutable instance. All parameters are optional (nullable). Invalid inputs throw
@@ -25,7 +25,7 @@ public readonly record struct AllyariaTypoItem
     /// <param name="textTransform">Text transform string.</param>
     /// <param name="verticalAlign">Vertical alignment string.</param>
     /// <param name="wordSpacing">Word spacing string.</param>
-    public AllyariaTypoItem(string[]? fontFamily = null,
+    public OldAllyariaTypoItem(string[]? fontFamily = null,
         string? fontSize = null,
         string? fontStyle = null,
         string? fontWeight = null,
@@ -39,7 +39,7 @@ public readonly record struct AllyariaTypoItem
     {
         if (fontFamily?.Length > 0)
         {
-            FontFamily = new AllyariaFontFamily(fontFamily);
+            FontFamily = new OldAllyariaFontFamily(fontFamily);
         }
 
         if (FontFamily?.Families.Length is 0)
@@ -48,78 +48,78 @@ public readonly record struct AllyariaTypoItem
         }
 
         FontSize = !string.IsNullOrWhiteSpace(fontSize)
-            ? new AllyariaFontSize(fontSize)
+            ? new OldAllyariaFontSize(fontSize)
             : null!;
 
         FontStyle = !string.IsNullOrWhiteSpace(fontStyle)
-            ? new AllyariaFontStyle(fontStyle)
+            ? new OldAllyariaFontStyle(fontStyle)
             : null!;
 
         FontWeight = !string.IsNullOrWhiteSpace(fontWeight)
-            ? new AllyariaFontWeight(fontWeight)
+            ? new OldAllyariaFontWeight(fontWeight)
             : null!;
 
         LetterSpacing = !string.IsNullOrWhiteSpace(letterSpacing)
-            ? new AllyariaLetterSpacing(letterSpacing)
+            ? new OldAllyariaLetterSpacing(letterSpacing)
             : null!;
 
         LineHeight = !string.IsNullOrWhiteSpace(lineHeight)
-            ? new AllyariaLineHeight(lineHeight)
+            ? new OldAllyariaLineHeight(lineHeight)
             : null!;
 
         TextAlign = !string.IsNullOrWhiteSpace(textAlign)
-            ? new AllyariaTextAlign(textAlign)
+            ? new OldAllyariaTextAlign(textAlign)
             : null!;
 
         TextDecoration = !string.IsNullOrWhiteSpace(textDecoration)
-            ? new AllyariaTextDecoration(textDecoration)
+            ? new OldAllyariaTextDecoration(textDecoration)
             : null!;
 
         TextTransform = !string.IsNullOrWhiteSpace(textTransform)
-            ? new AllyariaTextTransform(textTransform)
+            ? new OldAllyariaTextTransform(textTransform)
             : null!;
 
         VerticalAlign = !string.IsNullOrWhiteSpace(verticalAlign)
-            ? new AllyariaVerticalAlign(verticalAlign)
+            ? new OldAllyariaVerticalAlign(verticalAlign)
             : null!;
 
         WordSpacing = !string.IsNullOrWhiteSpace(wordSpacing)
-            ? new AllyariaWordSpacing(wordSpacing)
+            ? new OldAllyariaWordSpacing(wordSpacing)
             : null!;
     }
 
     /// <summary>Optional strongly typed font-family style.</summary>
-    public AllyariaFontFamily? FontFamily { get; }
+    public OldAllyariaFontFamily? FontFamily { get; }
 
     /// <summary>Optional strongly typed font-size style.</summary>
-    public AllyariaFontSize? FontSize { get; }
+    public OldAllyariaFontSize? FontSize { get; }
 
     /// <summary>Optional strongly typed font-style.</summary>
-    public AllyariaFontStyle? FontStyle { get; }
+    public OldAllyariaFontStyle? FontStyle { get; }
 
     /// <summary>Optional strongly typed font-weight.</summary>
-    public AllyariaFontWeight? FontWeight { get; }
+    public OldAllyariaFontWeight? FontWeight { get; }
 
     /// <summary>Optional strongly typed letter-spacing style.</summary>
-    public AllyariaLetterSpacing? LetterSpacing { get; }
+    public OldAllyariaLetterSpacing? LetterSpacing { get; }
 
     /// <summary>Optional strongly typed line-height style.</summary>
-    public AllyariaLineHeight? LineHeight { get; }
+    public OldAllyariaLineHeight? LineHeight { get; }
 
     /// <summary>Optional strongly typed text-align style.</summary>
-    public AllyariaTextAlign? TextAlign { get; }
+    public OldAllyariaTextAlign? TextAlign { get; }
 
     /// <summary>Optional strongly typed text-decoration style.</summary>
-    public AllyariaTextDecoration? TextDecoration { get; init; }
+    public OldAllyariaTextDecoration? TextDecoration { get; init; }
 
     /// <summary>Optional strongly typed text-transform style.</summary>
-    public AllyariaTextTransform? TextTransform { get; }
+    public OldAllyariaTextTransform? TextTransform { get; }
 
     /// <summary>Optional strongly typed vertical-align style.</summary>
-    public AllyariaVerticalAlign? VerticalAlign { get; }
+    public OldAllyariaVerticalAlign? VerticalAlign { get; }
 
     /// <summary>Optional strongly typed word-spacing style.</summary>
-    public AllyariaWordSpacing? WordSpacing { get; }
+    public OldAllyariaWordSpacing? WordSpacing { get; }
 
     /// <summary>
     /// Produces a single-line CSS declaration string in fixed order, skipping null/whitespace properties. Format:

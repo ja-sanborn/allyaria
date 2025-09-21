@@ -13,16 +13,16 @@
 /// <see cref="ToString" /> calls <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoration>
+public readonly struct OldAllyariaTextDecoration : IEquatable<OldAllyariaTextDecoration>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaTextDecoration" /> struct from a raw CSS value.
+    /// Initializes a new instance of the <see cref="OldAllyariaTextDecoration" /> struct from a raw CSS value.
     /// </summary>
     /// <param name="value">
     /// The raw CSS value, possibly containing space-separated tokens such as <c>"underline overline"</c> or a single token
     /// like <c>"none"</c>.
     /// </param>
-    public AllyariaTextDecoration(string value) => Value = Normalize(value);
+    public OldAllyariaTextDecoration(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized, space-separated token string that represents this <c>text-decoration</c> value.
@@ -34,15 +34,15 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// </summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaTextDecoration other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaTextDecoration other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaTextDecoration" /> is equal to the current instance by comparing
+    /// Determines whether the specified <see cref="OldAllyariaTextDecoration" /> is equal to the current instance by comparing
     /// normalized values.
     /// </summary>
     /// <param name="other">The other instance to compare with.</param>
     /// <returns><see langword="true" /> if equal; otherwise <see langword="false" />.</returns>
-    public bool Equals(AllyariaTextDecoration other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaTextDecoration other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -140,25 +140,27 @@ public readonly struct AllyariaTextDecoration : IEquatable<AllyariaTextDecoratio
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaTextDecoration" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaTextDecoration" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns><see langword="true" /> if equal; otherwise <see langword="false" />.</returns>
-    public static bool operator ==(AllyariaTextDecoration left, AllyariaTextDecoration right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaTextDecoration left, OldAllyariaTextDecoration right)
+        => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaTextDecoration" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaTextDecoration" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaTextDecoration" /> created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaTextDecoration(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaTextDecoration" /> created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaTextDecoration(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaTextDecoration" /> to <see cref="string" />.</summary>
-    /// <param name="decoration">The <see cref="AllyariaTextDecoration" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaTextDecoration" /> to <see cref="string" />.</summary>
+    /// <param name="decoration">The <see cref="OldAllyariaTextDecoration" /> instance.</param>
     /// <returns>The normalized, space-separated token string represented by <paramref name="decoration" />.</returns>
-    public static implicit operator string(AllyariaTextDecoration decoration) => decoration.Value;
+    public static implicit operator string(OldAllyariaTextDecoration decoration) => decoration.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaTextDecoration" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaTextDecoration" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns><see langword="true" /> if not equal; otherwise <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaTextDecoration left, AllyariaTextDecoration right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaTextDecoration left, OldAllyariaTextDecoration right)
+        => !left.Equals(right);
 }

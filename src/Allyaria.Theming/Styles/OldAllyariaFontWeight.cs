@@ -16,13 +16,13 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToString" /> calls <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
+public readonly struct OldAllyariaFontWeight : IEquatable<OldAllyariaFontWeight>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaFontWeight" /> struct from a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaFontWeight" /> struct from a raw CSS value.</summary>
     /// <param name="value">
     /// Raw input value (e.g., <c>"normal"</c>, <c>"bold"</c>, <c>"400"</c>, <c>"700"</c>, or <c>"var(--fw)"</c>).
     /// </param>
-    public AllyariaFontWeight(string value) => Value = Normalize(value);
+    public OldAllyariaFontWeight(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
     public string Value { get; } = string.Empty;
@@ -30,19 +30,20 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="obj" /> is an <see cref="AllyariaFontWeight" /> with the same normalized
+    /// <see langword="true" /> if <paramref name="obj" /> is an <see cref="OldAllyariaFontWeight" /> with the same normalized
     /// value; otherwise, <see langword="false" />.
     /// </returns>
-    public override bool Equals(object? obj) => obj is AllyariaFontWeight other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaFontWeight other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaFontWeight" /> is equal to the current instance (value equality).
+    /// Determines whether the specified <see cref="OldAllyariaFontWeight" /> is equal to the current instance (value
+    /// equality).
     /// </summary>
-    /// <param name="other">The other <see cref="AllyariaFontWeight" /> to compare.</param>
+    /// <param name="other">The other <see cref="OldAllyariaFontWeight" /> to compare.</param>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaFontWeight other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaFontWeight other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -78,7 +79,7 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var"))
         {
             return trim;
         }
@@ -113,29 +114,29 @@ public readonly struct AllyariaFontWeight : IEquatable<AllyariaFontWeight>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaFontWeight" /> (value equality).</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaFontWeight" /> (value equality).</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns>
     /// <see langword="true" /> if both operands represent the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public static bool operator ==(AllyariaFontWeight left, AllyariaFontWeight right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaFontWeight left, OldAllyariaFontWeight right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontWeight" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaFontWeight" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaFontWeight" /> created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaFontWeight(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaFontWeight" /> created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaFontWeight(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaFontWeight" /> to <see cref="string" />.</summary>
-    /// <param name="fontWeight">The <see cref="AllyariaFontWeight" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaFontWeight" /> to <see cref="string" />.</summary>
+    /// <param name="fontWeight">The <see cref="OldAllyariaFontWeight" /> instance.</param>
     /// <returns>The normalized CSS value contained in <paramref name="fontWeight" />.</returns>
-    public static implicit operator string(AllyariaFontWeight fontWeight) => fontWeight.Value;
+    public static implicit operator string(OldAllyariaFontWeight fontWeight) => fontWeight.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaFontWeight" /> (value inequality).</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaFontWeight" /> (value inequality).</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns>
     /// <see langword="true" /> if the operands represent different normalized values; otherwise, <see langword="false" />.
     /// </returns>
-    public static bool operator !=(AllyariaFontWeight left, AllyariaFontWeight right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaFontWeight left, OldAllyariaFontWeight right) => !left.Equals(right);
 }

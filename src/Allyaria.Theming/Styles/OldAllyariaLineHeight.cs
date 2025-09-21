@@ -29,11 +29,11 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
+public readonly struct OldAllyariaLineHeight : IEquatable<OldAllyariaLineHeight>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaLineHeight" /> struct from a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaLineHeight" /> struct from a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"normal"</c>, <c>"1.5"</c>, <c>"20px"</c>, <c>"var(--lh)"</c>).</param>
-    public AllyariaLineHeight(string value) => Value = Normalize(value);
+    public OldAllyariaLineHeight(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized CSS value represented by this instance (e.g., <c>"1.5"</c>, <c>"normal"</c>, <c>"20px"</c>,
@@ -44,16 +44,16 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
     /// <summary>Indicates whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaLineHeight other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaLineHeight other && Equals(other);
 
     /// <summary>
-    /// Indicates whether the specified <see cref="AllyariaLineHeight" /> is equal to the current instance (value equality).
+    /// Indicates whether the specified <see cref="OldAllyariaLineHeight" /> is equal to the current instance (value equality).
     /// </summary>
     /// <param name="other">The other instance to compare.</param>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaLineHeight other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaLineHeight other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -76,7 +76,7 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var", "calc"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var", "calc"))
         {
             return trim;
         }
@@ -90,13 +90,13 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
         }
 
         // Canonicalize numeric formatting (e.g., "1.0" => "1")
-        if (StyleHelpers.IsUnitlessPositive(lower))
+        if (OldStyleHelpers.IsUnitlessPositive(lower))
         {
             return double.Parse(lower, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
         }
 
         // Length/percentage path (lower-case & validate), not negative.
-        if (StyleHelpers.IsLengthOrPercentage(lower) && !lower.StartsWith("-", StringComparison.Ordinal))
+        if (OldStyleHelpers.IsLengthOrPercentage(lower) && !lower.StartsWith("-", StringComparison.Ordinal))
         {
             return lower;
         }
@@ -116,25 +116,25 @@ public readonly struct AllyariaLineHeight : IEquatable<AllyariaLineHeight>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaLineHeight" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaLineHeight" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator ==(AllyariaLineHeight left, AllyariaLineHeight right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaLineHeight left, OldAllyariaLineHeight right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaLineHeight" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaLineHeight" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaLineHeight" /> created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaLineHeight(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaLineHeight" /> created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaLineHeight(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaLineHeight" /> to <see cref="string" />.</summary>
-    /// <param name="lineHeight">The <see cref="AllyariaLineHeight" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaLineHeight" /> to <see cref="string" />.</summary>
+    /// <param name="lineHeight">The <see cref="OldAllyariaLineHeight" /> instance.</param>
     /// <returns>The normalized CSS value represented by <paramref name="lineHeight" />.</returns>
-    public static implicit operator string(AllyariaLineHeight lineHeight) => lineHeight.Value;
+    public static implicit operator string(OldAllyariaLineHeight lineHeight) => lineHeight.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaLineHeight" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaLineHeight" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if not equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaLineHeight left, AllyariaLineHeight right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaLineHeight left, OldAllyariaLineHeight right) => !left.Equals(right);
 }

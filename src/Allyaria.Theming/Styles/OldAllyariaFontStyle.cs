@@ -28,11 +28,11 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
+public readonly struct OldAllyariaFontStyle : IEquatable<OldAllyariaFontStyle>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaFontStyle" /> struct with a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaFontStyle" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"italic"</c>, <c>"oblique 12deg"</c>, <c>"var(--style)"</c>).</param>
-    public AllyariaFontStyle(string value) => Value = Normalize(value);
+    public OldAllyariaFontStyle(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized CSS value represented by this instance (e.g., <c>"italic"</c>, <c>"oblique 10deg"</c>).
@@ -42,15 +42,15 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <summary>Determines whether the specified object is equal to the current instance using value equality.</summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaFontStyle other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaFontStyle other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaFontStyle" /> is equal to the current instance using value
+    /// Determines whether the specified <see cref="OldAllyariaFontStyle" /> is equal to the current instance using value
     /// equality.
     /// </summary>
     /// <param name="other">The other instance.</param>
     /// <returns><see langword="true" /> if the normalized values match; otherwise, <see langword="false" />.</returns>
-    public bool Equals(AllyariaFontStyle other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaFontStyle other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -114,7 +114,7 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var"))
         {
             return trim;
         }
@@ -160,25 +160,25 @@ public readonly struct AllyariaFontStyle : IEquatable<AllyariaFontStyle>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaFontStyle" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaFontStyle" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator ==(AllyariaFontStyle left, AllyariaFontStyle right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaFontStyle left, OldAllyariaFontStyle right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontStyle" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaFontStyle" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaFontStyle" /> instance.</returns>
-    public static implicit operator AllyariaFontStyle(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaFontStyle" /> instance.</returns>
+    public static implicit operator OldAllyariaFontStyle(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaFontStyle" /> to <see cref="string" />.</summary>
-    /// <param name="fontStyle">The <see cref="AllyariaFontStyle" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaFontStyle" /> to <see cref="string" />.</summary>
+    /// <param name="fontStyle">The <see cref="OldAllyariaFontStyle" /> instance.</param>
     /// <returns>The normalized CSS value.</returns>
-    public static implicit operator string(AllyariaFontStyle fontStyle) => fontStyle.Value;
+    public static implicit operator string(OldAllyariaFontStyle fontStyle) => fontStyle.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaFontStyle" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaFontStyle" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if not equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaFontStyle left, AllyariaFontStyle right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaFontStyle left, OldAllyariaFontStyle right) => !left.Equals(right);
 }

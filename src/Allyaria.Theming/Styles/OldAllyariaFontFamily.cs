@@ -12,18 +12,18 @@
 /// <see cref="ToString" /> calls <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
+public readonly struct OldAllyariaFontFamily : IEquatable<OldAllyariaFontFamily>
 {
     /// <summary>Backing field for <see cref="Families" />.</summary>
     private readonly string[]? _families;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaFontFamily" /> struct from one or more raw family names. This
+    /// Initializes a new instance of the <see cref="OldAllyariaFontFamily" /> struct from one or more raw family names. This
     /// constructor accepts either a single comma-separated string, multiple strings, or an array of strings. Any string
     /// containing commas will be split into multiple family names.
     /// </summary>
     /// <param name="families">One or more raw font family names. Items that contain commas will be split into separate names.</param>
-    public AllyariaFontFamily(params string[] families) => _families = Normalize(families);
+    public OldAllyariaFontFamily(params string[] families) => _families = Normalize(families);
 
     /// <summary>Gets the normalized font family array.</summary>
     public string[] Families => _families ?? Array.Empty<string>();
@@ -34,16 +34,17 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaFontFamily other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaFontFamily other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaFontFamily" /> is equal to the current instance (value equality).
+    /// Determines whether the specified <see cref="OldAllyariaFontFamily" /> is equal to the current instance (value
+    /// equality).
     /// </summary>
     /// <param name="other">The other instance to compare.</param>
     /// <returns>
     /// <see langword="true" /> if both contain the same normalized sequence; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaFontFamily other)
+    public bool Equals(OldAllyariaFontFamily other)
     {
         var a = Families;
         var b = other.Families;
@@ -205,43 +206,43 @@ public readonly struct AllyariaFontFamily : IEquatable<AllyariaFontFamily>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaFontFamily" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaFontFamily" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator ==(AllyariaFontFamily left, AllyariaFontFamily right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaFontFamily left, OldAllyariaFontFamily right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="AllyariaFontFamily" />.</summary>
+    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="OldAllyariaFontFamily" />.</summary>
     /// <param name="families">The raw font family array to convert.</param>
-    /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaFontFamily(string[] families) => new(families);
+    /// <returns>An <see cref="OldAllyariaFontFamily" /> created from <paramref name="families" />.</returns>
+    public static implicit operator OldAllyariaFontFamily(string[] families) => new(families);
 
     /// <summary>
-    /// Implicit conversion from <see langword="string" /> to <see cref="AllyariaFontFamily" />. Accepts a single
+    /// Implicit conversion from <see langword="string" /> to <see cref="OldAllyariaFontFamily" />. Accepts a single
     /// comma-separated string of font family names.
     /// </summary>
     /// <param name="families">A single string containing one or more comma-separated font family names.</param>
-    /// <returns>An <see cref="AllyariaFontFamily" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaFontFamily(string families) => new(families);
+    /// <returns>An <see cref="OldAllyariaFontFamily" /> created from <paramref name="families" />.</returns>
+    public static implicit operator OldAllyariaFontFamily(string families) => new(families);
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string[]" /> (the normalized array).
+    /// Implicit conversion from <see cref="OldAllyariaFontFamily" /> to <see langword="string[]" /> (the normalized array).
     /// </summary>
-    /// <param name="fontFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
+    /// <param name="fontFamily">The <see cref="OldAllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family array.</returns>
-    public static implicit operator string[](AllyariaFontFamily fontFamily) => fontFamily.Families;
+    public static implicit operator string[](OldAllyariaFontFamily fontFamily) => fontFamily.Families;
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaFontFamily" /> to <see langword="string" /> (the normalized, comma-joined
-    /// value).
+    /// Implicit conversion from <see cref="OldAllyariaFontFamily" /> to <see langword="string" /> (the normalized,
+    /// comma-joined value).
     /// </summary>
-    /// <param name="fontFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
+    /// <param name="fontFamily">The <see cref="OldAllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family list joined by commas with no spaces.</returns>
-    public static implicit operator string(AllyariaFontFamily fontFamily) => fontFamily.Value;
+    public static implicit operator string(OldAllyariaFontFamily fontFamily) => fontFamily.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaFontFamily" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaFontFamily" /> using value equality.</summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns><see langword="true" /> if not equal; otherwise, <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaFontFamily left, AllyariaFontFamily right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaFontFamily left, OldAllyariaFontFamily right) => !left.Equals(right);
 }

@@ -30,13 +30,15 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
+public readonly struct OldAllyariaLetterSpacing : IEquatable<OldAllyariaLetterSpacing>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaLetterSpacing" /> struct from a raw CSS value.</summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OldAllyariaLetterSpacing" /> struct from a raw CSS value.
+    /// </summary>
     /// <param name="value">
     /// The raw CSS value (e.g., <c>"normal"</c>, <c>"0.05em"</c>, <c>"2px"</c>, <c>"calc(1px + 0.1em)"</c>).
     /// </param>
-    public AllyariaLetterSpacing(string value) => Value = Normalize(value);
+    public OldAllyariaLetterSpacing(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
     public string Value { get; }
@@ -44,17 +46,17 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaLetterSpacing other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaLetterSpacing other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaLetterSpacing" /> is equal to the current instance (value
+    /// Determines whether the specified <see cref="OldAllyariaLetterSpacing" /> is equal to the current instance (value
     /// equality).
     /// </summary>
     /// <param name="other">The other instance to compare.</param>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaLetterSpacing other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaLetterSpacing other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -77,7 +79,7 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var", "calc"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var", "calc"))
         {
             return trim;
         }
@@ -91,13 +93,13 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
         }
 
         // Check if length or percentage.
-        if (StyleHelpers.IsLengthOrPercentage(lower))
+        if (OldStyleHelpers.IsLengthOrPercentage(lower))
         {
             return lower;
         }
 
         // Check if bare number.
-        if (StyleHelpers.IsNumeric(lower))
+        if (OldStyleHelpers.IsNumeric(lower))
         {
             return string.Concat(lower, "px");
         }
@@ -117,27 +119,28 @@ public readonly struct AllyariaLetterSpacing : IEquatable<AllyariaLetterSpacing>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaLetterSpacing" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaLetterSpacing" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns>
     /// <see langword="true" /> if both operands represent the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public static bool operator ==(AllyariaLetterSpacing left, AllyariaLetterSpacing right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaLetterSpacing left, OldAllyariaLetterSpacing right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaLetterSpacing" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaLetterSpacing" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaLetterSpacing" /> created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaLetterSpacing(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaLetterSpacing" /> created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaLetterSpacing(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaLetterSpacing" /> to <see cref="string" />.</summary>
-    /// <param name="letterSpacing">The <see cref="AllyariaLetterSpacing" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaLetterSpacing" /> to <see cref="string" />.</summary>
+    /// <param name="letterSpacing">The <see cref="OldAllyariaLetterSpacing" /> instance.</param>
     /// <returns>The normalized CSS value represented by <paramref name="letterSpacing" />.</returns>
-    public static implicit operator string(AllyariaLetterSpacing letterSpacing) => letterSpacing.Value;
+    public static implicit operator string(OldAllyariaLetterSpacing letterSpacing) => letterSpacing.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaLetterSpacing" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaLetterSpacing" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if operands differ; otherwise, <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaLetterSpacing left, AllyariaLetterSpacing right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaLetterSpacing left, OldAllyariaLetterSpacing right)
+        => !left.Equals(right);
 }

@@ -38,13 +38,13 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToString" /> calls <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
+public readonly struct OldAllyariaFontSize : IEquatable<OldAllyariaFontSize>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaFontSize" /> struct from a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaFontSize" /> struct from a raw CSS value.</summary>
     /// <param name="value">
     /// The raw CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"calc(12px + 1vw)"</c> ).
     /// </param>
-    public AllyariaFontSize(string value) => Value = Normalize(value);
+    public OldAllyariaFontSize(string value) => Value = Normalize(value);
 
     /// <summary>
     /// Gets the normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>, <c>"var(--fs)"</c>).
@@ -54,19 +54,19 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <summary>Indicates whether this instance and a specified object are equal (value equality).</summary>
     /// <param name="obj">Another object to compare to.</param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="obj" /> is an <see cref="AllyariaFontSize" /> with the same normalized
+    /// <see langword="true" /> if <paramref name="obj" /> is an <see cref="OldAllyariaFontSize" /> with the same normalized
     /// value; otherwise <see langword="false" />.
     /// </returns>
-    public override bool Equals(object? obj) => obj is AllyariaFontSize other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaFontSize other && Equals(other);
 
     /// <summary>
-    /// Indicates whether this instance and another <see cref="AllyariaFontSize" /> are equal (value equality).
+    /// Indicates whether this instance and another <see cref="OldAllyariaFontSize" /> are equal (value equality).
     /// </summary>
     /// <param name="other">The other instance.</param>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaFontSize other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaFontSize other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance, based on the normalized CSS value using ordinal comparison.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -89,7 +89,7 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var", "calc", "min", "max", "clamp"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var", "calc", "min", "max", "clamp"))
         {
             return trim;
         }
@@ -104,13 +104,13 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
         }
 
         // Length/percentage path (accepts px, em, rem, ch, ex, lh, rlh, cm, mm, q, in, pt, pc, vw, vh, vi, vb, vmin, vmax, and %).
-        if (StyleHelpers.IsLengthOrPercentage(lower))
+        if (OldStyleHelpers.IsLengthOrPercentage(lower))
         {
             return lower;
         }
 
         // Bare numeric → px (culture-invariant).
-        if (StyleHelpers.IsNumeric(lower))
+        if (OldStyleHelpers.IsNumeric(lower))
         {
             return string.Concat(lower, "px");
         }
@@ -130,27 +130,27 @@ public readonly struct AllyariaFontSize : IEquatable<AllyariaFontSize>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaFontSize" /> using value equality.</summary>
+    /// <summary>Equality operator for <see cref="OldAllyariaFontSize" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns>
     /// <see langword="true" /> if both operands have the same normalized value; otherwise <see langword="false" />.
     /// </returns>
-    public static bool operator ==(AllyariaFontSize left, AllyariaFontSize right) => left.Equals(right);
+    public static bool operator ==(OldAllyariaFontSize left, OldAllyariaFontSize right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontSize" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaFontSize" />.</summary>
     /// <param name="value">The raw CSS value to normalize.</param>
-    /// <returns>An <see cref="AllyariaFontSize" /> instance created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaFontSize(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaFontSize" /> instance created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaFontSize(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaFontSize" /> to <see cref="string" />.</summary>
-    /// <param name="fontSize">The <see cref="AllyariaFontSize" /> value.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaFontSize" /> to <see cref="string" />.</summary>
+    /// <param name="fontSize">The <see cref="OldAllyariaFontSize" /> value.</param>
     /// <returns>The normalized CSS value (e.g., <c>"16px"</c>, <c>"1rem"</c>, <c>"smaller"</c>).</returns>
-    public static implicit operator string(AllyariaFontSize fontSize) => fontSize.Value;
+    public static implicit operator string(OldAllyariaFontSize fontSize) => fontSize.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaFontSize" /> using value equality.</summary>
+    /// <summary>Inequality operator for <see cref="OldAllyariaFontSize" /> using value equality.</summary>
     /// <param name="left">Left operand.</param>
     /// <param name="right">Right operand.</param>
     /// <returns><see langword="true" /> if operands differ; otherwise <see langword="false" />.</returns>
-    public static bool operator !=(AllyariaFontSize left, AllyariaFontSize right) => !left.Equals(right);
+    public static bool operator !=(OldAllyariaFontSize left, OldAllyariaFontSize right) => !left.Equals(right);
 }

@@ -27,11 +27,11 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
+public readonly struct OldAllyariaWordSpacing : IEquatable<OldAllyariaWordSpacing>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaWordSpacing" /> struct with a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaWordSpacing" /> struct with a raw CSS value.</summary>
     /// <param name="value">The raw CSS value (e.g., <c>"normal"</c>, <c>"5px"</c>, <c>"10%"</c>, <c>"calc(1px + 0.5em)"</c>).</param>
-    public AllyariaWordSpacing(string value) => Value = Normalize(value);
+    public OldAllyariaWordSpacing(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
     public string Value { get; }
@@ -39,16 +39,17 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
     /// <summary>Determines whether the specified object is equal to the current instance (value equality).</summary>
     /// <param name="obj">The object to compare.</param>
     /// <returns><see langword="true" /> if equal; otherwise, <see langword="false" />.</returns>
-    public override bool Equals(object? obj) => obj is AllyariaWordSpacing other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaWordSpacing other && Equals(other);
 
     /// <summary>
-    /// Determines whether the specified <see cref="AllyariaWordSpacing" /> is equal to the current instance (value equality).
+    /// Determines whether the specified <see cref="OldAllyariaWordSpacing" /> is equal to the current instance (value
+    /// equality).
     /// </summary>
     /// <param name="other">The other instance to compare.</param>
     /// <returns>
     /// <see langword="true" /> if both instances have the same normalized value; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(AllyariaWordSpacing other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaWordSpacing other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <summary>Returns a hash code for this instance based on the normalized value.</summary>
     /// <returns>A 32-bit signed hash code.</returns>
@@ -74,7 +75,7 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var", "calc"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var", "calc"))
         {
             return trim;
         }
@@ -88,13 +89,13 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
         }
 
         // Check if length or percentage.
-        if (StyleHelpers.IsLengthOrPercentage(lower))
+        if (OldStyleHelpers.IsLengthOrPercentage(lower))
         {
             return lower;
         }
 
         // Check if bare number.
-        if (StyleHelpers.IsNumeric(lower))
+        if (OldStyleHelpers.IsNumeric(lower))
         {
             return string.Concat(lower, "px");
         }
@@ -114,19 +115,19 @@ public readonly struct AllyariaWordSpacing : IEquatable<AllyariaWordSpacing>
     /// <returns>The CSS declaration string.</returns>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaWordSpacing" /> using value equality.</summary>
-    public static bool operator ==(AllyariaWordSpacing left, AllyariaWordSpacing right) => left.Equals(right);
+    /// <summary>Equality operator for <see cref="OldAllyariaWordSpacing" /> using value equality.</summary>
+    public static bool operator ==(OldAllyariaWordSpacing left, OldAllyariaWordSpacing right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaWordSpacing" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaWordSpacing" />.</summary>
     /// <param name="value">The raw CSS value to convert.</param>
-    /// <returns>An <see cref="AllyariaWordSpacing" /> created from <paramref name="value" />.</returns>
-    public static implicit operator AllyariaWordSpacing(string value) => new(value);
+    /// <returns>An <see cref="OldAllyariaWordSpacing" /> created from <paramref name="value" />.</returns>
+    public static implicit operator OldAllyariaWordSpacing(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaWordSpacing" /> to <see cref="string" />.</summary>
-    /// <param name="wordSpacing">The <see cref="AllyariaWordSpacing" /> instance.</param>
+    /// <summary>Implicit conversion from <see cref="OldAllyariaWordSpacing" /> to <see cref="string" />.</summary>
+    /// <param name="wordSpacing">The <see cref="OldAllyariaWordSpacing" /> instance.</param>
     /// <returns>The normalized CSS value represented by <paramref name="wordSpacing" />.</returns>
-    public static implicit operator string(AllyariaWordSpacing wordSpacing) => wordSpacing.Value;
+    public static implicit operator string(OldAllyariaWordSpacing wordSpacing) => wordSpacing.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaWordSpacing" /> using value equality.</summary>
-    public static bool operator !=(AllyariaWordSpacing left, AllyariaWordSpacing right) => !left.Equals(right);
+    /// <summary>Inequality operator for <see cref="OldAllyariaWordSpacing" /> using value equality.</summary>
+    public static bool operator !=(OldAllyariaWordSpacing left, OldAllyariaWordSpacing right) => !left.Equals(right);
 }

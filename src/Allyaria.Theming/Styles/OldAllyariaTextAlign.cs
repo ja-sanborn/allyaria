@@ -14,20 +14,20 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="ToCss" />.
 /// </para>
 /// </summary>
-public readonly struct AllyariaTextAlign : IEquatable<AllyariaTextAlign>
+public readonly struct OldAllyariaTextAlign : IEquatable<OldAllyariaTextAlign>
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaTextAlign" /> struct from a raw CSS value.</summary>
+    /// <summary>Initializes a new instance of the <see cref="OldAllyariaTextAlign" /> struct from a raw CSS value.</summary>
     /// <param name="value">Raw CSS value (e.g., <c>"left"</c>, <c>"center"</c>, <c>"var(--align)"</c>).</param>
-    public AllyariaTextAlign(string value) => Value = Normalize(value);
+    public OldAllyariaTextAlign(string value) => Value = Normalize(value);
 
     /// <summary>Gets the normalized CSS value represented by this instance.</summary>
     public string Value { get; }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is AllyariaTextAlign other && Equals(other);
+    public override bool Equals(object? obj) => obj is OldAllyariaTextAlign other && Equals(other);
 
     /// <inheritdoc />
-    public bool Equals(AllyariaTextAlign other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+    public bool Equals(OldAllyariaTextAlign other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
 
     /// <inheritdoc />
     public override int GetHashCode()
@@ -47,7 +47,7 @@ public readonly struct AllyariaTextAlign : IEquatable<AllyariaTextAlign>
         var trim = value.Trim();
 
         // Accept common CSS function forms without altering the content.
-        if (StyleHelpers.IsCssFunction(trim, "var"))
+        if (OldStyleHelpers.IsCssFunction(trim, "var"))
         {
             return trim;
         }
@@ -74,15 +74,15 @@ public readonly struct AllyariaTextAlign : IEquatable<AllyariaTextAlign>
     /// <summary>Returns the CSS declaration string produced by <see cref="ToCss" />.</summary>
     public override string ToString() => ToCss();
 
-    /// <summary>Equality operator for <see cref="AllyariaTextAlign" />.</summary>
-    public static bool operator ==(AllyariaTextAlign left, AllyariaTextAlign right) => left.Equals(right);
+    /// <summary>Equality operator for <see cref="OldAllyariaTextAlign" />.</summary>
+    public static bool operator ==(OldAllyariaTextAlign left, OldAllyariaTextAlign right) => left.Equals(right);
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaTextAlign" />.</summary>
-    public static implicit operator AllyariaTextAlign(string value) => new(value);
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="OldAllyariaTextAlign" />.</summary>
+    public static implicit operator OldAllyariaTextAlign(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaTextAlign" /> to <see cref="string" />.</summary>
-    public static implicit operator string(AllyariaTextAlign align) => align.Value;
+    /// <summary>Implicit conversion from <see cref="OldAllyariaTextAlign" /> to <see cref="string" />.</summary>
+    public static implicit operator string(OldAllyariaTextAlign align) => align.Value;
 
-    /// <summary>Inequality operator for <see cref="AllyariaTextAlign" />.</summary>
-    public static bool operator !=(AllyariaTextAlign left, AllyariaTextAlign right) => !left.Equals(right);
+    /// <summary>Inequality operator for <see cref="OldAllyariaTextAlign" />.</summary>
+    public static bool operator !=(OldAllyariaTextAlign left, OldAllyariaTextAlign right) => !left.Equals(right);
 }

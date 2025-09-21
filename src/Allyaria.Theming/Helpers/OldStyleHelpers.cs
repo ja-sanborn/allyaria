@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Helpers;
 /// methods to allow consumption from style structs, while the class itself remains <c>internal</c> to the theming
 /// assembly. All numeric parsing uses <see cref="CultureInfo.InvariantCulture" />.
 /// </summary>
-internal static class StyleHelpers
+internal static class OldStyleHelpers
 {
     /// <summary>
     /// A comprehensive set of CSS length units recognized by <see cref="IsLength(string)" />. Includes absolute, relative, and
