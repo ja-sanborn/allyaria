@@ -239,6 +239,8 @@ public sealed class AllyariaCssFunctionTests
         result.Should().Be(expected);
     }
 
+    // --- Additional coverage to exercise public TryParse, edge identifiers, and null conversion ---
+
     [Fact]
     public void TryParse_ValidInput_ReturnsTrue_And_Normalizes()
     {
