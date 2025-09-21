@@ -15,7 +15,7 @@ public abstract record StyleValueBase : IComparable<StyleValueBase>
     protected StyleValueBase(string value = "") => Value = value.Trim();
 
     /// <summary>Gets the style value represented as a string.</summary>
-    public string Value { get; }
+    public virtual string Value { get; }
 
     /// <summary>
     /// Compares the current instance to another <see cref="StyleValueBase" /> object to determine sort order.
