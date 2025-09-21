@@ -61,10 +61,7 @@ public sealed class AllyariaFontFamilyTests
         // Arrange
         var input = new[]
         {
-            " Inter  ,  Roboto ",
-            "Open Sans",
-            "'Open Sans'",
-            "inter"
+            " Inter  ,  Roboto ", "Open Sans", "'Open Sans'", "inter"
         };
 
         // Act
@@ -230,7 +227,10 @@ public sealed class AllyariaFontFamilyTests
     public void Implicit_FromStringArray_NormalizesAndQuotes()
     {
         // Arrange
-        string[] raw = { "Inter", "Open Sans" };
+        string[] raw =
+        {
+            "Inter", "Open Sans"
+        };
 
         // Act
         AllyariaFontFamily sut = raw;
@@ -272,21 +272,6 @@ public sealed class AllyariaFontFamilyTests
     }
 
     [Fact]
-    public void TryParse_ValidInput_ReturnsTrue_WithNormalizedValue_AndFamilies()
-    {
-        // Arrange
-        var raw = " Inter , Open Sans ";
-
-        // Act
-        var ok = AllyariaFontFamily.TryParse(raw, out var sut);
-
-        // Assert
-        ok.Should().BeTrue();
-        ((string)sut).Should().Be("Inter,\"Open Sans\"");
-        ((string[])sut).Should().Equal("Inter", "Open Sans"); // unquoted
-    }
-
-    [Fact]
     public void TryParse_InvalidInput_ReturnsFalse_And_Empty()
     {
         // Arrange
@@ -296,8 +281,33 @@ public sealed class AllyariaFontFamilyTests
         var ok = AllyariaFontFamily.TryParse(raw, out var sut);
 
         // Assert
-        ok.Should().BeFalse();
-        ((string)sut).Should().BeEmpty();
-        ((string[])sut).Should().BeEmpty();
+        ok.Should()
+            .BeFalse();
+
+        ((string)sut).Should()
+            .BeEmpty();
+
+        ((string[])sut).Should()
+            .BeEmpty();
+    }
+
+    [Fact]
+    public void TryParse_ValidInput_ReturnsTrue_WithNormalizedValue_AndFamilies()
+    {
+        // Arrange
+        var raw = " Inter , Open Sans ";
+
+        // Act
+        var ok = AllyariaFontFamily.TryParse(raw, out var sut);
+
+        // Assert
+        ok.Should()
+            .BeTrue();
+
+        ((string)sut).Should()
+            .Be("Inter,\"Open Sans\"");
+
+        ((string[])sut).Should()
+            .Equal("Inter", "Open Sans"); // unquoted
     }
 }
