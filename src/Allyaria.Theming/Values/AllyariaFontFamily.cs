@@ -18,20 +18,12 @@ public sealed record AllyariaFontFamily : StyleValueBase
         : base(Normalize(families)) { }
 
     /// <summary>
-    /// Gets the normalized font families as an array. This is derived by splitting the canonical comma-separated
-    /// <see cref="Value" /> and trimming entries.
-    /// </summary>
-    public string[] Families
-        => Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-    /// <summary>
     /// Flattens a sequence of raw family strings, splitting any items that contain commas into separate entries, trimming
     /// whitespace from each resulting token, and removing empty results.
     /// </summary>
     /// <param name="families">The raw sequence of family strings (some entries may contain commas).</param>
     /// <returns>An array of tokens with commas expanded and whitespace trimmed.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="families" /> is <c>null</c>.</exception>
-    private static string[] FlattenCommaSeparated(IEnumerable<string> families)
+   private static string[] FlattenCommaSeparated(IEnumerable<string> families)
     {
         var tokens = new List<string>();
 
@@ -157,4 +149,113 @@ public sealed record AllyariaFontFamily : StyleValueBase
     /// <param name="fontFamilyFamily">The <see cref="AllyariaFontFamily" /> instance.</param>
     /// <returns>The normalized font family list joined by commas with no spaces.</returns>
     public static implicit operator string(AllyariaFontFamily fontFamilyFamily) => fontFamilyFamily.Value;
+
+    /// <summary>
+    /// Attempts to parse a raw font family list and normalize it into a canonical, comma-separated form.
+    /// </summary>
+    /// <param name="value">
+    /// A raw font family string, which may contain one or more comma-separated family names.
+    /// Individual tokens are trimmed; tokens requiring quotes per CSS rules will be quoted.
+    /// </param>
+    /// <param name="func">
+    /// When this method returns, contains an <see cref="AllyariaFontFamily"/> whose
+    /// <see cref="StyleValueBase.Value"/> is the normalized representation, or <see cref="string.Empty"/>
+    /// if parsing fails (e.g., input is null/whitespace or normalizes to no tokens).
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="value"/> was successfully normalized into a non-empty
+    /// canonical form; otherwise <see langword="false"/>.
+    /// </returns>
+    public static bool TryParse(string value, out AllyariaFontFamily func)
+    {
+        func = new AllyariaFontFamily(value);
+        return !string.IsNullOrWhiteSpace(func.Value);
+    }
+
+    /// <summary>
+    /// Backing field for <see cref="Families"/>. Caches the normalized font family array after the first
+    /// access to avoid repeated parsing of the canonical <see cref="StyleValueBase.Value"/>.
+    /// </summary>
+    private string[]? _families;
+
+    /// <summary>
+    /// Gets the normalized font families as an array. This splits the canonical comma-separated
+    /// <see cref="StyleValueBase.Value"/> on commas that are <b>outside</b> of quotes (so commas inside a quoted
+    /// family name are ignored), then removes any surrounding double quotes from each item and
+    /// unescapes inner quotes (i.e., <c>\"</c> becomes <c>"</c>). Returned items are unquoted,
+    /// trimmed family names. The result is cached after the first access.
+    /// </summary>
+    public string[] Families
+    {
+        get
+        {
+            _families ??= SplitCanonicalFamilies(Value);
+            return _families;
+        }
+    }
+
+    /// <summary>
+/// Splits a canonical comma-joined value (no spaces) on commas that are outside of double quotes,
+/// then strips surrounding quotes and unescapes inner quotes.
+/// Assumes tokens were produced by <see cref="NormalizeQuotes"/> (i.e., double quotes used and inner quotes escaped as \" ).
+/// </summary>
+private static string[] SplitCanonicalFamilies(string value)
+{
+    if (string.IsNullOrEmpty(value))
+    {
+        return Array.Empty<string>();
+    }
+
+    var items = new List<string>();
+    var sb = new System.Text.StringBuilder(value.Length);
+
+    var inQuotes = false;
+    var prev = '\0';
+
+    foreach (var ch in value)
+    {
+        if (ch == ',' && !inQuotes)
+        {
+            items.Add(UnquoteAndUnescape(sb.ToString().Trim()));
+            sb.Clear();
+            prev = '\0';
+            continue;
+        }
+
+        if (ch == '"' && prev != '\\')
+        {
+            inQuotes = !inQuotes;
+            sb.Append(ch); // keep quotes for now; we'll remove them in UnquoteAndUnescape
+        }
+        else
+        {
+            sb.Append(ch);
+        }
+
+        prev = ch;
+    }
+
+    if (sb.Length > 0)
+    {
+        items.Add(UnquoteAndUnescape(sb.ToString().Trim()));
+    }
+
+    return items.ToArray();
+}
+
+/// <summary>
+/// Removes surrounding double quotes if present and unescapes inner quotes (\" -> ").
+/// </summary>
+private static string UnquoteAndUnescape(string token)
+{
+    if (token.Length >= 2 && token[0] == '"' && token[^1] == '"')
+    {
+        // strip surrounding quotes
+        token = token.Substring(1, token.Length - 2);
+        // unescape inner quotes
+        token = token.Replace("\\\"", "\"", StringComparison.Ordinal);
+    }
+
+    return token;
+}
 }

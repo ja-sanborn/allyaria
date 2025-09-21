@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaStyleFontPublicSurfaceTests
+public sealed class AllyariaFontFamilyTests
 {
     [Fact]
     public void Ctor_EscapesInnerDoubleQuotes_AndQuotesOverall()
@@ -15,7 +15,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("\"Foo\\\"Bar\"");
+            .Equal("Foo\"Bar"); // Families are unquoted & unescaped
 
         sut.Value.Should()
             .Be("\"Foo\\\"Bar\"");
@@ -32,7 +32,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("\"Open Sans\"", "A", "B", "\"A'B\"");
+            .Equal("Open Sans", "A", "B", "A'B"); // unquoted
 
         sut.Value.Should()
             .Be("\"Open Sans\",A,B,\"A'B\"");
@@ -61,10 +61,10 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
         // Arrange
         var input = new[]
         {
-            " Inter  ,  Roboto ", // comma split + trim
-            "Open Sans", // requires quotes
-            "'Open Sans'", // already quoted → strip → canonical re-quote
-            "inter" // duplicate (case-insensitive) removed
+            " Inter  ,  Roboto ",
+            "Open Sans",
+            "'Open Sans'",
+            "inter"
         };
 
         // Act
@@ -75,7 +75,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
             .Be("Inter,Roboto,\"Open Sans\"");
 
         sut.Families.Should()
-            .Equal("Inter", "Roboto", "\"Open Sans\"");
+            .Equal("Inter", "Roboto", "Open Sans"); // unquoted
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("\"Open Sans\"", "\"Already Quoted\"", "Inter");
+            .Equal("Open Sans", "Already Quoted", "Inter"); // unquoted
 
         sut.Value.Should()
             .Be("\"Open Sans\",\"Already Quoted\",Inter");
@@ -106,7 +106,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("\"Tab\tHere\"", "\"New\nLine\"", "\"FormFeed\fHere\"");
+            .Equal("Tab\tHere", "New\nLine", "FormFeed\fHere"); // unquoted
 
         sut.Value.Should()
             .Be("\"Tab\tHere\",\"New\nLine\",\"FormFeed\fHere\"");
@@ -154,7 +154,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("Inter", "\"Open Sans\"");
+            .Equal("Inter", "Open Sans"); // unquoted
 
         sut.Value.Should()
             .Be("Inter,\"Open Sans\"");
@@ -171,7 +171,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("A", "B", "\"C C\"");
+            .Equal("A", "B", "C C"); // unquoted
     }
 
     [Fact]
@@ -223,17 +223,14 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
             .Be("Inter,\"Open Sans\"");
 
         families.Should()
-            .Equal("Inter", "\"Open Sans\"");
+            .Equal("Inter", "Open Sans"); // unquoted
     }
 
     [Fact]
     public void Implicit_FromStringArray_NormalizesAndQuotes()
     {
         // Arrange
-        string[] raw =
-        {
-            "Inter", "Open Sans"
-        };
+        string[] raw = { "Inter", "Open Sans" };
 
         // Act
         AllyariaFontFamily sut = raw;
@@ -243,7 +240,7 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
             .Be("Inter,\"Open Sans\"");
 
         ((string[])sut).Should()
-            .Equal("Inter", "\"Open Sans\"");
+            .Equal("Inter", "Open Sans"); // unquoted
     }
 
     [Fact]
@@ -271,6 +268,36 @@ public sealed class AllyariaStyleFontPublicSurfaceTests
 
         // Assert
         families.Should()
-            .Equal("Inter", "Roboto", "\"Open Sans\"");
+            .Equal("Inter", "Roboto", "Open Sans"); // unquoted
+    }
+
+    [Fact]
+    public void TryParse_ValidInput_ReturnsTrue_WithNormalizedValue_AndFamilies()
+    {
+        // Arrange
+        var raw = " Inter , Open Sans ";
+
+        // Act
+        var ok = AllyariaFontFamily.TryParse(raw, out var sut);
+
+        // Assert
+        ok.Should().BeTrue();
+        ((string)sut).Should().Be("Inter,\"Open Sans\"");
+        ((string[])sut).Should().Equal("Inter", "Open Sans"); // unquoted
+    }
+
+    [Fact]
+    public void TryParse_InvalidInput_ReturnsFalse_And_Empty()
+    {
+        // Arrange
+        var raw = "   ,  ,  ";
+
+        // Act
+        var ok = AllyariaFontFamily.TryParse(raw, out var sut);
+
+        // Assert
+        ok.Should().BeFalse();
+        ((string)sut).Should().BeEmpty();
+        ((string[])sut).Should().BeEmpty();
     }
 }
