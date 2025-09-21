@@ -17,8 +17,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        result.Should().Be(expected);
     }
 
     [Theory]
@@ -33,8 +32,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        result.Should().BeEmpty();
     }
 
     // --- Name normalization and acceptance ---
@@ -52,8 +50,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        result.Should().Be(expected);
     }
 
     [Fact]
@@ -67,8 +64,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be("calc(min(10px, 20px) + max(1rem, 2rem))");
+        result.Should().Be("calc(min(10px, 20px) + max(1rem, 2rem))");
     }
 
     [Theory]
@@ -83,8 +79,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        result.Should().Be(expected);
     }
 
     [Fact]
@@ -98,8 +93,7 @@ public sealed class AllyariaCssFunctionTests
         var result = left > right;
 
         // Assert
-        result.Should()
-            .BeTrue();
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -113,8 +107,7 @@ public sealed class AllyariaCssFunctionTests
         var result = left >= right;
 
         // Assert
-        result.Should()
-            .BeTrue();
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -127,8 +120,7 @@ public sealed class AllyariaCssFunctionTests
         string result = sut;
 
         // Assert
-        result.Should()
-            .Be("calc(1+2)");
+        result.Should().Be("calc(1+2)");
     }
 
     [Theory]
@@ -144,8 +136,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -159,8 +150,7 @@ public sealed class AllyariaCssFunctionTests
         var result = left < right;
 
         // Assert
-        result.Should()
-            .BeTrue();
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -174,8 +164,7 @@ public sealed class AllyariaCssFunctionTests
         var result = left <= right;
 
         // Assert
-        result.Should()
-            .BeTrue();
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -189,8 +178,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -204,8 +192,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -219,8 +206,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -234,8 +220,7 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be("max(10px ,  20px)");
+        result.Should().Be("max(10px ,  20px)");
     }
 
     [Theory]
@@ -251,7 +236,78 @@ public sealed class AllyariaCssFunctionTests
         var result = (string)sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        result.Should().Be(expected);
+    }
+
+    // --- Additional coverage to exercise public TryParse, edge identifiers, and null conversion ---
+
+    [Fact]
+    public void TryParse_ValidInput_ReturnsTrue_And_Normalizes()
+    {
+        // Arrange
+        var input = "MAX( 1px , 2px )";
+
+        // Act
+        var ok = AllyariaCssFunction.TryParse(input, out var func);
+
+        // Assert
+        ok.Should().BeTrue();                    // public API returns true for valid (normalizable) input
+        ((string)func).Should().Be("max(1px , 2px)");
+    }
+
+    [Fact]
+    public void TryParse_InvalidInput_ReturnsFalse_And_EmptyValue()
+    {
+        // Arrange
+        var input = "background";
+
+        // Act
+        var ok = AllyariaCssFunction.TryParse(input, out var func);
+
+        // Assert
+        ok.Should().BeFalse();
+        ((string)func).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void NameStartingWithDigit_IsInvalid()
+    {
+        // Arrange
+        var input = "1calc(1+2)";
+
+        // Act
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("calc(1+2))well")] // extra trailing ')'
+    [InlineData("calc(1+2)more")]  // trailing tokens after last ')'
+    public void TrailingCharacters_After_FinalParen_ShouldBeInvalid(string input)
+    {
+        // Arrange
+
+        // Act
+        var sut = new AllyariaCssFunction(input);
+        var result = (string)sut;
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
+    {
+        // Arrange
+        AllyariaCssFunction? sut = null;
+
+        // Act
+        string result = sut;
+
+        // Assert
+        result.Should().BeEmpty();
     }
 }

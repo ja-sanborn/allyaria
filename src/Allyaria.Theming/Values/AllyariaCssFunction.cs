@@ -103,4 +103,22 @@ public sealed record AllyariaCssFunction : StyleValueBase
     /// Normalized CSS string or <see cref="string.Empty" /> if <paramref name="calc" /> is <c>null</c> or invalid.
     /// </returns>
     public static implicit operator string(AllyariaCssFunction? calc) => calc?.Value ?? string.Empty;
+
+    /// <summary>
+    /// Attempts to parse a CSS-like function string in the strict form <c>name(inner)</c>.
+    /// </summary>
+    /// <param name="value">The candidate text to parse.</param>
+    /// <param name="func">
+    /// When this method returns, contains an <see cref="AllyariaCssFunction"/> whose <see cref="StyleValueBase.Value"/>
+    /// is the normalized representation (or empty if parsing fails).
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="value"/> is already in normalized form (exactly equals
+    /// <c>name(inner)</c> with a lowercase function name and trimmed inner); otherwise <see langword="false"/>.
+    /// </returns>
+    public static bool TryParse(string value, out AllyariaCssFunction func)
+    {
+        func = new AllyariaCssFunction(value);
+        return !string.IsNullOrWhiteSpace(func.Value);
+    }
 }
