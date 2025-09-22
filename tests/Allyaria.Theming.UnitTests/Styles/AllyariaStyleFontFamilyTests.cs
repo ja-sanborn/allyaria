@@ -112,7 +112,8 @@ public sealed class AllyariaStyleFontFamilyTests
     [Theory]
     [InlineData("Inter", "Inter")]
     [InlineData("'Open Sans', Arial, sans-serif", "\"Open Sans\",Arial,sans-serif")]
-    public void Implicit_To_AllyariaCssFontFamily_Should_ReturnUnderlying_When_StyleIsFontFamily(string family, string result)
+    public void Implicit_To_AllyariaCssFontFamily_Should_ReturnUnderlying_When_StyleIsFontFamily(string family,
+        string result)
     {
         // Arrange
         AllyariaStyleFontFamily sut = family;
