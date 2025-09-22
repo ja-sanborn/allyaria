@@ -89,8 +89,8 @@ public readonly record struct AllyariaStyleColor
     }
 
     /// <summary>Initializes a new instance from an existing <see cref="AllyariaCssColor" />.</summary>
-    /// <param name="cssColor">The color value to wrap. Must represent a valid CSS color.</param>
-    public AllyariaStyleColor(AllyariaCssColor cssColor) => _style = cssColor;
+    /// <param name="color">The color value to wrap. Must represent a valid CSS color.</param>
+    public AllyariaStyleColor(AllyariaCssColor color) => _style = color;
 
     /// <summary>
     /// Gets the underlying <see cref="StyleValueBase" />. If the instance was default-constructed and no value is available,
