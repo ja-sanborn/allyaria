@@ -116,9 +116,9 @@ public readonly record struct AllyariaStyleColor
     public static implicit operator AllyariaStyleColor(string value) => new(value);
 
     /// <summary>Implicitly converts an <see cref="AllyariaCssColor" /> into an <see cref="AllyariaStyleColor" />.</summary>
-    /// <param name="cssColor">The CSS color to wrap.</param>
+    /// <param name="color">The CSS color to wrap.</param>
     /// <returns>An <see cref="AllyariaStyleColor" /> instance representing the provided color.</returns>
-    public static implicit operator AllyariaStyleColor(AllyariaCssColor cssColor) => new(cssColor);
+    public static implicit operator AllyariaStyleColor(AllyariaCssColor color) => new(color);
 
     /// <summary>
     /// Implicitly converts an <see cref="AllyariaStyleColor" /> to its CSS declaration <see cref="string" /> (e.g.,
