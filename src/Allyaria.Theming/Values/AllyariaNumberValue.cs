@@ -8,7 +8,7 @@ namespace Allyaria.Theming.Values;
 /// Represents a CSS <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> value. Ensures
 /// normalization according to CSS syntax rules and provides access to the numeric component.
 /// </summary>
-public sealed record AllyariaCssNumber : StyleValueBase
+public sealed record AllyariaNumberValue : StyleValueBase
 {
     /// <summary>
     /// Supported CSS length units (case-insensitive). Includes relative, viewport, container query, and absolute units.
@@ -67,11 +67,11 @@ public sealed record AllyariaCssNumber : StyleValueBase
     };
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaCssNumber" /> class. Accepts a raw CSS string and normalizes it to
+    /// Initializes a new instance of the <see cref="AllyariaNumberValue" /> class. Accepts a raw CSS string and normalizes it to
     /// a valid <c>&lt;number&gt;</c>, <c>&lt;length&gt;</c>, or <c>&lt;percentage&gt;</c> if possible.
     /// </summary>
     /// <param name="value">The raw CSS value to parse.</param>
-    public AllyariaCssNumber(string value)
+    public AllyariaNumberValue(string value)
         : base(Normalize(value)) { }
 
     /// <summary>
@@ -170,34 +170,34 @@ public sealed record AllyariaCssNumber : StyleValueBase
         return string.Empty;
     }
 
-    /// <summary>Attempts to parse and normalize a CSS number, percentage, or length value.</summary>
+    /// <summary>Attempts to parse and normalize a CSS numberValue, percentage, or length value.</summary>
     /// <param name="value">The raw CSS value to parse.</param>
-    /// <param name="number">
-    /// When this method returns, contains an <see cref="AllyariaCssNumber" /> whose <see cref="StyleValueBase.Value" /> is the
+    /// <param name="numberValue">
+    /// When this method returns, contains an <see cref="AllyariaNumberValue" /> whose <see cref="StyleValueBase.Value" /> is the
     /// normalized representation, or <see cref="string.Empty" /> if parsing fails.
     /// </param>
     /// <returns>
     /// <see langword="true" /> if <paramref name="value" /> was successfully normalized into a non-empty canonical form;
     /// otherwise <see langword="false" />.
     /// </returns>
-    public static bool TryParse(string value, out AllyariaCssNumber number)
+    public static bool TryParse(string value, out AllyariaNumberValue numberValue)
     {
-        number = new AllyariaCssNumber(value);
+        numberValue = new AllyariaNumberValue(value);
 
-        return !string.IsNullOrWhiteSpace(number.Value);
+        return !string.IsNullOrWhiteSpace(numberValue.Value);
     }
 
-    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaCssNumber" />.</summary>
+    /// <summary>Implicitly converts a <see cref="string" /> to an <see cref="AllyariaNumberValue" />.</summary>
     /// <param name="value">The raw CSS value to normalize.</param>
-    /// <returns>An <see cref="AllyariaCssNumber" /> representing the normalized value (or empty when invalid).</returns>
-    public static implicit operator AllyariaCssNumber(string value) => new(value);
+    /// <returns>An <see cref="AllyariaNumberValue" /> representing the normalized value (or empty when invalid).</returns>
+    public static implicit operator AllyariaNumberValue(string value) => new(value);
 
     /// <summary>
-    /// Implicitly converts an <see cref="AllyariaCssNumber" /> to its normalized <see cref="string" /> representation.
+    /// Implicitly converts an <see cref="AllyariaNumberValue" /> to its normalized <see cref="string" /> representation.
     /// </summary>
     /// <param name="number">The instance to convert.</param>
     /// <returns>
     /// The normalized string value or <see cref="string.Empty" /> when <paramref name="number" /> is <c>null</c>.
     /// </returns>
-    public static implicit operator string(AllyariaCssNumber? number) => number?.Value ?? string.Empty;
+    public static implicit operator string(AllyariaNumberValue? number) => number?.Value ?? string.Empty;
 }

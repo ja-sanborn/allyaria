@@ -2,13 +2,13 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaCssColorTests
+public sealed class AllyariaColorValueTests
 {
     [Fact]
     public void Alpha_Rounding_To_Byte_Is_AwayFromZero_When_Inspecting_HexRgba()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(0, 0, 0, 0.5);
+        var sut = AllyariaColorValue.FromRgba(0, 0, 0, 0.5);
 
         // Act
         var hex = sut.HexRgba;
@@ -22,7 +22,7 @@ public sealed class AllyariaCssColorTests
     public void Constructor_InvalidRgb_Function_Format_Throws()
     {
         // Arrange
-        var act = () => new AllyariaCssColor("not-a-valid-rgb");
+        var act = () => new AllyariaColorValue("not-a-valid-rgb");
 
         // Assert
         act.Should()
@@ -37,7 +37,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_Hex6_Parses(string hex, int er, int eg, int eb)
     {
         // Arrange + Act
-        var sut = new AllyariaCssColor(hex);
+        var sut = new AllyariaColorValue(hex);
 
         // Assert
         sut.R.Should()
@@ -57,7 +57,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_Hex8_Parses_With_Alpha()
     {
         // Arrange + Act
-        var sut = new AllyariaCssColor("#1234567F"); // A=0x7F ≈ 127/255
+        var sut = new AllyariaColorValue("#1234567F"); // A=0x7F ≈ 127/255
 
         // Assert
         sut.HexRgba.Should()
@@ -71,8 +71,8 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_hsv_hsva_Parses()
     {
         // Arrange + Act
-        var hsv = new AllyariaCssColor("hsv(210, 100%, 100%)");
-        var hsva = new AllyariaCssColor("hsva(0, 0%, 0%, 0.25)");
+        var hsv = new AllyariaColorValue("hsv(210, 100%, 100%)");
+        var hsva = new AllyariaColorValue("hsva(0, 0%, 0%, 0.25)");
 
         // Assert
         hsv.HexRgb.Should()
@@ -86,7 +86,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_Hsv_OutOfRange_Throws()
     {
         // Arrange
-        var act = () => new AllyariaCssColor("hsv(10, 200%, 30%)"); // S% out of [0..100]
+        var act = () => new AllyariaColorValue("hsv(10, 200%, 30%)"); // S% out of [0..100]
 
         // Act + Assert
         act.Should()
@@ -103,7 +103,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_Invalid_Throws(string input)
     {
         // Arrange
-        var act = () => new AllyariaCssColor(input);
+        var act = () => new AllyariaColorValue(input);
 
         // Assert
         act.Should()
@@ -115,8 +115,8 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_rgb_rgba_Parses()
     {
         // Arrange + Act
-        var rgb = new AllyariaCssColor("rgb(255, 0, 128)");
-        var rgba = new AllyariaCssColor("rgba(255, 0, 128, 0.5)");
+        var rgb = new AllyariaColorValue("rgb(255, 0, 128)");
+        var rgba = new AllyariaColorValue("rgba(255, 0, 128, 0.5)");
 
         // Assert
         rgb.HexRgba.Should()
@@ -130,7 +130,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_Rgb_With_NonInteger_Component_Throws()
     {
         // Arrange
-        var act = () => new AllyariaCssColor("rgb(a,0,0)");
+        var act = () => new AllyariaColorValue("rgb(a,0,0)");
 
         // Act + Assert
         act.Should()
@@ -142,7 +142,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_RgbPrefix_InvalidFormat_Throws()
     {
         // Arrange
-        var act = () => new AllyariaCssColor("rgb(1,2)");
+        var act = () => new AllyariaColorValue("rgb(1,2)");
 
         // Act + Assert
         act.Should()
@@ -154,8 +154,8 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_ShortHex_Lowercase_Parses()
     {
         // Arrange + Act
-        var rgb = new AllyariaCssColor("#abc"); // expands to #aabbcc
-        var rgba = new AllyariaCssColor("#0f3c"); // #00ff33 with alpha nibble c → 12*17=204
+        var rgb = new AllyariaColorValue("#abc"); // expands to #aabbcc
+        var rgba = new AllyariaColorValue("#0f3c"); // #00ff33 with alpha nibble c → 12*17=204
 
         // Assert
         rgb.HexRgba.Should()
@@ -172,8 +172,8 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_ShortHex_Parses_RGB_And_RGBA()
     {
         // Arrange + Act
-        var rgb = new AllyariaCssColor("#ABC"); // expands to #AABBCC
-        var rgba = new AllyariaCssColor("#0F3C"); // #00FF33 with alpha nibble C → 12*17=204
+        var rgb = new AllyariaColorValue("#ABC"); // expands to #AABBCC
+        var rgba = new AllyariaColorValue("#0F3C"); // #00FF33 with alpha nibble C → 12*17=204
 
         // Assert
         rgb.HexRgba.Should()
@@ -190,7 +190,7 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_ShortHex_With_Invalid_Hex_Digit_Throws()
     {
         // Arrange
-        var act = () => new AllyariaCssColor("#abz"); // 'z' triggers ToHexNibble default branch
+        var act = () => new AllyariaColorValue("#abz"); // 'z' triggers ToHexNibble default branch
 
         // Act + Assert
         act.Should()
@@ -202,8 +202,8 @@ public sealed class AllyariaCssColorTests
     public void Ctor_String_WebName_And_MaterialName_Parses()
     {
         // Arrange + Act
-        var web = new AllyariaCssColor("DodgerBlue");
-        var mat = new AllyariaCssColor("Deep Purple 200");
+        var web = new AllyariaColorValue("DodgerBlue");
+        var mat = new AllyariaColorValue("Deep Purple 200");
 
         // Assert
         web.HexRgb.Should()
@@ -217,9 +217,9 @@ public sealed class AllyariaCssColorTests
     public void Equality_And_HashCode_Are_ValueBased()
     {
         // Arrange
-        var a = new AllyariaCssColor("#11223344");
-        var b = AllyariaCssColor.FromRgba(0x11, 0x22, 0x33, 0x44 / 255.0);
-        var c = new AllyariaCssColor("#11223345");
+        var a = new AllyariaColorValue("#11223344");
+        var b = AllyariaColorValue.FromRgba(0x11, 0x22, 0x33, 0x44 / 255.0);
+        var c = new AllyariaColorValue("#11223345");
 
         // Act
         var equal = a == b;
@@ -245,8 +245,8 @@ public sealed class AllyariaCssColorTests
     public void FromHsva_Converts_To_RGB_And_Clamps()
     {
         // Arrange + Act
-        var white = AllyariaCssColor.FromHsva(0, 0, 100, 1.1); // alpha should clamp to 1.0
-        var black = AllyariaCssColor.FromHsva(0, 0, 0); // black
+        var white = AllyariaColorValue.FromHsva(0, 0, 100, 1.1); // alpha should clamp to 1.0
+        var black = AllyariaColorValue.FromHsva(0, 0, 0); // black
 
         // Assert
         white.HexRgb.Should()
@@ -364,7 +364,7 @@ public sealed class AllyariaCssColorTests
         byte eb)
     {
         // Arrange + Act
-        var sut = AllyariaCssColor.FromHsva(h, s, v);
+        var sut = AllyariaColorValue.FromHsva(h, s, v);
 
         // Assert
         sut.R.Should()
@@ -381,7 +381,7 @@ public sealed class AllyariaCssColorTests
     public void FromRgba_ClampsAlpha_And_SetsChannels()
     {
         // Arrange + Act
-        var sut = AllyariaCssColor.FromRgba(255, 128, 7, 1.5); // alpha clamps to 1.0
+        var sut = AllyariaColorValue.FromRgba(255, 128, 7, 1.5); // alpha clamps to 1.0
 
         // Assert
         sut.R.Should()
@@ -406,7 +406,7 @@ public sealed class AllyariaCssColorTests
     public void HoverColor_Lightens_Or_Darkens_By_20_Depending_On_V(string input, string expected)
     {
         // Arrange
-        var sut = new AllyariaCssColor(input);
+        var sut = new AllyariaColorValue(input);
 
         // Act
         var hover = sut.HoverColor();
@@ -423,7 +423,7 @@ public sealed class AllyariaCssColorTests
     public void Hsv_Get_Returns_Formatted_String()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(255, 0, 0);
+        var sut = AllyariaColorValue.FromRgba(255, 0, 0);
 
         // Act
         var hsv = sut.Hsv;
@@ -437,11 +437,11 @@ public sealed class AllyariaCssColorTests
     public void Hsv_RoundTrip_Via_Public_Api_Basics()
     {
         // Arrange
-        var colored = new AllyariaCssColor("#1E90FF");
+        var colored = new AllyariaColorValue("#1E90FF");
 
         // Act
         (var h, var s, var v) = (colored.H, colored.S, colored.V);
-        var recon = AllyariaCssColor.FromHsva(h, s, v, colored.A);
+        var recon = AllyariaColorValue.FromHsva(h, s, v, colored.A);
 
         // Assert
         recon.HexRgba.Should()
@@ -452,7 +452,7 @@ public sealed class AllyariaCssColorTests
     public void Hsva_Get_Returns_Formatted_String()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(255, 0, 0, 0.25);
+        var sut = AllyariaColorValue.FromRgba(255, 0, 0, 0.25);
 
         // Act
         var hsva = sut.Hsva;
@@ -466,7 +466,7 @@ public sealed class AllyariaCssColorTests
     public void Hue_Computation_MaxBf_Is_Approximately_210()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(0, 128, 255);
+        var sut = AllyariaColorValue.FromRgba(0, 128, 255);
 
         // Act
         var hue = sut.H;
@@ -480,7 +480,7 @@ public sealed class AllyariaCssColorTests
     public void Hue_Computation_MaxGf_Is_Approximately_150()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(0, 255, 128);
+        var sut = AllyariaColorValue.FromRgba(0, 255, 128);
 
         // Act
         var hue = sut.H;
@@ -494,7 +494,7 @@ public sealed class AllyariaCssColorTests
     public void Hue_Computation_MaxRf_Adjusts_Negative_To_330()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(255, 0, 128);
+        var sut = AllyariaColorValue.FromRgba(255, 0, 128);
 
         // Act
         var hue = sut.H;
@@ -508,7 +508,7 @@ public sealed class AllyariaCssColorTests
     public void Implicit_String_Conversions_Work()
     {
         // Arrange
-        AllyariaCssColor sut = "#11223344";
+        AllyariaColorValue sut = "#11223344";
 
         // Act
         string back = sut;
@@ -517,7 +517,7 @@ public sealed class AllyariaCssColorTests
         back.Should()
             .Be("#11223344");
 
-        var round = (AllyariaCssColor)back;
+        var round = (AllyariaColorValue)back;
 
         round.HexRgba.Should()
             .Be("#11223344");
@@ -527,8 +527,8 @@ public sealed class AllyariaCssColorTests
     public void Named_Colors_Web_And_Material_Are_Resolved_Via_Public_Ctor()
     {
         // Arrange + Act
-        var web = new AllyariaCssColor("DodgerBlue");
-        var material = new AllyariaCssColor("deep purple a700");
+        var web = new AllyariaColorValue("DodgerBlue");
+        var material = new AllyariaColorValue("deep purple a700");
 
         // Assert
         web.HexRgb.Should()
@@ -542,7 +542,7 @@ public sealed class AllyariaCssColorTests
     public void Rgb_Get_Returns_Formatted_String()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(255, 0, 0);
+        var sut = AllyariaColorValue.FromRgba(255, 0, 0);
 
         // Act
         var rgb = sut.Rgb;
@@ -556,7 +556,7 @@ public sealed class AllyariaCssColorTests
     public void Rgba_Get_Returns_Formatted_String()
     {
         // Arrange
-        var sut = AllyariaCssColor.FromRgba(255, 0, 0, 0.25);
+        var sut = AllyariaColorValue.FromRgba(255, 0, 0, 0.25);
 
         // Act
         var rgba = sut.Rgba;
@@ -572,7 +572,7 @@ public sealed class AllyariaCssColorTests
     public void ShiftColor_Adjusts_V_Clamped_And_Preserves_Alpha(string input, double delta, string expectedHex)
     {
         // Arrange
-        var sut = new AllyariaCssColor(input);
+        var sut = new AllyariaColorValue(input);
 
         // Act
         var shifted = sut.ShiftColor(delta);
@@ -589,7 +589,7 @@ public sealed class AllyariaCssColorTests
     public void Transparent_Keyword_Yields_ZeroAlpha()
     {
         // Arrange + Act
-        var sut = new AllyariaCssColor("transparent");
+        var sut = new AllyariaColorValue("transparent");
 
         // Assert
         sut.A.Should()
@@ -603,7 +603,7 @@ public sealed class AllyariaCssColorTests
     public void TryParse_ReturnsFalse_And_Black_On_Invalid_Input()
     {
         // Arrange + Act
-        var ok = AllyariaCssColor.TryParse("definitely-not-a-color", out var color);
+        var ok = AllyariaColorValue.TryParse("definitely-not-a-colorValue", out var color);
 
         // Assert
         ok.Should()
@@ -617,10 +617,10 @@ public sealed class AllyariaCssColorTests
     public void TryParse_ReturnsTrue_And_Parses_Valid_Inputs()
     {
         // Arrange
-        var okHex = AllyariaCssColor.TryParse("#FF000080", out var hex);
-        var okRgb = AllyariaCssColor.TryParse("rgba(0, 128, 255, 0.25)", out var rgb);
-        var okWeb = AllyariaCssColor.TryParse("DodgerBlue", out var web);
-        var okMat = AllyariaCssColor.TryParse("Deep Purple 200", out var mat);
+        var okHex = AllyariaColorValue.TryParse("#FF000080", out var hex);
+        var okRgb = AllyariaColorValue.TryParse("rgba(0, 128, 255, 0.25)", out var rgb);
+        var okWeb = AllyariaColorValue.TryParse("DodgerBlue", out var web);
+        var okMat = AllyariaColorValue.TryParse("Deep Purple 200", out var mat);
 
         // Assert
         okHex.Should()
@@ -652,7 +652,7 @@ public sealed class AllyariaCssColorTests
     public void Value_Returns_Rgba_String()
     {
         // Arrange + Act
-        var sut = new AllyariaCssColor("#11223344");
+        var sut = new AllyariaColorValue("#11223344");
 
         // Assert
         sut.Value.Should()

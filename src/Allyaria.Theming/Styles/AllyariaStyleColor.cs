@@ -24,7 +24,7 @@ namespace Allyaria.Theming.Styles;
 ///         </item>
 ///     </list>
 ///     <para>
-///     It supports implicit creation from <see cref="string" /> and <see cref="AllyariaCssColor" /> to reduce ceremony in
+///     It supports implicit creation from <see cref="string" /> and <see cref="AllyariaColorValue" /> to reduce ceremony in
 ///     call sites. All conversions are one-way implicit to favor ergonomic use in markup and style construction.
 ///     </para>
 /// </remarks>
@@ -46,39 +46,39 @@ public readonly record struct AllyariaStyleColor
     /// Parsing attempts occur in the following order:
     /// <list type="number">
     ///     <item>
-    ///         <description><see cref="AllyariaCssColor.TryParse(string, out AllyariaCssColor?)" /> (named/hex/rgb/hsl…)</description>
+    ///         <description><see cref="AllyariaColorValue.TryParse(string, out AlAllyariaColorValue" /> (named/hex/rgb/hsl…)</description>
     ///     </item>
     ///     <item>
     ///         <description>
-    ///         <see cref="AllyariaCssGlobal.TryParse(string, out AllyariaCssGlobal?)" /> (e.g., <c>inherit</c>, <c>initial</c>
+    ///         <see cref="AllyariaGlobalValue.TryParse(string, out AlAllyariaGlobalValue" /> (e.g., <c>inherit</c>, <c>initial</c>
     ///         )
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <description>
-    ///         <see cref="AllyariaCssFunction.TryParse(string, out AllyariaCssFunction?)" /> (e.g., <c>var(--color)</c>)
+    ///         <see cref="AllyariaFunctionValue.TryParse(string, out AlAllyariaFunctionValue" /> (e.g., <c>var(--color)</c>)
     ///         </description>
     ///     </item>
     /// </list>
-    /// If all attempts fail, the instance falls back to <see cref="AllyariaCssColor.Transparent" />.
+    /// If all attempts fail, the instance falls back to <see cref="AllyariaColorValue.Transparent" />.
     /// </remarks>
     public AllyariaStyleColor(string value)
     {
-        if (AllyariaCssColor.TryParse(value, out var color))
+        if (AllyariaColorValue.TryParse(value, out var color))
         {
             _style = color;
 
             return;
         }
 
-        if (AllyariaCssGlobal.TryParse(value, out var global))
+        if (AllyariaGlobalValue.TryParse(value, out var global))
         {
             _style = global;
 
             return;
         }
 
-        if (AllyariaCssFunction.TryParse(value, out var func))
+        if (AllyariaFunctionValue.TryParse(value, out var func))
         {
             _style = func;
 
@@ -88,9 +88,9 @@ public readonly record struct AllyariaStyleColor
         _style = Colors.Transparent;
     }
 
-    /// <summary>Initializes a new instance from an existing <see cref="AllyariaCssColor" />.</summary>
+    /// <summary>Initializes a new instance from an existing <see cref="AllyariaColorValue" />.</summary>
     /// <param name="color">The color value to wrap. Must represent a valid CSS color.</param>
-    public AllyariaStyleColor(AllyariaCssColor color) => _style = color;
+    public AllyariaStyleColor(AllyariaColorValue color) => _style = color;
 
     /// <summary>
     /// Gets the underlying <see cref="StyleValueBase" />. If the instance was default-constructed and no value is available,
@@ -115,10 +115,10 @@ public readonly record struct AllyariaStyleColor
     /// <returns>An <see cref="AllyariaStyleColor" /> instance representing the provided value.</returns>
     public static implicit operator AllyariaStyleColor(string value) => new(value);
 
-    /// <summary>Implicitly converts an <see cref="AllyariaCssColor" /> into an <see cref="AllyariaStyleColor" />.</summary>
+    /// <summary>Implicitly converts an <see cref="AllyariaColorValue" /> into an <see cref="AllyariaStyleColor" />.</summary>
     /// <param name="color">The CSS color to wrap.</param>
-    /// <returns>An <see cref="AllyariaStyleColor" /> instance representing the provided color.</returns>
-    public static implicit operator AllyariaStyleColor(AllyariaCssColor color) => new(color);
+    /// <returns>An <see cref="AllyariaStyleColor" /> instance representing the provided colorValue.</returns>
+    public static implicit operator AllyariaStyleColor(AllyariaColorValue color) => new(color);
 
     /// <summary>
     /// Implicitly converts an <see cref="AllyariaStyleColor" /> to its CSS declaration <see cref="string" /> (e.g.,
@@ -132,17 +132,17 @@ public readonly record struct AllyariaStyleColor
     public static implicit operator string(AllyariaStyleColor color) => color.Value;
 
     /// <summary>
-    /// Implicitly unwraps the underlying <see cref="AllyariaCssColor" /> from an <see cref="AllyariaStyleColor" />.
+    /// Implicitly unwraps the underlying <see cref="AllyariaColorValue" /> from an <see cref="AllyariaStyleColor" />.
     /// </summary>
     /// <param name="color">The wrapper to convert.</param>
     /// <returns>
-    /// The underlying <see cref="AllyariaCssColor" /> if one is stored; otherwise the default fallback
+    /// The underlying <see cref="AllyariaColorValue" /> if one is stored; otherwise the default fallback
     /// <see cref="Colors.Transparent" />.
     /// </returns>
     /// <remarks>
     /// When the wrapper holds a non-color value (e.g., a global keyword or a function), the value is coerced by the underlying
-    /// theming primitives to <see cref="AllyariaCssColor" />. Ensure such coercion is supported by
+    /// theming primitives to <see cref="AllyariaColorValue" />. Ensure such coercion is supported by
     /// <see cref="StyleValueBase" /> implementations in <c>Allyaria.Theming.Values</c>.
     /// </remarks>
-    public static implicit operator AllyariaCssColor(AllyariaStyleColor color) => (AllyariaCssColor)color.Style;
+    public static implicit operator AllyariaColorValue(AllyariaStyleColor color) => (AllyariaColorValue)color.Style;
 }

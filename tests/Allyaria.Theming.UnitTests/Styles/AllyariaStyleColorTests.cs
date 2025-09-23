@@ -9,7 +9,7 @@ public sealed class AllyariaStyleColorTests
     public void Ctor_CssColor_Should_WrapProvidedColor_When_ColorIsValid()
     {
         // Arrange
-        AllyariaCssColor.TryParse("#123456", out var parsed)
+        AllyariaColorValue.TryParse("#123456", out var parsed)
             .Should()
             .BeTrue("expected test color to parse");
 
@@ -106,7 +106,7 @@ public sealed class AllyariaStyleColorTests
         sut.Style.Value.Should()
             .NotBeNullOrWhiteSpace();
 
-        // It should *not* fall back to transparent for valid color inputs.
+        // It should *not* fall back to transparent for valid colorValue inputs.
         sut.Style.Value.Should()
             .NotBe(Colors.Transparent.Value);
     }
@@ -167,7 +167,7 @@ public sealed class AllyariaStyleColorTests
     public void Implicit_FromCssColor_Should_CreateWrapper_When_ColorProvided()
     {
         // Arrange
-        AllyariaCssColor.TryParse("rgb(1,2,3)", out var color)
+        AllyariaColorValue.TryParse("rgb(1,2,3)", out var color)
             .Should()
             .BeTrue();
 
@@ -224,14 +224,14 @@ public sealed class AllyariaStyleColorTests
         // Arrange
         const string input = "#0a1b2c";
 
-        AllyariaCssColor.TryParse(input, out var expectedColor)
+        AllyariaColorValue.TryParse(input, out var expectedColor)
             .Should()
             .BeTrue();
 
         var sut = new AllyariaStyleColor(input);
 
         // Act
-        AllyariaCssColor actual = sut;
+        AllyariaColorValue actual = sut;
 
         // Assert
         actual.Value.Should()

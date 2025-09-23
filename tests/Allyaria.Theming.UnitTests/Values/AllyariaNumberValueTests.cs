@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaCssNumberTests
+public sealed class AllyariaNumberValueTests
 {
     [Theory]
     [InlineData("1rex", "1rex", 1)]
@@ -20,7 +20,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -56,7 +56,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -80,7 +80,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -96,7 +96,7 @@ public sealed class AllyariaCssNumberTests
     public void Implicit_FromString_ShouldNormalize_AndParseNumber()
     {
         // Arrange
-        AllyariaCssNumber sut = "  15.5PT  ";
+        AllyariaNumberValue sut = "  15.5PT  ";
 
         // Act
         var value = (string)sut;
@@ -114,7 +114,7 @@ public sealed class AllyariaCssNumberTests
     public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
     {
         // Arrange
-        AllyariaCssNumber? sut = null;
+        AllyariaNumberValue? sut = null;
 
         // Act
         string value = sut;
@@ -128,7 +128,7 @@ public sealed class AllyariaCssNumberTests
     public void Implicit_ToString_ShouldReturnNormalizedValue()
     {
         // Arrange
-        var sut = new AllyariaCssNumber("  -2.25ex  ");
+        var sut = new AllyariaNumberValue("  -2.25ex  ");
 
         // Act
         string value = sut;
@@ -155,7 +155,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -184,7 +184,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -203,7 +203,7 @@ public sealed class AllyariaCssNumberTests
         string? input = null;
 
         // Act
-        var sut = new AllyariaCssNumber(input!);
+        var sut = new AllyariaNumberValue(input!);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -226,7 +226,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -249,7 +249,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssNumber(input);
+        var sut = new AllyariaNumberValue(input);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -267,7 +267,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var ok = AllyariaCssNumber.TryParse("12 %", out var sut);
+        var ok = AllyariaNumberValue.TryParse("12 %", out var sut);
         var value = (string)sut;
         var number = sut.Number;
 
@@ -288,7 +288,7 @@ public sealed class AllyariaCssNumberTests
         // Arrange
 
         // Act
-        var ok = AllyariaCssNumber.TryParse("  1.5rem  ", out var sut);
+        var ok = AllyariaNumberValue.TryParse("  1.5rem  ", out var sut);
         var value = (string)sut;
         var number = sut.Number;
 

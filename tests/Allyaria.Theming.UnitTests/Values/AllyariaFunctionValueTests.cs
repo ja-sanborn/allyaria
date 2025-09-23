@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaCssFunctionTests
+public sealed class AllyariaFunctionValueTests
 {
     [Theory]
     [InlineData("scalc(1)", "scalc(1)")] // arbitrary identifier allowed
@@ -13,7 +13,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -29,7 +29,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -48,7 +48,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -63,7 +63,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "calc( min(10px, 20px) + max(1rem, 2rem) )";
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -79,7 +79,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction($"   {input}   ");
+        var sut = new AllyariaFunctionValue($"   {input}   ");
         var result = (string)sut;
 
         // Assert
@@ -91,8 +91,8 @@ public sealed class AllyariaCssFunctionTests
     public void GreaterThan_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("calc(100% - 2rem)");
-        var right = new AllyariaCssFunction("calc ulus(100% - 2rem)"); // invalid
+        var left = new AllyariaFunctionValue("calc(100% - 2rem)");
+        var right = new AllyariaFunctionValue("calc ulus(100% - 2rem)"); // invalid
 
         // Act
         var result = left > right;
@@ -106,8 +106,8 @@ public sealed class AllyariaCssFunctionTests
     public void GreaterThanOrEqual_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("var(--ok)");
-        var right = new AllyariaCssFunction("var iant(--ok)"); // invalid
+        var left = new AllyariaFunctionValue("var(--ok)");
+        var right = new AllyariaFunctionValue("var iant(--ok)"); // invalid
 
         // Act
         var result = left >= right;
@@ -121,7 +121,7 @@ public sealed class AllyariaCssFunctionTests
     public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
     {
         // Arrange
-        AllyariaCssFunction? sut = null;
+        AllyariaFunctionValue? sut = null;
 
         // Act
         string result = sut;
@@ -135,7 +135,7 @@ public sealed class AllyariaCssFunctionTests
     public void ImplicitOperators_ShouldRoundTrip_ForValidFunction()
     {
         // Arrange
-        AllyariaCssFunction sut = "calc(1+2)";
+        AllyariaFunctionValue sut = "calc(1+2)";
 
         // Act
         string result = sut;
@@ -154,7 +154,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -166,8 +166,8 @@ public sealed class AllyariaCssFunctionTests
     public void LessThan_WhenLeftInvalid_AndRightValid_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("min max(1)"); // invalid
-        var right = new AllyariaCssFunction("min(1)");
+        var left = new AllyariaFunctionValue("min max(1)"); // invalid
+        var right = new AllyariaFunctionValue("min(1)");
 
         // Act
         var result = left < right;
@@ -181,8 +181,8 @@ public sealed class AllyariaCssFunctionTests
     public void LessThanOrEqual_WhenNormalizedValuesEqual_ShouldBeTrue()
     {
         // Arrange
-        var left = new AllyariaCssFunction("MaX( 2 )");
-        var right = new AllyariaCssFunction("max(2)");
+        var left = new AllyariaFunctionValue("MaX( 2 )");
+        var right = new AllyariaFunctionValue("max(2)");
 
         // Act
         var result = left <= right;
@@ -199,7 +199,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "max(10px, 20px";
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -214,7 +214,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "1calc(1+2)";
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -229,7 +229,7 @@ public sealed class AllyariaCssFunctionTests
         string? input = null;
 
         // Act
-        var sut = new AllyariaCssFunction(input!);
+        var sut = new AllyariaFunctionValue(input!);
         var result = (string)sut;
 
         // Assert
@@ -244,7 +244,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "calc (1+2)";
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -260,7 +260,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -275,7 +275,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "  max( 10px ,  20px )  ";
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert
@@ -290,7 +290,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "background";
 
         // Act
-        var ok = AllyariaCssFunction.TryParse(input, out var func);
+        var ok = AllyariaFunctionValue.TryParse(input, out var func);
 
         // Assert
         ok.Should()
@@ -307,7 +307,7 @@ public sealed class AllyariaCssFunctionTests
         var input = "MAX( 1px , 2px )";
 
         // Act
-        var ok = AllyariaCssFunction.TryParse(input, out var func);
+        var ok = AllyariaFunctionValue.TryParse(input, out var func);
 
         // Assert
         ok.Should()
@@ -326,7 +326,7 @@ public sealed class AllyariaCssFunctionTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssFunction(input);
+        var sut = new AllyariaFunctionValue(input);
         var result = (string)sut;
 
         // Assert

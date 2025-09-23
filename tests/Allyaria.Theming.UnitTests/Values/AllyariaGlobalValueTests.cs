@@ -2,7 +2,7 @@
 
 namespace Allyaria.Theming.UnitTests.Values;
 
-public sealed class AllyariaCssGlobalTests
+public sealed class AllyariaGlobalValueTests
 {
     [Theory]
     [InlineData("")]
@@ -15,7 +15,7 @@ public sealed class AllyariaCssGlobalTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssGlobal(input);
+        var sut = new AllyariaGlobalValue(input);
         string value = sut;
 
         // Assert
@@ -34,7 +34,7 @@ public sealed class AllyariaCssGlobalTests
         // Arrange
 
         // Act
-        var sut = new AllyariaCssGlobal(input);
+        var sut = new AllyariaGlobalValue(input);
         string value = sut;
 
         // Assert
@@ -49,7 +49,7 @@ public sealed class AllyariaCssGlobalTests
         string? raw = null;
 
         // Act
-        var sut = new AllyariaCssGlobal(raw!);
+        var sut = new AllyariaGlobalValue(raw!);
         string value = sut;
 
         // Assert
@@ -61,7 +61,7 @@ public sealed class AllyariaCssGlobalTests
     public void Implicit_FromString_Parses_And_Normalizes()
     {
         // Arrange
-        AllyariaCssGlobal sut = "  ReVeRt-LaYeR  ";
+        AllyariaGlobalValue sut = "  ReVeRt-LaYeR  ";
 
         // Act
         string value = sut;
@@ -75,7 +75,7 @@ public sealed class AllyariaCssGlobalTests
     public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
     {
         // Arrange
-        AllyariaCssGlobal? sut = null;
+        AllyariaGlobalValue? sut = null;
 
         // Act
         string value = sut;
@@ -89,11 +89,11 @@ public sealed class AllyariaCssGlobalTests
     public void RoundTrip_String_Conversion_Works_For_Valid_Value()
     {
         // Arrange
-        AllyariaCssGlobal sut = "unset";
+        AllyariaGlobalValue sut = "unset";
 
         // Act
         string back = sut;
-        AllyariaCssGlobal round = back;
+        AllyariaGlobalValue round = back;
 
         // Assert
         back.Should()
@@ -110,7 +110,7 @@ public sealed class AllyariaCssGlobalTests
         var input = "initial-value";
 
         // Act
-        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
+        var ok = AllyariaGlobalValue.TryParse(input, out var sut);
         string value = sut;
 
         // Assert
@@ -128,7 +128,7 @@ public sealed class AllyariaCssGlobalTests
         var input = "  INITIAL  ";
 
         // Act
-        var ok = AllyariaCssGlobal.TryParse(input, out var sut);
+        var ok = AllyariaGlobalValue.TryParse(input, out var sut);
         string value = sut;
 
         // Assert

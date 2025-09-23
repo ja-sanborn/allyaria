@@ -9,21 +9,21 @@ public sealed class AllyariaStyleFontFamilyTests
     public void Ctor_FromCssFontFamily_Should_UseProvidedInstance()
     {
         // Arrange
-        var provided = new AllyariaCssFontFamily("Inter");
+        var provided = new AllyariaFontFamilyValue("Inter");
 
         // Act
         var sut = new AllyariaStyleFontFamily(provided);
 
         // Assert
         sut.Style.Should()
-            .BeOfType<AllyariaCssFontFamily>();
+            .BeOfType<AllyariaFontFamilyValue>();
 
         // Ensure it's equivalent by value; if reference equality isn't guaranteed, compare by Value
         sut.Style.Value.Should()
             .Be("Inter");
 
         sut.Value.Should()
-            .Be("font-family:Inter;");
+            .Be("font-familyValue:Inter;");
     }
 
     [Theory]
@@ -43,13 +43,13 @@ public sealed class AllyariaStyleFontFamilyTests
             .Be(result);
 
         sut.Value.Should()
-            .Be($"font-family:{result};");
+            .Be($"font-familyValue:{result};");
     }
 
     [Theory]
     [InlineData("var(--font-body)")]
     [InlineData("env(safe-area-inset-top)")]
-    [InlineData("calc(1px + 1px)")] // even if odd for font-family, ensures function parsing path
+    [InlineData("calc(1px + 1px)")] // even if odd for font-familyValue, ensures function parsing path
     public void Ctor_String_Should_WrapCssFunction_When_ValueLooksLikeFunction(string func)
     {
         // Arrange
@@ -60,10 +60,10 @@ public sealed class AllyariaStyleFontFamilyTests
 
         // Assert
         style.Should()
-            .BeOfType<AllyariaCssFunction>();
+            .BeOfType<AllyariaFunctionValue>();
 
         sut.Value.Should()
-            .Be($"font-family:{func};");
+            .Be($"font-familyValue:{func};");
     }
 
     [Theory]
@@ -81,10 +81,10 @@ public sealed class AllyariaStyleFontFamilyTests
 
         // Assert
         style.Should()
-            .BeOfType<AllyariaCssGlobal>();
+            .BeOfType<AllyariaGlobalValue>();
 
         sut.Value.Should()
-            .Be($"font-family:{keyword};");
+            .Be($"font-familyValue:{keyword};");
     }
 
     [Theory]
@@ -93,20 +93,20 @@ public sealed class AllyariaStyleFontFamilyTests
     public void Implicit_From_AllyariaCssFontFamily_Should_SetStyle(string family, string result)
     {
         // Arrange
-        var cssFamily = new AllyariaCssFontFamily(family);
+        var cssFamily = new AllyariaFontFamilyValue(family);
 
         // Act
         AllyariaStyleFontFamily sut = cssFamily;
 
         // Assert
         sut.Style.Should()
-            .BeOfType<AllyariaCssFontFamily>();
+            .BeOfType<AllyariaFontFamilyValue>();
 
         sut.Style.Value.Should()
             .Be(result);
 
         sut.Value.Should()
-            .Be($"font-family:{result};");
+            .Be($"font-familyValue:{result};");
     }
 
     [Theory]
@@ -119,7 +119,7 @@ public sealed class AllyariaStyleFontFamilyTests
         AllyariaStyleFontFamily sut = family;
 
         // Act
-        AllyariaCssFontFamily actual = sut;
+        AllyariaFontFamilyValue actual = sut;
 
         // Assert
         actual.Value.Should()
@@ -135,7 +135,7 @@ public sealed class AllyariaStyleFontFamilyTests
         // Act
         var act = () =>
         {
-            AllyariaCssFontFamily _ = sut;
+            AllyariaFontFamilyValue _ = sut;
         };
 
         // Assert
@@ -152,7 +152,7 @@ public sealed class AllyariaStyleFontFamilyTests
         // Act
         var act = () =>
         {
-            AllyariaCssFontFamily _ = sut;
+            AllyariaFontFamilyValue _ = sut;
         };
 
         // Assert
@@ -175,7 +175,7 @@ public sealed class AllyariaStyleFontFamilyTests
 
         // Assert
         css.Should()
-            .Be($"font-family:{sut.Style.Value};");
+            .Be($"font-familyValue:{sut.Style.Value};");
 
         css.Should()
             .Be(sut.Value);
@@ -189,16 +189,16 @@ public sealed class AllyariaStyleFontFamilyTests
 
         // Act
         var style = sut.Style;
-        var asFontFamily = (AllyariaCssFontFamily)style;
+        var asFontFamily = (AllyariaFontFamilyValue)style;
 
         // Assert
         style.Should()
-            .BeOfType<AllyariaCssFontFamily>();
+            .BeOfType<AllyariaFontFamilyValue>();
 
         asFontFamily.Value.Should()
             .Be(string.Empty);
 
         sut.Value.Should()
-            .Be("font-family:;");
+            .Be("font-familyValue:;");
     }
 }

@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Values;
 /// <c>initial</c>, <c>unset</c>, <c>revert</c>, and <c>revert-layer</c>. Input is normalized to lowercase; invalid input
 /// yields <see cref="string.Empty" />.
 /// </summary>
-public sealed record AllyariaCssGlobal : StyleValueBase
+public sealed record AllyariaGlobalValue : StyleValueBase
 {
     /// <summary>The set of allowed CSS global values. Comparison is case-insensitive.</summary>
     private static readonly HashSet<string> AllowedValues = new(
@@ -23,11 +23,11 @@ public sealed record AllyariaCssGlobal : StyleValueBase
     );
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AllyariaCssGlobal" /> class from a raw string. The input is normalized; if
+    /// Initializes a new instance of the <see cref="AllyariaGlobalValue" /> class from a raw string. The input is normalized; if
     /// invalid, the <see cref="StyleValueBase.Value" /> is empty.
     /// </summary>
     /// <param name="value">The raw CSS keyword to parse.</param>
-    public AllyariaCssGlobal(string value)
+    public AllyariaGlobalValue(string value)
         : base(Normalize(value)) { }
 
     /// <summary>Normalizes a raw CSS global value candidate.</summary>
@@ -47,31 +47,31 @@ public sealed record AllyariaCssGlobal : StyleValueBase
             : string.Empty;
     }
 
-    /// <summary>Attempts to parse a raw string into a <see cref="AllyariaCssGlobal" />.</summary>
+    /// <summary>Attempts to parse a raw string into a <see cref="AllyariaGlobalValue" />.</summary>
     /// <param name="value">The raw CSS keyword to parse.</param>
-    /// <param name="global">
-    /// When this method returns, contains the parsed <see cref="AllyariaCssGlobal" />. Its <see cref="StyleValueBase.Value" />
+    /// <param name="globalValue">
+    /// When this method returns, contains the parsed <see cref="AllyariaGlobalValue" />. Its <see cref="StyleValueBase.Value" />
     /// is the normalized keyword, or empty if parsing fails.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="value" /> is a valid CSS global value; otherwise <see langword="false" />.
+    /// <see langword="true" /> if <paramref name="value" /> is a valid CSS globalValue value; otherwise <see langword="false" />.
     /// </returns>
-    public static bool TryParse(string value, out AllyariaCssGlobal global)
+    public static bool TryParse(string value, out AllyariaGlobalValue globalValue)
     {
-        global = new AllyariaCssGlobal(value);
+        globalValue = new AllyariaGlobalValue(value);
 
-        return !string.IsNullOrWhiteSpace(global.Value);
+        return !string.IsNullOrWhiteSpace(globalValue.Value);
     }
 
-    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaCssGlobal" />.</summary>
+    /// <summary>Implicit conversion from <see cref="string" /> to <see cref="AllyariaGlobalValue" />.</summary>
     /// <param name="value">The raw CSS keyword.</param>
-    /// <returns>An <see cref="AllyariaCssGlobal" /> instance.</returns>
-    public static implicit operator AllyariaCssGlobal(string value) => new(value);
+    /// <returns>An <see cref="AllyariaGlobalValue" /> instance.</returns>
+    public static implicit operator AllyariaGlobalValue(string value) => new(value);
 
-    /// <summary>Implicit conversion from <see cref="AllyariaCssGlobal" /> to <see cref="string" />.</summary>
+    /// <summary>Implicit conversion from <see cref="AllyariaGlobalValue" /> to <see cref="string" />.</summary>
     /// <param name="global">The instance to convert.</param>
     /// <returns>
     /// The normalized CSS keyword or <see cref="string.Empty" /> if <paramref name="global" /> is null or invalid.
     /// </returns>
-    public static implicit operator string(AllyariaCssGlobal? global) => global?.Value ?? string.Empty;
+    public static implicit operator string(AllyariaGlobalValue? global) => global?.Value ?? string.Empty;
 }
