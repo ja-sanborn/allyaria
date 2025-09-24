@@ -4,333 +4,267 @@ namespace Allyaria.Theming.UnitTests.Values;
 
 public sealed class AllyariaFunctionValueTests
 {
-    [Theory]
-    [InlineData("scalc(1)", "scalc(1)")] // arbitrary identifier allowed
-    [InlineData("my_func(42)", "my_func(42)")] // underscore
-    [InlineData("my-func(42)", "my-func(42)")] // hyphen
-    public void ArbitraryIdentifier_Names_AreAccepted_AndLowercased(string input, string expected)
+    [Fact]
+    public void Ctor_Should_AcceptLongestInnerUntilLastParen_When_ExtraInnerParensExist()
     {
         // Arrange
+        var input = "min(max(1,(2)), (3 + (4)))";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        actual.Should()
+            .Be("min(max(1,(2)), (3 + (4)))");
     }
 
-    [Theory]
-    [InlineData("--x")]
-    [InlineData("--LONG_token")]
-    public void DoubleDash_Shorthand_IsNotSupported_ShouldNormalizeToEmpty(string input)
+    [Fact]
+    public void Ctor_Should_AllowNestedParentheses_When_InnerContainsFunctions()
     {
         // Arrange
+        var input = "rgb(calc(1+2), 0, max(0, 1))";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        actual.Should()
+            .Be("rgb(calc(1+2), 0, max(0, 1))");
     }
 
-    // --- Name normalization and acceptance ---
-
-    [Theory]
-    [InlineData("Min(1rem,2rem)", "min(1rem,2rem)")]
-    [InlineData("MAX(10px, 20px)", "max(10px, 20px)")]
-    [InlineData("calc( 100% - var(--Gap) )", "calc(100% - var(--Gap))")]
-    public void GeneralFunction_ShouldLowercaseName_AndPreserveInner(string input, string expected)
+    [Fact]
+    public void Ctor_Should_HandleFunctionNamesWithDashes_When_CaseInsensitive()
     {
         // Arrange
+        var input = "RePeAtInG-RaDiAl-GrAdIeNt(circle, red, blue)";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .Be(expected);
+        actual.Should()
+            .Be("repeating-radial-gradient(circle, red, blue)");
     }
 
     [Fact]
-    public void GeneralFunction_WithNestedParentheses_ShouldUseFirstOpenAndLastClose()
+    public void Ctor_Should_NormalizeCaseInsensitiveNameToLower_When_MixedCasingProvided()
     {
         // Arrange
-        var input = "calc( min(10px, 20px) + max(1rem, 2rem) )";
+        var input = "RGB(255 0 0)";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut; // implicit AllyariaFunctionValue -> string
 
         // Assert
-        result.Should()
-            .Be("calc(min(10px, 20px) + max(1rem, 2rem))");
-    }
-
-    [Theory]
-    [InlineData("calc( 1 + 2 )", "calc(1 + 2)")]
-    [InlineData("min( 1rem , 2rem )", "min(1rem , 2rem)")]
-    public void GeneralFunction_WithOuterWhitespace_ShouldNormalize(string input, string expected)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaFunctionValue($"   {input}   ");
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .Be(expected);
+        actual.Should()
+            .Be("rgb(255 0 0)");
     }
 
     [Fact]
-    public void GreaterThan_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
+    public void Ctor_Should_PreserveCaseSensitiveName_When_ExactCasingProvided()
     {
         // Arrange
-        var left = new AllyariaFunctionValue("calc(100% - 2rem)");
-        var right = new AllyariaFunctionValue("calc ulus(100% - 2rem)"); // invalid
+        var input = "rotateX(45deg)";
 
         // Act
-        var result = left > right;
+        var sut = new AllyariaFunctionValue(input);
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .BeTrue();
+        actual.Should()
+            .Be("rotateX(45deg)");
     }
 
     [Fact]
-    public void GreaterThanOrEqual_WhenLeftValid_AndRightInvalid_ShouldBeTrue()
+    public void Ctor_Should_ThrowFormatException_When_CaseSensitiveNameCasingIsWrong()
     {
         // Arrange
-        var left = new AllyariaFunctionValue("var(--ok)");
-        var right = new AllyariaFunctionValue("var iant(--ok)"); // invalid
+        var input = "rotatex(45deg)";
 
         // Act
-        var result = left >= right;
+        var act = () => new AllyariaFunctionValue(input);
 
         // Assert
-        result.Should()
-            .BeTrue();
-    }
-
-    [Fact]
-    public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
-    {
-        // Arrange
-        AllyariaFunctionValue? sut = null;
-
-        // Act
-        string result = sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void ImplicitOperators_ShouldRoundTrip_ForValidFunction()
-    {
-        // Arrange
-        AllyariaFunctionValue sut = "calc(1+2)";
-
-        // Act
-        string result = sut;
-
-        // Assert
-        result.Should()
-            .Be("calc(1+2)");
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("Unable to parse CSS function expression.");
     }
 
     [Theory]
-    [InlineData("background")]
-    [InlineData("var()")]
-    [InlineData("mi n(1)")]
-    public void InvalidInputs_ShouldNormalizeToEmpty(string input)
+    [InlineData("rgb(10 20 30")]
+    [InlineData("rgb10 20 30)")]
+    [InlineData("()(1)")]
+    [InlineData("rgb()")]
+    [InlineData("unknown(1 2 3)")]
+    [InlineData("rgb)1 2 3)")]
+    public void Ctor_Should_ThrowFormatException_When_InputIsMalformed(string input)
     {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        // Arrange & Act
+        var act = () => new AllyariaFunctionValue(input);
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("Unable to parse CSS function expression.");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Ctor_Should_ThrowFormatException_When_ValueIsEmptyOrWhitespace(string input)
+    {
+        // Arrange & Act
+        var act = () => new AllyariaFunctionValue(input);
+
+        // Assert
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("Value is null or whitespace.");
     }
 
     [Fact]
-    public void LessThan_WhenLeftInvalid_AndRightValid_ShouldBeTrue()
-    {
-        // Arrange
-        var left = new AllyariaFunctionValue("min max(1)"); // invalid
-        var right = new AllyariaFunctionValue("min(1)");
-
-        // Act
-        var result = left < right;
-
-        // Assert
-        result.Should()
-            .BeTrue();
-    }
-
-    [Fact]
-    public void LessThanOrEqual_WhenNormalizedValuesEqual_ShouldBeTrue()
-    {
-        // Arrange
-        var left = new AllyariaFunctionValue("MaX( 2 )");
-        var right = new AllyariaFunctionValue("max(2)");
-
-        // Act
-        var result = left <= right;
-
-        // Assert
-        result.Should()
-            .BeTrue();
-    }
-
-    [Fact]
-    public void MissingFinalParen_ShouldBeInvalid()
-    {
-        // Arrange
-        var input = "max(10px, 20px";
-
-        // Act
-        var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void NameStartingWithDigit_IsInvalid()
-    {
-        // Arrange
-        var input = "1calc(1+2)";
-
-        // Act
-        var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void NullValue_ShouldNormalizeToEmpty()
+    public void Ctor_Should_ThrowFormatException_When_ValueIsNull()
     {
         // Arrange
         string? input = null;
 
         // Act
-        var sut = new AllyariaFunctionValue(input!);
-        var result = (string)sut;
+        var act = () => new AllyariaFunctionValue(input!);
 
         // Assert
-        result.Should()
-            .BeEmpty();
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("Value is null or whitespace.");
     }
 
     [Fact]
-    public void SpaceBetweenNameAndParen_ShouldBeInvalid()
+    public void Ctor_Should_TrimNameAndInner_When_SpacesAroundDelimiters()
     {
         // Arrange
-        var input = "calc (1+2)";
+        var input = "   calc   (   1rem + 2px   )   ";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .BeEmpty();
-    }
-
-    [Theory]
-    [InlineData("calc(1+2))well")] // extra trailing ')'
-    [InlineData("calc(1+2)more")] // trailing tokens after last ')'
-    public void TrailingCharacters_After_FinalParen_ShouldBeInvalid(string input)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
-
-        // Assert
-        result.Should()
-            .BeEmpty();
+        actual.Should()
+            .Be("calc(1rem + 2px)");
     }
 
     [Fact]
-    public void Trimming_ShouldBeApplied_ButInnerSpacingPreserved()
+    public void Ctor_Should_TrimOuterWhitespace_And_InnerWhitespaceEdges_When_SurroundedBySpaces()
     {
         // Arrange
-        var input = "  max( 10px ,  20px )  ";
+        var input = "   rgb(   10  20  30   )   ";
 
         // Act
         var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
+        string actual = sut;
 
         // Assert
-        result.Should()
-            .Be("max(10px ,  20px)");
+        actual.Should()
+            .Be("rgb(10  20  30)");
     }
 
     [Fact]
-    public void TryParse_InvalidInput_ReturnsFalse_And_EmptyValue()
+    public void Implicit_FromString_Should_ConstructAndNormalize_When_ValidInput()
     {
         // Arrange
-        var input = "background";
+        AllyariaFunctionValue sut = "Color-Mix(in srgb, red 50%, blue)";
 
         // Act
-        var ok = AllyariaFunctionValue.TryParse(input, out var func);
+        string actual = sut;
+
+        // Assert
+        actual.Should()
+            .Be("color-mix(in srgb, red 50%, blue)");
+    }
+
+    [Fact]
+    public void Implicit_ToString_Should_ReturnNormalizedValue_When_InstanceCreated()
+    {
+        // Arrange
+        var sut = new AllyariaFunctionValue("rotateY(30deg)");
+
+        // Act
+        string actual = sut;
+
+        // Assert
+        actual.Should()
+            .Be("rotateY(30deg)");
+    }
+
+    [Fact]
+    public void Parse_Should_ReturnInstance_When_InputIsValid()
+    {
+        // Arrange
+        var input = "HSL(200 30% 40%)";
+
+        // Act
+        var sut = AllyariaFunctionValue.Parse(input);
+        string actual = sut;
+
+        // Assert
+        actual.Should()
+            .Be("hsl(200 30% 40%)");
+    }
+
+    [Fact]
+    public void Parse_Should_ThrowFormatException_When_InputIsInvalid()
+    {
+        // Arrange
+        var input = "nope(1 2 3)";
+
+        // Act
+        var act = () => AllyariaFunctionValue.Parse(input);
+
+        // Assert
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("Unable to parse CSS function expression.");
+    }
+
+    [Fact]
+    public void TryParse_Should_ReturnFalseAndNull_When_InputIsInvalid()
+    {
+        // Arrange
+        var input = "whoDis(123)";
+
+        // Act
+        var ok = AllyariaFunctionValue.TryParse(input, out var result);
 
         // Assert
         ok.Should()
             .BeFalse();
 
-        ((string)func).Should()
-            .BeEmpty();
+        result.Should()
+            .BeNull();
     }
 
     [Fact]
-    public void TryParse_ValidInput_ReturnsTrue_And_Normalizes()
+    public void TryParse_Should_ReturnTrueAndResult_When_InputIsValid()
     {
         // Arrange
-        var input = "MAX( 1px , 2px )";
+        var input = "OkLch(50% 0.1 120)";
 
         // Act
-        var ok = AllyariaFunctionValue.TryParse(input, out var func);
+        var ok = AllyariaFunctionValue.TryParse(input, out var result);
 
         // Assert
         ok.Should()
-            .BeTrue(); // public API returns true for valid (normalizable) input
+            .BeTrue();
 
-        ((string)func).Should()
-            .Be("max(1px , 2px)");
-    }
-
-    [Theory]
-    [InlineData("var(--X)", "var(--X)")]
-    [InlineData("VAR(--x)", "var(--x)")]
-    [InlineData(" Var(--Gap) ", "var(--Gap)")]
-    public void VarFunction_ShouldLowercaseName_AndPreserveInner(string input, string expected)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaFunctionValue(input);
-        var result = (string)sut;
-
-        // Assert
         result.Should()
-            .Be(expected);
+            .NotBeNull();
+
+        string normalized = result;
+
+        normalized.Should()
+            .Be("oklch(50% 0.1 120)");
     }
 }

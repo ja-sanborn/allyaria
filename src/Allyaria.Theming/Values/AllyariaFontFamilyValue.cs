@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Abstractions;
+using Allyaria.Theming.Contracts;
 using System.Text;
 
 namespace Allyaria.Theming.Values;
@@ -6,13 +6,13 @@ namespace Allyaria.Theming.Values;
 /// <summary>
 /// Represents a normalized CSS <c>font-family</c> list. Accepts one or more raw family names (each may be
 /// comma-separated), applies quoting rules per CSS (quote tokens that contain whitespace, commas, or quotes),
-/// de-duplicates, trims, and produces a canonical comma-separated <see cref="StyleValueBase.Value" />.
+/// de-duplicates, trims, and produces a canonical comma-separated <see cref="ValueBase.Value" />.
 /// </summary>
-public sealed record AllyariaFontFamilyValue : StyleValueBase
+public sealed class AllyariaFontFamilyValue : ValueBase
 {
     /// <summary>
     /// Backing field for <see cref="Families" />. Caches the normalized font family array after the first access to avoid
-    /// repeated parsing of the canonical <see cref="StyleValueBase.Value" />.
+    /// repeated parsing of the canonical <see cref="ValueBase.Value" />.
     /// </summary>
     private string[]? _families;
 
@@ -20,15 +20,16 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
     /// Initializes a new instance of the <see cref="AllyariaFontFamilyValue" /> class from one or more raw family names. Any
     /// argument that contains commas is split into multiple names before normalization.
     /// </summary>
-    /// <param name="families">One or more raw font family names. Items containing commas will be split into separate names.</param>
-    public AllyariaFontFamilyValue(params string[] families)
-        : base(Normalize(families)) { }
+    /// <param name="values">One or more raw font family names. Items containing commas will be split into separate names.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="values" /> is <see langword="null" /> or empty.</exception>
+    public AllyariaFontFamilyValue(params string[] values)
+        : base(Normalize(values)) { }
 
     /// <summary>
-    /// Gets the normalized font families as an array. This splits the canonical comma-separated
-    /// <see cref="StyleValueBase.Value" /> on commas that are <b>outside</b> of quotes (so commas inside a quoted family name
-    /// are ignored), then removes any surrounding double quotes from each item and unescapes inner quotes (i.e., <c>\"</c>
-    /// becomes <c>"</c>). Returned items are unquoted, trimmed family names. The result is cached after the first access.
+    /// Gets the normalized font families as an array. This splits the canonical comma-separated <see cref="ValueBase.Value" />
+    /// on commas that are <b>outside</b> of quotes (so commas inside a quoted family name are ignored), then removes any
+    /// surrounding double quotes from each item and unescapes inner quotes (i.e., <c>\"</c> becomes <c>"</c>). Returned items
+    /// are unquoted, trimmed family names. The result is cached after the first access.
     /// </summary>
     public string[] Families
     {
@@ -75,23 +76,24 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
     /// Normalizes input provided via the <c>params</c> constructor: validates arguments, splits comma-separated items, quotes
     /// tokens when required by CSS rules, trims, and de-duplicates while preserving first-seen ordering.
     /// </summary>
-    /// <param name="families">The raw family names supplied to the constructor.</param>
+    /// <param name="values">The raw family names supplied to the constructor.</param>
     /// <returns>A normalized comma-separated string of font family names (or <see cref="string.Empty" /> when none).</returns>
-    private static string Normalize(string[]? families = null)
+    /// <exception cref="ArgumentException">Thrown when <paramref name="values" /> is <see langword="null" /> or empty.</exception>
+    private static string Normalize(string[]? values = null)
     {
-        if (families is null || families.Length == 0)
+        var flattened = FlattenCommaSeparated(values ?? Array.Empty<string>());
+
+        if (flattened is null || flattened.Length is 0)
         {
-            return string.Empty;
+            throw new ArgumentException("At least one font family name must be provided.", nameof(values));
         }
 
-        var flattened = FlattenCommaSeparated(families);
-
-        // Use case-insensitive de-dupe to align with typical CSS name matching semantics.
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var ordered = new List<string>(flattened.Length);
 
         foreach (var family in flattened)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(family, nameof(values));
             var normalized = NormalizeQuotes(family.Trim());
 
             if (seen.Add(normalized))
@@ -133,7 +135,9 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
             }
         ) >= 0;
 
-        var needsQuotes = hasWhitespace || family.Contains(',') || family.Contains('"') || family.Contains('\'');
+        var needsQuotes = hasWhitespace || family.Contains(',', StringComparison.Ordinal) ||
+            family.Contains('"', StringComparison.Ordinal) ||
+            family.Contains('\'', StringComparison.Ordinal);
 
         if (!needsQuotes)
         {
@@ -146,17 +150,22 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
     }
 
     /// <summary>
+    /// Creates a new <see cref="AllyariaFontFamilyValue" /> by parsing a single raw <c>font-family</c> string.
+    /// </summary>
+    /// <param name="value">A string that may contain one or more comma-separated font family names.</param>
+    /// <returns>A new <see cref="AllyariaFontFamilyValue" /> instance representing the normalized families.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is <see langword="null" /> or empty.</exception>
+    public static AllyariaFontFamilyValue Parse(string value) => new(value);
+
+    /// <summary>
     /// Splits a canonical comma-joined value (no spaces) on commas that are outside of double quotes, then strips surrounding
     /// quotes and unescapes inner quotes. Assumes tokens were produced by <see cref="NormalizeQuotes" /> (i.e., double quotes
-    /// used and inner quotes escaped as \" ).
+    /// used and inner quotes escaped as <c>\"</c>).
     /// </summary>
+    /// <param name="value">The canonical comma-separated <see cref="ValueBase.Value" /> string.</param>
+    /// <returns>An array of unquoted, trimmed family names.</returns>
     private static string[] SplitCanonicalFamilies(string value)
     {
-        if (string.IsNullOrEmpty(value))
-        {
-            return Array.Empty<string>();
-        }
-
         var items = new List<string>();
         var sb = new StringBuilder(value.Length);
 
@@ -198,25 +207,38 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
     /// <summary>Attempts to parse a raw font family list and normalize it into a canonical, comma-separated form.</summary>
     /// <param name="value">
     /// A raw font family string, which may contain one or more comma-separated family names. Individual tokens are trimmed;
-    /// tokens requiring quotes per CSS rules will be quoted.
+    /// tokens requiring quotes per CSS rules will be quoted. May be <see langword="null" />.
     /// </param>
-    /// <param name="func">
-    /// When this method returns, contains an <see cref="AllyariaFontFamilyValue" /> whose <see cref="StyleValueBase.Value" /> is
-    /// the normalized representation, or <see cref="string.Empty" /> if parsing fails (e.g., input is null/whitespace or
+    /// <param name="result">
+    /// When this method returns, contains an <see cref="AllyariaFontFamilyValue" /> whose <see cref="ValueBase.Value" /> is
+    /// the normalized representation, or <see langword="null" /> if parsing fails (e.g., input is null/whitespace or
     /// normalizes to no tokens).
     /// </param>
     /// <returns>
     /// <see langword="true" /> if <paramref name="value" /> was successfully normalized into a non-empty canonical form;
     /// otherwise <see langword="false" />.
     /// </returns>
-    public static bool TryParse(string value, out AllyariaFontFamilyValue func)
+    public static bool TryParse(string value, out AllyariaFontFamilyValue? result)
     {
-        func = new AllyariaFontFamilyValue(value);
+        try
+        {
+            result = new AllyariaFontFamilyValue(value);
 
-        return !string.IsNullOrWhiteSpace(func.Value);
+            return true;
+        }
+        catch
+        {
+            result = null;
+
+            return false;
+        }
     }
 
-    /// <summary>Removes surrounding double quotes if present and unescapes inner quotes (\" -> ").</summary>
+    /// <summary>
+    /// Removes surrounding double quotes if present and unescapes inner quotes (turns <c>\"</c> into <c>"</c>).
+    /// </summary>
+    /// <param name="token">The token to unquote and unescape.</param>
+    /// <returns>The unquoted token with inner quotes unescaped.</returns>
     private static string UnquoteAndUnescape(string token)
     {
         if (token.Length >= 2 && token[0] == '"' && token[^1] == '"')
@@ -231,31 +253,26 @@ public sealed record AllyariaFontFamilyValue : StyleValueBase
         return token;
     }
 
-    /// <summary>Implicit conversion from <see langword="string[]" /> to <see cref="AllyariaFontFamilyValue" />.</summary>
-    /// <param name="families">The raw font family array to convert.</param>
-    /// <returns>An <see cref="AllyariaFontFamilyValue" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaFontFamilyValue(string[] families) => new(families);
-
     /// <summary>
-    /// Implicit conversion from <see langword="string" /> to <see cref="AllyariaFontFamilyValue" />. Accepts a single
+    /// Implicit conversion from <see cref="string" /> to <see cref="AllyariaFontFamilyValue" />. Accepts a single
     /// comma-separated string of font family names.
     /// </summary>
-    /// <param name="families">A single string containing one or more comma-separated font family names.</param>
-    /// <returns>An <see cref="AllyariaFontFamilyValue" /> created from <paramref name="families" />.</returns>
-    public static implicit operator AllyariaFontFamilyValue(string families) => new(families);
+    /// <param name="values">A single string containing one or more comma-separated font family names.</param>
+    /// <returns>An <see cref="AllyariaFontFamilyValue" /> created from <paramref name="values" />.</returns>
+    public static implicit operator AllyariaFontFamilyValue(string values) => new(values);
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaFontFamilyValue" /> to <see langword="string[]" /> (the normalized array).
+    /// Implicit conversion from <see cref="AllyariaFontFamilyValue" /> to <see langwod="string[]" /> (the normalized array).
     /// </summary>
-    /// <param name="fontFamilyValue">The <see cref="AllyariaFontFamilyValue" /> instance.</param>
-    /// <returns>The normalized font familyValue array.</returns>
-    public static implicit operator string[](AllyariaFontFamilyValue fontFamilyValue) => fontFamilyValue.Families;
+    /// <param name="value">The <see cref="AllyariaFontFamilyValue" /> instance.</param>
+    /// <returns>The normalized font family array.</returns>
+    public static implicit operator string[](AllyariaFontFamilyValue value) => value.Families;
 
     /// <summary>
-    /// Implicit conversion from <see cref="AllyariaFontFamilyValue" /> to <see langword="string" /> (the normalized,
-    /// comma-joined value).
+    /// Implicit conversion from <see cref="AllyariaFontFamilyValue" /> to <see cref="string" /> (the normalized, comma-joined
+    /// value).
     /// </summary>
-    /// <param name="fontFamilyValue">The <see cref="AllyariaFontFamilyValue" /> instance.</param>
-    /// <returns>The normalized font familyValue list joined by commas with no spaces.</returns>
-    public static implicit operator string(AllyariaFontFamilyValue fontFamilyValue) => fontFamilyValue.Value;
+    /// <param name="value">The <see cref="AllyariaFontFamilyValue" /> instance.</param>
+    /// <returns>The normalized font family list joined by commas with no spaces.</returns>
+    public static implicit operator string(AllyariaFontFamilyValue value) => value.Value;
 }

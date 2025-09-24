@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Abstractions;
+﻿using Allyaria.Theming.Contracts;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -9,7 +9,7 @@ namespace Allyaria.Theming.Values;
 /// total ordering by the uppercase <c>#RRGGBBAA</c> form.
 /// </summary>
 /// <remarks>
-/// This type is a small, immutable value type (readonly struct). It supports:
+/// This type is an immutable reference type. It supports:
 /// <list type="bullet">
 ///     <item>
 ///         <description>
@@ -29,7 +29,7 @@ namespace Allyaria.Theming.Values;
 /// </list>
 /// All numeric parsing/formatting uses <see cref="CultureInfo.InvariantCulture" />.
 /// </remarks>
-public sealed record AllyariaColorValue : StyleValueBase
+public sealed class AllyariaColorValue : ValueBase
 {
     /// <summary>Material Design color lookup table.</summary>
     private static readonly Dictionary<string, AllyariaColorValue> MaterialMap = new(StringComparer.OrdinalIgnoreCase)
@@ -331,16 +331,22 @@ public sealed record AllyariaColorValue : StyleValueBase
         ["white"] = FromHexInline("#FFFFFFFF")
     };
 
-    /// <summary>Compiled regular expression for parsing CSS <c>hsv()</c> and <c>hsva()</c> functions.</summary>
+    /// <summary>
+    /// Compiled regular expression for parsing CSS <c>hsv()</c> and <c>hsva()</c> functions with a safe timeout.
+    /// </summary>
     private static readonly Regex RxHsv = new(
         @"^hsva?\s*\(\s*(?<h>(\d*\.)?\d+)\s*,\s*(?<s>(\d*\.)?\d+)\s*%\s*,\s*(?<v>(\d*\.)?\d+)\s*%(?:\s*,\s*(?<a>((\d*\.)?\d+)))?\s*\)\s*$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,
+        TimeSpan.FromMilliseconds(250)
     );
 
-    /// <summary>Compiled regular expression for parsing CSS <c>rgb()</c> and <c>rgba()</c> functions.</summary>
+    /// <summary>
+    /// Compiled regular expression for parsing CSS <c>rgb()</c> and <c>rgba()</c> functions with a safe timeout.
+    /// </summary>
     private static readonly Regex RxRgb = new(
         @"^rgba?\s*\(\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})(?:\s*,\s*(?<a>((\d*\.)?\d+)))?\s*\)\s*$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,
+        TimeSpan.FromMilliseconds(250)
     );
 
     /// <summary>CSS Web color lookup table.</summary>
@@ -486,51 +492,77 @@ public sealed record AllyariaColorValue : StyleValueBase
         ["whitesmoke"] = FromHexInline("#F5F5F5FF"),
         ["yellow"] = FromHexInline("#FFFF00FF"),
         ["yellowgreen"] = FromHexInline("#9ACD32FF"),
-        ["transparent"] = new AllyariaColorValue(0, 0, 0, 0)
+        ["transparent"] = FromHexInline("#00000000")
     };
 
-    /// <summary>Initializes a color from HSVA channels.</summary>
-    /// <param name="h">Hue in degrees, clamped to [0..360].</param>
-    /// <param name="s">Saturation in percent, clamped to [0..100].</param>
-    /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
-    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <summary>Initializes an instance from HSV(A) channels after validation and conversion to RGBA.</summary>
+    /// <param name="h">Hue in degrees (0–360).</param>
+    /// <param name="s">Saturation in percent (0–100).</param>
+    /// <param name="v">Value (brightness) in percent (0–100).</param>
+    /// <param name="a">Alpha in [0–1].</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if any channel lies outside the valid range.</exception>
     private AllyariaColorValue(double h, double s, double v, double a = 1.0)
         : base(string.Empty)
     {
-        HsvToRgb(Math.Clamp(h, 0, 360), Math.Clamp(s, 0, 100), Math.Clamp(v, 0, 100), out var r, out var g, out var b);
+        if (h is < 0 or > 360)
+        {
+            throw new ArgumentOutOfRangeException(nameof(h), h, "H must be between 0 and 360.");
+        }
+
+        if (s is < 0 or > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(s), s, "S must be between 0 and 100.");
+        }
+
+        if (v is < 0 or > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(v), v, "V must be between 0 and 100.");
+        }
+
+        if (a is < 0 or > 1.0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(a), a, "A must be between 0 and 1.0.");
+        }
+
+        HsvToRgb(h, s, v, out var r, out var g, out var b);
         R = r;
         G = g;
         B = b;
-        A = Math.Clamp(a, 0, 1.0);
+        A = a;
     }
 
-    /// <summary>Initializes a color from RGBA channels.</summary>
-    /// <param name="r">Red in [0..255].</param>
-    /// <param name="g">Green in [0..255].</param>
-    /// <param name="b">Blue in [0..255].</param>
-    /// <param name="a">Alpha in [0..1], clamped.</param>
+    /// <summary>Initializes an instance from RGB(A) channels after validation.</summary>
+    /// <param name="r">Red channel in [0–255].</param>
+    /// <param name="g">Green channel in [0–255].</param>
+    /// <param name="b">Blue channel in [0–255].</param>
+    /// <param name="a">Alpha in [0–1].</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="a" /> lies outside [0,1].</exception>
     private AllyariaColorValue(byte r, byte g, byte b, double a = 1.0)
         : base(string.Empty)
     {
+        if (a is < 0 or > 1.0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(a), a, "A must be between 0 and 1.0.");
+        }
+
         R = r;
         G = g;
         B = b;
-        A = Math.Clamp(a, 0, 1.0);
+        A = a;
     }
 
-    /// <summary>
-    /// Initializes a color by parsing a CSS-like string: <c>#RGB</c>, <c>#RGBA</c>, <c>#RRGGBB</c>, <c>#RRGGBBAA</c>,
-    /// <c>rgb()</c>, <c>rgba()</c>, <c>hsv(H,S%,V%)</c>, <c>hsva(H,S%,V%,A)</c>, Web color names, or Material color names.
-    /// </summary>
-    /// <param name="value">The input string to parse.</param>
-    /// <exception cref="ArgumentException">Thrown when the value is not a recognized color format or name.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
+    /// <summary>Initializes an instance by parsing the provided CSS/hex/name color string.</summary>
+    /// <param name="value">
+    /// A color value in <c>#RGB</c>, <c>#RGBA</c>, <c>#RRGGBB</c>, <c>#RRGGBBAA</c>, <c>rgb()</c>, <c>rgba()</c>, <c>hsv()</c>
+    /// , <c>hsva()</c>, a CSS Web color name, or a Material color name.
+    /// </param>
+    /// <exception cref="ArgumentException">Thrown when the value cannot be parsed.</exception>
     public AllyariaColorValue(string value)
         : base(string.Empty)
     {
         try
         {
-            ArgumentNullException.ThrowIfNull(value);
+            ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
             var s = value.Trim();
 
@@ -591,9 +623,8 @@ public sealed record AllyariaColorValue : StyleValueBase
                 return;
             }
 
-            throw new ArgumentException("Color not found.", nameof(value));
+            throw new ArgumentException("Unable to parse value.", nameof(value));
         }
-
         catch (Exception exception)
         {
             throw new ArgumentException(
@@ -760,7 +791,7 @@ public sealed record AllyariaColorValue : StyleValueBase
     /// <param name="s">Saturation in percent, clamped to [0..100].</param>
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColorValue from the HSVA channels.</returns>
+    /// <returns>The <see cref="AllyariaColorValue" /> from the HSVA channels.</returns>
     public static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
@@ -800,7 +831,7 @@ public sealed record AllyariaColorValue : StyleValueBase
     /// <param name="g">Green in [0..255].</param>
     /// <param name="b">Blue in [0..255].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
-    /// <returns>The AllyariaColorValue from the RGBA channels.</returns>
+    /// <returns>The <see cref="AllyariaColorValue" /> from the RGBA channels.</returns>
     public static AllyariaColorValue FromRgba(byte r, byte g, byte b, double a = 1.0) => new(r, g, b, a);
 
     /// <summary>Parses an <c>rgb(r,g,b)</c> or <c>rgba(r,g,b,a)</c> CSS color function.</summary>
@@ -837,6 +868,7 @@ public sealed record AllyariaColorValue : StyleValueBase
     /// Produces a hover-friendly variant: if <see cref="V" /> &lt; 50, lightens by 20; otherwise darkens by 20. Alpha is
     /// preserved.
     /// </summary>
+    /// <returns>A new <see cref="AllyariaColorValue" /> adjusted for hover states.</returns>
     public AllyariaColorValue HoverColor()
     {
         var delta = V < 50
@@ -875,7 +907,7 @@ public sealed record AllyariaColorValue : StyleValueBase
             return;
         }
 
-        h = (h % 360 + 360) % 360; // normalize to [0,360]
+        h = (h % 360 + 360) % 360;
         var hh = h / 60.0;
         var i = (int)Math.Floor(hh);
         var ff = hh - i;
@@ -923,7 +955,7 @@ public sealed record AllyariaColorValue : StyleValueBase
                 g1 = p;
                 b1 = q;
 
-                break; // case 5
+                break;
         }
 
         r = (byte)Math.Clamp((int)Math.Round(r1 * 255.0), 0, 255);
@@ -935,25 +967,28 @@ public sealed record AllyariaColorValue : StyleValueBase
     /// <param name="input">An input such as <c>"Deep Purple 200"</c>, <c>"deep-purple-200"</c>, or <c>"red500"</c>.</param>
     /// <returns>A normalized, lower-case key without spaces, dashes, or underscores (e.g., <c>"deeppurple200"</c>).</returns>
     private static string NormalizeMaterialKey(string input)
-    {
-        var s = input.Trim().ToLowerInvariant()
+        => input.Trim().ToLowerInvariant()
             .Replace(" ", string.Empty)
             .Replace("-", string.Empty)
             .Replace("_", string.Empty);
 
-        return s;
-    }
+    /// <summary>Parses a color string into an <see cref="AllyariaColorValue" />.</summary>
+    /// <param name="value">The color value to parse.</param>
+    /// <returns>The parsed <see cref="AllyariaColorValue" />.</returns>
+    /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
+    public static AllyariaColorValue Parse(string value) => new(value);
 
-    /// <summary>Parses a floating-point number using invariant culture.</summary>
-    /// <param name="s">The source text.</param>
+    /// <summary>Parses a floating-point number using invariant culture and validates the range.</summary>
+    /// <param name="value">The source text.</param>
     /// <param name="param">A parameter name used in exception messages.</param>
     /// <param name="min">The minimum allowed value (inclusive).</param>
     /// <param name="max">The maximum allowed value (inclusive).</param>
     /// <returns>The parsed number.</returns>
     /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
-    private static double ParseDouble(string s, string param, int min, int max)
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the parsed value is out of range.</exception>
+    private static double ParseDouble(string value, string param, int min, int max)
     {
-        double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var v);
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var v);
 
         if (v < min || v > max)
         {
@@ -964,16 +999,16 @@ public sealed record AllyariaColorValue : StyleValueBase
     }
 
     /// <summary>Parses an integer and validates it against the provided inclusive range.</summary>
-    /// <param name="s">The source text.</param>
+    /// <param name="value">The source text.</param>
     /// <param name="param">A parameter name used in exception messages.</param>
     /// <param name="min">The minimum allowed value (inclusive).</param>
     /// <param name="max">The maximum allowed value (inclusive).</param>
     /// <returns>The parsed integer.</returns>
     /// <exception cref="ArgumentException">Thrown when parsing fails.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the parsed value is out of range.</exception>
-    private static int ParseInt(string s, string param, int min, int max)
+    private static int ParseInt(string value, string param, int min, int max)
     {
-        int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v);
+        int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v);
 
         if (v < min || v > max)
         {
@@ -1067,73 +1102,80 @@ public sealed record AllyariaColorValue : StyleValueBase
             _ => throw new ArgumentException($"Invalid hex digit '{c}'.")
         };
 
-    /// <summary>Attempts to parse a Material colorValue name of the form <c>{Hue}{Tone}</c>.</summary>
+    /// <summary>Attempts to parse a Material color name of the form <c>{Hue}{Tone}</c>.</summary>
     /// <param name="name">
     /// Examples include <c>"DeepPurple200"</c>, <c>"red500"</c>, or <c>"deep-purple a700"</c> (whitespace, dashes, and
     /// underscores are ignored).
     /// </param>
-    /// <param name="colorValue">When this method returns, contains the parsed colorValue if successful; otherwise the default value.</param>
+    /// <param name="color">
+    /// When this method returns, contains the parsed colorValue if successful; otherwise the default value.
+    /// </param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    private static bool TryFromMaterialName(string name, out AllyariaColorValue colorValue)
+    private static bool TryFromMaterialName(string name, out AllyariaColorValue color)
     {
         var norm = NormalizeMaterialKey(name);
 
         if (MaterialMap.TryGetValue(norm, out var rgba))
         {
-            colorValue = rgba;
+            color = rgba;
 
             return true;
         }
 
-        colorValue = new AllyariaColorValue("black");
+        color = Colors.Transparent;
 
         return false;
     }
 
-    /// <summary>Attempts to parse a CSS Web colorValue name (case-insensitive).</summary>
-    /// <param name="name">The colorValue name (e.g., <c>"dodgerblue"</c>, <c>"white"</c>).</param>
-    /// <param name="colorValue">When this method returns, contains the parsed colorValue if successful; otherwise the default value.</param>
+    /// <summary>Attempts to parse a CSS Web color name (case-insensitive).</summary>
+    /// <param name="name">The color name (e.g., <c>"dodgerblue"</c>, <c>"white"</c>).</param>
+    /// <param name="color">When this method returns, contains the parsed color if successful; otherwise the default value.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
-    private static bool TryFromWebName(string name, out AllyariaColorValue colorValue)
+    private static bool TryFromWebName(string name, out AllyariaColorValue color)
     {
         var key = name.Trim().ToLowerInvariant();
 
         if (WebNameMap.TryGetValue(key, out var rgba))
         {
-            colorValue = rgba;
+            color = rgba;
 
             return true;
         }
 
-        colorValue = new AllyariaColorValue("black");
+        color = Colors.Transparent;
 
         return false;
     }
 
-    /// <summary>Attempts to parse a colorValue string.</summary>
-    /// <param name="value">The input colorValue string.</param>
-    /// <param name="colorValue">When successful, receives the parsed colorValue; otherwise set to black.</param>
-    /// <returns><c>true</c> when parsing succeeds; otherwise <c>false</c>.</returns>
-    public static bool TryParse(string value, out AllyariaColorValue colorValue)
+    /// <summary>Attempts to parse a color string into an <see cref="AllyariaColorValue" />.</summary>
+    /// <param name="value">The color value to parse.</param>
+    /// <param name="result">When this method returns, contains the parsed color if successful; otherwise <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
+    public static bool TryParse(string value, out AllyariaColorValue? result)
     {
         try
         {
-            colorValue = new AllyariaColorValue(value);
+            result = new AllyariaColorValue(value);
 
             return true;
         }
         catch
         {
-            colorValue = new AllyariaColorValue("black");
+            result = null;
 
             return false;
         }
     }
 
-    /// <summary>Implicit conversion from <see cref="string" /> by parsing.</summary>
-    /// <param name="value">A supported color string.</param>
+    /// <summary>Explicit cast from <see cref="string" /> to <see cref="AllyariaColorValue" />.</summary>
+    /// <param name="value">The color value to parse.</param>
+    /// <returns>A new <see cref="AllyariaColorValue" />.</returns>
     public static implicit operator AllyariaColorValue(string value) => new(value);
 
-    /// <summary>Implicit conversion to <see cref="string" /> using <see cref="ToString" /> (i.e., <c>#RRGGBBAA</c>).</summary>
-    public static implicit operator string(AllyariaColorValue value) => value.HexRgba;
+    /// <summary>
+    /// Implicit cast from <see cref="AllyariaColorValue" /> to its canonical string representation (<c>#RRGGBBAA</c>).
+    /// </summary>
+    /// <param name="value">The color value.</param>
+    /// <returns>The uppercase <c>#RRGGBBAA</c> string.</returns>
+    public static implicit operator string(AllyariaColorValue value) => value.Value;
 }

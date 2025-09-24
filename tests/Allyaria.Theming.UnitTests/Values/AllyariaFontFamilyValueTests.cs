@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Values;
+using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Values;
 
@@ -56,6 +56,19 @@ public sealed class AllyariaFontFamilyValueTests
     }
 
     [Fact]
+    public void Ctor_Should_ThrowArgumentException_When_NoValuesProvided()
+    {
+        // Arrange
+        var act = () => new AllyariaFontFamilyValue();
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("values")
+            .WithMessage("*At least one font family name must be provided.*");
+    }
+
+    [Fact]
     public void Ctor_SplitsTrimsQuotesAndDeDupesCaseInsensitive_PreservingOrder()
     {
         // Arrange
@@ -110,37 +123,6 @@ public sealed class AllyariaFontFamilyValueTests
     }
 
     [Fact]
-    public void Ctor_WithNoArgs_YieldsEmptyValueAndNoFamilies()
-    {
-        // Arrange // Act
-        var sut = new AllyariaFontFamilyValue();
-
-        // Assert
-        sut.Value.Should()
-            .BeEmpty();
-
-        sut.Families.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void Ctor_WithNullParamsArray_TreatedAsEmpty()
-    {
-        // Arrange
-        string[]? raw = null;
-
-        // Act
-        var sut = new AllyariaFontFamilyValue(raw!);
-
-        // Assert
-        sut.Value.Should()
-            .BeEmpty();
-
-        sut.Families.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
     public void DeDuplication_IsCaseInsensitive_AndOrderPreserving()
     {
         // Arrange
@@ -158,6 +140,22 @@ public sealed class AllyariaFontFamilyValueTests
     }
 
     [Fact]
+    public void Families_IsMemoized_ReturnsSameReferenceOnSubsequentAccess()
+    {
+        // Arrange
+        var sut = new AllyariaFontFamilyValue("Inter", "Open Sans");
+
+        // Act
+        var first = sut.Families;
+        var second = sut.Families;
+
+        // Assert
+        ReferenceEquals(first, second)
+            .Should()
+            .BeTrue();
+    }
+
+    [Fact]
     public void Families_SplitsByComma_AndTrimsEntries()
     {
         // Arrange
@@ -169,40 +167,6 @@ public sealed class AllyariaFontFamilyValueTests
         // Assert
         families.Should()
             .Equal("A", "B", "C C"); // unquoted
-    }
-
-    [Fact]
-    public void Implicit_FromEmptyString_YieldsEmpty()
-    {
-        // Arrange
-        var raw = "";
-
-        // Act
-        AllyariaFontFamilyValue sut = raw;
-
-        // Assert
-        ((string)sut).Should()
-            .BeEmpty();
-
-        ((string[])sut).Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void Implicit_FromNullStringArray_YieldsEmpty()
-    {
-        // Arrange
-        string[]? nullArray = null;
-
-        // Act
-        AllyariaFontFamilyValue sut = nullArray!;
-
-        // Assert
-        ((string)sut).Should()
-            .BeEmpty();
-
-        ((string[])sut).Should()
-            .BeEmpty();
     }
 
     [Fact]
@@ -220,26 +184,6 @@ public sealed class AllyariaFontFamilyValueTests
             .Be("Inter,\"Open Sans\"");
 
         families.Should()
-            .Equal("Inter", "Open Sans"); // unquoted
-    }
-
-    [Fact]
-    public void Implicit_FromStringArray_NormalizesAndQuotes()
-    {
-        // Arrange
-        string[] raw =
-        {
-            "Inter", "Open Sans"
-        };
-
-        // Act
-        AllyariaFontFamilyValue sut = raw;
-
-        // Assert
-        ((string)sut).Should()
-            .Be("Inter,\"Open Sans\"");
-
-        ((string[])sut).Should()
             .Equal("Inter", "Open Sans"); // unquoted
     }
 
@@ -272,42 +216,94 @@ public sealed class AllyariaFontFamilyValueTests
     }
 
     [Fact]
-    public void TryParse_InvalidInput_ReturnsFalse_And_Empty()
+    public void Parse_Should_ReturnNormalized_When_InputIsValid()
     {
         // Arrange
-        var raw = "   ,  ,  ";
+        var input = " Inter , Open Sans , \"Foo Bar\" ";
 
         // Act
-        var ok = AllyariaFontFamilyValue.TryParse(raw, out var sut);
+        var sut = AllyariaFontFamilyValue.Parse(input);
+
+        // Assert
+        ((string)sut).Should()
+            .Be("Inter,\"Open Sans\",\"Foo Bar\"");
+
+        ((string[])sut).Should()
+            .Equal("Inter", "Open Sans", "Foo Bar");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    public void Parse_Should_ThrowArgumentException_When_InputIsNullOrWhitespace(string? input)
+    {
+        // Arrange
+        var act = () => AllyariaFontFamilyValue.Parse(input!);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("values");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\r\n")]
+    public void TryParse_Should_ReturnFalse_AndNullResult_When_InputIsNullOrWhitespace(string? input)
+    {
+        // Act
+        var ok = AllyariaFontFamilyValue.TryParse(input!, out var result);
 
         // Assert
         ok.Should()
             .BeFalse();
 
-        ((string)sut).Should()
-            .BeEmpty();
+        result.Should()
+            .BeNull();
+    }
 
-        ((string[])sut).Should()
-            .BeEmpty();
+    [Theory]
+    [InlineData(",")]
+    [InlineData(",,")]
+    [InlineData(" , , ")]
+    [InlineData(" , ,  ,  ")]
+    public void TryParse_Should_ReturnFalse_AndNullResult_When_NormalizesToNoTokens(string input)
+    {
+        // Act
+        var ok = AllyariaFontFamilyValue.TryParse(input, out var result);
+
+        // Assert
+        ok.Should()
+            .BeFalse();
+
+        result.Should()
+            .BeNull();
     }
 
     [Fact]
-    public void TryParse_ValidInput_ReturnsTrue_WithNormalizedValue_AndFamilies()
+    public void TryParse_Should_ReturnTrue_WithNormalizedResult_When_InputIsValid()
     {
         // Arrange
-        var raw = " Inter , Open Sans ";
+        var input = " Inter ,  Roboto , Open Sans , inter ";
 
         // Act
-        var ok = AllyariaFontFamilyValue.TryParse(raw, out var sut);
+        var ok = AllyariaFontFamilyValue.TryParse(input, out var result);
 
         // Assert
         ok.Should()
             .BeTrue();
 
-        ((string)sut).Should()
-            .Be("Inter,\"Open Sans\"");
+        result.Should()
+            .NotBeNull();
 
-        ((string[])sut).Should()
-            .Equal("Inter", "Open Sans"); // unquoted
+        ((string)result).Should()
+            .Be("Inter,Roboto,\"Open Sans\"");
+
+        ((string[])result).Should()
+            .Equal("Inter", "Roboto", "Open Sans");
     }
 }

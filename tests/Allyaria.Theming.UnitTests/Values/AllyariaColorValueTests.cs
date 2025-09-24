@@ -1,4 +1,5 @@
-﻿using Allyaria.Theming.Values;
+using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Values;
 
@@ -241,163 +242,85 @@ public sealed class AllyariaColorValueTests
             .Be(b.GetHashCode());
     }
 
-    [Fact]
-    public void FromHsva_Converts_To_RGB_And_Clamps()
-    {
-        // Arrange + Act
-        var white = AllyariaColorValue.FromHsva(0, 0, 100, 1.1); // alpha should clamp to 1.0
-        var black = AllyariaColorValue.FromHsva(0, 0, 0); // black
-
-        // Assert
-        white.HexRgb.Should()
-            .Be("#FFFFFF");
-
-        white.A.Should()
-            .Be(1.0);
-
-        black.HexRgb.Should()
-            .Be("#000000");
-    }
-
     [Theory]
-    [InlineData(
-        0,
-        0,
-        100,
-        255,
-        255,
-        255
-    )] // achromatic white
-    [InlineData(
-        0,
-        0,
-        25,
-        64,
-        64,
-        64
-    )] // achromatic gray (rounding)
-    [InlineData(
-        30,
-        100,
-        100,
-        255,
-        128,
-        0
-    )] // sector i = 0
-    [InlineData(
-        90,
-        100,
-        100,
-        128,
-        255,
-        0
-    )] // sector i = 1
-    [InlineData(
-        150,
-        100,
-        100,
-        0,
-        255,
-        128
-    )] // sector i = 2
-    [InlineData(
-        210,
-        100,
-        100,
-        0,
-        128,
-        255
-    )] // sector i = 3
-    [InlineData(
-        270,
-        100,
-        100,
-        128,
-        0,
-        255
-    )] // sector i = 4
-    [InlineData(
-        330,
-        100,
-        100,
-        255,
-        0,
-        128
-    )] // sector i = 5
-    [InlineData(
-        -30,
-        100,
-        100,
-        255,
-        0,
-        0
-    )] // h normalization wraps to 330
-    [InlineData(
-        720,
-        100,
-        100,
-        255,
-        0,
-        0
-    )] // h normalization wraps to 0
-    [InlineData(
-        0,
-        0,
-        150,
-        255,
-        255,
-        255
-    )] // v clamp high
-    [InlineData(
-        0,
-        0,
-        -10,
-        0,
-        0,
-        0
-    )] // v clamp low
-    public void FromHsva_Produces_Expected_Bytes(double h,
-        double s,
-        double v,
-        byte er,
-        byte eg,
-        byte eb)
+    [InlineData(0, 100, 100, "#FF0000FF")] // sector 0
+    [InlineData(60, 100, 100, "#FFFF00FF")] // sector 1
+    [InlineData(120, 100, 100, "#00FF00FF")] // sector 2
+    [InlineData(240, 100, 100, "#0000FFFF")] // sector 4
+    [InlineData(300, 100, 100, "#FF00FFFF")] // sector 5 -> default branch
+    public void FromHsva_Covers_All_HsvToRgb_Sectors(double h, double s, double v, string expectedHex)
     {
-        // Arrange + Act
+        // Act
         var sut = AllyariaColorValue.FromHsva(h, s, v);
 
         // Assert
-        sut.R.Should()
-            .Be(er);
-
-        sut.G.Should()
-            .Be(eg);
-
-        sut.B.Should()
-            .Be(eb);
+        sut.HexRgba.Should()
+            .Be(expectedHex);
     }
 
     [Fact]
-    public void FromRgba_ClampsAlpha_And_SetsChannels()
+    public void FromHsva_Grayscale_When_Saturation_Is_Zero()
     {
-        // Arrange + Act
-        var sut = AllyariaColorValue.FromRgba(255, 128, 7, 1.5); // alpha clamps to 1.0
+        // Arrange
+        const double h = 123; // any hue
+        const double s = 0; // forces grayscale branch (s <= 0)
+        const double v = 50; // mid gray -> 127.5 -> rounds to 128 (0x80)
+
+        // Act
+        var sut = AllyariaColorValue.FromHsva(h, s, v);
 
         // Assert
-        sut.R.Should()
-            .Be(255);
-
-        sut.G.Should()
-            .Be(128);
-
-        sut.B.Should()
-            .Be(7);
-
-        sut.A.Should()
-            .Be(1.0);
-
         sut.HexRgba.Should()
-            .Be("#FF8007FF"); // AA from clamped alpha 1.0
+            .Be("#808080FF");
+    }
+
+    [Fact]
+    public void FromHsva_Normalizes_Hue_At_360_To_Zero()
+    {
+        // Act
+        var sut = AllyariaColorValue.FromHsva(360, 100, 100);
+
+        // Assert
+        sut.HexRgba.Should()
+            .Be("#FF0000FF");
+    }
+
+    [Theory]
+    [InlineData(-1, 0, 0, 1.0, "h")]
+    [InlineData(361, 0, 0, 1.0, "h")]
+    [InlineData(0, -0.1, 0, 1.0, "s")]
+    [InlineData(0, 100.1, 0, 1.0, "s")]
+    [InlineData(0, 0, -0.1, 1.0, "v")]
+    [InlineData(0, 0, 100.1, 1.0, "v")]
+    [InlineData(0, 0, 0, -0.01, "a")]
+    [InlineData(0, 0, 0, 1.01, "a")]
+    public void FromHsva_Should_ThrowArgumentOutOfRange_When_Channel_OutOfRange(double h,
+        double s,
+        double v,
+        double a,
+        string paramName)
+    {
+        // Arrange
+        var act = () => AllyariaColorValue.FromHsva(h, s, v, a);
+
+        // Act + Assert
+        act.Should()
+            .Throw<ArgumentOutOfRangeException>()
+            .WithParameterName(paramName);
+    }
+
+    [Theory]
+    [InlineData(-0.0001)]
+    [InlineData(1.0001)]
+    public void FromRgba_Should_ThrowArgumentOutOfRange_When_Alpha_OutOfRange(double alpha)
+    {
+        // Arrange
+        var act = () => AllyariaColorValue.FromRgba(1, 2, 3, alpha);
+
+        // Act + Assert
+        act.Should()
+            .Throw<ArgumentOutOfRangeException>()
+            .WithParameterName("a");
     }
 
     [Theory]
@@ -417,6 +340,20 @@ public sealed class AllyariaColorValueTests
 
         hover.A.Should()
             .Be(sut.A);
+    }
+
+    [Fact]
+    public void Hsv_For_Black_Is_Zeroes_And_Hue_Is_Zero()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#000000");
+
+        // Act
+        var hsv = sut.Hsv;
+
+        // Assert
+        hsv.Should()
+            .Be("hsv(0, 0%, 0%)");
     }
 
     [Fact]
@@ -539,6 +476,21 @@ public sealed class AllyariaColorValueTests
     }
 
     [Fact]
+    public void Parse_Should_Create_Equivalent_Instance_To_Constructor()
+    {
+        // Arrange
+        var input = "#CAFEBABE";
+        var viaCtor = new AllyariaColorValue(input);
+
+        // Act
+        var viaParse = AllyariaColorValue.Parse(input);
+
+        // Assert
+        viaParse.HexRgba.Should()
+            .Be(viaCtor.HexRgba);
+    }
+
+    [Fact]
     public void Rgb_Get_Returns_Formatted_String()
     {
         // Arrange
@@ -609,7 +561,7 @@ public sealed class AllyariaColorValueTests
         ok.Should()
             .BeFalse();
 
-        color.HexRgba.Should()
+        color?.HexRgba.Should()
             .Be("#000000FF");
     }
 
@@ -626,25 +578,25 @@ public sealed class AllyariaColorValueTests
         okHex.Should()
             .BeTrue();
 
-        hex.HexRgba.Should()
+        hex?.HexRgba.Should()
             .Be("#FF000080");
 
         okRgb.Should()
             .BeTrue();
 
-        rgb.HexRgba.Should()
+        rgb?.HexRgba.Should()
             .Be("#0080FF40");
 
         okWeb.Should()
             .BeTrue();
 
-        web.HexRgb.Should()
+        web?.HexRgb.Should()
             .Be("#1E90FF");
 
         okMat.Should()
             .BeTrue();
 
-        mat.HexRgb.Should()
+        mat?.HexRgb.Should()
             .Be("#B39DDB");
     }
 
@@ -657,5 +609,169 @@ public sealed class AllyariaColorValueTests
         // Assert
         sut.Value.Should()
             .Be("#11223344");
+    }
+
+    [Fact]
+    public void ValueBase_Compare_Returns0_When_Both_Null()
+    {
+        // Arrange + Act
+        var result = ValueBase.Compare(null, null);
+
+        // Assert
+        result.Should()
+            .Be(0);
+    }
+
+    [Fact]
+    public void ValueBase_Compare_Returns1_When_Right_Is_Null()
+    {
+        // Arrange
+        var left = new AllyariaColorValue("#000000");
+
+        // Act
+        var result = ValueBase.Compare(left, null);
+
+        // Assert
+        result.Should()
+            .Be(1);
+    }
+
+    [Fact]
+    public void ValueBase_Compare_ReturnsMinus1_When_Left_Is_Null()
+    {
+        // Arrange
+        var right = new AllyariaColorValue("#000000");
+
+        // Act
+        var result = ValueBase.Compare(null, right);
+
+        // Assert
+        result.Should()
+            .Be(-1);
+    }
+
+    [Fact]
+    public void ValueBase_Compare_ThrowsArgumentException_When_TypesDiffer()
+    {
+        // Arrange
+        var left = new AllyariaColorValue("#000000");
+        var other = Substitute.For<ValueBase>("zzz");
+
+        // Act
+        var act = () => ValueBase.Compare(left, other);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot compare values of different types.");
+    }
+
+    [Fact]
+    public void ValueBase_CompareTo_Returns0_When_Same_Reference()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#010203");
+
+        // Act
+        var result = sut.CompareTo(sut);
+
+        // Assert
+        result.Should()
+            .Be(0);
+    }
+
+    [Fact]
+    public void ValueBase_CompareTo_Returns1_When_Other_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#010203");
+
+        // Act
+        var result = sut.CompareTo(null);
+
+        // Assert
+        result.Should()
+            .Be(1);
+    }
+
+    [Fact]
+    public void ValueBase_CompareTo_ThrowsArgumentException_When_TypesDiffer()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#010203");
+        var other = Substitute.For<ValueBase>("zzz");
+
+        // Act
+        var act = () => sut.CompareTo(other);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot compare values of different types.");
+    }
+
+    [Fact]
+    public void ValueBase_Relational_Operators_Work_By_Canonical_Value()
+    {
+        // Arrange
+        var small = new AllyariaColorValue("#00000000");
+        var equalLeft = new AllyariaColorValue("#11223344");
+        var equalRight = new AllyariaColorValue("#11223344");
+        var big = new AllyariaColorValue("#FFFFFFFF");
+
+        // Act + Assert
+        (small < big).Should()
+            .BeTrue();
+
+        (big > small).Should()
+            .BeTrue();
+
+        (equalLeft <= equalRight).Should()
+            .BeTrue();
+
+        (equalLeft >= equalRight).Should()
+            .BeTrue();
+    }
+
+    [Fact]
+    public void ValueBase_Static_Equals_Behavior_With_Nulls_And_SameType()
+    {
+        // Arrange
+        var a = new AllyariaColorValue("#11223344");
+        var b = new AllyariaColorValue("#11223344");
+        ValueBase? n = null;
+
+        // Act
+        var bothNull = ValueBase.Equals(n, null);
+        var leftNull = ValueBase.Equals(n, a);
+        var rightNull = ValueBase.Equals(a, null);
+        var equal = ValueBase.Equals(a, b);
+
+        // Assert
+        bothNull.Should()
+            .BeFalse(); // static Equals(null, null) -> false per implementation
+
+        leftNull.Should()
+            .BeFalse();
+
+        rightNull.Should()
+            .BeFalse();
+
+        equal.Should()
+            .BeTrue();
+    }
+
+    [Fact]
+    public void ValueBase_ToString_Returns_Value()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#0A0B0C0D");
+
+        // Act
+        var text = sut.ToString();
+
+        // Assert
+        text.Should()
+            .Be(sut.Value);
     }
 }

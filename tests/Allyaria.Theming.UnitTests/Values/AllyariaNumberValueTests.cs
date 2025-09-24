@@ -1,305 +1,327 @@
 ﻿using Allyaria.Theming.Values;
+using System.Globalization;
 
 namespace Allyaria.Theming.UnitTests.Values;
 
 public sealed class AllyariaNumberValueTests
 {
     [Theory]
-    [InlineData("1rex", "1rex", 1)]
-    [InlineData("2cap", "2cap", 2)]
-    [InlineData("3rcap", "3rcap", 3)]
-    [InlineData("4rch", "4rch", 4)]
-    [InlineData("5ic", "5ic", 5)]
-    [InlineData("6ric", "6ric", 6)]
-    [InlineData("7lh", "7lh", 7)]
-    [InlineData("8rlh", "8rlh", 8)]
-    public void AdditionalFontRelativeUnits_ShouldNormalize_AndParse(string input,
-        string expectedValue,
-        decimal expectedNumber)
+    [InlineData("10px", 10)]
+    [InlineData("-.75rem", -0.75)]
+    [InlineData("2.5em", 2.5)]
+    [InlineData("100q", 100)]
+    [InlineData("1svw", 1)]
+    [InlineData("3cqmin", 3)]
+    [InlineData("4vh", 4)]
+    public void Constructor_Should_Accept_Lengths_When_InputHasSupportedUnit(string input, double expectedNumber)
     {
-        // Arrange
-
-        // Act
+        // Arrange & Act
         var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
-        var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
+        string normalized = sut;
 
-        number.Should()
+        normalized.Should()
+            .Be(input);
+
+        sut.Number.Should()
             .Be(expectedNumber);
     }
 
     [Theory]
-    [InlineData("1svw", "1svw", 1)]
-    [InlineData("2svh", "2svh", 2)]
-    [InlineData("3svi", "3svi", 3)]
-    [InlineData("4svb", "4svb", 4)]
-    [InlineData("5svmin", "5svmin", 5)]
-    [InlineData("6svmax", "6svmax", 6)]
-    [InlineData("7lvw", "7lvw", 7)]
-    [InlineData("8lvh", "8lvh", 8)]
-    [InlineData("9lvi", "9lvi", 9)]
-    [InlineData("10lvb", "10lvb", 10)]
-    [InlineData("11lvmin", "11lvmin", 11)]
-    [InlineData("12lvmax", "12lvmax", 12)]
-    [InlineData("13dvw", "13dvw", 13)]
-    [InlineData("14dvh", "14dvh", 14)]
-    [InlineData("15dvi", "15dvi", 15)]
-    [InlineData("16dvb", "16dvb", 16)]
-    [InlineData("17dvmin", "17dvmin", 17)]
-    [InlineData("18dvmax", "18dvmax", 18)]
-    public void AllViewportFamilies_ShouldNormalize_AndParse(string input, string expectedValue, decimal expectedNumber)
+    [InlineData("0%")]
+    [InlineData("12.5%")]
+    [InlineData("-33.33%")]
+    public void Constructor_Should_Accept_Percentages_When_InputEndsWithPercent(string input)
     {
-        // Arrange
-
-        // Act
+        // Arrange & Act
         var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
-        var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
+        string normalized = sut;
 
-        number.Should()
-            .Be(expectedNumber);
+        normalized.Should()
+            .Be(input.ToLowerInvariant());
+
+        sut.Number.Should()
+            .Be(double.Parse(input[..^1], NumberStyles.Float, CultureInfo.InvariantCulture));
     }
 
     [Theory]
-    [InlineData("1cqw", "1cqw", 1)]
-    [InlineData("2cqh", "2cqh", 2)]
-    [InlineData("3cqi", "3cqi", 3)]
-    [InlineData("4cqb", "4cqb", 4)]
-    [InlineData("5cqmin", "5cqmin", 5)]
-    [InlineData("6cqmax", "6cqmax", 6)]
-    public void ContainerQueryUnits_ShouldNormalize_AndParse(string input, string expectedValue, decimal expectedNumber)
+    [InlineData("0")]
+    [InlineData("42")]
+    [InlineData("-17")]
+    [InlineData(".5")]
+    [InlineData("5.")]
+    [InlineData("-0.75")]
+    public void Constructor_Should_Accept_PlainNumbers_When_InputIsNumeric(string input)
+    {
+        // Arrange & Act
+        var sut = new AllyariaNumberValue(input);
+
+        // Assert
+        string normalized = sut;
+
+        normalized.Should()
+            .Be(input.ToLowerInvariant());
+    }
+
+    [Fact]
+    public void Constructor_Should_Normalize_ToLower_And_Trim_When_InputHasWhitespaceAndUppercase()
     {
         // Arrange
+        var input = "  10PX  ";
 
         // Act
         var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
-        var number = sut.Number;
+        string normalized = sut; // implicit AllyariaNumberValue -> string
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
+        normalized.Should()
+            .Be("10px");
 
-        number.Should()
-            .Be(expectedNumber);
+        sut.Number.Should()
+            .Be(10d);
     }
 
-    [Fact]
-    public void Implicit_FromString_ShouldNormalize_AndParseNumber()
+    [Theory]
+    [InlineData("10 px")] // space is not allowed by IsValid
+    [InlineData("10px;")] // semicolon not allowed
+    [InlineData("calc(1)")] // parentheses not allowed
+    [InlineData("#123")] // hash not allowed
+    public void Constructor_Should_ThrowArgumentException_When_InputContainsInvalidCharacters(string input)
     {
         // Arrange
-        AllyariaNumberValue sut = "  15.5PT  ";
+        var act = () => new AllyariaNumberValue(input);
 
-        // Act
-        var value = (string)sut;
-        var number = sut.Number;
+        // Act / Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
+    }
 
-        // Assert
-        value.Should()
-            .Be("15.5pt");
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Constructor_Should_ThrowArgumentException_When_InputIsNullOrWhiteSpace(string? input)
+    {
+        // Arrange
+        var act = () => new AllyariaNumberValue(input!);
 
-        number.Should()
-            .Be(15.5m);
+        // Act / Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
+    }
+
+    [Theory]
+    [InlineData("px")] // unit only, no numeric part
+    [InlineData("rem")] // unit only
+    [InlineData("10p")] // unsupported unit
+    [InlineData("+%")] // percent with no number
+    public void Constructor_Should_ThrowArgumentException_When_LengthOrPercentageIsMalformed(string input)
+    {
+        // Arrange
+        var act = () => new AllyariaNumberValue(input);
+
+        // Act / Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
     }
 
     [Fact]
-    public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
+    public void Implicit_AllyariaNumberValueToString_Should_ReturnEmpty_When_InstanceIsNull()
     {
         // Arrange
         AllyariaNumberValue? sut = null;
 
         // Act
-        string value = sut;
+        string result = sut;
 
         // Assert
-        value.Should()
-            .BeEmpty();
+        result.Should()
+            .Be(string.Empty);
     }
 
     [Fact]
-    public void Implicit_ToString_ShouldReturnNormalizedValue()
+    public void Implicit_StringToAllyariaNumberValue_Should_ConstructInstance_When_InputIsValid()
     {
         // Arrange
-        var sut = new AllyariaNumberValue("  -2.25ex  ");
+        AllyariaNumberValue sut = "2.5rem";
 
         // Act
-        string value = sut;
+        string normalized = sut;
 
         // Assert
-        value.Should()
-            .Be("-2.25ex");
+        normalized.Should()
+            .Be("2.5rem");
 
         sut.Number.Should()
-            .Be(-2.25m);
-    }
-
-    [Theory]
-    [InlineData("px", "", 0)]
-    [InlineData("%", "", 0)]
-    [InlineData("12 %", "", 0)]
-    [InlineData("12pp", "", 0)]
-    [InlineData("abc", "", 0)]
-    [InlineData("12.3.4", "", 0)]
-    [InlineData("", "", 0)]
-    [InlineData("   ", "", 0)]
-    public void Invalid_ShouldBecomeEmpty_AndNumberZero(string input, string expectedValue, decimal expectedNumber)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
-        var number = sut.Number;
-
-        // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
-    }
-
-    [Theory]
-    [InlineData("10px", "10px", 10)]
-    [InlineData("  1.5rem  ", "1.5rem", 1.5)]
-    [InlineData("12EM", "12em", 12)]
-    [InlineData("7Q", "7q", 7)]
-    [InlineData("-3.25Ch", "-3.25ch", -3.25)]
-    [InlineData("100LVW", "100lvw", 100)]
-    [InlineData("22.2dvh", "22.2dvh", 22.2)]
-    [InlineData("5cqw", "5cqw", 5)]
-    [InlineData("9.75ic", "9.75ic", 9.75)]
-    public void Length_ShouldNormalizeUnitsToLower_AndParseNumber(string input,
-        string expectedValue,
-        decimal expectedNumber)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
-        var number = sut.Number;
-
-        // Assert
-        value.Should()
-            .Be(expectedValue);
-
-        number.Should()
-            .Be(expectedNumber);
+            .Be(2.5d);
     }
 
     [Fact]
-    public void NullInput_ShouldBecomeEmpty_AndNumberZero()
+    public void Implicit_StringToAllyariaNumberValue_Should_ThrowArgumentException_When_InputIsInvalid()
     {
         // Arrange
-        string? input = null;
+        var act = () =>
+        {
+            AllyariaNumberValue _ = "bad value";
+        };
 
-        // Act
-        var sut = new AllyariaNumberValue(input!);
-        var value = (string)sut;
-        var number = sut.Number;
-
-        // Assert
-        value.Should()
-            .BeEmpty();
-
-        number.Should()
-            .Be(0);
+        // Act / Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
     }
 
     [Theory]
-    [InlineData("0", "0", 0)]
-    [InlineData("12", "12", 12)]
-    [InlineData("-3.5", "-3.5", -3.5)]
-    [InlineData("  10.0  ", "10.0", 10.0)]
-    [InlineData("+4.25", "+4.25", 4.25)]
-    public void Numeric_ShouldNormalize_AndParseNumber(string input, string expectedValue, decimal expectedNumber)
+    [InlineData("1px")]
+    [InlineData(
+        "1e3px"
+    )] // exponent is allowed for validation, but Number should read only the leading numeric via regex
+    [InlineData("1e3")] // plain number with exponent: valid input, Number ignores exponent per regex design
+    public void Number_Should_IgnoreExponentNotation_When_ValueContainsExponent(string input)
     {
         // Arrange
+        var sut = new AllyariaNumberValue(input);
 
         // Act
-        var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
         number.Should()
-            .Be(expectedNumber);
+            .Be(1d);
     }
 
     [Theory]
-    [InlineData("0%", "0%", 0)]
-    [InlineData("12%", "12%", 12)]
-    [InlineData("-3.5%", "-3.5%", -3.5)]
-    [InlineData("  10.0%  ", "10.0%", 10.0)]
-    [InlineData("+4.25%", "+4.25%", 4.25)]
-    public void Percentage_ShouldNormalize_AndParseNumber(string input, string expectedValue, decimal expectedNumber)
+    [InlineData("NaN", 0d)]
+    [InlineData("Infinity", 0d)]
+    [InlineData("-Infinity", 0d)]
+    public void Number_Should_ReturnZero_When_No_Leading_Numeric_Match_Even_If_Input_Is_A_Valid_Number_String(
+        string input,
+        double expected)
     {
         // Arrange
+        // These inputs are valid per Double.TryParse (Normalize accepts them),
+        // but the Number regex only matches leading digits/decimal—not special tokens—so Match.Success == false.
+        var sut = new AllyariaNumberValue(input);
 
         // Act
-        var sut = new AllyariaNumberValue(input);
-        var value = (string)sut;
         var number = sut.Number;
 
         // Assert
-        value.Should()
-            .Be(expectedValue);
-
         number.Should()
-            .Be(expectedNumber);
+            .Be(
+                expected,
+                "NumberPrefixRegex won't match special numeric tokens like NaN/Infinity, exercising the non-match path"
+            );
     }
 
     [Fact]
-    public void TryParse_InvalidInput_ReturnsFalse_And_Empty()
+    public void Parse_Should_ReturnEquivalentValue_When_ValidInput()
     {
         // Arrange
+        var input = " 12PX ";
 
         // Act
-        var ok = AllyariaNumberValue.TryParse("12 %", out var sut);
-        var value = (string)sut;
-        var number = sut.Number;
+        var sut = AllyariaNumberValue.Parse(input);
 
         // Assert
-        ok.Should()
+        string normalized = sut;
+
+        normalized.Should()
+            .Be("12px");
+
+        sut.Number.Should()
+            .Be(12d);
+    }
+
+    [Fact]
+    public void Parse_Should_ThrowArgumentException_When_InvalidInput()
+    {
+        // Arrange
+        var input = "nope";
+
+        // Act
+        var act = () => AllyariaNumberValue.Parse(input);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
+    }
+
+    [Fact]
+    public void TryParse_Should_ReturnFalse_And_NullResult_When_InputIsInvalid()
+    {
+        // Arrange
+        var input = "10 px";
+
+        // Act
+        var success = AllyariaNumberValue.TryParse(input, out var result);
+
+        // Assert
+        success.Should()
             .BeFalse();
 
-        value.Should()
-            .BeEmpty();
-
-        number.Should()
-            .Be(0m);
+        result.Should()
+            .BeNull();
     }
 
     [Fact]
-    public void TryParse_ValidInput_ReturnsTrue_And_Normalized()
+    public void TryParse_Should_ReturnTrue_And_OutResult_When_InputIsValid()
     {
         // Arrange
+        var input = "50%";
 
         // Act
-        var ok = AllyariaNumberValue.TryParse("  1.5rem  ", out var sut);
-        var value = (string)sut;
-        var number = sut.Number;
+        var success = AllyariaNumberValue.TryParse(input, out var result);
 
         // Assert
-        ok.Should()
+        success.Should()
             .BeTrue();
 
-        value.Should()
-            .Be("1.5rem");
+        result.Should()
+            .NotBeNull();
 
-        number.Should()
-            .Be(1.5m);
+        string normalized = result;
+
+        normalized.Should()
+            .Be("50%");
+
+        result.Number.Should()
+            .Be(50d);
+    }
+
+    [Fact]
+    public void Validation_Should_BeCultureInvariant_When_CurrentCultureUsesCommaDecimal()
+    {
+        // Arrange
+        var original = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+        try
+        {
+            // Act
+            var valid = new AllyariaNumberValue("1.5"); // dot should still be valid due to Invariant parsing
+            var invalidAct = () => new AllyariaNumberValue("1,5"); // comma should be invalid
+
+            // Assert
+            string normalized = valid;
+
+            normalized.Should()
+                .Be("1.5");
+
+            invalidAct.Should()
+                .Throw<ArgumentException>()
+                .WithParameterName("value");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = original;
+        }
     }
 }

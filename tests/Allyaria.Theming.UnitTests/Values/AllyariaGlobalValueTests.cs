@@ -5,137 +5,112 @@ namespace Allyaria.Theming.UnitTests.Values;
 public sealed class AllyariaGlobalValueTests
 {
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("initial-value")]
-    [InlineData("inheritance")]
-    [InlineData("revertlayer")]
-    public void Ctor_Invalid_Input_Yields_Empty_Value(string input)
-    {
-        // Arrange
-
-        // Act
-        var sut = new AllyariaGlobalValue(input);
-        string value = sut;
-
-        // Assert
-        value.Should()
-            .BeEmpty();
-    }
-
-    [Theory]
     [InlineData("inherit", "inherit")]
-    [InlineData("INITIAL", "initial")]
-    [InlineData("UnSeT", "unset")]
-    [InlineData("revert", "revert")]
-    [InlineData("  ReVeRt-LaYeR  ", "revert-layer")]
-    public void Ctor_Normalizes_Valid_Keywords_To_Lowercase(string input, string expected)
+    [InlineData("INHERIT", "inherit")]
+    [InlineData(" Initial ", "initial")]
+    [InlineData("unset", "unset")]
+    [InlineData("Revert", "revert")]
+    [InlineData("revert-layer", "revert-layer")]
+    public void Ctor_Should_NormalizeValue_When_InputIsValid(string input, string expected)
     {
-        // Arrange
-
-        // Act
+        // Arrange & Act
         var sut = new AllyariaGlobalValue(input);
-        string value = sut;
 
         // Assert
-        value.Should()
+        sut.Value.Should()
             .Be(expected);
     }
 
-    [Fact]
-    public void Ctor_Null_Input_Yields_Empty_Value()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("invalid")]
+    [InlineData("none")]
+    public void Ctor_Should_ThrowArgumentException_When_InputIsInvalid(string? input)
     {
         // Arrange
-        string? raw = null;
+        var act = () => new AllyariaGlobalValue(input!);
 
-        // Act
-        var sut = new AllyariaGlobalValue(raw!);
-        string value = sut;
-
-        // Assert
-        value.Should()
-            .BeEmpty();
+        // Act & Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
     }
 
     [Fact]
-    public void Implicit_FromString_Parses_And_Normalizes()
-    {
-        // Arrange
-        AllyariaGlobalValue sut = "  ReVeRt-LaYeR  ";
-
-        // Act
-        string value = sut;
-
-        // Assert
-        value.Should()
-            .Be("revert-layer");
-    }
-
-    [Fact]
-    public void Implicit_ToString_On_Null_Instance_ReturnsEmpty()
-    {
-        // Arrange
-        AllyariaGlobalValue? sut = null;
-
-        // Act
-        string value = sut;
-
-        // Assert
-        value.Should()
-            .BeEmpty();
-    }
-
-    [Fact]
-    public void RoundTrip_String_Conversion_Works_For_Valid_Value()
+    public void ImplicitOperatorFromString_Should_CreateInstance()
     {
         // Arrange
         AllyariaGlobalValue sut = "unset";
 
-        // Act
-        string back = sut;
-        AllyariaGlobalValue round = back;
-
-        // Assert
-        back.Should()
-            .Be("unset");
-
-        ((string)round).Should()
+        // Act & Assert
+        sut.Value.Should()
             .Be("unset");
     }
 
     [Fact]
-    public void TryParse_Invalid_Returns_False_And_Empty_Instance()
+    public void ImplicitOperatorToString_Should_ReturnUnderlyingValue()
     {
         // Arrange
-        var input = "initial-value";
+        var sut = new AllyariaGlobalValue("revert-layer");
 
         // Act
-        var ok = AllyariaGlobalValue.TryParse(input, out var sut);
-        string value = sut;
+        string result = sut;
 
         // Assert
-        ok.Should()
+        result.Should()
+            .Be("revert-layer");
+    }
+
+    [Fact]
+    public void Parse_Should_ReturnInstance_When_InputIsValid()
+    {
+        // Arrange & Act
+        var result = AllyariaGlobalValue.Parse("inherit");
+
+        // Assert
+        result.Value.Should()
+            .Be("inherit");
+    }
+
+    [Fact]
+    public void Parse_Should_ThrowArgumentException_When_InputIsInvalid()
+    {
+        // Arrange
+        var act = () => AllyariaGlobalValue.Parse("not-a-valid");
+
+        // Act & Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithParameterName("value");
+    }
+
+    [Fact]
+    public void TryParse_Should_ReturnFalseAndNull_When_InputIsInvalid()
+    {
+        // Arrange & Act
+        var success = AllyariaGlobalValue.TryParse("bad-value", out var result);
+
+        // Assert
+        success.Should()
             .BeFalse();
 
-        value.Should()
-            .BeEmpty();
+        result.Should()
+            .BeNull();
     }
 
     [Fact]
-    public void TryParse_Valid_Returns_True_And_Normalized_Instance()
+    public void TryParse_Should_ReturnTrueAndInstance_When_InputIsValid()
     {
-        // Arrange
-        var input = "  INITIAL  ";
-
-        // Act
-        var ok = AllyariaGlobalValue.TryParse(input, out var sut);
-        string value = sut;
+        // Arrange & Act
+        var success = AllyariaGlobalValue.TryParse("initial", out var result);
 
         // Assert
-        ok.Should()
+        success.Should()
             .BeTrue();
 
-        value.Should()
+        result!.Value.Should()
             .Be("initial");
     }
 }
