@@ -1,52 +1,119 @@
-﻿name: Tests
+﻿name: Tests & Coverage
 
 on:
+  pull_request:
   push:
     branches: [ main ]
-  pull_request:
-    types: [ opened, synchronize, reopened, ready_for_review ]
-  workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: tests-${{ github.ref }}
-  cancel-in-progress: true
+  pages: write           # for GitHub Pages deploy
+  id-token: write        # for GitHub Pages deploy
 
 jobs:
-  unit-tests:
-    name: Theming Unit Tests
+  test:
+    name: Build, Test, Coverage
     runs-on: ubuntu-latest
+
     steps:
-      - name: ⬇️ Checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🧰 Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: 💾 Cache NuGet
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: 🔧 Restore
+      - name: Restore
         run: dotnet restore
 
-      - name: 🏗️ Build (Release)
+      - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: 🧪 Test (Allyaria.Theming.UnitTests)
-        run: dotnet test tests/Allyaria.Theming.UnitTests --configuration Release --no-build --logger "trx;LogFileName=unit.trx" --results-directory TestResults
+      # Run tests: produce TRX + Coverage (Cobertura), enforce 75% line/total threshold
+      - name: Test with coverage (fail under 75%)
+        run: |
+          mkdir -p TestResults/coverage
+          dotnet test --no-build --configuration Release \
+            --logger "trx;LogFileName=test-results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=TestResults/coverage/coverage \
+            /p:CoverletOutputFormat=cobertura \
+            /p:Threshold=75 \
+            /p:ThresholdType=line \
+            /p:ThresholdStat=total
 
-      - name: 📦 Upload Unit Test Results
-        if: always()
+      # Convert TRX -> HTML test report (simple static HTML)
+      # Using ReportUnit (dotnet global tool) which converts .trx to browsable HTML.
+      - name: Generate HTML test report
+        run: |
+          dotnet tool update -g ReportUnit
+          export PATH="$PATH:/github/home/.dotnet/tools"
+          mkdir -p test-report
+          # Convert all trx files under TestResults to a single HTML site
+          # ReportUnit scans the folder and generates index.html etc.
+          reportunit "TestResults" "test-report"
+
+      # Generate HTML coverage + badges
+      - name: Generate coverage HTML & badges
+        if: ${{ always() }}   # run even if tests fail so you can inspect reports
+        run: |
+          dotnet tool update -g dotnet-reportgenerator-globaltool
+          export PATH="$PATH:/github/home/.dotnet/tools"
+          reportgenerator \
+            -reports:"TestResults/coverage/coverage.cobertura.xml" \
+            -targetdir:"coverage-report" \
+            -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges"
+
+      # Upload raw artifacts (debuggable in Actions UI)
+      - name: Upload artifacts (TRX, test HTML, coverage HTML)
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results
-          path: TestResults/unit.trx
+          name: test-and-coverage-artifacts
+          path: |
+            TestResults/**
+            test-report/**
+            coverage-report/**
+
+      # Make a nice markdown summary for the PR from coverage (optional, but handy)
+      - name: Add coverage summary to PR
+        if: ${{ github.event_name == 'pull_request' && always() }}
+        run: |
+          if [ -f "coverage-report/SummaryGithub.md" ]; then
+            echo "## Code Coverage" >> $GITHUB_STEP_SUMMARY
+            cat coverage-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # Prepare a static site (Pages) that includes test and coverage HTML + badges
+      - name: Prepare site for Pages
+        if: ${{ always() }}
+        run: |
+          rm -rf site
+          mkdir -p site
+          # copy coverage site (contains index.html)
+          cp -r coverage-report/* site/
+          # host test report under /tests
+          mkdir -p site/tests
+          cp -r test-report/* site/tests/
+          # copy badges (coverage-report produces badge_line.svg)
+          # put a simple redirect index if no main coverage index exists (defensive)
+          if [ ! -f site/index.html ]; then
+            echo "<html><head><meta http-equiv='refresh' content='0; url=tests/index.html'></head></html>" > site/index.html
+          fi
+
+      # Upload the static site to GitHub Pages artifact
+      - name: Configure Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact for Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      # Publish the site (only on main)
+      - name: Deploy to GitHub Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/deploy-pages@v4
