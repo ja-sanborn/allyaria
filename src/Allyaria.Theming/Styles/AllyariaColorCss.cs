@@ -23,9 +23,13 @@ namespace Allyaria.Theming.Styles;
 /// </remarks>
 public sealed class AllyariaColorCss : CssBase
 {
-    /// <summary>Initializes a new instance from a complete CSS declaration string like <c>"color: #fff"</c>.</summary>
-    /// <param name="cssProperty">The full CSS declaration string to parse (must be for <c>color</c>).</param>
-    /// <exception cref="ArgumentException">Thrown when the declaration cannot be parsed.</exception>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CssBase" /> class from a single CSS declaration string.
+    /// </summary>
+    /// <param name="cssProperty">A full CSS declaration.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="cssProperty" /> is null/whitespace or cannot be parsed into a valid property and value.
+    /// </exception>
     public AllyariaColorCss(string cssProperty)
         : base(cssProperty)
     {

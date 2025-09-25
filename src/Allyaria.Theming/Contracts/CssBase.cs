@@ -20,7 +20,7 @@ public abstract class CssBase : IEquatable<CssBase>
     /// <summary>
     /// Initializes a new instance of the <see cref="CssBase" /> class from a single CSS declaration string.
     /// </summary>
-    /// <param name="cssProperty">A full CSS declaration, e.g., <c>"color: #fff;"</c>. A trailing semicolon is optional.</param>
+    /// <param name="cssProperty">A full CSS declaration.</param>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="cssProperty" /> is null/whitespace or cannot be parsed into a valid property and value.
     /// </exception>
