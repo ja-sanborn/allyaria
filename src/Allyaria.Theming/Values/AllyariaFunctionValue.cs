@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Contracts;
 
 namespace Allyaria.Theming.Values;
 
@@ -201,12 +201,12 @@ public sealed class AllyariaFunctionValue : ValueBase
 
         var text = value.Trim();
 
-        if (!TrySplitFunc(text, out var funcName, out var innerExpr))
+        if (TrySplitFunc(text, out var funcName, out var innerExpr))
         {
-            throw new FormatException("Unable to parse CSS function expression.");
+            return $"{funcName}({innerExpr})";
         }
 
-        return $"{funcName}({innerExpr})";
+        throw new FormatException("Unable to parse CSS function expression.");
     }
 
     /// <summary>Parses the supplied value into an <see cref="AllyariaFunctionValue" /> and throws if invalid.</summary>

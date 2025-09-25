@@ -8,7 +8,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
 {
     /// <summary>Initializes a new instance of the <see cref="ValueBase" /> class.</summary>
     /// <param name="values">The underlying string value.</param>
-    protected ValueBase(params string[] values) => Value = string.Join(',', values).Trim();
+    protected ValueBase(params string[] values) => Value = string.Join(',', values);
 
     /// <summary>Gets the raw string value represented by this instance.</summary>
     public virtual string Value { get; }
