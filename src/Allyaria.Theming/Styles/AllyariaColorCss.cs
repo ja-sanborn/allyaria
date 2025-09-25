@@ -1,6 +1,5 @@
 using Allyaria.Theming.Contracts;
 using Allyaria.Theming.Values;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Styles;
 
@@ -86,7 +85,7 @@ public sealed class AllyariaColorCss : CssBase
     /// <param name="value">The raw CSS value string to parse.</param>
     /// <param name="result">When this method returns <see langword="true" />, contains the parsed instance.</param>
     /// <returns><see langword="true" /> if parsing succeeds; otherwise, <see langword="false" />.</returns>
-    public static bool TryParse(string value, [NotNullWhen(true)] out AllyariaColorCss? result)
+    public static bool TryParse(string value, out AllyariaColorCss? result)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -109,16 +108,12 @@ public sealed class AllyariaColorCss : CssBase
         }
     }
 
-    /// <summary>
-    /// Implicitly converts a raw CSS value string to an <see cref="AllyariaColorCss" /> for the <c>color</c> property.
-    /// </summary>
+    /// <summary>Implicitly converts a raw CSS value string to an <see cref="AllyariaColorCss" />.</summary>
     /// <param name="value">The raw CSS value string.</param>
     /// <returns>An <see cref="AllyariaColorCss" /> instance.</returns>
     public static implicit operator AllyariaColorCss(string value) => new(value);
 
-    /// <summary>
-    /// Implicitly converts an <see cref="AllyariaColorCss" /> to its CSS declaration string (e.g., <c>"color: #fff;"</c>).
-    /// </summary>
+    /// <summary>Implicitly converts an <see cref="AllyariaColorCss" /> to its CSS declaration string.</summary>
     /// <param name="value">The instance to convert.</param>
     /// <returns>The full CSS declaration string.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
