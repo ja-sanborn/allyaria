@@ -1,4 +1,5 @@
-﻿using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Constants;
+using Allyaria.Theming.Contracts;
 using System.Globalization;
 using System.Text.RegularExpressions;
 

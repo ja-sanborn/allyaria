@@ -93,6 +93,17 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>A hash code for this instance.</returns>
     public override int GetHashCode() => Value.GetHashCode(StringComparison.Ordinal);
 
+    /// <summary>Converts the current value into a CSS declaration string for the specified property.</summary>
+    /// <param name="propertyName">The CSS property name. If <c>null</c> or whitespace, only the value is returned.</param>
+    /// <returns>
+    /// A CSS declaration in the format <c>"property: value;"</c> if <paramref name="propertyName" /> is provided; otherwise,
+    /// just the <see cref="Value" />.
+    /// </returns>
+    public string ToCss(string propertyName)
+        => string.IsNullOrWhiteSpace(propertyName)
+            ? Value
+            : $"{propertyName.ToLowerInvariant().Trim()}:{Value};";
+
     /// <summary>Returns the string representation of this instance.</summary>
     /// <returns>The raw string value.</returns>
     public override string ToString() => Value;

@@ -538,6 +538,65 @@ public sealed class AllyariaColorValueTests
     }
 
     [Fact]
+    public void ToCss_Should_Not_Include_Spaces_Around_Colon_And_Must_End_With_Semicolon()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#00000080"); // ensure deterministic Value
+
+        // Act
+        var css = sut.ToCss(" Opacity ");
+
+        // Assert
+        css.Should()
+            .Be("opacity:#00000080;");
+
+        css.Should()
+            .EndWith(";");
+
+        css.Should()
+            .NotContain(" :");
+
+        css.Should()
+            .NotContain(": ");
+    }
+
+    [Theory]
+    [InlineData("Color", "color")]
+    [InlineData(" background-Color ", "background-color")]
+    [InlineData("BORDER-TOP", "border-top")]
+    public void ToCss_Should_Return_Lowercased_Trimmed_Declaration_When_PropertyName_Provided(string propertyName,
+        string expectedProp)
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#A1B2C3D4");
+
+        // Act
+        var css = sut.ToCss(propertyName);
+
+        // Assert
+        css.Should()
+            .Be($"{expectedProp}:#A1B2C3D4;");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\t \n")]
+    public void ToCss_Should_Return_Value_Only_When_PropertyName_Is_NullOrWhitespace(string? propertyName)
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#11223344");
+
+        // Act
+        var css = sut.ToCss(propertyName!);
+
+        // Assert
+        css.Should()
+            .Be("#11223344");
+    }
+
+    [Fact]
     public void Transparent_Keyword_Yields_ZeroAlpha()
     {
         // Arrange + Act
