@@ -122,10 +122,3 @@ jobs:
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         uses: actions/deploy-pages@v4
-        with:
-        # Optional but recommended to see the deployment in the "github-pages" environment
-        # id: deployment
-        # token: ${{ secrets.GITHUB_TOKEN }}
-        # preview: false
-        # More options: https://github.com/actions/deploy-pages
-        # (defaults are fine)
