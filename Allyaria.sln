@@ -67,68 +67,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", 
 		docs\references\Allyaria.Theming.Typography.AllyariaTypoItem.md = docs\references\Allyaria.Theming.Typography.AllyariaTypoItem.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".future-ideas", ".future-ideas", "{E75C0F8F-CCF4-4710-9FE0-0EF7E7287EE8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "theming", "theming", "{5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "theming-tests", "theming-tests", "{E2847E36-AFD6-46AF-BB3E-C29E4E2D69F4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{FFBA3A33-B7F6-4D52-A5D5-AE29DE972649}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming\Contracts\CssBase.cs = .future-ideas\theming\Contracts\CssBase.cs
-		.future-ideas\theming\Contracts\ValueBase.cs = .future-ideas\theming\Contracts\ValueBase.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{F7326122-926B-4529-B3CC-822E24E9F727}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming\Helpers\OldStyleHelpers.cs = .future-ideas\theming\Helpers\OldStyleHelpers.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styles", "Styles", "{180A334F-DFBC-4A3D-8EC0-8E69A38D048B}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming\Styles\AllyariaFontFamilyCss.cs = .future-ideas\theming\Styles\AllyariaFontFamilyCss.cs
-		.future-ideas\theming\Styles\AllyariaFontSizeCss.cs = .future-ideas\theming\Styles\AllyariaFontSizeCss.cs
-		.future-ideas\theming\Styles\OldAllyariaFontStyle.cs = .future-ideas\theming\Styles\OldAllyariaFontStyle.cs
-		.future-ideas\theming\Styles\OldAllyariaFontWeight.cs = .future-ideas\theming\Styles\OldAllyariaFontWeight.cs
-		.future-ideas\theming\Styles\OldAllyariaLetterSpacing.cs = .future-ideas\theming\Styles\OldAllyariaLetterSpacing.cs
-		.future-ideas\theming\Styles\OldAllyariaLineHeight.cs = .future-ideas\theming\Styles\OldAllyariaLineHeight.cs
-		.future-ideas\theming\Styles\OldAllyariaTextAlign.cs = .future-ideas\theming\Styles\OldAllyariaTextAlign.cs
-		.future-ideas\theming\Styles\OldAllyariaTextDecoration.cs = .future-ideas\theming\Styles\OldAllyariaTextDecoration.cs
-		.future-ideas\theming\Styles\OldAllyariaTextTransform.cs = .future-ideas\theming\Styles\OldAllyariaTextTransform.cs
-		.future-ideas\theming\Styles\OldAllyariaVerticalAlign.cs = .future-ideas\theming\Styles\OldAllyariaVerticalAlign.cs
-		.future-ideas\theming\Styles\OldAllyariaWordSpacing.cs = .future-ideas\theming\Styles\OldAllyariaWordSpacing.cs
-		AllyariaStringCss.cs = AllyariaStringCss.cs
-		.future-ideas\theming\Styles\AllyariaColorCss.cs = .future-ideas\theming\Styles\AllyariaColorCss.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Values", "Values", "{716A07FF-CE5C-41D9-B400-DF849707FE70}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming\Values\AllyariaAngleValue.cs = .future-ideas\theming\Values\AllyariaAngleValue.cs
-		.future-ideas\theming\Values\AllyariaColorValue.cs = .future-ideas\theming\Values\AllyariaColorValue.cs
-		.future-ideas\theming\Values\AllyariaFontFamilyValue.cs = .future-ideas\theming\Values\AllyariaFontFamilyValue.cs
-		.future-ideas\theming\Values\AllyariaFunctionValue.cs = .future-ideas\theming\Values\AllyariaFunctionValue.cs
-		.future-ideas\theming\Values\AllyariaGlobalValue.cs = .future-ideas\theming\Values\AllyariaGlobalValue.cs
-		.future-ideas\theming\Values\AllyariaNumberValue.cs = .future-ideas\theming\Values\AllyariaNumberValue.cs
-		.future-ideas\theming\Values\AllyariaSizeValue.cs = .future-ideas\theming\Values\AllyariaSizeValue.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styles", "Styles", "{2BEC696D-233F-4EA8-8FD2-3ABDE3EC3442}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming-tests\Styles\AllyariaColorCssTests.cs = .future-ideas\theming-tests\Styles\AllyariaColorCssTests.cs
-		.future-ideas\theming-tests\Styles\AllyariaFontFamilyCssTests.cs = .future-ideas\theming-tests\Styles\AllyariaFontFamilyCssTests.cs
-		.future-ideas\theming-tests\Styles\AllyariaFontSizeCssTests.cs = .future-ideas\theming-tests\Styles\AllyariaFontSizeCssTests.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Values", "Values", "{235B882F-FFBB-4E16-AE0A-E0E908B5D195}"
-	ProjectSection(SolutionItems) = preProject
-		.future-ideas\theming-tests\Values\AllyariaColorValueTests.cs = .future-ideas\theming-tests\Values\AllyariaColorValueTests.cs
-		.future-ideas\theming-tests\Values\AllyariaFontFamilyValueTests.cs = .future-ideas\theming-tests\Values\AllyariaFontFamilyValueTests.cs
-		.future-ideas\theming-tests\Values\AllyariaFunctionValueTests.cs = .future-ideas\theming-tests\Values\AllyariaFunctionValueTests.cs
-		.future-ideas\theming-tests\Values\AllyariaGlobalValueTests.cs = .future-ideas\theming-tests\Values\AllyariaGlobalValueTests.cs
-		.future-ideas\theming-tests\Values\AllyariaNumberValueTests.cs = .future-ideas\theming-tests\Values\AllyariaNumberValueTests.cs
-		.future-ideas\theming-tests\Values\AllyariaSizeValueTests.cs = .future-ideas\theming-tests\Values\AllyariaSizeValueTests.cs
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,14 +82,6 @@ Global
 		{9BF51EFB-D9D6-4987-8F32-03B2881273A1} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 		{F1658959-606D-4B4A-A768-89741991B4B9} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 		{87ECEB69-9E94-4136-B906-1322CA050981} = {38DECD57-882D-484C-A729-22BD05B403BD}
-		{5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F} = {E75C0F8F-CCF4-4710-9FE0-0EF7E7287EE8}
-		{E2847E36-AFD6-46AF-BB3E-C29E4E2D69F4} = {E75C0F8F-CCF4-4710-9FE0-0EF7E7287EE8}
-		{FFBA3A33-B7F6-4D52-A5D5-AE29DE972649} = {5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F}
-		{F7326122-926B-4529-B3CC-822E24E9F727} = {5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F}
-		{180A334F-DFBC-4A3D-8EC0-8E69A38D048B} = {5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F}
-		{716A07FF-CE5C-41D9-B400-DF849707FE70} = {5FE2E66E-ADB3-4276-9156-7E21D5B7DD3F}
-		{2BEC696D-233F-4EA8-8FD2-3ABDE3EC3442} = {E2847E36-AFD6-46AF-BB3E-C29E4E2D69F4}
-		{235B882F-FFBB-4E16-AE0A-E0E908B5D195} = {E2847E36-AFD6-46AF-BB3E-C29E4E2D69F4}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1AFD8FBD-1308-4D1E-8D8E-892AD42812CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

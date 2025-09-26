@@ -230,6 +230,44 @@ public readonly record struct AllyariaPalette
     }
 
     /// <summary>
+    /// Builds a string of inline CSS declarations representing the <em>hover</em> state for this palette. The same precedence
+    /// rules apply: background image (if any) takes priority over background color; otherwise the hover color variant is used.
+    /// Border declarations mirror the non-hover state.
+    /// </summary>
+    /// <returns>A CSS declaration string for hover state styling (e.g., on <c>:hover</c>).</returns>
+    public string ToCssHover()
+    {
+        var builder = new StringBuilder();
+        builder.Append(ForegroundHoverColor.ToCss("color"));
+
+        if (HasBackground)
+        {
+            builder.Append(BackgroundImage!.ToCss("background-image"));
+            builder.Append("background-position:center;");
+            builder.Append("background-repeat:no-repeat;");
+            builder.Append("background-size:cover;");
+        }
+        else
+        {
+            builder.Append(BackgroundHoverColor.ToCss("background-color"));
+        }
+
+        if (HasBorder)
+        {
+            builder.Append(BorderColor.ToCss("border-color"));
+            builder.Append(BorderStyle.ToCss("border-style"));
+            builder.Append(BorderWidth!.ToCss("border-width"));
+
+            if (HasRadius)
+            {
+                builder.Append(BorderRadius!.ToCss("border-radius"));
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    /// <summary>
     /// Builds a string of CSS custom property declarations for theming (e.g., <c>--aa-fg</c>, <c>--aa-bg</c>). When a
     /// background image is present, an <c>--aa-bg-image</c> variable is emitted and color variables are constrained to
     /// foregrounds and borders; otherwise, background color variables are emitted.

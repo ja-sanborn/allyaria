@@ -158,6 +158,100 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCssHover_Should_EmitBackgroundHoverColor_When_NoImageAndNoBorder()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "",
+            borderWidth: 0
+        );
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .Contain("color:")
+            .And.Contain("background-color:")
+            .And.NotContain("background-image")
+            .And.NotContain("border-");
+    }
+
+    [Fact]
+    public void ToCssHover_Should_EmitBackgroundImageAndNoBackgroundHoverColor_When_ImageProvided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            Colors.Red, // explicit hover color, should be ignored due to image
+            backgroundImage: "https://example.com/pic.png"
+        );
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .Contain("background-image:")
+            .And.Contain("linear-gradient(")
+            .And.Contain("url(\"https://example.com/pic.png\")")
+            .And.Contain("background-position:center;")
+            .And.Contain("background-repeat:no-repeat;")
+            .And.Contain("background-size:cover;")
+            .And.NotContain("background-color:");
+    }
+
+    [Fact]
+    public void ToCssHover_Should_EmitBorderDeclarations_When_BorderWidthPositive()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "",
+            borderWidth: 2,
+            borderColor: Colors.Black,
+            borderStyle: new AllyariaStringValue("dotted"),
+            borderRadius: new AllyariaStringValue("5px")
+        );
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .Contain("border-color:")
+            .And.Contain("border-style:dotted")
+            .And.Contain("border-width:2px")
+            .And.Contain("border-radius:5px");
+    }
+
+    [Fact]
+    public void ToCssHover_Should_OmitBorderDeclarations_When_BorderWidthZero()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 0,
+            borderRadius: new AllyariaStringValue("10px")
+        );
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .NotContain("border-color")
+            .And.NotContain("border-style")
+            .And.NotContain("border-width")
+            .And.NotContain("border-radius");
+    }
+
+    [Fact]
     public void ToCssVars_Should_EmitBorderVars_When_BorderPresent()
     {
         // Arrange
