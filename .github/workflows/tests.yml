@@ -5,13 +5,12 @@ on:
   push:
     branches: [ main ]
 
-# Needed for Pages + PR checks publishing
 permissions:
   contents: read
   pages: write
   id-token: write
-  checks: write            # for creating check runs (test results publisher)
-  pull-requests: write     # optional, for PR comments/annotations
+  checks: write          # for PR test results publishing
+  pull-requests: write   # for PR annotations/comments
 
 jobs:
   test:
@@ -33,35 +32,16 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # ---- OPTION A: coverlet via MSBuild props, deterministic output path
-      - name: Test with coverage (fail under 75%)
+      # ---- OPTION B (recommended): built-in collector (no NuGet needed)
+      - name: Test with coverage (XPlat collector)
         run: |
           set -e
-          ROOT="$(pwd)"
-          OUTDIR="$ROOT/TestResults/coverage"
-          mkdir -p "$OUTDIR"
-
           dotnet test --no-build --configuration Release \
             --logger "trx;LogFileName=test-results.trx" \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput="$OUTDIR/coverage" \
-            /p:CoverletOutputFormat=cobertura \
-            /p:Threshold=75 \
-            /p:ThresholdType=line \
-            /p:ThresholdStat=total
+            --collect:"XPlat Code Coverage"
 
           echo "---- locate cobertura files (debug) ----"
-          find "$ROOT" -type f -name "coverage.cobertura.xml" -print || true
-
-      # ---- OPTION B (alternative): built-in collector (XPlat) — DISABLED
-      # - name: Test with coverage via DataCollector (XPlat)
-      #   run: |
-      #     set -e
-      #     dotnet test --no-build --configuration Release \
-      #       --logger "trx;LogFileName=test-results.trx" \
-      #       --collect:"XPlat Code Coverage"
-      #     echo "---- locate cobertura files (debug) ----"
-      #     find "$(pwd)" -type f -name "coverage.cobertura.xml" -print || true
+          find "$(pwd)" -type f -name "coverage.cobertura.xml" -print || true
 
       # Publish TRX into PR as a check (disabled for forked PRs)
       - name: Publish unit test results to PR
@@ -72,35 +52,47 @@ jobs:
             **/test-results.trx
             **/TestResults/**/*.trx
 
-      # Generate HTML coverage + badges (robust: exact path or glob; never hard-fail)
-      - name: Generate coverage HTML & badges
+      # Generate HTML coverage + badges, and enforce 75% line coverage threshold
+      - name: Generate coverage HTML, badges, and enforce threshold
         if: ${{ always() }}
         run: |
           set -e
           dotnet tool update -g dotnet-reportgenerator-globaltool
           export PATH="$PATH:/github/home/.dotnet/tools"
 
-          if [ -f "TestResults/coverage/coverage.cobertura.xml" ]; then
-            SRC="TestResults/coverage/coverage.cobertura.xml"
-          else
-            SRC="**/TestResults/**/coverage.cobertura.xml"
-          fi
-
+          # XPlat collector writes per-test-project under TestResults/**/coverage.cobertura.xml
+          SRC="**/TestResults/**/coverage.cobertura.xml"
           echo "Using reports pattern: $SRC"
-          if compgen -G "$SRC" > /dev/null; then
-            reportgenerator \
-              -reports:"$SRC" \
-              -targetdir:"coverage-report" \
-              -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges"
-          else
-            echo "No coverage files found; creating placeholder site."
+
+          if ! compgen -G "$SRC" > /dev/null; then
+            echo "No coverage files found from XPlat collector."
             mkdir -p coverage-report
             printf '%s\n' \
               '<!doctype html><meta charset="utf-8">' \
               '<title>Coverage</title>' \
               '<h1>No coverage files found for this run.</h1>' \
-              '<p>Check the workflow logs for details.</p>' \
+              '<p>Ensure tests executed and the XPlat collector is enabled.</p>' \
               > coverage-report/index.html
+          else
+            reportgenerator \
+              -reports:"$SRC" \
+              -targetdir:"coverage-report" \
+              -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges;TextSummary"
+
+            echo "---- coverage-report contents ----"
+            ls -la coverage-report || true
+
+            # Enforce 75% line coverage using TextSummary output
+            # The line 'Line coverage: 83.4%' appears in Summary.txt
+            COV_LINE=$(grep -Eo 'Line coverage: *[0-9]+(\.[0-9]+)?%' coverage-report/Summary.txt | grep -Eo '[0-9]+(\.[0-9]+)?')
+            if [ -z "$COV_LINE" ]; then
+              echo "Could not parse line coverage from Summary.txt"; COV_LINE=0
+            fi
+            echo "Parsed line coverage: ${COV_LINE}%"
+            awk -v cov="$COV_LINE" 'BEGIN { if (cov+0 < 75) { exit 1 } }' || {
+              echo "Line coverage ${COV_LINE}% is below required threshold (75%)."
+              exit 1
+            }
           fi
 
       # Upload artifacts so you can inspect from the Actions UI
