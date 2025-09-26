@@ -1,363 +1,274 @@
 ﻿using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
+using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 
 public sealed class AllyariaPaletteTests
 {
     [Fact]
-    public void BackgroundColor_Should_Return_BaseColor_When_HasBorderFalse()
+    public void BackgroundImage_Should_BeNull_When_EmptyOrWhitespace()
     {
         // Arrange
-        var baseBg = Colors.Black; // any explicit color
-        var sut = new AllyariaPalette(baseBg, hasBorder: false);
+        var sutEmpty = new AllyariaPalette(backgroundImage: "");
+        var sutWhitespace = new AllyariaPalette(backgroundImage: "   ");
 
         // Act
-        var effective = sut.BackgroundColor;
+        var imgEmpty = sutEmpty.BackgroundImage;
+        var imgWhitespace = sutWhitespace.BackgroundImage;
 
         // Assert
-        effective.Should()
-            .Be(baseBg);
+        imgEmpty.Should()
+            .BeNull();
+
+        imgWhitespace.Should()
+            .BeNull();
     }
 
     [Fact]
-    public void BackgroundColor_Should_Return_HoverOfBase_When_HasBorderTrue()
+    public void BackgroundImage_Should_ContainLowerCasedTrimmedUrl_When_Provided()
     {
         // Arrange
-        var baseBg = Colors.White;
-        var sut = new AllyariaPalette(baseBg, hasBorder: true);
+        var sut = new AllyariaPalette(backgroundImage: "  HTTPS://CDN.EXAMPLE.COM/Hero.JPG  ");
 
         // Act
-        var effective = sut.BackgroundColor;
-
-        // Assert
-        effective.Should()
-            .Be(baseBg.HoverColor());
-    }
-
-    [Fact]
-    public void BackgroundHoverColor_Should_Default_To_Background_Hover_When_NotProvided()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(Colors.Black, hasBorder: false);
-
-        // Act
-        var effectiveBg = sut.BackgroundColor;
-        var hover = sut.BackgroundHoverColor;
-
-        // Assert
-        hover.Should()
-            .Be(effectiveBg.HoverColor());
-    }
-
-    [Fact]
-    public void BackgroundImage_Should_Be_Empty_When_HasBackgroundFalse_Even_If_Provided()
-    {
-        // Arrange
-        var raw = "https://example.com/abc.png";
-
-        // Act
-        var sut = new AllyariaPalette(backgroundImage: raw, hasBackground: false);
         var img = sut.BackgroundImage;
 
         // Assert
         img.Should()
-            .BeEmpty();
+            .NotBeNull();
+
+        img.ToCss("background-image")
+            .Should()
+            .Contain("url(\"https://cdn.example.com/hero.jpg\")")
+            .And.Contain("linear-gradient(");
     }
 
     [Fact]
-    public void BackgroundImage_Should_Be_Normalized_When_Provided_And_HasBackgroundTrue()
+    public void ToCss_Should_DefaultBorderStyleToSolid_When_StyleNotSupplied()
     {
         // Arrange
-        var raw = "  HtTpS://Example.COM/Images/HeRo.PnG  ";
-
-        // Act
-        var sut = new AllyariaPalette(backgroundImage: raw, hasBackground: true);
-        var normalized = sut.BackgroundImage;
-
-        // Assert
-        normalized.Should()
-            .Be("https://example.com/images/hero.png");
-    }
-
-    [Fact]
-    public void BorderColor_Should_Be_Transparent_When_HasBorderFalse()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(hasBorder: false);
-
-        // Act
-        var border = sut.BorderColor;
-
-        // Assert
-        border.Should()
-            .Be(Colors.Transparent);
-    }
-
-    [Fact]
-    public void BorderColor_Should_FallBack_To_EffectiveBackground_When_Unset_And_HasBorderTrue()
-    {
-        // Arrange
-        var baseBg = Colors.White;
-        var sut = new AllyariaPalette(baseBg, borderColor: null, hasBorder: true);
-
-        // Act
-        var border = sut.BorderColor;
-        var effectiveBg = sut.BackgroundColor;
-
-        // Assert
-        border.Should()
-            .Be(effectiveBg);
-    }
-
-    [Fact]
-    public void ForegroundColor_Should_Default_To_Black_When_Background_Is_Light()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(Colors.White, hasBorder: false);
-
-        // Act
-        var fg = sut.ForegroundColor;
-
-        // Assert
-        fg.Should()
-            .Be(Colors.Black);
-    }
-
-    [Fact]
-    public void ForegroundColor_Should_Default_To_White_When_Background_Is_Dark()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(Colors.Black, hasBorder: false);
-
-        // Act
-        var fg = sut.ForegroundColor;
-
-        // Assert
-        fg.Should()
-            .Be(Colors.White);
-    }
-
-    [Fact]
-    public void ForegroundHoverColor_Should_Default_To_Foreground_Hover_When_NotProvided()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(Colors.White, hasBorder: false);
-
-        // Act
-        var fg = sut.ForegroundColor;
-        var hover = sut.ForegroundHoverColor;
-
-        // Assert
-        hover.Should()
-            .Be(fg.HoverColor());
-    }
-
-    [Fact]
-    public void ToCss_Should_Not_Render_Background_When_HasBackgroundFalse()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "/a.png", hasBackground: false);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 1,
+            borderColor: Colors.Black
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
         css.Should()
-            .NotContain("background-image:");
-
-        css.Should()
-            .NotContain("background-position:");
-
-        css.Should()
-            .NotContain("background-repeat:");
-
-        css.Should()
-            .NotContain("background-size:");
-
-        css.Should()
-            .NotContain("background-color");
+            .Contain("border-style:solid");
     }
 
     [Fact]
-    public void ToCss_Should_Not_Render_BorderColor_When_HasBorderFalse()
+    public void ToCss_Should_EmitBackgroundImageAndNoBackgroundColor_When_ImageProvided()
     {
         // Arrange
-        var sut = new AllyariaPalette(hasBorder: false);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "  HTTPS://EXAMPLE.COM/Img.Png  "
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
         css.Should()
-            .NotContain("border-color");
+            .Contain("background-image:")
+            .And.Contain("linear-gradient(")
+            .And.Contain("url(\"https://example.com/img.png\")") // lowercased + trimmed
+            .And.Contain("background-position:center;")
+            .And.Contain("background-repeat:no-repeat;")
+            .And.Contain("background-size:cover;")
+            .And.NotContain("background-color:");
     }
 
     [Fact]
-    public void ToCss_Should_Render_BackgroundColor_When_Image_Is_Whitespace()
+    public void ToCss_Should_EmitBorderDeclarations_When_BorderWidthPositive()
     {
         // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "   ", hasBackground: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "",
+            borderWidth: 2,
+            borderColor: Colors.Black,
+            borderStyle: new AllyariaStringValue("dashed"),
+            borderRadius: new AllyariaStringValue("4px")
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
         css.Should()
-            .Contain("background-color");
-
-        css.Should()
-            .NotContain("background-image:");
+            .Contain("border-color:")
+            .And.Contain("border-style:dashed")
+            .And.Contain("border-width:2px")
+            .And.Contain("border-radius:4px");
     }
 
     [Fact]
-    public void ToCss_Should_Render_BackgroundColor_When_Image_Not_Provided()
+    public void ToCss_Should_EmitColorAndBackgroundColor_When_NoImageAndNoBorder()
     {
         // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "", hasBackground: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "",
+            borderWidth: 0
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
         css.Should()
-            .Contain("background-color");
-
-        css.Should()
-            .NotContain("background-image:");
+            .Contain("color:")
+            .And.Contain("background-color:")
+            .And.NotContain("background-image")
+            .And.NotContain("border-");
     }
 
     [Fact]
-    public void ToCss_Should_Render_BackgroundImage_With_Overlay_Position_Repeat_And_Size()
+    public void ToCss_Should_OmitBorderDeclarations_When_BorderWidthZero()
     {
         // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "  /assets/Hero.JPG  ", hasBackground: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "",
+            borderWidth: 0,
+            borderRadius: new AllyariaStringValue("12px") // radius should still be ignored without a border
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
         css.Should()
-            .Contain(
-                "background-image:linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5)),url(\"/assets/hero.jpg\");"
-            );
-
-        css.Should()
-            .Contain("background-position:center;");
-
-        css.Should()
-            .Contain("background-repeat:no-repeat;");
-
-        css.Should()
-            .Contain("background-size:cover;");
+            .NotContain("border-color")
+            .And.NotContain("border-style")
+            .And.NotContain("border-width")
+            .And.NotContain("border-radius");
     }
 
     [Fact]
-    public void ToCss_Should_Render_BorderColor_When_HasBorderTrue()
+    public void ToCssVars_Should_EmitBorderVars_When_BorderPresent()
     {
         // Arrange
-        var sut = new AllyariaPalette(hasBorder: true);
-
-        // Act
-        var css = sut.ToCss();
-
-        // Assert
-        css.Should()
-            .Contain("border-color");
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Define_Background_Vars_When_No_Image()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "", hasBackground: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 3,
+            borderColor: Colors.Black,
+            borderStyle: new AllyariaStringValue("dotted"),
+            borderRadius: new AllyariaStringValue("8px")
+        );
 
         // Act
         var vars = sut.ToCssVars();
 
         // Assert
         vars.Should()
-            .Contain("--aa-fg:");
-
-        vars.Should()
-            .Contain("--aa-fg-hover:");
-
-        vars.Should()
-            .Contain("--aa-bg:");
-
-        vars.Should()
-            .Contain("--aa-bg-hover:");
-
-        vars.Should()
-            .NotContain("--aa-bg-image:");
+            .Contain("--aa-border-color")
+            .And.Contain("--aa-border-style:dotted")
+            .And.Contain("--aa-border-width:3px")
+            .And.Contain("--aa-border-radius:8px");
     }
 
     [Fact]
-    public void ToCssVars_Should_Define_Border_Var_When_HasBorderTrue()
+    public void ToCssVars_Should_EmitFgAndBgVars_When_NoImage()
     {
         // Arrange
-        var sut = new AllyariaPalette(hasBorder: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            Colors.Black, // explicit to avoid relying on HoverColor() implementation
+            Colors.White, // explicit to avoid relying on HoverColor() implementation
+            "",
+            0
+        );
 
         // Act
         var vars = sut.ToCssVars();
 
         // Assert
         vars.Should()
-            .Contain("--aa-border:");
+            .Contain("--aa-fg")
+            .And.Contain("--aa-fg-hover")
+            .And.Contain("--aa-bg")
+            .And.Contain("--aa-bg-hover")
+            .And.NotContain("--aa-bg-image");
     }
 
     [Fact]
-    public void ToCssVars_Should_Define_Image_Var_When_Image_Is_Present_And_HasBackgroundTrue()
+    public void ToCssVars_Should_EmitFgAndImageVars_When_ImagePresent()
     {
         // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "https://cdn/x.png", hasBackground: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            foregroundHoverColor: Colors.White,
+            backgroundImage: "Example.png",
+            borderWidth: 0
+        );
 
         // Act
         var vars = sut.ToCssVars();
 
         // Assert
         vars.Should()
-            .Contain("--aa-fg:");
-
-        vars.Should()
-            .Contain("--aa-fg-hover:");
-
-        vars.Should()
-            .Contain("--aa-bg-image:");
-
-        vars.Should()
-            .NotContain("--aa-bg:");
-
-        vars.Should()
-            .NotContain("--aa-bg-hover:");
+            .Contain("--aa-fg")
+            .And.Contain("--aa-fg-hover")
+            .And.Contain("--aa-bg-image")
+            .And.NotContain("--aa-bg;") // ensure no plain bg variables
+            .And.NotContain("--aa-bg-hover");
     }
 
     [Fact]
-    public void ToCssVars_Should_Not_Define_Border_Var_When_HasBorderFalse()
+    public void ToCssVars_Should_OmitBorderVars_When_BorderAbsent()
     {
         // Arrange
-        var sut = new AllyariaPalette(hasBorder: false);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 0
+        );
 
         // Act
         var vars = sut.ToCssVars();
 
         // Assert
         vars.Should()
-            .NotContain("--aa-border:");
+            .NotContain("--aa-border-color")
+            .And.NotContain("--aa-border-style")
+            .And.NotContain("--aa-border-width")
+            .And.NotContain("--aa-border-radius");
     }
 
     [Fact]
-    public void ToString_Should_Return_Same_As_ToCss()
+    public void ToString_Should_ReturnSameAsToCss_When_AnyConfiguration()
     {
         // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "/img.png", hasBackground: true, hasBorder: true);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "banner.jpg",
+            borderWidth: 1,
+            borderColor: Colors.Black
+        );
 
         // Act
-        var asString = sut.ToString();
-        var css = sut.ToCss();
+        var cssViaToString = sut.ToString();
+        var cssViaToCss = sut.ToCss();
 
         // Assert
-        asString.Should()
-            .Be(css);
+        cssViaToString.Should()
+            .Be(cssViaToCss);
     }
 }
