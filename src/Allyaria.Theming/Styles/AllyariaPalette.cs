@@ -13,7 +13,7 @@ namespace Allyaria.Theming.Styles;
 /// precedence—background images override region colors, explicit overrides beat defaults, and borders are opt-in. See
 /// <see cref="ToCss" /> and <see cref="ToCssVars" />.
 /// </remarks>
-public readonly struct AllyariaPalette
+public readonly record struct AllyariaPalette
 {
     /// <summary>The base background color as provided, before any precedence (e.g., border presence) is applied.</summary>
     private readonly AllyariaColorValue _backgroundColor;
@@ -265,8 +265,4 @@ public readonly struct AllyariaPalette
 
         return builder.ToString();
     }
-
-    /// <summary>Returns the inline CSS built by <see cref="ToCss" /> for convenience.</summary>
-    /// <returns>The same value as <see cref="ToCss" />.</returns>
-    public override string ToString() => ToCss();
 }

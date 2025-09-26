@@ -189,9 +189,7 @@ public sealed class AllyariaPaletteTests
             Colors.White,
             Colors.Black,
             Colors.Black, // explicit to avoid relying on HoverColor() implementation
-            Colors.White, // explicit to avoid relying on HoverColor() implementation
-            "",
-            0
+            Colors.White // explicit to avoid relying on HoverColor() implementation
         );
 
         // Act
@@ -249,26 +247,5 @@ public sealed class AllyariaPaletteTests
             .And.NotContain("--aa-border-style")
             .And.NotContain("--aa-border-width")
             .And.NotContain("--aa-border-radius");
-    }
-
-    [Fact]
-    public void ToString_Should_ReturnSameAsToCss_When_AnyConfiguration()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(
-            Colors.White,
-            Colors.Black,
-            backgroundImage: "banner.jpg",
-            borderWidth: 1,
-            borderColor: Colors.Black
-        );
-
-        // Act
-        var cssViaToString = sut.ToString();
-        var cssViaToCss = sut.ToCss();
-
-        // Assert
-        cssViaToString.Should()
-            .Be(cssViaToCss);
     }
 }
