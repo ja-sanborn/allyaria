@@ -1,14 +1,17 @@
-﻿name: Tests & Coverage
+name: Tests & Coverage
 
 on:
   pull_request:
   push:
     branches: [ main ]
 
+# Needed for Pages + PR checks publishing
 permissions:
   contents: read
   pages: write
   id-token: write
+  checks: write            # for creating check runs (test results publisher)
+  pull-requests: write     # optional, for PR comments/annotations
 
 jobs:
   test:
@@ -30,41 +33,77 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # Run tests and collect Cobertura coverage to an absolute path prefix
+      # ---- OPTION A: coverlet via MSBuild props, deterministic output path
       - name: Test with coverage (fail under 75%)
         run: |
+          set -e
           ROOT="$(pwd)"
-          mkdir -p "$ROOT/TestResults/coverage"
+          OUTDIR="$ROOT/TestResults/coverage"
+          mkdir -p "$OUTDIR"
+
           dotnet test --no-build --configuration Release \
             --logger "trx;LogFileName=test-results.trx" \
             /p:CollectCoverage=true \
-            /p:CoverletOutput="$ROOT/TestResults/coverage/coverage" \
+            /p:CoverletOutput="$OUTDIR/coverage" \
             /p:CoverletOutputFormat=cobertura \
             /p:Threshold=75 \
             /p:ThresholdType=line \
             /p:ThresholdStat=total
 
-      # OPTIONAL but very useful: publish TRX into the PR summary
+          echo "---- locate cobertura files (debug) ----"
+          find "$ROOT" -type f -name "coverage.cobertura.xml" -print || true
+
+      # ---- OPTION B (alternative): built-in collector (XPlat) — DISABLED
+      # - name: Test with coverage via DataCollector (XPlat)
+      #   run: |
+      #     set -e
+      #     dotnet test --no-build --configuration Release \
+      #       --logger "trx;LogFileName=test-results.trx" \
+      #       --collect:"XPlat Code Coverage"
+      #     echo "---- locate cobertura files (debug) ----"
+      #     find "$(pwd)" -type f -name "coverage.cobertura.xml" -print || true
+
+      # Publish TRX into PR as a check (disabled for forked PRs)
       - name: Publish unit test results to PR
-        if: ${{ github.event_name == 'pull_request' && always() }}
+        if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && always() }}
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: |
             **/test-results.trx
             **/TestResults/**/*.trx
 
-      # Generate HTML coverage (aggregate all Cobertura files just in case)
+      # Generate HTML coverage + badges (robust: exact path or glob; never hard-fail)
       - name: Generate coverage HTML & badges
         if: ${{ always() }}
         run: |
+          set -e
           dotnet tool update -g dotnet-reportgenerator-globaltool
           export PATH="$PATH:/github/home/.dotnet/tools"
-          reportgenerator \
-            -reports:"**/TestResults/**/coverage.cobertura.xml" \
-            -targetdir:"coverage-report" \
-            -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges"
 
-      # Upload raw artifacts for inspection
+          if [ -f "TestResults/coverage/coverage.cobertura.xml" ]; then
+            SRC="TestResults/coverage/coverage.cobertura.xml"
+          else
+            SRC="**/TestResults/**/coverage.cobertura.xml"
+          fi
+
+          echo "Using reports pattern: $SRC"
+          if compgen -G "$SRC" > /dev/null; then
+            reportgenerator \
+              -reports:"$SRC" \
+              -targetdir:"coverage-report" \
+              -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges"
+          else
+            echo "No coverage files found; creating placeholder site."
+            mkdir -p coverage-report
+            printf '%s\n' \
+              '<!doctype html><meta charset="utf-8">' \
+              '<title>Coverage</title>' \
+              '<h1>No coverage files found for this run.</h1>' \
+              '<p>Check the workflow logs for details.</p>' \
+              > coverage-report/index.html
+          fi
+
+      # Upload artifacts so you can inspect from the Actions UI
       - name: Upload artifacts (TRX + coverage HTML)
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -85,30 +124,33 @@ jobs:
             echo "_No coverage report generated._" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      # Prepare static site for Pages (coverage under /, TRX downloadable under /tests)
+      # Prepare Pages site (defensive: always produces an index; exclude ./site when copying TRX)
       - name: Prepare site for Pages
         if: ${{ always() }}
         run: |
+          set -e
           rm -rf site
           mkdir -p site
-          if [ -d "coverage-report" ]; then
-            cp -r coverage-report/* site/
-          fi
-          mkdir -p site/tests
-          # copy any TRX files so you can download them from Pages
-          find . -type f -name "*.trx" -exec cp {} site/tests/ \; || true
-          # ensure there is an index.html so Pages never fails
-          if [ ! -f site/index.html ]; then
-            cat > site/index.html <<'HTML'
-            <!doctype html>
-            <meta charset="utf-8">
-            <title>Test & Coverage Reports</title>
-            <h1>Test & Coverage Reports</h1>
-            <p>No coverage site found. See raw TRX files under <a href="./tests/">/tests/</a>.</p>
-            HTML
+
+          if [ -d "coverage-report" ] && [ "$(ls -A coverage-report)" ]; then
+            cp -r coverage-report/* site/ || true
           fi
 
-      # Configure, upload, and deploy Pages (main branch only)
+          mkdir -p site/tests
+          # Copy TRX files but exclude the ./site folder to avoid copying onto itself
+          find . -path ./site -prune -o -type f -name '*.trx' -print -exec cp {} site/tests/ \; || true
+
+          # Ensure an index exists even if coverage wasn't produced
+          if [ ! -f site/index.html ]; then
+            printf '%s\n' \
+              '<!doctype html><meta charset="utf-8">' \
+              '<title>Test & Coverage Reports</title>' \
+              '<h1>Test & Coverage Reports</h1>' \
+              '<p>No coverage site for this run. TRX files are under <a href="./tests/">/tests/</a>.</p>' \
+              > site/index.html
+          fi
+
+      # Pages deploy only from main
       - name: Configure Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         uses: actions/configure-pages@v5
@@ -122,10 +164,3 @@ jobs:
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         uses: actions/deploy-pages@v4
-        with:
-        # Optional but recommended to see the deployment in the "github-pages" environment
-        # id: deployment
-        # token: ${{ secrets.GITHUB_TOKEN }}
-        # preview: false
-        # More options: https://github.com/actions/deploy-pages
-        # (defaults are fine)
