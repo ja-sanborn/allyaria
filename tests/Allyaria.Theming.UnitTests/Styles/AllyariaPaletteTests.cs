@@ -7,44 +7,6 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AllyariaPaletteTests
 {
     [Fact]
-    public void BackgroundImage_Should_BeNull_When_EmptyOrWhitespace()
-    {
-        // Arrange
-        var sutEmpty = new AllyariaPalette(backgroundImage: "");
-        var sutWhitespace = new AllyariaPalette(backgroundImage: "   ");
-
-        // Act
-        var imgEmpty = sutEmpty.BackgroundImage;
-        var imgWhitespace = sutWhitespace.BackgroundImage;
-
-        // Assert
-        imgEmpty.Should()
-            .BeNull();
-
-        imgWhitespace.Should()
-            .BeNull();
-    }
-
-    [Fact]
-    public void BackgroundImage_Should_ContainLowerCasedTrimmedUrl_When_Provided()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(backgroundImage: "  HTTPS://CDN.EXAMPLE.COM/Hero.JPG  ");
-
-        // Act
-        var img = sut.BackgroundImage;
-
-        // Assert
-        img.Should()
-            .NotBeNull();
-
-        img.ToCss("background-image")
-            .Should()
-            .Contain("url(\"https://cdn.example.com/hero.jpg\")")
-            .And.Contain("linear-gradient(");
-    }
-
-    [Fact]
     public void ToCss_Should_DefaultBorderStyleToSolid_When_StyleNotSupplied()
     {
         // Arrange

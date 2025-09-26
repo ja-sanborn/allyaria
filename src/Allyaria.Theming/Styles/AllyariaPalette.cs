@@ -143,7 +143,7 @@ public readonly record struct AllyariaPalette
     /// <summary>
     /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
     /// </summary>
-    public AllyariaStringValue? BackgroundImage => _backgroundImage;
+    private AllyariaStringValue? BackgroundImage => _backgroundImage;
 
     /// <summary>
     /// Gets the effective border color. If <see cref="HasBorder" /> is <see langword="false" />, the color is
