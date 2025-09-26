@@ -1,7 +1,7 @@
-﻿using Allyaria.Theming.Values;
+using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Allyaria.Theming;
+namespace Allyaria.Theming.Constants;
 
 /// <summary>
 /// Provides a consolidated, alphabetically sorted library of named colors (CSS and Material), exposed as strongly-typed

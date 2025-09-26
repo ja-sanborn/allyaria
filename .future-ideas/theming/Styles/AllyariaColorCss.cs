@@ -64,17 +64,12 @@ public sealed class AllyariaColorCss : CssBase
             return color!;
         }
 
-        if (AllyariaGlobalValue.TryParse(value, out var global))
+        if (AllyariaStringValue.TryParse(value, out var str))
         {
-            return global!;
+            return str!;
         }
 
-        if (AllyariaFunctionValue.TryParse(value, out var func))
-        {
-            return func!;
-        }
-
-        throw new ArgumentException("Invalid color value.", nameof(value));
+        throw new ArgumentException("Invalid CSS value.", nameof(value));
     }
 
     /// <summary>Parses a raw CSS value string into an <see cref="AllyariaColorCss" /> for the <c>color</c> property.</summary>
