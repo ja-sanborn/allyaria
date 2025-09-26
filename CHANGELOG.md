@@ -1,31 +1,41 @@
 # Change Log
 
-## [0.0.1-alpha] 2025-09-19
+## [0.0.1-alpha] 2025-09-25
 
 ### Added
 
 * Initial repository scaffolding, base solution, core and unit test projects, centralized build and packages, and
   documentation placeholders.
 * `Allyaria.Theming` project with:
-    * Initial `AllyariaColor` implementation, including:
-        * Color parsing from hex, RGB(A), HSV(A), web names, and Material color names.
-        * Properties for RGBA, HSVA, HexRgb/HexRgba, ToString, and CSS conversion.
-        * Color adjustment methods (`ShiftColor`, `HoverColor`).
-        * Implicit conversions, equality, ordering, and operator overloads.
-    * New `AllyariaPaletteItem` implementation, including:
-        * Constructors for default, background-only, and background+foreground initialization.
-        * Properties for background, border, and foreground colors with precedence and fallbacks.
-        * Hover color and background image support with overlay handling.
-        * `HasBackground` and `HasBorder` flags controlling rendering.
-        * Methods `ToCss`, `ToHoverCss`, `ToCssVars`, and `ToString` for dynamic CSS generation.
-    * New `AllyariaTypoItem` implementation, including:
-        * Constructor with optional parameters for font family, size, style, weight, spacing, line-height, alignment,
-          decoration, transform, vertical-align, and word-spacing.
-        * Validation and normalization of values (keywords lowercased, bare numbers assumed `px`, `var()` and `calc()`
-          passed through).
-        * Properties throw `ArgumentException` on invalid inputs.
-        * `ToCss` builds single-line CSS declarations in fixed order, skipping null/whitespace.
-        * `ToString` returns the same as `ToCss`.
+    * Added `AllyariaColorValue` class in `Allyaria.Theming.Values`
+        * Immutable, CSS-oriented color type with parsing, formatting, and conversion support
+        * Supports hex, rgb(a), hsv(a), CSS Web names, and Material Design names
+        * Provides conversions between RGBA and HSVA
+        * Exposes multiple string forms (`HexRgb`, `HexRgba`, `Rgb`, `Rgba`, `Hsv`, `Hsva`)
+        * Includes helpers: `HoverColor()` (20% lighten/darken) and `ShiftColor(percent)`
+        * Implements value equality and total ordering by canonical `#RRGGBBAA`
+    * Added `AllyariaStringValue` in `Allyaria.Theming.Values`
+        * Immutable, validated wrapper for theme strings (trimmed; rejects null/whitespace)
+        * Provides `Parse` and `TryParse` helpers
+        * Implicit conversions: `string → AllyariaStringValue` and `AllyariaStringValue → string`
+    * Added `AllyariaPalette` struct in `Allyaria.Theming.Styles`
+        * Provides immutable, strongly typed palette for background, foreground, border, and hover states
+        * Enforces theming precedence rules (background images > background colors, explicit overrides > defaults,
+          borders opt-in)
+        * Computes accessible foreground colors when not explicitly set
+        * Supports `ToCss()` for inline CSS generation
+        * Supports `ToCssHover()` for inline CSS generation for mouse hover states
+        * Supports `ToCssVars()` for emitting CSS custom properties
+    * Added `AllyariaTypography` struct in `Allyaria.Theming.Styles`
+        * Supports strongly typed typography definitions (font family, size, weight, style, spacing, alignment, etc.)
+        * Provides `ToCss()` for inline CSS style strings
+        * Provides `ToCssVars()` for generating CSS custom properties
+        * Emits only non-null properties for clean, minimal output
+    * Added `Colors` static class in `Allyaria.Theming.Constants`
+        * Provides strongly typed `AllyariaColorValue` properties for CSS Web and Material Design colors
+        * Alphabetically organized for discoverability
+        * Covers standard named colors (e.g., `Colors.Red`, `Colors.White`) and full Material tone sets (e.g.,
+          `Colors.Blue500`, `Colors.GreenA400`)
 
 ### Updated/Fixed
 

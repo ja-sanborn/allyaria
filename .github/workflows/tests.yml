@@ -1,52 +1,131 @@
-﻿name: Tests
+﻿name: Tests & Coverage
 
 on:
+  pull_request:
   push:
     branches: [ main ]
-  pull_request:
-    types: [ opened, synchronize, reopened, ready_for_review ]
-  workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: tests-${{ github.ref }}
-  cancel-in-progress: true
+  pages: write
+  id-token: write
 
 jobs:
-  unit-tests:
-    name: Theming Unit Tests
+  test:
+    name: Build, Test, Coverage
     runs-on: ubuntu-latest
+
     steps:
-      - name: ⬇️ Checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 🧰 Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: 💾 Cache NuGet
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: 🔧 Restore
+      - name: Restore
         run: dotnet restore
 
-      - name: 🏗️ Build (Release)
+      - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: 🧪 Test (Allyaria.Theming.UnitTests)
-        run: dotnet test tests/Allyaria.Theming.UnitTests --configuration Release --no-build --logger "trx;LogFileName=unit.trx" --results-directory TestResults
+      # Run tests and collect Cobertura coverage to an absolute path prefix
+      - name: Test with coverage (fail under 75%)
+        run: |
+          ROOT="$(pwd)"
+          mkdir -p "$ROOT/TestResults/coverage"
+          dotnet test --no-build --configuration Release \
+            --logger "trx;LogFileName=test-results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput="$ROOT/TestResults/coverage/coverage" \
+            /p:CoverletOutputFormat=cobertura \
+            /p:Threshold=75 \
+            /p:ThresholdType=line \
+            /p:ThresholdStat=total
 
-      - name: 📦 Upload Unit Test Results
-        if: always()
+      # OPTIONAL but very useful: publish TRX into the PR summary
+      - name: Publish unit test results to PR
+        if: ${{ github.event_name == 'pull_request' && always() }}
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/test-results.trx
+            **/TestResults/**/*.trx
+
+      # Generate HTML coverage (aggregate all Cobertura files just in case)
+      - name: Generate coverage HTML & badges
+        if: ${{ always() }}
+        run: |
+          dotnet tool update -g dotnet-reportgenerator-globaltool
+          export PATH="$PATH:/github/home/.dotnet/tools"
+          reportgenerator \
+            -reports:"**/TestResults/**/coverage.cobertura.xml" \
+            -targetdir:"coverage-report" \
+            -reporttypes:"Html;HtmlSummary;MarkdownSummaryGithub;Badges"
+
+      # Upload raw artifacts for inspection
+      - name: Upload artifacts (TRX + coverage HTML)
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results
-          path: TestResults/unit.trx
+          name: test-and-coverage-artifacts
+          path: |
+            **/TestResults/**/*.trx
+            coverage-report/**
+
+      # Add a short coverage summary to the job/PR summary
+      - name: Add coverage summary to PR
+        if: ${{ always() }}
+        run: |
+          if [ -f "coverage-report/SummaryGithub.md" ]; then
+            echo "## Code Coverage" >> "$GITHUB_STEP_SUMMARY"
+            cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "_No coverage report generated._" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Prepare static site for Pages (coverage under /, TRX downloadable under /tests)
+      - name: Prepare site for Pages
+        if: ${{ always() }}
+        run: |
+          rm -rf site
+          mkdir -p site
+          if [ -d "coverage-report" ]; then
+            cp -r coverage-report/* site/
+          fi
+          mkdir -p site/tests
+          # copy any TRX files so you can download them from Pages
+          find . -type f -name "*.trx" -exec cp {} site/tests/ \; || true
+          # ensure there is an index.html so Pages never fails
+          if [ ! -f site/index.html ]; then
+            cat > site/index.html <<'HTML'
+            <!doctype html>
+            <meta charset="utf-8">
+            <title>Test & Coverage Reports</title>
+            <h1>Test & Coverage Reports</h1>
+            <p>No coverage site found. See raw TRX files under <a href="./tests/">/tests/</a>.</p>
+            HTML
+          fi
+
+      # Configure, upload, and deploy Pages (main branch only)
+      - name: Configure Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact for Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        if: ${{ github.ref == 'refs/heads/main' && always() }}
+        uses: actions/deploy-pages@v4
+        with:
+        # Optional but recommended to see the deployment in the "github-pages" environment
+        # id: deployment
+        # token: ${{ secrets.GITHUB_TOKEN }}
+        # preview: false
+        # More options: https://github.com/actions/deploy-pages
+        # (defaults are fine)

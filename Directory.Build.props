@@ -8,9 +8,6 @@
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <AnalysisLevel>latest</AnalysisLevel>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <CollectCoverage>true</CollectCoverage>
-        <CoverletOutputFormat>cobertura,opencover</CoverletOutputFormat>
-        <CoverletOutput>$(MSBuildThisFileDirectory)TestResults\coverage\</CoverletOutput>
         <Company>Allyaria</Company>
         <Copyright>MPL 2.0 - JASanborn / Allyaria</Copyright>
         <RepositoryUrl>https://github.com/ja-sanborn/allyaria</RepositoryUrl>
@@ -21,6 +18,13 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsTestProject)'=='true' and '$(BuildingInsideVisualStudio)'==''">
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>cobertura,opencover</CoverletOutputFormat>
+        <CoverletOutput>$(MSBuildThisFileDirectory)TestResults/coverage/</CoverletOutput>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(CI)'=='true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
     <ItemGroup>
