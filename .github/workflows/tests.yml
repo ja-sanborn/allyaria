@@ -9,8 +9,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  checks: write          # for PR test results publishing
-  pull-requests: write   # for PR annotations/comments
+  checks: write
+  pull-requests: write
 
 jobs:
   test:
@@ -32,16 +32,37 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      # ---- OPTION B (recommended): built-in collector (no NuGet needed)
-      - name: Test with coverage (XPlat collector)
+      # Create runsettings so the XPlat collector outputs Cobertura XML
+      - name: Create coverage runsettings (Cobertura)
+        run: |
+          printf '%s\n' \
+            '<?xml version="1.0" encoding="utf-8"?>' \
+            '<RunSettings>' \
+            '  <DataCollectionRunSettings>' \
+            '    <DataCollectors>' \
+            '      <DataCollector friendlyName="XPlat Code Coverage">' \
+            '        <Configuration>' \
+            '          <Format>cobertura</Format>' \
+            '        </Configuration>' \
+            '      </DataCollector>' \
+            '    </DataCollectors>' \
+            '  </DataCollectionRunSettings>' \
+            '</RunSettings>' \
+            > coverlet.runsettings
+
+      # Collect coverage using the built-in collector, force outputs into ./TestResults
+      - name: Test with coverage (XPlat collector → Cobertura)
         run: |
           set -e
+          mkdir -p TestResults
           dotnet test --no-build --configuration Release \
             --logger "trx;LogFileName=test-results.trx" \
-            --collect:"XPlat Code Coverage"
+            --collect:"XPlat Code Coverage" \
+            --settings coverlet.runsettings \
+            --results-directory TestResults
 
-          echo "---- locate cobertura files (debug) ----"
-          find "$(pwd)" -type f -name "coverage.cobertura.xml" -print || true
+          echo "---- locate Cobertura files (debug) ----"
+          find TestResults -type f -name "coverage.cobertura.xml" -print || true
 
       # Publish TRX into PR as a check (disabled for forked PRs)
       - name: Publish unit test results to PR
@@ -49,10 +70,9 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: |
-            **/test-results.trx
             **/TestResults/**/*.trx
 
-      # Generate HTML coverage + badges, and enforce 75% line coverage threshold
+      # Generate HTML coverage + badges, and enforce 75% line coverage
       - name: Generate coverage HTML, badges, and enforce threshold
         if: ${{ always() }}
         run: |
@@ -60,20 +80,10 @@ jobs:
           dotnet tool update -g dotnet-reportgenerator-globaltool
           export PATH="$PATH:/github/home/.dotnet/tools"
 
-          # XPlat collector writes per-test-project under TestResults/**/coverage.cobertura.xml
-          SRC="**/TestResults/**/coverage.cobertura.xml"
+          SRC="TestResults/**/coverage.cobertura.xml"
           echo "Using reports pattern: $SRC"
 
-          if ! compgen -G "$SRC" > /dev/null; then
-            echo "No coverage files found from XPlat collector."
-            mkdir -p coverage-report
-            printf '%s\n' \
-              '<!doctype html><meta charset="utf-8">' \
-              '<title>Coverage</title>' \
-              '<h1>No coverage files found for this run.</h1>' \
-              '<p>Ensure tests executed and the XPlat collector is enabled.</p>' \
-              > coverage-report/index.html
-          else
+          if compgen -G "$SRC" > /dev/null; then
             reportgenerator \
               -reports:"$SRC" \
               -targetdir:"coverage-report" \
@@ -82,30 +92,31 @@ jobs:
             echo "---- coverage-report contents ----"
             ls -la coverage-report || true
 
-            # Enforce 75% line coverage using TextSummary output
-            # The line 'Line coverage: 83.4%' appears in Summary.txt
+            # Enforce 75% line coverage from Summary.txt ("Line coverage: 83.4%")
             COV_LINE=$(grep -Eo 'Line coverage: *[0-9]+(\.[0-9]+)?%' coverage-report/Summary.txt | grep -Eo '[0-9]+(\.[0-9]+)?')
-            if [ -z "$COV_LINE" ]; then
-              echo "Could not parse line coverage from Summary.txt"; COV_LINE=0
-            fi
-            echo "Parsed line coverage: ${COV_LINE}%"
-            awk -v cov="$COV_LINE" 'BEGIN { if (cov+0 < 75) { exit 1 } }' || {
-              echo "Line coverage ${COV_LINE}% is below required threshold (75%)."
-              exit 1
-            }
+            echo "Parsed line coverage: ${COV_LINE:-N/A}%"
+            awk -v cov="${COV_LINE:-0}" 'BEGIN { if (cov+0 < 75) exit 1 }' || {
+              echo "Line coverage ${COV_LINE}% is below the 75% threshold."; exit 1; }
+          else
+            echo "No Cobertura files found; creating placeholder site."
+            mkdir -p coverage-report
+            printf '%s\n' \
+              '<!doctype html><meta charset="utf-8">' \
+              '<title>Coverage</title>' \
+              '<h1>No coverage files found for this run.</h1>' \
+              '<p>Verify the XPlat collector executed and produced Cobertura.</p>' \
+              > coverage-report/index.html
           fi
 
-      # Upload artifacts so you can inspect from the Actions UI
       - name: Upload artifacts (TRX + coverage HTML)
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: test-and-coverage-artifacts
           path: |
-            **/TestResults/**/*.trx
+            TestResults/**/*.trx
             coverage-report/**
 
-      # Add a short coverage summary to the job/PR summary
       - name: Add coverage summary to PR
         if: ${{ always() }}
         run: |
@@ -116,23 +127,17 @@ jobs:
             echo "_No coverage report generated._" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      # Prepare Pages site (defensive: always produces an index; exclude ./site when copying TRX)
       - name: Prepare site for Pages
         if: ${{ always() }}
         run: |
           set -e
           rm -rf site
           mkdir -p site
-
           if [ -d "coverage-report" ] && [ "$(ls -A coverage-report)" ]; then
             cp -r coverage-report/* site/ || true
           fi
-
           mkdir -p site/tests
-          # Copy TRX files but exclude the ./site folder to avoid copying onto itself
           find . -path ./site -prune -o -type f -name '*.trx' -print -exec cp {} site/tests/ \; || true
-
-          # Ensure an index exists even if coverage wasn't produced
           if [ ! -f site/index.html ]; then
             printf '%s\n' \
               '<!doctype html><meta charset="utf-8">' \
@@ -142,7 +147,6 @@ jobs:
               > site/index.html
           fi
 
-      # Pages deploy only from main
       - name: Configure Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
         uses: actions/configure-pages@v5
