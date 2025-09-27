@@ -80,21 +80,20 @@ public readonly record struct AllyariaPalette
         AllyariaStringValue? borderStyle = null,
         AllyariaStringValue? borderRadius = null)
     {
-        _backgroundImage = backgroundImage;
         _backgroundColor = backgroundColor;
-        _foregroundColor = foregroundColor;
-
+        _backgroundImage = backgroundImage;
         _borderColor = borderColor;
         _borderRadius = borderRadius;
         _borderStyle = borderStyle;
         _borderWidth = borderWidth;
+        _foregroundColor = foregroundColor;
     }
 
     /// <summary>
     /// Gets the effective background color after precedence is applied. When a border is present, the background is slightly
     /// adjusted via <see cref="AllyariaColorValue.HoverColor()" /> for contrast.
     /// </summary>
-    private AllyariaColorValue BackgroundColor
+    public AllyariaColorValue BackgroundColor
         => _backgroundColor is null
             ? Colors.White
             : HasBorder
@@ -104,7 +103,7 @@ public readonly record struct AllyariaPalette
     /// <summary>
     /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
     /// </summary>
-    private AllyariaStringValue? BackgroundImage
+    public AllyariaStringValue? BackgroundImage
         => string.IsNullOrWhiteSpace(_backgroundImage)
             ? null
             : new AllyariaStringValue(
@@ -115,21 +114,21 @@ public readonly record struct AllyariaPalette
     /// Gets the effective border color. If <see cref="HasBorder" /> is <see langword="false" />, the color is
     /// <see cref="Colors.Transparent" />.
     /// </summary>
-    private AllyariaColorValue BorderColor
+    public AllyariaColorValue BorderColor
         => HasBorder
             ? _borderColor ?? BackgroundColor
             : Colors.Transparent;
 
     /// <summary>Gets the effective border radius declaration value, or <see langword="null" /> when not set.</summary>
-    private AllyariaStringValue? BorderRadius => _borderRadius;
+    public AllyariaStringValue? BorderRadius => _borderRadius;
 
     /// <summary>Gets the border style token (e.g., <c>solid</c>).</summary>
-    private AllyariaStringValue BorderStyle => _borderStyle ?? new AllyariaStringValue("solid");
+    public AllyariaStringValue BorderStyle => _borderStyle ?? new AllyariaStringValue("solid");
 
     /// <summary>
     /// Gets the effective border width declaration value, or <see langword="null" /> when no border should be rendered.
     /// </summary>
-    private AllyariaStringValue? BorderWidth
+    public AllyariaStringValue? BorderWidth
         => _borderWidth > 0
             ? new AllyariaStringValue($"{_borderWidth}px")
             : null;
@@ -138,7 +137,7 @@ public readonly record struct AllyariaPalette
     /// Gets the effective foreground (text) color. When not explicitly provided, this is computed from
     /// <see cref="BackgroundColor" /> value/lightness for accessible contrast (dark backgrounds → white; light → black).
     /// </summary>
-    private AllyariaColorValue ForegroundColor
+    public AllyariaColorValue ForegroundColor
         => _foregroundColor ?? (BackgroundColor.V < 50.0
             ? Colors.White
             : Colors.Black);

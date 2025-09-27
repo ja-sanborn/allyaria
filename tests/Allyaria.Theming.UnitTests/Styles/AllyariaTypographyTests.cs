@@ -101,7 +101,7 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var textAlign = new AllyariaStringValue("center");
         var textTransform = new AllyariaStringValue("uppercase");
-        var sut = new AllyariaTypography(textAlign: textAlign, textTransform: textTransform);
+        var sut = new AllyariaTypography(TextAlign: textAlign, TextTransform: textTransform);
 
         // Act
         var css = sut.ToCss();
@@ -170,7 +170,7 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var fontSize = new AllyariaStringValue("14px");
         var fontWeight = new AllyariaStringValue("700");
-        var sut = new AllyariaTypography(fontSize: fontSize, fontWeight: fontWeight);
+        var sut = new AllyariaTypography(FontSize: fontSize, FontWeight: fontWeight);
 
         // Act
         var cssVars = sut.ToCssVars("brand");
@@ -191,9 +191,9 @@ public sealed class AllyariaTypographyTests
         var lineHeight = new AllyariaStringValue("1.5");
 
         var sut = new AllyariaTypography(
-            fontWeight: weight,
-            letterSpacing: letterSpacing,
-            lineHeight: lineHeight
+            FontWeight: weight,
+            LetterSpacing: letterSpacing,
+            LineHeight: lineHeight
         );
 
         // Act
@@ -230,7 +230,7 @@ public sealed class AllyariaTypographyTests
     {
         // Arrange
         var fontStyle = new AllyariaStringValue("italic");
-        var sut = new AllyariaTypography(fontStyle: fontStyle);
+        var sut = new AllyariaTypography(FontStyle: fontStyle);
 
         // Act
         var cssVars = sut.ToCssVars("---Custom---");
@@ -276,8 +276,8 @@ public sealed class AllyariaTypographyTests
         var wordSpacing = new AllyariaStringValue("0.1em");
 
         var sut = new AllyariaTypography(
-            verticalAlign: verticalAlign,
-            wordSpacing: wordSpacing
+            VerticalAlign: verticalAlign,
+            WordSpacing: wordSpacing
         );
 
         // Act

@@ -7,78 +7,31 @@ namespace Allyaria.Theming.Styles;
 /// Represents a strongly typed typography definition for Allyaria theming. Provides conversion to CSS inline styles or CSS
 /// variables.
 /// </summary>
-public readonly record struct AllyariaTypography
+/// <param name="FontFamily">The font family to use (e.g., <c>"Inter, Segoe UI, sans-serif"</c>).</param>
+/// <param name="FontSize">The font size.</param>
+/// <param name="FontStyle">The font style (e.g., normal, italic).</param>
+/// <param name="FontWeight">The font weight (e.g., bold, 400).</param>
+/// <param name="LetterSpacing">The letter spacing.</param>
+/// <param name="LineHeight">The line height.</param>
+/// <param name="TextAlign">The text alignment.</param>
+/// <param name="TextDecoration">The text decoration.</param>
+/// <param name="TextTransform">The text transform (e.g., uppercase).</param>
+/// <param name="VerticalAlign">The vertical alignment.</param>
+/// <param name="WordSpacing">The word spacing.</param>
+public readonly record struct AllyariaTypography(
+    AllyariaStringValue? FontFamily = null,
+    AllyariaStringValue? FontSize = null,
+    AllyariaStringValue? FontStyle = null,
+    AllyariaStringValue? FontWeight = null,
+    AllyariaStringValue? LetterSpacing = null,
+    AllyariaStringValue? LineHeight = null,
+    AllyariaStringValue? TextAlign = null,
+    AllyariaStringValue? TextDecoration = null,
+    AllyariaStringValue? TextTransform = null,
+    AllyariaStringValue? VerticalAlign = null,
+    AllyariaStringValue? WordSpacing = null
+)
 {
-    /// <summary>Initializes a new instance of the <see cref="AllyariaTypography" /> struct.</summary>
-    /// <param name="fontFamily">The font family to use (e.g., <c>"Inter, Segoe UI, sans-serif"</c>).</param>
-    /// <param name="fontSize">The font size.</param>
-    /// <param name="fontStyle">The font style (e.g., normal, italic).</param>
-    /// <param name="fontWeight">The font weight (e.g., bold, 400).</param>
-    /// <param name="letterSpacing">The letter spacing.</param>
-    /// <param name="lineHeight">The line height.</param>
-    /// <param name="textAlign">The text alignment.</param>
-    /// <param name="textDecoration">The text decoration.</param>
-    /// <param name="textTransform">The text transform (e.g., uppercase).</param>
-    /// <param name="verticalAlign">The vertical alignment.</param>
-    /// <param name="wordSpacing">The word spacing.</param>
-    public AllyariaTypography(AllyariaStringValue? fontFamily = null,
-        AllyariaStringValue? fontSize = null,
-        AllyariaStringValue? fontStyle = null,
-        AllyariaStringValue? fontWeight = null,
-        AllyariaStringValue? letterSpacing = null,
-        AllyariaStringValue? lineHeight = null,
-        AllyariaStringValue? textAlign = null,
-        AllyariaStringValue? textDecoration = null,
-        AllyariaStringValue? textTransform = null,
-        AllyariaStringValue? verticalAlign = null,
-        AllyariaStringValue? wordSpacing = null)
-    {
-        FontFamily = fontFamily;
-        FontSize = fontSize;
-        FontStyle = fontStyle;
-        FontWeight = fontWeight;
-        LetterSpacing = letterSpacing;
-        LineHeight = lineHeight;
-        TextAlign = textAlign;
-        TextDecoration = textDecoration;
-        TextTransform = textTransform;
-        VerticalAlign = verticalAlign;
-        WordSpacing = wordSpacing;
-    }
-
-    /// <summary>Gets the font family.</summary>
-    private AllyariaStringValue? FontFamily { get; }
-
-    /// <summary>Gets the font size.</summary>
-    private AllyariaStringValue? FontSize { get; }
-
-    /// <summary>Gets the font style.</summary>
-    private AllyariaStringValue? FontStyle { get; }
-
-    /// <summary>Gets the font weight.</summary>
-    private AllyariaStringValue? FontWeight { get; }
-
-    /// <summary>Gets the letter spacing.</summary>
-    private AllyariaStringValue? LetterSpacing { get; }
-
-    /// <summary>Gets the line height.</summary>
-    private AllyariaStringValue? LineHeight { get; }
-
-    /// <summary>Gets the text alignment.</summary>
-    private AllyariaStringValue? TextAlign { get; }
-
-    /// <summary>Gets the text decoration.</summary>
-    private AllyariaStringValue? TextDecoration { get; }
-
-    /// <summary>Gets the text transform.</summary>
-    private AllyariaStringValue? TextTransform { get; }
-
-    /// <summary>Gets the vertical alignment.</summary>
-    private AllyariaStringValue? VerticalAlign { get; }
-
-    /// <summary>Gets the word spacing.</summary>
-    private AllyariaStringValue? WordSpacing { get; }
-
     /// <summary>Appends a CSS declaration to the builder if the value is not null.</summary>
     /// <param name="builder">The string builder to append to.</param>
     /// <param name="value">The optional string value.</param>

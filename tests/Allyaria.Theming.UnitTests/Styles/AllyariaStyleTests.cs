@@ -64,7 +64,7 @@ public sealed class AllyariaStyleTests
     {
         // Arrange
         var palette = new AllyariaPalette();
-        var typography = new AllyariaTypography(fontWeight: new AllyariaStringValue("bold"));
+        var typography = new AllyariaTypography(FontWeight: new AllyariaStringValue("bold"));
         var sut = new AllyariaStyle(palette, typography);
 
         // Act
@@ -119,7 +119,7 @@ public sealed class AllyariaStyleTests
     {
         // Arrange
         var palette = new AllyariaPalette(); // default palette
-        var typography = new AllyariaTypography(fontStyle: new AllyariaStringValue("italic"));
+        var typography = new AllyariaTypography(FontStyle: new AllyariaStringValue("italic"));
         var sut = new AllyariaStyle(palette, typography);
 
         // Act
