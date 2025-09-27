@@ -45,6 +45,62 @@ public readonly record struct AllyariaTypography(
     }
 
     /// <summary>
+    /// Creates a new <see cref="AllyariaTypography" /> instance by cascading the current values with the provided overrides.
+    /// Any parameter left <see langword="null" /> will keep the existing value from this instance.
+    /// </summary>
+    /// <param name="fontFamily">Optional override for <see cref="AllyariaTypography.FontFamily" />.</param>
+    /// <param name="fontSize">Optional override for <see cref="AllyariaTypography.FontSize" />.</param>
+    /// <param name="fontStyle">Optional override for <see cref="AllyariaTypography.FontStyle" />.</param>
+    /// <param name="fontWeight">Optional override for <see cref="AllyariaTypography.FontWeight" />.</param>
+    /// <param name="letterSpacing">Optional override for <see cref="AllyariaTypography.LetterSpacing" />.</param>
+    /// <param name="lineHeight">Optional override for <see cref="AllyariaTypography.LineHeight" />.</param>
+    /// <param name="textAlign">Optional override for <see cref="AllyariaTypography.TextAlign" />.</param>
+    /// <param name="textDecoration">Optional override for <see cref="AllyariaTypography.TextDecoration" />.</param>
+    /// <param name="textTransform">Optional override for <see cref="AllyariaTypography.TextTransform" />.</param>
+    /// <param name="verticalAlign">Optional override for <see cref="AllyariaTypography.VerticalAlign" />.</param>
+    /// <param name="wordSpacing">Optional override for <see cref="AllyariaTypography.WordSpacing" />.</param>
+    /// <returns>A new <see cref="AllyariaTypography" /> instance with the combined values.</returns>
+    public AllyariaTypography Cascade(AllyariaStringValue? fontFamily = null,
+        AllyariaStringValue? fontSize = null,
+        AllyariaStringValue? fontStyle = null,
+        AllyariaStringValue? fontWeight = null,
+        AllyariaStringValue? letterSpacing = null,
+        AllyariaStringValue? lineHeight = null,
+        AllyariaStringValue? textAlign = null,
+        AllyariaStringValue? textDecoration = null,
+        AllyariaStringValue? textTransform = null,
+        AllyariaStringValue? verticalAlign = null,
+        AllyariaStringValue? wordSpacing = null)
+    {
+        var newFontFamily = fontFamily ?? FontFamily;
+        var newFontSize = fontSize ?? FontSize;
+        var newFontStyle = fontStyle ?? FontStyle;
+        var newFontWeight = fontWeight ?? FontWeight;
+        var newLetterSpacing = letterSpacing ?? LetterSpacing;
+        var newLineHeight = lineHeight ?? LineHeight;
+        var newTextAlign = textAlign ?? TextAlign;
+        var newTextDecoration = textDecoration ?? TextDecoration;
+        var newTextTransform = textTransform ?? TextTransform;
+        var newVerticalAlign = verticalAlign ?? VerticalAlign;
+        var newWordSpacing = wordSpacing ?? WordSpacing;
+
+        return new AllyariaTypography
+        {
+            FontFamily = newFontFamily,
+            FontSize = newFontSize,
+            FontStyle = newFontStyle,
+            FontWeight = newFontWeight,
+            LetterSpacing = newLetterSpacing,
+            LineHeight = newLineHeight,
+            TextAlign = newTextAlign,
+            TextDecoration = newTextDecoration,
+            TextTransform = newTextTransform,
+            VerticalAlign = newVerticalAlign,
+            WordSpacing = newWordSpacing
+        };
+    }
+
+    /// <summary>
     /// Builds a CSS style string representing this typography. Only appends declarations for non-null properties.
     /// </summary>
     /// <returns>A concatenated CSS style string.</returns>
