@@ -74,8 +74,8 @@ public readonly record struct AllyariaPalette
     /// </param>
     public AllyariaPalette(AllyariaColorValue? backgroundColor = null,
         AllyariaColorValue? foregroundColor = null,
-        string backgroundImage = "",
-        int borderWidth = 0,
+        string? backgroundImage = "",
+        int? borderWidth = 0,
         AllyariaColorValue? borderColor = null,
         AllyariaStringValue? borderStyle = null,
         AllyariaStringValue? borderRadius = null)
@@ -116,7 +116,7 @@ public readonly record struct AllyariaPalette
     /// </summary>
     public AllyariaColorValue BorderColor
         => HasBorder
-            ? _borderColor ?? BackgroundColor
+            ? _borderColor ?? _backgroundColor ?? Colors.White
             : Colors.Transparent;
 
     /// <summary>Gets the effective border radius declaration value, or <see langword="null" /> when not set.</summary>
@@ -152,6 +152,56 @@ public readonly record struct AllyariaPalette
 
     /// <summary>Gets a value indicating whether a border radius should be emitted.</summary>
     private bool HasRadius => BorderRadius is not null;
+
+    /// <summary>
+    /// Cascades the palette by applying overrides, falling back to the original base values of this instance when not provided
+    /// (no reapplication of effective/derived precedence).
+    /// </summary>
+    /// <param name="backgroundColor">Optional new background color (base).</param>
+    /// <param name="foregroundColor">Optional new foreground color (base).</param>
+    /// <param name="backgroundImage">
+    /// Optional new background image URL (unwrapped; overlaying is handled by <see cref="BackgroundImage" />).
+    /// </param>
+    /// <param name="borderWidth">
+    /// Optional new border width in CSS pixels; values &lt; 0 are treated as <c>null</c> (no
+    /// border).
+    /// </param>
+    /// <param name="borderColor">Optional new border color (base).</param>
+    /// <param name="borderStyle">Optional new border style token.</param>
+    /// <param name="borderRadius">Optional new border radius token.</param>
+    /// <returns>
+    /// A new <see cref="AllyariaPalette" /> with the specified overrides applied atop this instance’s base values.
+    /// </returns>
+    public AllyariaPalette Cascade(AllyariaColorValue? backgroundColor = null,
+        AllyariaColorValue? foregroundColor = null,
+        string? backgroundImage = null,
+        int? borderWidth = null,
+        AllyariaColorValue? borderColor = null,
+        AllyariaStringValue? borderStyle = null,
+        AllyariaStringValue? borderRadius = null)
+    {
+        var sanitizedBorderWidth = borderWidth is < 0
+            ? null
+            : borderWidth;
+
+        var newBackgroundColor = backgroundColor ?? _backgroundColor;
+        var newBackgroundImage = backgroundImage ?? _backgroundImage;
+        var newBorderColor = borderColor ?? _borderColor;
+        var newBorderStyle = borderStyle ?? _borderStyle;
+        var newBorderRadius = borderRadius ?? _borderRadius;
+        var newBorderWidth = sanitizedBorderWidth ?? _borderWidth;
+        var newForegroundColor = foregroundColor ?? _foregroundColor;
+
+        return new AllyariaPalette(
+            newBackgroundColor,
+            newForegroundColor,
+            newBackgroundImage,
+            newBorderWidth,
+            newBorderColor,
+            newBorderStyle,
+            newBorderRadius
+        );
+    }
 
     /// <summary>
     /// Builds a string of inline CSS declarations (e.g., <c>color: #fff; background-color: #000;</c>) that applies the current

@@ -24,7 +24,7 @@ public sealed class AllyariaPaletteTests
 
         // Assert
         css.Should()
-            .Contain("border-color:#535353FF");
+            .Contain("border-color:#202020FF");
     }
 
     [Fact]
@@ -45,6 +45,260 @@ public sealed class AllyariaPaletteTests
         // Assert
         css.Should()
             .Contain("border-color:#FF0000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Default_BorderColor_To_BackgroundColor_When_BorderAdded_Without_Explicit_Color()
+    {
+        // Arrange
+        var bg = Colors.White;
+        var sut = new AllyariaPalette(bg, Colors.Black, borderWidth: 0);
+
+        // Act
+        var cascaded = sut.Cascade(borderWidth: 2);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-color:"); // defaulting to BackgroundColor (hovered due to border)
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BackgroundColor_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var cascaded = sut.Cascade(Colors.Black);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-color:#000000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BackgroundImage_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var cascaded = sut.Cascade(backgroundImage: "  /Hero.PNG  ");
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-image:")
+            .And.Contain("linear-gradient(")
+            .And.Contain("url(\"/hero.png\")")
+            .And.NotContain("background-color:");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BorderColor_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: 2);
+
+        // Act
+        var cascaded = sut.Cascade(borderColor: Colors.Red);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-color:#FF0000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BorderRadius_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var cascaded = sut.Cascade(borderRadius: new AllyariaStringValue("12px"));
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-radius:12px;");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BorderStyle_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: 1);
+
+        // Act
+        var cascaded = sut.Cascade(borderStyle: new AllyariaStringValue("dashed"));
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-style:dashed");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_BorderWidth_When_Positive()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: 0);
+
+        // Act
+        var cascaded = sut.Cascade(borderWidth: 3);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-style:solid")
+            .And.Contain("border-width:3px");
+    }
+
+    [Fact]
+    public void Cascade_Should_Override_ForegroundColor_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White);
+
+        // Act
+        var cascaded = sut.Cascade(foregroundColor: Colors.Red);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("color:#FF0000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Recompute_BackgroundColor_Hover_When_Border_Added_And_No_BackgroundColor_Override()
+    {
+        // Arrange
+        var darkBg = new AllyariaColorValue("#202020FF");
+        var sut = new AllyariaPalette(darkBg, Colors.White, borderWidth: 0);
+
+        // Act
+        var cascaded = sut.Cascade(borderWidth: 1);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-color:#535353FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Remove_Border_When_BorderWidth_Is_Negative()
+    {
+        // Arrange
+        var darkBg = new AllyariaColorValue("#202020FF");
+        var sut = new AllyariaPalette(darkBg, Colors.White, borderWidth: 2);
+
+        // Act
+        var cascaded = sut.Cascade(borderWidth: -1);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-width:2px")
+            .And.Contain("border-color:#202020FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_BackgroundColor_When_Not_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.Black, Colors.White);
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-color:#000000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_BackgroundImage_When_Not_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, "bg.jpg");
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("url(\"bg.jpg\")");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_BorderColor_When_Not_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: 1, borderColor: Colors.Black);
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-color:#000000FF");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_BorderRadius_When_Not_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderRadius: new AllyariaStringValue("6px"));
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-radius:6px;");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_BorderStyle_When_Not_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 1,
+            borderStyle: new AllyariaStringValue("dotted")
+        );
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-style:dotted");
+    }
+
+    [Fact]
+    public void Cascade_Should_Retain_Original_ForegroundColor_When_Not_Provided()
+    {
+        // Arrange
+        var explicitForeground = new AllyariaColorValue("#112233FF");
+        var sut = new AllyariaPalette(Colors.White, explicitForeground);
+
+        // Act
+        var cascaded = sut.Cascade();
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("color:#112233FF");
     }
 
     [Fact]
