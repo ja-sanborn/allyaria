@@ -2,7 +2,8 @@
 
 > *Version 1: 2025-09-27*
 >
-> [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)  
+> [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
+>
 > [![Coverage](https://ja-sanborn.github.io/allyaria/badge_linecoverage.svg)](https://ja-sanborn.github.io/allyaria/)
 
 **Allyaria** is a *Blazor Component Library* for modern .NET apps, built with accessibility and localization at its
@@ -13,19 +14,22 @@ core. It is flexible, customizable, and extensible, written entirely in Blazor w
 ### AllyariaColorValue
 
 `AllyariaColorValue` is an immutable, framework-agnostic color type with CSS-oriented parsing, formatting, and value
-semantics.  
+semantics.
 It supports:
 
 * **Parsing** from multiple formats:
+
     * Hex: `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`
     * Functional: `rgb()`, `rgba()`, `hsv()`, `hsva()`
     * Named colors: CSS Web color names and Material Design palette names
 * **Conversions** between RGBA and HSVA (Hue 0–360°, Saturation/Value 0–100%, Alpha 0–1)
 * **Formatting** to string forms:
+
     * `HexRgb`, `HexRgba`
     * `Rgb`, `Rgba`
     * `Hsv`, `Hsva`
 * **Helpers**:
+
     * `HoverColor()` → lightens or darkens by 20% for hover states
     * `ShiftColor(percent)` → adjust brightness by ±percent
 * **Equality & ordering** by canonical `#RRGGBBAA` string
@@ -34,7 +38,7 @@ All numeric operations use `InvariantCulture`, ensuring consistent, predictable 
 
 ### AllyariaStringValue
 
-`AllyariaStringValue` is an immutable, normalized wrapper for theme strings.  
+`AllyariaStringValue` is an immutable, normalized wrapper for theme strings.
 It guarantees **non-null, non-empty, non-whitespace** input and stores the **trimmed** value.
 
 Key features:
@@ -46,7 +50,7 @@ Key features:
 
 ### AllyariaPalette
 
-`AllyariaPalette` is an immutable, strongly typed palette used by the Allyaria theme engine.  
+`AllyariaPalette` is an immutable, strongly typed palette used by the Allyaria theme engine.
 It defines background, foreground, border, and hover states with clear **precedence rules**:
 
 * **Background images** take precedence over background colors.
@@ -67,7 +71,7 @@ This ensures consistent, accessible, and theme-driven styling across components.
 
 ### AllyariaTypography
 
-`AllyariaTypography` is a strongly typed struct for defining typography within the Allyaria theming system.  
+`AllyariaTypography` is a strongly typed struct for defining typography within the Allyaria theming system.
 It encapsulates font-related properties (family, size, weight, style, spacing, alignment, decoration, transform, etc.)
 and provides conversion helpers to:
 
@@ -88,6 +92,7 @@ It provides:
 
 * **Composition** of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts, sizes, spacing).
 * **Inline CSS styles** via `ToCss()` — for normal state.
+* **Inline CSS styles for hover states** via `ToCssHover()`.
 * **CSS custom properties (variables)** via `ToCssVars(string prefix = "")` — exportable tokens for isolated CSS.
 
 This ensures consistent, accessible, theme-driven styling across components, with **value semantics** for easy equality
