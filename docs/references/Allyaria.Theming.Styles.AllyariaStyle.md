@@ -2,30 +2,34 @@
 
 `AllyariaStyle` is an immutable **record-struct** that composes an `AllyariaPalette` (colors, borders, backgrounds) with
 `AllyariaTypography` (font family, size, weight, line-height, etc.) and exposes helpers to emit **inline CSS** and **CSS
-custom properties** for both its normal and hover states. It simply **concatenates** each sub-type’s CSS fragments—so
-all precedence rules for colors, images, borders, and hover behavior are inherited from `AllyariaPalette`, while all
+custom properties** for both its normal and hover states. It concatenates each sub-type’s CSS fragments—so all
+precedence rules for colors, images, borders, and hover behavior are inherited from `AllyariaPalette`, while all
 font rules are inherited from `AllyariaTypography`.
 
 ---
 
 ## Constructors
 
-* `AllyariaStyle(AllyariaPalette palette, AllyariaTypography typography)`
-  Creates a style by pairing a palette with a typography definition.
+* `AllyariaStyle(AllyariaPalette palette, AllyariaTypography typography, AllyariaPalette? paletteHover = null, AllyariaTypography? typographyHover = null)`
+Creates a style by pairing a palette with a typography definition, with optional **hover** overrides.
 
     * `palette` — The computed color/border/background model. See `AllyariaPalette` docs for precedence and CSS emission
       specifics.
-    * `typography` — The text styling model (font stack, sizing, weights, spacing). *(See `AllyariaTypography` API for
-      details.)*
+    * `typography` — The text styling model (font stack, sizing, weights, spacing).
+    * `paletteHover` — Optional hover palette. If omitted, a derived hover palette is created from `palette`
+      (foreground/background shifted to their hover variants) while preserving other palette aspects.
+    * `typographyHover` — Optional hover typography. Defaults to `typography` when omitted.
 
 ---
 
 ## Properties
 
-* `Palette` *(get; init)* — The color/background/border source whose `ToCss*`/`ToCssVars` outputs are included.
-* `Typography` *(get; init)* — The typography source whose `ToCss*`/`ToCssVars` outputs are included.
+* `Palette` *(get)* — The color/background/border source whose `ToCss*`/`ToCssVars` outputs are included.
+* `PaletteHover` *(get)* — The hover palette used by `ToCssHover()` and hover variable emission.
+* `Typography` *(get)* — The typography source whose `ToCss*`/`ToCssVars` outputs are included.
+* `TypographyHover` *(get)* — The hover typography used by `ToCssHover()` and hover variable emission.
 
-> **Immutability:** Being a `record struct` with `readonly` members, instances are value-type, copyable, and safe to
+> **Immutability:** Being a `record struct` with readonly members, instances are value-type, copyable, and safe to
 > pass by value without defensive cloning. Equality and deconstruction follow record semantics.
 
 ---
@@ -45,21 +49,29 @@ font rules are inherited from `AllyariaTypography`.
   Typography emission includes font-related declarations.
 
 * `string ToCssHover()`
-  Returns the concatenation of `Palette.ToCssHover()` and `Typography.ToCss()`.
-  Use for **hover** state styling. Palette hover behavior mirrors non-hover with hover color variants; background image
-  behavior is identical to non-hover. Typography typically does not change on hover and is reused.
+  Returns the concatenation of `PaletteHover.ToCss()` and `TypographyHover.ToCss()`.
+  Use for **`:hover`** inline declarations or when composing style strings for interactive states.
 
-* `string ToCssVars()`
-  Returns the concatenation of `Palette.ToCssVars()` and `Typography.ToCssVars()`.
-  Use to expose **CSS custom properties** (e.g., `--aa-fg`, `--aa-bg`, `--aa-border-width`) that components can consume
-  in isolated CSS without relying on global overrides.
+* `string ToCssVars(string prefix = "")`
+  Emits custom properties (CSS variables) for **both base and hover states** using a normalized prefix.
+
+    * **Prefix normalization:** Input `prefix` is trimmed of leading/trailing hyphens, collapses whitespace/dashes to a
+      single hyphen, and is lowercased. If the result is empty/whitespace, the default prefix **`aa`** is used.
+    * **Hover namespace:** Hover variables reuse the same normalized prefix with **`-hover`** appended.
+    * **Output composition:** Concatenates the variable declarations from `Palette` and `Typography` for the base
+      prefix,
+      then `PaletteHover` and `TypographyHover` for the hover prefix.
+
+  Use this when exposing **CSS custom properties** (e.g., `--aa-…`) that component-scoped CSS can consume without
+  relying
+  on global overrides.
 
 ---
 
 ## Operators
 
-* `==`, `!=` — Value equality provided by `record struct` semantics (compares `Palette` and `Typography`). No ordering
-  operators are defined.
+* `==`, `!=` — Value equality provided by `record struct` semantics (compares `Palette`, `PaletteHover`, `Typography`,
+  and `TypographyHover`). No ordering operators are defined.
 
 ---
 
@@ -84,15 +96,13 @@ var typography = new AllyariaTypography(
     lineHeight: "1.5",
     fontWeight: 500);
 
+// Hover palette/typography optional: omitted → derived palette hover, same typography by default
 var style = new AllyariaStyle(palette, typography);
 
-var css      = style.ToCss();      // non-hover declarations
-var cssHover = style.ToCssHover(); // hover declarations
-var cssVars  = style.ToCssVars();  // CSS custom properties for isolated CSS
+var css      = style.ToCss();       // non-hover declarations
+var cssHover = style.ToCssHover();  // hover declarations
+var cssVars  = style.ToCssVars();   // base + hover CSS custom properties
 ```
-
-*`ToCss()` and `ToCssHover()` are concatenations of the palette and typography outputs; palette emission rules are
-described in `AllyariaPalette`. Typography emission covers font-related declarations only.*
 
 ### 2) In Razor (inline + vars)
 
@@ -109,7 +119,7 @@ described in `AllyariaPalette`. Typography emission covers font-related declarat
 <style>
 /* Component .razor.css is preferred; shown inline here for illustration only. */
 .card:hover { @(_style.ToCssHover()) }
-.card { @(_style.ToCssVars()) } /* expose custom properties for CSS isolation */
+.card { @(_style.ToCssVars()) } /* exposes base + hover custom properties for CSS isolation */
 </style>
 ```
 
@@ -118,21 +128,22 @@ described in `AllyariaPalette`. Typography emission covers font-related declarat
 ## Behavior & Precedence Notes
 
 * **Colors & Backgrounds:** `AllyariaStyle` defers to `AllyariaPalette` for all background/foreground/border logic,
-  including image overlays, hover variants, and border emission (width/style/color/radius). If a background image is
-  set, the palette emits `background-image` + sizing/positioning helpers; otherwise it emits `background-color`.
-* **Typography:** `AllyariaStyle` includes typography unchanged across normal/hover; use a different `AllyariaStyle` if
-  hover should adjust font weight/decoration.
-* **CSS Variables:** When you prefer styling via CSS isolation, call `ToCssVars()` and consume the emitted custom
-  properties from your component styles instead of overriding with global CSS.
+  including image overlays and border emission. If a background image is set, the palette emits `background-image` +
+  sizing/positioning helpers; otherwise it emits `background-color`.
+* **Hover strategy:** By default, hover uses a derived palette (foreground/background shifted to their hover colors) and
+  the same typography. Provide explicit `paletteHover` and/or `typographyHover` to override that behavior.
+* **CSS Variables:** `ToCssVars(prefix)` exposes **both base and hover** variables with the same normalized prefix;
+  hover
+  variables add `-hover`.
 
 ---
 
 ## Performance
 
-* **Allocation-lean:** Methods use `string.Concat` to join the palette and typography fragments, avoiding intermediate
-  builders where unnecessary. This is suitable for per-render inline style emission.
+* **Allocation-lean:** Methods use `string.Concat` to join palette and typography fragments, avoiding unnecessary
+  intermediates.
 * **Value semantics:** As a small `record struct`, instances are cheap to copy and compare; equality comparisons are
-  structural (`Palette`, `Typography`).
+  structural across base and hover members.
 
 ---
 
@@ -157,10 +168,9 @@ font-family: Inter, system-ui, sans-serif; font-size: 14px; line-height: 1.5; fo
 **Variables (`ToCssVars`)**
 
 ```css
+/* Base (prefix normalized; default "aa" if empty) */
 --aa-fg: #000000;
---aa-fg-hover: #111827;
 --aa-bg: #ffffff;
---aa-bg-hover: #f9fafb;
 --aa-border-color: #4b5563;
 --aa-border-style: solid;
 --aa-border-width: 1px;
@@ -168,6 +178,12 @@ font-family: Inter, system-ui, sans-serif; font-size: 14px; line-height: 1.5; fo
 --aa-font-size: 14px;
 --aa-line-height: 1.5;
 --aa-font-weight: 500;
+
+/* Hover (same prefix with "-hover" appended) */
+--aa-hover-fg: #111827;
+--aa-hover-bg: #f9fafb;
+--aa-hover-border-color: #374151;
+/* Typography hover variables mirror base names under the hover prefix */
 ```
 
 *(Variable names shown for illustration; the exact typography variable names are defined by `AllyariaTypography`.)*
@@ -177,14 +193,13 @@ font-family: Inter, system-ui, sans-serif; font-size: 14px; line-height: 1.5; fo
 ## When to Use `AllyariaStyle`
 
 * You want a **single source** that represents both color/border/background and type, to apply consistently across a
-  component.
-* You prefer **inline styles** with strong precedence (no reliance on global CSS overrides), but still want to **export
-  CSS variables** for isolated CSS to consume.
+  component with **explicit hover handling**.
+* You prefer **inline styles** with strong precedence (no reliance on global CSS overrides), while also exporting **CSS
+  variables** for isolated CSS to consume.
 
 ---
 
 ## Related
 
 * **`AllyariaPalette`** — Background/foreground/border logic and CSS emission, including hover and CSS variables.
-* **`AllyariaTypography`** — Font stack, size, weight, spacing, and corresponding CSS/variable emission. *(See its API
-  doc.)*
+* **`AllyariaTypography`** — Font stack, size, weight, spacing, and corresponding CSS/variable emission.
