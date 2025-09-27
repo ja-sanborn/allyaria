@@ -9,7 +9,7 @@ namespace Allyaria.Theming.Constants;
 public static class Styles
 {
     /// <summary>Gets a WCAG-compliant dark style preset with Material colors and serif typography.</summary>
-    public static AllyariaStyle DarkStyle { get; } = new(
+    public static AllyariaStyle Dark { get; } = new(
         new AllyariaPalette(Colors.Grey900, Colors.Grey50),
         new AllyariaTypography(
             new AllyariaStringValue("Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
@@ -27,7 +27,7 @@ public static class Styles
     );
 
     /// <summary>Gets a WCAG-compliant light style preset with Material colors and serif typography.</summary>
-    public static AllyariaStyle LightStyle { get; } = new(
+    public static AllyariaStyle Light { get; } = new(
         new AllyariaPalette(Colors.Grey50, Colors.Grey900),
         new AllyariaTypography(
             new AllyariaStringValue("Segoe UI, Roboto, Helvetica, Arial, sans-serif"),

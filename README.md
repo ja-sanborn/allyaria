@@ -1,8 +1,8 @@
 # Allyaria
 
-> *Version 1: 2025-09-25*
+> *Version 1: 2025-09-26*
 >
-> [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
+> [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)  
 > [![Coverage](https://ja-sanborn.github.io/allyaria/badge_linecoverage.svg)](https://ja-sanborn.github.io/allyaria/)
 
 **Allyaria** is a *Blazor Component Library* for modern .NET apps, built with accessibility and localization at its
@@ -74,6 +74,21 @@ and provides conversion helpers to:
 Only non-null values are emitted, making it safe to compose flexible, theme-driven typography definitions without
 unnecessary noise in the resulting CSS.
 
+### AllyariaStyle
+
+`AllyariaStyle` is an immutable, strongly typed record-struct that **combines a palette and typography** into a single
+style definition.
+
+It provides:
+
+* **Composition** of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts, sizes, spacing).
+* **Inline CSS styles** via `ToCss()` — for normal state.
+* **Inline CSS styles for hover states** via `ToCssHover()` — reuses typography, swaps palette hover colors.
+* **CSS custom properties (variables)** via `ToCssVars()` — exportable tokens for isolated CSS.
+
+This ensures consistent, accessible, theme-driven styling across components, with **value semantics** for easy equality
+checks and copy-by-value safety.
+
 ### Colors
 
 The `Colors` class provides a consolidated, strongly typed library of named colors for Allyaria theming.
@@ -84,6 +99,24 @@ The `Colors` class provides a consolidated, strongly typed library of named colo
 * Values are defined in canonical `#RRGGBBAA` form for consistency.
 * Properties are alphabetically organized for quick lookup.
 * Designed for convenient use in theming, palette composition, and inline style generation.
+
+### Styles
+
+The `Styles` class provides a set of **predefined theme presets** as ready-to-use `AllyariaStyle` instances.
+
+Available presets:
+
+* **Light** — Light UI preset (`Grey50` background, `Grey900` foreground) with sans-serif typography.
+* **Dark** — Dark UI preset (`Grey900` background, `Grey50` foreground) with sans-serif typography.
+* **HighContrast** — Maximum-contrast preset (`White` background, `Black` foreground) for accessibility.
+
+Each preset combines an `AllyariaPalette` and `AllyariaTypography`, and supports:
+
+* **Inline CSS styles** via `ToCss()`
+* **Inline CSS styles for hover states** via `ToCssHover()`
+* **CSS custom properties (variables)** via `ToCssVars()`
+
+These serve as accessible defaults while allowing extension or replacement with custom brand themes.
 
 ## License
 
