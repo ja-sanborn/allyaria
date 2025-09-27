@@ -1,6 +1,6 @@
 # Allyaria
 
-> *Version 1: 2025-09-26*
+> *Version 1: 2025-09-27*
 >
 > [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)  
 > [![Coverage](https://ja-sanborn.github.io/allyaria/badge_linecoverage.svg)](https://ja-sanborn.github.io/allyaria/)
@@ -53,6 +53,10 @@ It defines background, foreground, border, and hover states with clear **precede
 * **Explicit overrides** beat computed defaults.
 * **Borders** are opt-in (width > 0) and may include color, style, and radius.
 * **Foreground colors** default to contrast-safe values based on background lightness.
+* **Hover state adjustment** — when a border is present, the effective background is slightly adjusted for better
+  contrast.
+* **CSS variable generation** — supports normalized prefixes and consistent naming for theming.
+* **Cascade support** — the `Cascade()` method allows creating derived palettes by selectively overriding base values.
 
 Conversion helpers are provided to:
 
@@ -69,6 +73,8 @@ and provides conversion helpers to:
 
 * **Inline CSS styles** via `ToCss()`
 * **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
+* **Cascade support** — the `Cascade()` method allows creating derived typography definitions by selectively overriding
+  base values.
 
 Only non-null values are emitted, making it safe to compose flexible, theme-driven typography definitions without
 unnecessary noise in the resulting CSS.

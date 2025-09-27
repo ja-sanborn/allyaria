@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.1-alpha] 2025-09-26
+## [0.0.1-alpha] 2025-09-27
 
 ### Added
 
@@ -23,12 +23,16 @@
         * Enforces theming precedence rules (background images > background colors, explicit overrides > defaults,
           borders opt-in)
         * Computes accessible foreground colors when not explicitly set
+        * Supports hover state adjustment when a border is present for better contrast
+        * Supports `Cascade()` method to create derived palettes by selectively overriding base values
         * Supports `ToCss()` for inline CSS generation
-        * Supports `ToCssVars(string prefix = "")` for emitting CSS custom properties
+        * Supports `ToCssVars(string prefix = "")` for emitting CSS custom properties with normalized prefixes
     * Added `AllyariaTypography` struct in `Allyaria.Theming.Styles`
-        * Supports strongly typed typography definitions (font family, size, weight, style, spacing, alignment, etc.)
+        * Supports strongly typed typography definitions (font family, size, weight, style, spacing, alignment,
+          decoration, transform, etc.)
+        * Provides `Cascade()` method to create derived typography definitions by selectively overriding base values
         * Provides `ToCss()` for inline CSS style strings
-        * Provides `ToCssVars(string prefix = "")` for generating CSS custom properties
+        * Provides `ToCssVars(string prefix = "")` for generating CSS custom properties with normalized prefixes
         * Emits only non-null properties for clean, minimal output
     * Added `AllyariaStyle` record struct in `Allyaria.Theming.Styles`
         * Immutable composition of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts,
