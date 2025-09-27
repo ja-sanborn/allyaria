@@ -1,6 +1,7 @@
 ﻿using Allyaria.Theming.Constants;
 using Allyaria.Theming.Values;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Styles;
 
@@ -262,29 +263,29 @@ public readonly record struct AllyariaPalette
     /// </remarks>
     public string ToCssVars(string prefix = "")
     {
-        prefix = prefix.Trim().Trim('-').ToLowerInvariant().Replace(" ", "-");
+        var basePrefix = Regex.Replace(prefix, @"\s+|-+", "-").Trim('-').ToLowerInvariant();
 
-        prefix = string.IsNullOrWhiteSpace(prefix)
+        basePrefix = string.IsNullOrWhiteSpace(prefix)
             ? "--aa-"
-            : $"--{prefix}-";
+            : $"--{basePrefix}-";
 
         var builder = new StringBuilder();
-        builder.Append(ForegroundColor.ToCss($"{prefix}color"));
+        builder.Append(ForegroundColor.ToCss($"{basePrefix}color"));
 
         if (HasBackground)
         {
-            builder.Append(BackgroundImage!.ToCss($"{prefix}background-image"));
+            builder.Append(BackgroundImage!.ToCss($"{basePrefix}background-image"));
         }
         else
         {
-            builder.Append(BackgroundColor.ToCss($"{prefix}background-color"));
+            builder.Append(BackgroundColor.ToCss($"{basePrefix}background-color"));
         }
 
         if (HasBorder)
         {
-            builder.Append(BorderColor.ToCss($"{prefix}border-color"));
-            builder.Append(BorderStyle.ToCss($"{prefix}border-style"));
-            builder.Append(BorderWidth!.ToCss($"{prefix}border-width"));
+            builder.Append(BorderColor.ToCss($"{basePrefix}border-color"));
+            builder.Append(BorderStyle.ToCss($"{basePrefix}border-style"));
+            builder.Append(BorderWidth!.ToCss($"{basePrefix}border-width"));
         }
 
         if (HasRadius)

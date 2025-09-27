@@ -1,5 +1,6 @@
 ﻿using Allyaria.Theming.Values;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Styles;
 
@@ -143,25 +144,25 @@ public readonly record struct AllyariaTypography(
     /// </remarks>
     public string ToCssVars(string prefix = "")
     {
-        prefix = prefix.Trim().Trim('-').ToLowerInvariant().Replace(" ", "-");
+        var basePrefix = Regex.Replace(prefix, @"\s+|-+", "-").Trim('-').ToLowerInvariant();
 
-        prefix = string.IsNullOrWhiteSpace(prefix)
+        basePrefix = string.IsNullOrWhiteSpace(prefix)
             ? "--aa-"
-            : $"--{prefix}-";
+            : $"--{basePrefix}-";
 
         var builder = new StringBuilder();
 
-        AppendIfNotNull(builder, FontFamily, $"{prefix}font-family");
-        AppendIfNotNull(builder, FontSize, $"{prefix}font-size");
-        AppendIfNotNull(builder, FontStyle, $"{prefix}font-style");
-        AppendIfNotNull(builder, FontWeight, $"{prefix}font-weight");
-        AppendIfNotNull(builder, LetterSpacing, $"{prefix}letter-spacing");
-        AppendIfNotNull(builder, LineHeight, $"{prefix}line-height");
-        AppendIfNotNull(builder, TextAlign, $"{prefix}text-align");
-        AppendIfNotNull(builder, TextDecoration, $"{prefix}text-decoration");
-        AppendIfNotNull(builder, TextTransform, $"{prefix}text-transform");
-        AppendIfNotNull(builder, VerticalAlign, $"{prefix}vertical-align");
-        AppendIfNotNull(builder, WordSpacing, $"{prefix}word-spacing");
+        AppendIfNotNull(builder, FontFamily, $"{basePrefix}font-family");
+        AppendIfNotNull(builder, FontSize, $"{basePrefix}font-size");
+        AppendIfNotNull(builder, FontStyle, $"{basePrefix}font-style");
+        AppendIfNotNull(builder, FontWeight, $"{basePrefix}font-weight");
+        AppendIfNotNull(builder, LetterSpacing, $"{basePrefix}letter-spacing");
+        AppendIfNotNull(builder, LineHeight, $"{basePrefix}line-height");
+        AppendIfNotNull(builder, TextAlign, $"{basePrefix}text-align");
+        AppendIfNotNull(builder, TextDecoration, $"{basePrefix}text-decoration");
+        AppendIfNotNull(builder, TextTransform, $"{basePrefix}text-transform");
+        AppendIfNotNull(builder, VerticalAlign, $"{basePrefix}vertical-align");
+        AppendIfNotNull(builder, WordSpacing, $"{basePrefix}word-spacing");
 
         return builder.ToString();
     }
