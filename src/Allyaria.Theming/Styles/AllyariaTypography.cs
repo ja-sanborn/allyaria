@@ -115,25 +115,44 @@ public readonly record struct AllyariaTypography
     }
 
     /// <summary>
-    /// Builds a CSS custom properties (variables) string representing this typography. Only appends declarations for non-null
-    /// properties.
+    /// Builds a CSS custom properties (variables) string representing this typography. The method normalizes the optional
+    /// <paramref name="prefix" /> by trimming whitespace and dashes, converting to lowercase, and replacing spaces with
+    /// hyphens. If no usable prefix remains, variables are emitted with the default <c>--aa-</c> prefix; otherwise, the
+    /// computed prefix is applied (e.g., <c>--mytheme-font-size</c>).
     /// </summary>
-    /// <returns>A concatenated CSS variables string.</returns>
-    public string ToCssVars()
+    /// <param name="prefix">
+    /// An optional string used to namespace the CSS variables. May contain spaces or leading/trailing dashes, which are
+    /// normalized before use. If empty or whitespace, defaults to <c>--aa-</c>.
+    /// </param>
+    /// <returns>
+    /// A concatenated CSS variables string containing only non-null typography properties (e.g., <c>--{prefix}-font-family</c>
+    /// , <c>--{prefix}-line-height</c>).
+    /// </returns>
+    /// <remarks>
+    /// Each variable is only appended if its corresponding property is non-null. This keeps the resulting CSS concise and
+    /// avoids redundant declarations.
+    /// </remarks>
+    public string ToCssVars(string prefix = "")
     {
+        prefix = prefix.Trim().Trim('-').ToLowerInvariant().Replace(" ", "-");
+
+        prefix = string.IsNullOrWhiteSpace(prefix)
+            ? "--aa-"
+            : $"--{prefix}-";
+
         var builder = new StringBuilder();
 
-        AppendIfNotNull(builder, FontFamily, "--aa-font-family");
-        AppendIfNotNull(builder, FontSize, "--aa-font-size");
-        AppendIfNotNull(builder, FontStyle, "--aa-font-style");
-        AppendIfNotNull(builder, FontWeight, "--aa-font-weight");
-        AppendIfNotNull(builder, LetterSpacing, "--aa-letter-spacing");
-        AppendIfNotNull(builder, LineHeight, "--aa-line-height");
-        AppendIfNotNull(builder, TextAlign, "--aa-text-align");
-        AppendIfNotNull(builder, TextDecoration, "--aa-text-decoration");
-        AppendIfNotNull(builder, TextTransform, "--aa-text-transform");
-        AppendIfNotNull(builder, VerticalAlign, "--aa-vertical-align");
-        AppendIfNotNull(builder, WordSpacing, "--aa-word-spacing");
+        AppendIfNotNull(builder, FontFamily, $"{prefix}font-family");
+        AppendIfNotNull(builder, FontSize, $"{prefix}font-size");
+        AppendIfNotNull(builder, FontStyle, $"{prefix}font-style");
+        AppendIfNotNull(builder, FontWeight, $"{prefix}font-weight");
+        AppendIfNotNull(builder, LetterSpacing, $"{prefix}letter-spacing");
+        AppendIfNotNull(builder, LineHeight, $"{prefix}line-height");
+        AppendIfNotNull(builder, TextAlign, $"{prefix}text-align");
+        AppendIfNotNull(builder, TextDecoration, $"{prefix}text-decoration");
+        AppendIfNotNull(builder, TextTransform, $"{prefix}text-transform");
+        AppendIfNotNull(builder, VerticalAlign, $"{prefix}vertical-align");
+        AppendIfNotNull(builder, WordSpacing, $"{prefix}word-spacing");
 
         return builder.ToString();
     }

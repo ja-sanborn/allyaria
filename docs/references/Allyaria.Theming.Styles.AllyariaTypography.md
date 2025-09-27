@@ -34,8 +34,10 @@ Initializes an immutable typography definition. All parameters are optional; **n
   `font-family; font-size; font-style; font-weight; letter-spacing; line-height; text-align; text-decoration; text-transform; vertical-align; word-spacing`.  
   Each declaration is emitted as `prop:value;` (lower-cased property names).
 
-* `string ToCssVars()` — Builds a **CSS custom properties** string using the same omission and order rules, with
-  Allyaria prefixes:  
+* `string ToCssVars(string prefix = "")` — Builds a **CSS custom properties** string using the same omission and order
+  rules, with
+  Allyaria prefixes:
+  The prefix is `--{prefix}-` and defaults to `--aa-`.
   `--aa-font-family; --aa-font-size; --aa-font-style; --aa-font-weight; --aa-letter-spacing; --aa-line-height; --aa-text-align; --aa-text-decoration; --aa-text-transform; --aa-vertical-align; --aa-word-spacing`.
 
 ---

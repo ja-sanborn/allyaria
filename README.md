@@ -57,8 +57,7 @@ It defines background, foreground, border, and hover states with clear **precede
 Conversion helpers are provided to:
 
 * **Inline CSS styles** via `ToCss()`
-* **Inline CSS styles for hover states** via `ToCssHover()`
-* **CSS custom properties (variables)** via `ToCssVars()`
+* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
 
 This ensures consistent, accessible, and theme-driven styling across components.
 
@@ -69,7 +68,7 @@ It encapsulates font-related properties (family, size, weight, style, spacing, a
 and provides conversion helpers to:
 
 * **Inline CSS styles** via `ToCss()`
-* **CSS custom properties (variables)** via `ToCssVars()`
+* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
 
 Only non-null values are emitted, making it safe to compose flexible, theme-driven typography definitions without
 unnecessary noise in the resulting CSS.
@@ -83,8 +82,7 @@ It provides:
 
 * **Composition** of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts, sizes, spacing).
 * **Inline CSS styles** via `ToCss()` — for normal state.
-* **Inline CSS styles for hover states** via `ToCssHover()` — reuses typography, swaps palette hover colors.
-* **CSS custom properties (variables)** via `ToCssVars()` — exportable tokens for isolated CSS.
+* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")` — exportable tokens for isolated CSS.
 
 This ensures consistent, accessible, theme-driven styling across components, with **value semantics** for easy equality
 checks and copy-by-value safety.

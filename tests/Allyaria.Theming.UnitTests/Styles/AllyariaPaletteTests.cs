@@ -15,9 +15,8 @@ public sealed class AllyariaPaletteTests
         var sut = new AllyariaPalette(
             darkBg,
             Colors.White,
-            backgroundImage: "",
-            borderWidth: 2,
-            borderColor: null
+            "",
+            2
         );
 
         // Act
@@ -35,9 +34,9 @@ public sealed class AllyariaPaletteTests
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            backgroundImage: "",
-            borderWidth: 1,
-            borderColor: Colors.Red
+            "",
+            1,
+            Colors.Red
         );
 
         // Act
@@ -54,9 +53,7 @@ public sealed class AllyariaPaletteTests
         // Arrange
         var sut = new AllyariaPalette(
             null,
-            Colors.Black,
-            backgroundImage: "",
-            borderWidth: 0
+            Colors.Black
         );
 
         // Act
@@ -73,9 +70,7 @@ public sealed class AllyariaPaletteTests
         // Arrange
         var sut = new AllyariaPalette(
             Colors.Black,
-            Colors.White,
-            backgroundImage: "",
-            borderWidth: 0
+            Colors.White
         );
 
         // Act
@@ -120,9 +115,7 @@ public sealed class AllyariaPaletteTests
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
-            Colors.Red,
-            backgroundImage: "",
-            borderWidth: 0
+            Colors.Red
         );
 
         // Act
@@ -159,7 +152,7 @@ public sealed class AllyariaPaletteTests
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            backgroundImage: "  HTTPS://EXAMPLE.COM/Img.Png  "
+            "  HTTPS://EXAMPLE.COM/Img.Png  "
         );
 
         // Act
@@ -183,11 +176,11 @@ public sealed class AllyariaPaletteTests
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            backgroundImage: "",
-            borderWidth: 2,
-            borderColor: Colors.Black,
-            borderStyle: new AllyariaStringValue("dashed"),
-            borderRadius: new AllyariaStringValue("4px")
+            "",
+            2,
+            Colors.Black,
+            new AllyariaStringValue("dashed"),
+            new AllyariaStringValue("4px")
         );
 
         // Act
@@ -207,9 +200,7 @@ public sealed class AllyariaPaletteTests
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
-            Colors.Black,
-            backgroundImage: "",
-            borderWidth: 0
+            Colors.Black
         );
 
         // Act
@@ -258,8 +249,6 @@ public sealed class AllyariaPaletteTests
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            backgroundImage: "",
-            borderWidth: 0,
             borderRadius: new AllyariaStringValue("12px") // radius should still be ignored without a border
         );
 
@@ -274,124 +263,66 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
-    public void ToCssHover_Should_EmitBackgroundHoverColor_When_NoImageAndNoBorder()
+    public void ToCssVars_Should_Emit_Prefixed_BackgroundColor_When_NoImage()
     {
         // Arrange
         var sut = new AllyariaPalette(
-            Colors.White,
             Colors.Black,
-            backgroundImage: "",
-            borderWidth: 0
+            Colors.White
         );
 
         // Act
-        var css = sut.ToCssHover();
+        var vars = sut.ToCssVars("brand");
 
         // Assert
-        css.Should()
-            .Contain("color:")
-            .And.Contain("background-color:")
-            .And.NotContain("background-image")
-            .And.NotContain("border-");
+        vars.Should()
+            .Contain("--brand-color:")
+            .And.Contain("--brand-background-color:")
+            .And.NotContain("--aa-");
     }
 
     [Fact]
-    public void ToCssHover_Should_EmitBackgroundImageAndNoBackgroundHoverColor_When_ImageProvided()
+    public void ToCssVars_Should_Emit_Prefixed_BackgroundImage_When_ImagePresent()
     {
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            Colors.Red, // explicit hover color, should be ignored due to image
-            backgroundImage: "https://example.com/pic.png"
+            "hero.png"
         );
 
         // Act
-        var css = sut.ToCssHover();
+        var vars = sut.ToCssVars("brand");
 
         // Assert
-        css.Should()
-            .Contain("background-image:")
-            .And.Contain("linear-gradient(")
-            .And.Contain("url(\"https://example.com/pic.png\")")
-            .And.Contain("background-position:center;")
-            .And.Contain("background-repeat:no-repeat;")
-            .And.Contain("background-size:cover;")
-            .And.NotContain("background-color:");
+        vars.Should()
+            .Contain("--brand-color:")
+            .And.Contain("--brand-background-image:")
+            .And.NotContain("--brand-background-color:");
     }
 
     [Fact]
-    public void ToCssHover_Should_EmitBorderDeclarations_When_BorderWidthPositive()
+    public void ToCssVars_Should_Emit_Prefixed_BorderVars_When_BorderPresent()
     {
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            backgroundImage: "",
             borderWidth: 2,
-            borderColor: Colors.Black,
-            borderStyle: new AllyariaStringValue("dotted"),
-            borderRadius: new AllyariaStringValue("5px")
+            borderColor: Colors.Red,
+            borderStyle: new AllyariaStringValue("dashed"),
+            borderRadius: new AllyariaStringValue("6px")
         );
 
         // Act
-        var css = sut.ToCssHover();
+        var vars = sut.ToCssVars("ui-kit");
 
         // Assert
-        css.Should()
-            .Contain("border-color:")
-            .And.Contain("border-style:dotted")
-            .And.Contain("border-width:2px")
-            .And.Contain("border-radius:5px");
-    }
-
-    [Fact]
-    public void ToCssHover_Should_Include_BorderRadius_When_Radius_Is_Provided()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(borderRadius: new AllyariaStringValue("12px"));
-
-        // Act
-        var css = sut.ToCssHover();
-
-        // Assert
-        css.Should()
-            .Contain("border-radius:12px;");
-    }
-
-    [Fact]
-    public void ToCssHover_Should_Not_Include_BorderRadius_When_Radius_Is_Null()
-    {
-        // Arrange
-        var sut = new AllyariaPalette();
-
-        // Act
-        var css = sut.ToCssHover();
-
-        // Assert
-        css.Should()
-            .NotContain("border-radius:");
-    }
-
-    [Fact]
-    public void ToCssHover_Should_OmitBorderDeclarations_When_BorderWidthZero()
-    {
-        // Arrange
-        var sut = new AllyariaPalette(
-            Colors.White,
-            Colors.Black,
-            borderWidth: 0,
-            borderRadius: new AllyariaStringValue("10px")
-        );
-
-        // Act
-        var css = sut.ToCssHover();
-
-        // Assert
-        css.Should()
-            .NotContain("border-color")
-            .And.NotContain("border-style")
-            .And.NotContain("border-width");
+        vars.Should()
+            .Contain("--ui-kit-border-color:#FF0000FF;")
+            .And.Contain("--ui-kit-border-style:dashed;")
+            .And.Contain("--ui-kit-border-width:2px;")
+            .And.Contain("--ui-kit-border-radius:6px;");
     }
 
     [Fact]
@@ -419,14 +350,12 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
-    public void ToCssVars_Should_EmitFgAndBgVars_When_NoImage()
+    public void ToCssVars_Should_EmitColorAndBackgroundColor_Vars_When_NoImage_And_DefaultPrefix()
     {
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
-            Colors.Black,
-            Colors.Black, // explicit to avoid relying on HoverColor() implementation
-            Colors.White // explicit to avoid relying on HoverColor() implementation
+            Colors.Black
         );
 
         // Act
@@ -434,23 +363,19 @@ public sealed class AllyariaPaletteTests
 
         // Assert
         vars.Should()
-            .Contain("--aa-fg")
-            .And.Contain("--aa-fg-hover")
-            .And.Contain("--aa-bg")
-            .And.Contain("--aa-bg-hover")
-            .And.NotContain("--aa-bg-image");
+            .Contain("--aa-color")
+            .And.Contain("--aa-background-color")
+            .And.NotContain("--aa-background-image");
     }
 
     [Fact]
-    public void ToCssVars_Should_EmitFgAndImageVars_When_ImagePresent()
+    public void ToCssVars_Should_EmitColorAndBackgroundImage_Vars_When_ImagePresent_And_DefaultPrefix()
     {
         // Arrange
         var sut = new AllyariaPalette(
             Colors.White,
             Colors.Black,
-            foregroundHoverColor: Colors.White,
-            backgroundImage: "Example.png",
-            borderWidth: 0
+            "Example.png"
         );
 
         // Act
@@ -458,11 +383,42 @@ public sealed class AllyariaPaletteTests
 
         // Assert
         vars.Should()
-            .Contain("--aa-fg")
-            .And.Contain("--aa-fg-hover")
-            .And.Contain("--aa-bg-image")
-            .And.NotContain("--aa-bg;") // ensure no plain bg variables
-            .And.NotContain("--aa-bg-hover");
+            .Contain("--aa-color")
+            .And.Contain("--aa-background-image")
+            .And.NotContain("--aa-background-color;");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("---")]
+    public void ToCssVars_Should_FallBack_To_DefaultPrefix_When_Prefix_Is_EmptyOrWhitespace(string prefix)
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var vars = sut.ToCssVars(prefix);
+
+        // Assert
+        vars.Should()
+            .Contain("--aa-color:")
+            .And.Contain("--aa-background-color:");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Handle_Prefix_With_Leading_And_Trailing_Dashes()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var vars = sut.ToCssVars("---Custom---");
+
+        // Assert
+        vars.Should()
+            .Contain("--custom-color:")
+            .And.Contain("--custom-background-color:");
     }
 
     [Fact]
@@ -477,6 +433,23 @@ public sealed class AllyariaPaletteTests
         // Assert
         cssVars.Should()
             .Contain("--aa-border-radius:4px;");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Normalize_CustomPrefix_To_Lowercase_TrimDashes_And_SpaceToHyphen()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var vars = sut.ToCssVars("  --My THEME  ");
+
+        // Assert
+        vars.Should()
+            .Contain("--my-theme-color:")
+            .And.Contain("--my-theme-background-color:")
+            .And.NotContain("--My THEME")
+            .And.NotContain("  ");
     }
 
     [Fact]

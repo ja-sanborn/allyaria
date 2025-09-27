@@ -48,13 +48,10 @@ Creates a palette with optional overrides.
   `background-position:center; background-repeat:no-repeat; background-size:cover;`; otherwise emits `background-color`.
   If a border is present, emits `border-color`, `border-style`, `border-width`, and (if specified) `border-radius`.
 
-* `string ToCssHover()` — Builds inline CSS declarations for the **hover** state.  
-  Mirrors `ToCss()` precedence. Uses hover variants for foreground/background colors when no image is present; image
-  behavior is identical to non-hover. Border emissions mirror non-hover.
-
-* `string ToCssVars()` — Emits CSS custom properties for theme-aware component styling.  
-  Always outputs `--aa-fg` and `--aa-fg-hover`. If a background image is set, outputs `--aa-bg-image`; otherwise outputs
-  `--aa-bg` and `--aa-bg-hover`. If a border is present, outputs `--aa-border-color`, `--aa-border-style`,
+* `string ToCssVars(string prefix = "")` — Emits CSS custom properties for theme-aware component styling.
+  The prefix is `--{prefix}-` and defaults to `--aa-`.
+  Outputs `--aa-color`. If a background image is set, outputs `--aa-bg-image`; otherwise outputs
+  `--aa-background-color` . If a border is present, outputs `--aa-border-color`, `--aa-border-style`,
   `--aa-border-width`, and (if set) `--aa-border-radius`.
 
 ---

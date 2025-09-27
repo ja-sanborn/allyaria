@@ -18,12 +18,6 @@ public readonly record struct AllyariaPalette
     /// <summary>The base background color as provided, before any precedence (e.g., border presence) is applied.</summary>
     private readonly AllyariaColorValue? _backgroundColor;
 
-    /// <summary>
-    /// Optional explicit background hover color as provided by the caller; may be <see langword="null" /> to signal defaulting
-    /// to <see cref="BackgroundColor" />.<see cref="AllyariaColorValue.HoverColor()" />.
-    /// </summary>
-    private readonly AllyariaColorValue? _backgroundHover;
-
     /// <summary>Optional background image or <see langword="null" /> when no image was provided.</summary>
     private readonly string? _backgroundImage;
 
@@ -50,12 +44,6 @@ public readonly record struct AllyariaPalette
     /// </summary>
     private readonly AllyariaColorValue? _foregroundColor;
 
-    /// <summary>
-    /// Optional explicit foreground hover color as provided by the caller; may be <see langword="null" /> to signal defaulting
-    /// to <see cref="ForegroundColor" />.<see cref="AllyariaColorValue.HoverColor()" />.
-    /// </summary>
-    private readonly AllyariaColorValue? _foregroundHover;
-
     /// <summary>Initializes a new immutable <see cref="AllyariaPalette" />.</summary>
     /// <param name="backgroundColor">
     /// Optional base background color; defaults to <see cref="Colors.White" /> when not
@@ -64,14 +52,6 @@ public readonly record struct AllyariaPalette
     /// <param name="foregroundColor">
     /// Optional explicit foreground color; when not provided, it is computed from <see cref="BackgroundColor" /> lightness for
     /// contrast.
-    /// </param>
-    /// <param name="backgroundHoverColor">
-    /// Optional explicit background hover color; when not provided, defaults to <see cref="BackgroundColor" />.
-    /// <see cref="AllyariaColorValue.HoverColor()" />.
-    /// </param>
-    /// <param name="foregroundHoverColor">
-    /// Optional explicit foreground hover color; when not provided, defaults to <see cref="ForegroundColor" />.
-    /// <see cref="AllyariaColorValue.HoverColor()" />.
     /// </param>
     /// <param name="backgroundImage">
     /// An optional background image URL. When non-empty, this is transformed into a composite
@@ -94,8 +74,6 @@ public readonly record struct AllyariaPalette
     /// </param>
     public AllyariaPalette(AllyariaColorValue? backgroundColor = null,
         AllyariaColorValue? foregroundColor = null,
-        AllyariaColorValue? backgroundHoverColor = null,
-        AllyariaColorValue? foregroundHoverColor = null,
         string backgroundImage = "",
         int borderWidth = 0,
         AllyariaColorValue? borderColor = null,
@@ -104,9 +82,7 @@ public readonly record struct AllyariaPalette
     {
         _backgroundImage = backgroundImage;
         _backgroundColor = backgroundColor;
-        _backgroundHover = backgroundHoverColor;
         _foregroundColor = foregroundColor;
-        _foregroundHover = foregroundHoverColor;
 
         _borderColor = borderColor;
         _borderRadius = borderRadius;
@@ -124,12 +100,6 @@ public readonly record struct AllyariaPalette
             : HasBorder
                 ? _backgroundColor.HoverColor()
                 : _backgroundColor;
-
-    /// <summary>
-    /// Gets the effective background hover color. Defaults to <see cref="BackgroundColor" />.
-    /// <see cref="AllyariaColorValue.HoverColor()" /> when not explicitly provided.
-    /// </summary>
-    private AllyariaColorValue BackgroundHoverColor => _backgroundHover ?? BackgroundColor.HoverColor();
 
     /// <summary>
     /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
@@ -172,12 +142,6 @@ public readonly record struct AllyariaPalette
         => _foregroundColor ?? (BackgroundColor.V < 50.0
             ? Colors.White
             : Colors.Black);
-
-    /// <summary>
-    /// Gets the effective foreground hover color. Defaults to <see cref="ForegroundColor" />.
-    /// <see cref="AllyariaColorValue.HoverColor()" /> when not explicitly provided.
-    /// </summary>
-    private AllyariaColorValue ForegroundHoverColor => _foregroundHover ?? ForegroundColor.HoverColor();
 
     /// <summary>
     /// Gets a value indicating whether a background image is set and should take precedence over background color.
@@ -229,75 +193,54 @@ public readonly record struct AllyariaPalette
     }
 
     /// <summary>
-    /// Builds a string of inline CSS declarations representing the <em>hover</em> state for this palette. The same precedence
-    /// rules apply: background image (if any) takes priority over background color; otherwise the hover color variant is used.
-    /// Border declarations mirror the non-hover state.
+    /// Builds a string of CSS custom property declarations for theming. The method normalizes the optional
+    /// <paramref name="prefix" /> by trimming whitespace and dashes, converting to lowercase, and replacing spaces with
+    /// hyphens. If no usable prefix remains, variables are emitted with the default <c>--aa-</c> prefix; otherwise, the
+    /// computed prefix is applied (e.g., <c>--mytheme-color</c>, <c>--mytheme-background-color</c>).
     /// </summary>
-    /// <returns>A CSS declaration string for hover state styling (e.g., on <c>:hover</c>).</returns>
-    public string ToCssHover()
+    /// <param name="prefix">
+    /// An optional string used to namespace the CSS variables. May contain spaces or leading/trailing dashes, which are
+    /// normalized before use. If empty or whitespace, defaults to <c>--aa-</c>.
+    /// </param>
+    /// <returns>
+    /// A CSS declaration string defining theme variables (foreground, background, border, and radius) that can be consumed by
+    /// component CSS. If a background image is present, a <c>--{prefix}-background-image</c> variable is emitted and
+    /// background color variables are omitted.
+    /// </returns>
+    /// <remarks>
+    /// Border and radius variables are included only when explicitly set. This ensures that only relevant theming properties
+    /// are emitted, keeping CSS concise.
+    /// </remarks>
+    public string ToCssVars(string prefix = "")
     {
+        prefix = prefix.Trim().Trim('-').ToLowerInvariant().Replace(" ", "-");
+
+        prefix = string.IsNullOrWhiteSpace(prefix)
+            ? "--aa-"
+            : $"--{prefix}-";
+
         var builder = new StringBuilder();
-        builder.Append(ForegroundHoverColor.ToCss("color"));
+        builder.Append(ForegroundColor.ToCss($"{prefix}color"));
 
         if (HasBackground)
         {
-            builder.Append(BackgroundImage!.ToCss("background-image"));
-            builder.Append("background-position:center;");
-            builder.Append("background-repeat:no-repeat;");
-            builder.Append("background-size:cover;");
+            builder.Append(BackgroundImage!.ToCss($"{prefix}background-image"));
         }
         else
         {
-            builder.Append(BackgroundHoverColor.ToCss("background-color"));
+            builder.Append(BackgroundColor.ToCss($"{prefix}background-color"));
         }
 
         if (HasBorder)
         {
-            builder.Append(BorderColor.ToCss("border-color"));
-            builder.Append(BorderStyle.ToCss("border-style"));
-            builder.Append(BorderWidth!.ToCss("border-width"));
+            builder.Append(BorderColor.ToCss($"{prefix}border-color"));
+            builder.Append(BorderStyle.ToCss($"{prefix}border-style"));
+            builder.Append(BorderWidth!.ToCss($"{prefix}border-width"));
         }
 
         if (HasRadius)
         {
-            builder.Append(BorderRadius!.ToCss("border-radius"));
-        }
-
-        return builder.ToString();
-    }
-
-    /// <summary>
-    /// Builds a string of CSS custom property declarations for theming (e.g., <c>--aa-fg</c>, <c>--aa-bg</c>). When a
-    /// background image is present, an <c>--aa-bg-image</c> variable is emitted and color variables are constrained to
-    /// foregrounds and borders; otherwise, background color variables are emitted.
-    /// </summary>
-    /// <returns>A CSS declaration string defining theme variables that can be consumed by component CSS.</returns>
-    public string ToCssVars()
-    {
-        var builder = new StringBuilder();
-        builder.Append(ForegroundColor.ToCss("--aa-fg"));
-        builder.Append(ForegroundHoverColor.ToCss("--aa-fg-hover"));
-
-        if (HasBackground)
-        {
-            builder.Append(BackgroundImage!.ToCss("--aa-bg-image"));
-        }
-        else
-        {
-            builder.Append(BackgroundColor.ToCss("--aa-bg"));
-            builder.Append(BackgroundHoverColor.ToCss("--aa-bg-hover"));
-        }
-
-        if (HasBorder)
-        {
-            builder.Append(BorderColor.ToCss("--aa-border-color"));
-            builder.Append(BorderStyle.ToCss("--aa-border-style"));
-            builder.Append(BorderWidth!.ToCss("--aa-border-width"));
-        }
-
-        if (HasRadius)
-        {
-            builder.Append(BorderRadius!.ToCss("--aa-border-radius"));
+            builder.Append(BorderRadius!.ToCss($"{prefix}border-radius"));
         }
 
         return builder.ToString();

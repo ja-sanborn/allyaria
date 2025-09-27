@@ -165,6 +165,24 @@ public sealed class AllyariaTypographyTests
     }
 
     [Fact]
+    public void ToCssVars_Should_Apply_CustomPrefix_To_All_Properties()
+    {
+        // Arrange
+        var fontSize = new AllyariaStringValue("14px");
+        var fontWeight = new AllyariaStringValue("700");
+        var sut = new AllyariaTypography(fontSize: fontSize, fontWeight: fontWeight);
+
+        // Act
+        var cssVars = sut.ToCssVars("brand");
+
+        // Assert
+        cssVars.Should()
+            .Contain("--brand-font-size:14px;")
+            .And.Contain("--brand-font-weight:700;")
+            .And.NotContain("--aa-");
+    }
+
+    [Fact]
     public void ToCssVars_Should_Concatenate_InDeclarationOrder_When_MultipleValuesProvided()
     {
         // Arrange
@@ -188,6 +206,52 @@ public sealed class AllyariaTypographyTests
 
         cssVars.Should()
             .Be(expected);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("---")]
+    public void ToCssVars_Should_FallBack_To_DefaultPrefix_When_Prefix_IsEmptyOrWhitespace(string prefix)
+    {
+        // Arrange
+        var sut = new AllyariaTypography(new AllyariaStringValue("Arial"));
+
+        // Act
+        var cssVars = sut.ToCssVars(prefix);
+
+        // Assert
+        cssVars.Should()
+            .Contain("--aa-font-family");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Handle_Prefix_With_LeadingAndTrailingDashes()
+    {
+        // Arrange
+        var fontStyle = new AllyariaStringValue("italic");
+        var sut = new AllyariaTypography(fontStyle: fontStyle);
+
+        // Act
+        var cssVars = sut.ToCssVars("---Custom---");
+
+        // Assert
+        cssVars.Should()
+            .Contain("--custom-font-style:italic;");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Normalize_CustomPrefix_To_Lowercase_TrimDashes_And_SpacesToHyphens()
+    {
+        // Arrange
+        var sut = new AllyariaTypography(new AllyariaStringValue("Arial"));
+
+        // Act
+        var cssVars = sut.ToCssVars("  --My THEME  ");
+
+        // Assert
+        cssVars.Should()
+            .Contain("--my-theme-font-family:Arial;");
     }
 
     [Fact]

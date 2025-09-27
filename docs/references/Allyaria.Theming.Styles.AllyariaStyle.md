@@ -44,14 +44,10 @@ font rules are inherited from `AllyariaTypography`.
   either `background-color` or `background-image` + sizing rules; border declarations are included when configured.
   Typography emission includes font-related declarations.
 
-* `string ToCssHover()`
-  Returns the concatenation of `Palette.ToCssHover()` and `Typography.ToCss()`.
-  Use for **hover** state styling. Palette hover behavior mirrors non-hover with hover color variants; background image
-  behavior is identical to non-hover. Typography typically does not change on hover and is reused.
-
-* `string ToCssVars()`
-  Returns the concatenation of `Palette.ToCssVars()` and `Typography.ToCssVars()`.
-  Use to expose **CSS custom properties** (e.g., `--aa-fg`, `--aa-bg`, `--aa-border-width`) that components can consume
+* `string ToCssVars(string prefix = "")`
+  Returns the concatenation of `Palette.ToCssVars(prefix)` and `Typography.ToCssVars(prefix)`.
+  Use to expose **CSS custom properties** (e.g., `--aa-color`, `--aa-background-color`, `--aa-border-width`) that
+  components can consume
   in isolated CSS without relying on global overrides.
 
 ---

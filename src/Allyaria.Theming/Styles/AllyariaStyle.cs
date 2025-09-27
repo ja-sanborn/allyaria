@@ -12,11 +12,21 @@ public readonly record struct AllyariaStyle(AllyariaPalette Palette, AllyariaTyp
     /// <returns>A concatenated CSS string including palette and typography CSS.</returns>
     public string ToCss() => string.Concat(Palette.ToCss(), Typography.ToCss());
 
-    /// <summary>Builds the CSS string for hover state of this style.</summary>
-    /// <returns>A concatenated CSS string including palette hover and typography CSS.</returns>
-    public string ToCssHover() => string.Concat(Palette.ToCssHover(), Typography.ToCss());
-
-    /// <summary>Builds the CSS string for CSS variable declarations of this style.</summary>
-    /// <returns>A concatenated CSS string including palette and typography variable declarations.</returns>
-    public string ToCssVars() => string.Concat(Palette.ToCssVars(), Typography.ToCssVars());
+    /// <summary>
+    /// Builds a CSS string for custom property (variable) declarations representing this style. The method normalizes the
+    /// optional <paramref name="prefix" /> by trimming whitespace and dashes, converting to lowercase, and replacing spaces
+    /// with hyphens. If no usable prefix remains, variables are emitted with the default <c>--aa-</c> prefix; otherwise, the
+    /// computed prefix is applied.
+    /// </summary>
+    /// <param name="prefix">
+    /// An optional string used to namespace the CSS variables. May contain spaces or leading/trailing dashes, which are
+    /// normalized before use. If empty or whitespace, defaults to <c>--aa-</c>.
+    /// </param>
+    /// <returns>A concatenated CSS string that includes both palette and typography variable declarations.</returns>
+    /// <remarks>
+    /// This method composes the results of <see cref="AllyariaPalette.ToCssVars(string)" /> and
+    /// <see cref="AllyariaTypography.ToCssVars(string)" /> using the same normalized prefix.
+    /// </remarks>
+    public string ToCssVars(string prefix = "")
+        => string.Concat(Palette.ToCssVars(prefix), Typography.ToCssVars(prefix));
 }
