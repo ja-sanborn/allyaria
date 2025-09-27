@@ -242,6 +242,71 @@ public sealed class AllyariaColorValueTests
             .Be(b.GetHashCode());
     }
 
+    [Fact]
+    public void Equals_Should_ReturnFalse_When_Obj_Is_Not_ValueBase()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#11223344");
+
+        // Act
+        var resultWithString = sut.Equals("not-a-valuebase");
+        var resultWithInt = sut.Equals(123);
+
+        // Assert
+        resultWithString.Should()
+            .BeFalse();
+
+        resultWithInt.Should()
+            .BeFalse();
+    }
+
+    [Fact]
+    public void Equals_Should_ReturnTrue_When_Obj_Is_SameType_And_Equal()
+    {
+        // Arrange
+        var left = new AllyariaColorValue("#A1B2C3D4");
+        var right = new AllyariaColorValue("#A1B2C3D4");
+
+        // Act
+        var result = left.Equals((object)right);
+
+        // Assert
+        result.Should()
+            .BeTrue();
+    }
+
+    [Fact]
+    public void Equals_Should_ThrowArgumentException_When_Comparing_Color_To_StringValue()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#000000FF");
+        var other = new AllyariaStringValue("black"); // different ValueBase subtype
+
+        // Act
+        var act = () => sut.Equals((object)other);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot compare values of different types.");
+    }
+
+    [Fact]
+    public void Equals_Should_ThrowArgumentException_When_Obj_Is_Different_ValueBase_Subtype()
+    {
+        // Arrange
+        var sut = new AllyariaColorValue("#01020304");
+        var other = Substitute.For<ValueBase>("any");
+
+        // Act
+        var act = () => sut.Equals((object)other);
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot compare values of different types.");
+    }
+
     [Theory]
     [InlineData(0, 100, 100, "#FF0000FF")] // sector 0
     [InlineData(60, 100, 100, "#FFFF00FF")] // sector 1
@@ -324,8 +389,8 @@ public sealed class AllyariaColorValueTests
     }
 
     [Theory]
-    [InlineData("#202020FF", "#535353FF")] // V≈12.5 < 50 => lighten by 20 → ≈32.5% => 0x53
-    [InlineData("#C0C0C0FF", "#8D8D8DFF")] // V≈75.3 ≥ 50 => darken by 20 → ≈55.3% => 0x8D/0x8C rounded
+    [InlineData("#202020FF", "#535353FF")]
+    [InlineData("#C0C0C0FF", "#8D8D8DFF")]
     public void HoverColor_Lightens_Or_Darkens_By_20_Depending_On_V(string input, string expected)
     {
         // Arrange
