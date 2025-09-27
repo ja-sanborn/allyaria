@@ -90,12 +90,7 @@ public sealed class AllyariaPaletteTests
     public void ForegroundColor_Should_Default_To_Black_When_Background_Is_Light()
     {
         // Arrange
-        var sut = new AllyariaPalette(
-            Colors.White,
-            null,
-            backgroundImage: "",
-            borderWidth: 0
-        );
+        var sut = new AllyariaPalette(Colors.White);
 
         // Act
         var css = sut.ToCss();
@@ -109,12 +104,7 @@ public sealed class AllyariaPaletteTests
     public void ForegroundColor_Should_Default_To_White_When_Background_Is_Dark()
     {
         // Arrange
-        var sut = new AllyariaPalette(
-            new AllyariaColorValue("#202020FF"),
-            null,
-            backgroundImage: "",
-            borderWidth: 0
-        );
+        var sut = new AllyariaPalette(new AllyariaColorValue("#202020FF"));
 
         // Act
         var css = sut.ToCss();
@@ -234,6 +224,34 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCss_Should_Include_BorderRadius_When_Radius_Is_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(borderRadius: new AllyariaStringValue("8px"));
+
+        // Act
+        var css = sut.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("border-radius:8px;");
+    }
+
+    [Fact]
+    public void ToCss_Should_Not_Include_BorderRadius_When_Radius_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaPalette();
+
+        // Act
+        var css = sut.ToCss();
+
+        // Assert
+        css.Should()
+            .NotContain("border-radius:");
+    }
+
+    [Fact]
     public void ToCss_Should_OmitBorderDeclarations_When_BorderWidthZero()
     {
         // Arrange
@@ -252,8 +270,7 @@ public sealed class AllyariaPaletteTests
         css.Should()
             .NotContain("border-color")
             .And.NotContain("border-style")
-            .And.NotContain("border-width")
-            .And.NotContain("border-radius");
+            .And.NotContain("border-width");
     }
 
     [Fact]
@@ -329,6 +346,34 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCssHover_Should_Include_BorderRadius_When_Radius_Is_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(borderRadius: new AllyariaStringValue("12px"));
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .Contain("border-radius:12px;");
+    }
+
+    [Fact]
+    public void ToCssHover_Should_Not_Include_BorderRadius_When_Radius_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaPalette();
+
+        // Act
+        var css = sut.ToCssHover();
+
+        // Assert
+        css.Should()
+            .NotContain("border-radius:");
+    }
+
+    [Fact]
     public void ToCssHover_Should_OmitBorderDeclarations_When_BorderWidthZero()
     {
         // Arrange
@@ -346,8 +391,7 @@ public sealed class AllyariaPaletteTests
         css.Should()
             .NotContain("border-color")
             .And.NotContain("border-style")
-            .And.NotContain("border-width")
-            .And.NotContain("border-radius");
+            .And.NotContain("border-width");
     }
 
     [Fact]
@@ -422,6 +466,34 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCssVars_Should_Include_BorderRadius_Var_When_Radius_Is_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(borderRadius: new AllyariaStringValue("4px"));
+
+        // Act
+        var cssVars = sut.ToCssVars();
+
+        // Assert
+        cssVars.Should()
+            .Contain("--aa-border-radius:4px;");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Not_Include_BorderRadius_Var_When_Radius_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaPalette();
+
+        // Act
+        var cssVars = sut.ToCssVars();
+
+        // Assert
+        cssVars.Should()
+            .NotContain("--aa-border-radius:");
+    }
+
+    [Fact]
     public void ToCssVars_Should_OmitBorderVars_When_BorderAbsent()
     {
         // Arrange
@@ -438,7 +510,6 @@ public sealed class AllyariaPaletteTests
         vars.Should()
             .NotContain("--aa-border-color")
             .And.NotContain("--aa-border-style")
-            .And.NotContain("--aa-border-width")
-            .And.NotContain("--aa-border-radius");
+            .And.NotContain("--aa-border-width");
     }
 }
