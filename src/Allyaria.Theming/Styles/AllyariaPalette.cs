@@ -116,9 +116,9 @@ public readonly record struct AllyariaPalette
     /// <see cref="Colors.Transparent" />.
     /// </summary>
     public AllyariaColorValue BorderColor
-        => HasBorder
-            ? _borderColor ?? _backgroundColor ?? Colors.White
-            : Colors.Transparent;
+        => _borderColor ?? (HasBorder
+            ? _backgroundColor ?? Colors.White
+            : Colors.Transparent);
 
     /// <summary>Gets the effective border radius declaration value, or <see langword="null" /> when not set.</summary>
     public AllyariaStringValue? BorderRadius => _borderRadius;
@@ -272,14 +272,11 @@ public readonly record struct AllyariaPalette
         var builder = new StringBuilder();
         builder.Append(ForegroundColor.ToCss($"{basePrefix}color"));
 
-        if (HasBackground)
-        {
-            builder.Append(BackgroundImage!.ToCss($"{basePrefix}background-image"));
-        }
-        else
-        {
-            builder.Append(BackgroundColor.ToCss($"{basePrefix}background-color"));
-        }
+        builder.Append(
+            HasBackground
+                ? BackgroundImage!.ToCss($"{basePrefix}background-image")
+                : BackgroundColor.ToCss($"{basePrefix}background-color")
+        );
 
         if (HasBorder)
         {
