@@ -67,6 +67,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", 
 		docs\references\Allyaria.Theming.Styles.AllyariaTypography.md = docs\references\Allyaria.Theming.Styles.AllyariaTypography.md
 		docs\references\Allyaria.Theming.Values.AllyariaColorValue.md = docs\references\Allyaria.Theming.Values.AllyariaColorValue.md
 		docs\references\Allyaria.Theming.Values.AllyariaStringValue.md = docs\references\Allyaria.Theming.Values.AllyariaStringValue.md
+		docs\references\Allyaria.Theming.Styles.AllyariaStyle.md = docs\references\Allyaria.Theming.Styles.AllyariaStyle.md
+		docs\references\Allyaria.Theming.Constants.Styles.md = docs\references\Allyaria.Theming.Constants.Styles.md
 	EndProjectSection
 EndProject
 Global

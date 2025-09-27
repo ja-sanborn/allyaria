@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.1-alpha] 2025-09-25
+## [0.0.1-alpha] 2025-09-26
 
 ### Added
 
@@ -31,11 +31,24 @@
         * Provides `ToCss()` for inline CSS style strings
         * Provides `ToCssVars()` for generating CSS custom properties
         * Emits only non-null properties for clean, minimal output
+    * Added `AllyariaStyle` record struct in `Allyaria.Theming.Styles`
+        * Immutable composition of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts,
+          sizes, spacing)
+        * Provides `ToCss()` for combined inline CSS output
+        * Provides `ToCssHover()` for hover-state styling with palette hover variants
+        * Provides `ToCssVars()` for exporting combined CSS custom properties
+        * Implements value semantics via record struct equality
     * Added `Colors` static class in `Allyaria.Theming.Constants`
         * Provides strongly typed `AllyariaColorValue` properties for CSS Web and Material Design colors
         * Alphabetically organized for discoverability
         * Covers standard named colors (e.g., `Colors.Red`, `Colors.White`) and full Material tone sets (e.g.,
           `Colors.Blue500`, `Colors.GreenA400`)
+    * Added `Styles` static class in `Allyaria.Theming.Constants`
+        * Provides predefined `AllyariaStyle` presets: `Light`, `Dark`, and `HighContrast`
+        * Each preset combines an `AllyariaPalette` (foreground/background/borders) with `AllyariaTypography` (font
+          family/size)
+        * Supports `ToCss()`, `ToCssHover()`, and `ToCssVars()` through the underlying `AllyariaStyle`
+        * Serves as accessible defaults for light, dark, and high-contrast theming scenarios
 
 ### Updated/Fixed
 

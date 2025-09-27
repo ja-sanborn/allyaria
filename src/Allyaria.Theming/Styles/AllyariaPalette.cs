@@ -16,7 +16,7 @@ namespace Allyaria.Theming.Styles;
 public readonly record struct AllyariaPalette
 {
     /// <summary>The base background color as provided, before any precedence (e.g., border presence) is applied.</summary>
-    private readonly AllyariaColorValue _backgroundColor;
+    private readonly AllyariaColorValue? _backgroundColor;
 
     /// <summary>
     /// Optional explicit background hover color as provided by the caller; may be <see langword="null" /> to signal defaulting
@@ -24,11 +24,8 @@ public readonly record struct AllyariaPalette
     /// </summary>
     private readonly AllyariaColorValue? _backgroundHover;
 
-    /// <summary>
-    /// Optional background image (already transformed to include an overlay and <c>url(...)</c>) or <see langword="null" />
-    /// when no image was provided.
-    /// </summary>
-    private readonly AllyariaStringValue? _backgroundImage;
+    /// <summary>Optional background image or <see langword="null" /> when no image was provided.</summary>
+    private readonly string? _backgroundImage;
 
     /// <summary>
     /// Optional explicit border color as provided by the caller; may be <see langword="null" /> to signal defaulting to
@@ -40,12 +37,12 @@ public readonly record struct AllyariaPalette
     private readonly AllyariaStringValue? _borderRadius;
 
     /// <summary>Border style token (e.g., <c>solid</c>). Defaults to <c>solid</c> when not supplied.</summary>
-    private readonly AllyariaStringValue _borderStyle;
+    private readonly AllyariaStringValue? _borderStyle;
 
     /// <summary>
     /// Optional border width (e.g., <c>1px</c>) or <see langword="null" /> when no border should be rendered.
     /// </summary>
-    private readonly AllyariaStringValue? _borderWidth;
+    private readonly int? _borderWidth;
 
     /// <summary>
     /// Optional explicit foreground color as provided by the caller; may be <see langword="null" /> to signal contrast-based
@@ -105,24 +102,16 @@ public readonly record struct AllyariaPalette
         AllyariaStringValue? borderStyle = null,
         AllyariaStringValue? borderRadius = null)
     {
-        _backgroundImage = string.IsNullOrWhiteSpace(backgroundImage)
-            ? null
-            : new AllyariaStringValue(
-                $"linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5)),url(\"{backgroundImage.Trim().ToLowerInvariant()}\")"
-            );
-
-        _backgroundColor = backgroundColor ?? Colors.White;
+        _backgroundImage = backgroundImage;
+        _backgroundColor = backgroundColor;
         _backgroundHover = backgroundHoverColor;
         _foregroundColor = foregroundColor;
         _foregroundHover = foregroundHoverColor;
 
         _borderColor = borderColor;
         _borderRadius = borderRadius;
-        _borderStyle = borderStyle ?? new AllyariaStringValue("solid");
-
-        _borderWidth = borderWidth > 0
-            ? new AllyariaStringValue($"{borderWidth}px")
-            : null;
+        _borderStyle = borderStyle;
+        _borderWidth = borderWidth;
     }
 
     /// <summary>
@@ -130,9 +119,11 @@ public readonly record struct AllyariaPalette
     /// adjusted via <see cref="AllyariaColorValue.HoverColor()" /> for contrast.
     /// </summary>
     private AllyariaColorValue BackgroundColor
-        => HasBorder
-            ? _backgroundColor.HoverColor()
-            : _backgroundColor;
+        => _backgroundColor is null
+            ? Colors.White
+            : HasBorder
+                ? _backgroundColor.HoverColor()
+                : _backgroundColor;
 
     /// <summary>
     /// Gets the effective background hover color. Defaults to <see cref="BackgroundColor" />.
@@ -143,7 +134,12 @@ public readonly record struct AllyariaPalette
     /// <summary>
     /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
     /// </summary>
-    private AllyariaStringValue? BackgroundImage => _backgroundImage;
+    private AllyariaStringValue? BackgroundImage
+        => string.IsNullOrWhiteSpace(_backgroundImage)
+            ? null
+            : new AllyariaStringValue(
+                $"linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5)),url(\"{_backgroundImage.Trim().ToLowerInvariant()}\")"
+            );
 
     /// <summary>
     /// Gets the effective border color. If <see cref="HasBorder" /> is <see langword="false" />, the color is
@@ -158,12 +154,15 @@ public readonly record struct AllyariaPalette
     private AllyariaStringValue? BorderRadius => _borderRadius;
 
     /// <summary>Gets the border style token (e.g., <c>solid</c>).</summary>
-    private AllyariaStringValue BorderStyle => _borderStyle;
+    private AllyariaStringValue BorderStyle => _borderStyle ?? new AllyariaStringValue("solid");
 
     /// <summary>
     /// Gets the effective border width declaration value, or <see langword="null" /> when no border should be rendered.
     /// </summary>
-    private AllyariaStringValue? BorderWidth => _borderWidth;
+    private AllyariaStringValue? BorderWidth
+        => _borderWidth > 0
+            ? new AllyariaStringValue($"{_borderWidth}px")
+            : null;
 
     /// <summary>
     /// Gets the effective foreground (text) color. When not explicitly provided, this is computed from
@@ -219,11 +218,11 @@ public readonly record struct AllyariaPalette
             builder.Append(BorderColor.ToCss("border-color"));
             builder.Append(BorderStyle.ToCss("border-style"));
             builder.Append(BorderWidth!.ToCss("border-width"));
+        }
 
-            if (HasRadius)
-            {
-                builder.Append(BorderRadius!.ToCss("border-radius"));
-            }
+        if (HasRadius)
+        {
+            builder.Append(BorderRadius!.ToCss("border-radius"));
         }
 
         return builder.ToString();
@@ -257,11 +256,11 @@ public readonly record struct AllyariaPalette
             builder.Append(BorderColor.ToCss("border-color"));
             builder.Append(BorderStyle.ToCss("border-style"));
             builder.Append(BorderWidth!.ToCss("border-width"));
+        }
 
-            if (HasRadius)
-            {
-                builder.Append(BorderRadius!.ToCss("border-radius"));
-            }
+        if (HasRadius)
+        {
+            builder.Append(BorderRadius!.ToCss("border-radius"));
         }
 
         return builder.ToString();
@@ -294,11 +293,11 @@ public readonly record struct AllyariaPalette
             builder.Append(BorderColor.ToCss("--aa-border-color"));
             builder.Append(BorderStyle.ToCss("--aa-border-style"));
             builder.Append(BorderWidth!.ToCss("--aa-border-width"));
+        }
 
-            if (HasRadius)
-            {
-                builder.Append(BorderRadius!.ToCss("--aa-border-radius"));
-            }
+        if (HasRadius)
+        {
+            builder.Append(BorderRadius!.ToCss("--aa-border-radius"));
         }
 
         return builder.ToString();
