@@ -144,7 +144,7 @@ public readonly record struct AllyariaTypography(
     /// </remarks>
     public string ToCssVars(string prefix = "")
     {
-        var basePrefix = Regex.Replace(prefix, @"\s+|-+", "-").Trim('-').ToLowerInvariant();
+        var basePrefix = Regex.Replace(prefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 
         basePrefix = string.IsNullOrWhiteSpace(prefix)
             ? "--aa-"

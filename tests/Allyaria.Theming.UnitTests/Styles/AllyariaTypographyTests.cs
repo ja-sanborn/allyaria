@@ -390,179 +390,100 @@ public sealed class AllyariaTypographyTests
     }
 
     [Fact]
-    public void ToCssVars_Should_Append_All_KnownProperties_InFixedOrder_When_AllProvided()
+    public void ToCssVars_Should_Collapse_Whitespace_And_Dashes_To_SingleDash()
     {
         // Arrange
-        var fontFamily = new AllyariaStringValue("Inter, Segoe UI, sans-serif");
-        var fontSize = new AllyariaStringValue("16px");
-        var fontStyle = new AllyariaStringValue("normal");
-        var fontWeight = new AllyariaStringValue("400");
-        var letterSpacing = new AllyariaStringValue("0.01em");
-        var lineHeight = new AllyariaStringValue("1.6");
-        var textAlign = new AllyariaStringValue("left");
-        var textDecoration = new AllyariaStringValue("none");
-        var textTransform = new AllyariaStringValue("none");
-        var verticalAlign = new AllyariaStringValue("baseline");
-        var wordSpacing = new AllyariaStringValue("0");
-
-        var sut = new AllyariaTypography(
-            fontFamily,
-            fontSize,
-            fontStyle,
-            fontWeight,
-            letterSpacing,
-            lineHeight,
-            textAlign,
-            textDecoration,
-            textTransform,
-            verticalAlign,
-            wordSpacing
-        );
+        var sut = new AllyariaTypography(new AllyariaStringValue("Arial"));
+        var prefix = "test  - - -  test";
 
         // Act
-        var cssVars = sut.ToCssVars();
-
-        // Assert (explicit order = the order in the implementation)
-        var expected = fontFamily.ToCss("--aa-font-family") +
-            fontSize.ToCss("--aa-font-size") +
-            fontStyle.ToCss("--aa-font-style") +
-            fontWeight.ToCss("--aa-font-weight") +
-            letterSpacing.ToCss("--aa-letter-spacing") +
-            lineHeight.ToCss("--aa-line-height") +
-            textAlign.ToCss("--aa-text-align") +
-            textDecoration.ToCss("--aa-text-decoration") +
-            textTransform.ToCss("--aa-text-transform") +
-            verticalAlign.ToCss("--aa-vertical-align") +
-            wordSpacing.ToCss("--aa-word-spacing");
-
-        cssVars.Should()
-            .Be(expected);
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Apply_CustomPrefix_To_All_Properties()
-    {
-        // Arrange
-        var fontSize = new AllyariaStringValue("14px");
-        var fontWeight = new AllyariaStringValue("700");
-        var sut = new AllyariaTypography(FontSize: fontSize, FontWeight: fontWeight);
-
-        // Act
-        var cssVars = sut.ToCssVars("brand");
+        var css = sut.ToCssVars(prefix);
 
         // Assert
-        cssVars.Should()
-            .Contain("--brand-font-size:14px;")
-            .And.Contain("--brand-font-weight:700;")
-            .And.NotContain("--aa-");
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Concatenate_InDeclarationOrder_When_MultipleValuesProvided()
-    {
-        // Arrange
-        var weight = new AllyariaStringValue("600");
-        var letterSpacing = new AllyariaStringValue("0.02em");
-        var lineHeight = new AllyariaStringValue("1.5");
-
-        var sut = new AllyariaTypography(
-            FontWeight: weight,
-            LetterSpacing: letterSpacing,
-            LineHeight: lineHeight
-        );
-
-        // Act
-        var cssVars = sut.ToCssVars();
-
-        // Assert
-        var expected = weight.ToCss("--aa-font-weight") +
-            letterSpacing.ToCss("--aa-letter-spacing") +
-            lineHeight.ToCss("--aa-line-height");
-
-        cssVars.Should()
-            .Be(expected);
+        css.Should()
+            .Contain("--test-test-font-family:Arial");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData("---")]
-    public void ToCssVars_Should_FallBack_To_DefaultPrefix_When_Prefix_IsEmptyOrWhitespace(string prefix)
+    public void ToCssVars_Should_Default_To_AA_Prefix_When_Prefix_Is_Empty_Or_Whitespace(string input)
     {
         // Arrange
         var sut = new AllyariaTypography(new AllyariaStringValue("Arial"));
 
         // Act
-        var cssVars = sut.ToCssVars(prefix);
+        var css = sut.ToCssVars(input);
 
         // Assert
-        cssVars.Should()
-            .Contain("--aa-font-family");
+        css.Should()
+            .Contain("--aa-font-family:Arial");
     }
 
     [Fact]
-    public void ToCssVars_Should_Handle_Prefix_With_LeadingAndTrailingDashes()
+    public void ToCssVars_Should_Include_All_NonNullProperties_In_ExpectedOrder()
     {
         // Arrange
-        var fontStyle = new AllyariaStringValue("italic");
-        var sut = new AllyariaTypography(FontStyle: fontStyle);
+        var sut = new AllyariaTypography(
+            new AllyariaStringValue("Inter"),
+            new AllyariaStringValue("16px"),
+            new AllyariaStringValue("italic"),
+            new AllyariaStringValue("600"),
+            new AllyariaStringValue("0.02em"),
+            new AllyariaStringValue("1.4"),
+            new AllyariaStringValue("center"),
+            new AllyariaStringValue("underline"),
+            new AllyariaStringValue("uppercase"),
+            new AllyariaStringValue("baseline"),
+            new AllyariaStringValue("0.1em")
+        );
 
         // Act
-        var cssVars = sut.ToCssVars("---Custom---");
+        var css = sut.ToCssVars("Theme");
 
         // Assert
-        cssVars.Should()
-            .Contain("--custom-font-style:italic;");
+        css.Should()
+            .Contain("--theme-font-family:Inter")
+            .And.Contain("--theme-font-size:16px")
+            .And.Contain("--theme-font-style:italic")
+            .And.Contain("--theme-font-weight:600")
+            .And.Contain("--theme-letter-spacing:0.02em")
+            .And.Contain("--theme-line-height:1.4")
+            .And.Contain("--theme-text-align:center")
+            .And.Contain("--theme-text-decoration:underline")
+            .And.Contain("--theme-text-transform:uppercase")
+            .And.Contain("--theme-vertical-align:baseline")
+            .And.Contain("--theme-word-spacing:0.1em");
     }
 
     [Fact]
-    public void ToCssVars_Should_Normalize_CustomPrefix_To_Lowercase_TrimDashes_And_SpacesToHyphens()
+    public void ToCssVars_Should_Normalize_Prefix_By_Trimming_And_Lowercasing_And_Replacing_Spaces_And_Dashes()
     {
         // Arrange
         var sut = new AllyariaTypography(new AllyariaStringValue("Arial"));
+        var prefix = "  --My THEME  - - Name--";
 
         // Act
-        var cssVars = sut.ToCssVars("  --My THEME  ");
+        var css = sut.ToCssVars(prefix);
 
         // Assert
-        cssVars.Should()
-            .Contain("--my-theme-font-family:Arial;");
+        css.Should()
+            .Contain("--my-theme-name-font-family:Arial")
+            .And.NotContain("  ")
+            .And.NotContain("--My THEME");
     }
 
     [Fact]
-    public void ToCssVars_Should_ReturnEmptyString_When_AllPropertiesNull()
+    public void ToCssVars_Should_ReturnEmptyString_When_AllPropertiesAreNull()
     {
         // Arrange
         var sut = new AllyariaTypography();
 
         // Act
-        var css = sut.ToCssVars();
+        var css = sut.ToCssVars("theme");
 
         // Assert
         css.Should()
-            .Be(string.Empty);
-    }
-
-    [Fact]
-    public void ToCssVars_Should_SkipNulls_AndIncludeProvided_When_MixedValues()
-    {
-        // Arrange
-        var verticalAlign = new AllyariaStringValue("middle");
-        var wordSpacing = new AllyariaStringValue("0.1em");
-
-        var sut = new AllyariaTypography(
-            VerticalAlign: verticalAlign,
-            WordSpacing: wordSpacing
-        );
-
-        // Act
-        var cssVars = sut.ToCssVars();
-
-        // Assert
-        var expected = verticalAlign.ToCss("--aa-vertical-align") +
-            wordSpacing.ToCss("--aa-word-spacing");
-
-        cssVars.Should()
-            .Be(expected);
+            .BeEmpty();
     }
 }

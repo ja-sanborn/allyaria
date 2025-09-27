@@ -77,7 +77,7 @@ public readonly record struct AllyariaStyle
     /// </remarks>
     public string ToCssVars(string prefix = "")
     {
-        var basePrefix = Regex.Replace(prefix, @"\s+|-+", "-").Trim('-').ToLowerInvariant();
+        var basePrefix = Regex.Replace(prefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 
         if (string.IsNullOrWhiteSpace(basePrefix))
         {
