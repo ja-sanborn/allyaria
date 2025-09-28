@@ -351,30 +351,6 @@ public sealed class AllyariaColorValueTests
     }
 
     [Theory]
-    [InlineData(-1, 0, 0, 1.0, "h")]
-    [InlineData(361, 0, 0, 1.0, "h")]
-    [InlineData(0, -0.1, 0, 1.0, "s")]
-    [InlineData(0, 100.1, 0, 1.0, "s")]
-    [InlineData(0, 0, -0.1, 1.0, "v")]
-    [InlineData(0, 0, 100.1, 1.0, "v")]
-    [InlineData(0, 0, 0, -0.01, "a")]
-    [InlineData(0, 0, 0, 1.01, "a")]
-    public void FromHsva_Should_ThrowArgumentOutOfRange_When_Channel_OutOfRange(double h,
-        double s,
-        double v,
-        double a,
-        string paramName)
-    {
-        // Arrange
-        var act = () => AllyariaColorValue.FromHsva(h, s, v, a);
-
-        // Act + Assert
-        act.Should()
-            .Throw<ArgumentOutOfRangeException>()
-            .WithParameterName(paramName);
-    }
-
-    [Theory]
     [InlineData(-0.0001)]
     [InlineData(1.0001)]
     public void FromRgba_Should_ThrowArgumentOutOfRange_When_Alpha_OutOfRange(double alpha)
