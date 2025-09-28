@@ -793,7 +793,21 @@ public sealed class AllyariaColorValue : ValueBase
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
     /// <returns>The <see cref="AllyariaColorValue" /> from the HSVA channels.</returns>
-    public static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
+    public static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0)
+    {
+        var hh = h % 360.0;
+
+        if (hh < 0.0)
+        {
+            hh += 360.0;
+        }
+
+        var ss = Math.Clamp(s, 0.0, 100.0);
+        var vv = Math.Clamp(v, 0.0, 100.0);
+        var aa = Math.Clamp(a, 0.0, 1.0);
+
+        return new AllyariaColorValue(hh, ss, vv, aa);
+    }
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>

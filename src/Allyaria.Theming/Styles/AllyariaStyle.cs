@@ -35,9 +35,9 @@ public readonly record struct AllyariaStyle
     {
         Palette = palette;
         Typography = typography;
-        PaletteHover = paletteHover ?? palette;
+        PaletteHover = paletteHover ?? palette.ToHoverPalette();
         TypographyHover = typographyHover ?? typography;
-        PaletteDisabled = paletteDisabled ?? palette;
+        PaletteDisabled = paletteDisabled ?? palette.ToDisabledPalette();
         TypographyDisabled = typographyDisabled ?? typography;
     }
 

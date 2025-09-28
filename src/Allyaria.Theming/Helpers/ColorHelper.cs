@@ -5,12 +5,26 @@ using Allyaria.Theming.Values;
 namespace Allyaria.Theming.Helpers;
 
 /// <summary>
-/// Contrast/status helper: WCAG contrast computation and hue-preserving derivation for opaque colors. No allocations
-/// (static helper), no alpha/canvas handling. If the hue rail cannot achieve the target, guarantees a final
-/// mix-toward-black/white attempt.
+/// Color utilities: WCAG contrast computation, hue-preserving contrast repair for opaque colors, and small reusable
+/// helpers used by palette derivations (e.g., HSVA clamped creation, scalar blending). No allocations (static helper), no
+/// alpha/canvas blending.
 /// </summary>
-public static class ContrastHelper
+internal static class ColorHelper
 {
+    /// <summary>Linearly blends a scalar value toward a target by a factor in [0..1].</summary>
+    /// <param name="start">Starting value.</param>
+    /// <param name="target">Target value.</param>
+    /// <param name="t">
+    /// Blend factor in [0..1]. <c>0</c> returns <paramref name="start" />, <c>1</c> returns <paramref name="target" />.
+    /// </param>
+    /// <returns>The blended scalar.</returns>
+    public static double Blend(double start, double target, double t)
+    {
+        t = Math.Clamp(t, 0.0, 1.0);
+
+        return start + (target - start) * t;
+    }
+
     /// <summary>
     /// Chooses the initial direction to adjust V (HSV Value) to locally increase contrast (+1 brighten, -1 darken).
     /// </summary>
@@ -164,14 +178,23 @@ public static class ContrastHelper
         );
     }
 
+    /// <summary>
+    /// sRGB-space linear interpolation between two opaque colors. Note this is *not* perceptually uniform.
+    /// </summary>
+    /// <param name="a">Start color.</param>
+    /// <param name="b">End color.</param>
+    /// <param name="t">Blend factor in [0..1].</param>
+    /// <returns>Blended color in sRGB.</returns>
+    public static AllyariaColorValue MixSrgb(AllyariaColorValue a, AllyariaColorValue b, double t) => LerpSrgb(a, b, t);
+
     /// <summary>WCAG relative luminance from sRGB bytes.</summary>
-    /// <param name="c">Opaque sRGB color.</param>
+    /// <param name="color">Opaque sRGB color.</param>
     /// <returns>Relative luminance [0..1].</returns>
-    private static double RelativeLuminance(AllyariaColorValue c)
+    public static double RelativeLuminance(AllyariaColorValue color)
     {
-        var rl = SrgbToLinear(c.R);
-        var gl = SrgbToLinear(c.G);
-        var bl = SrgbToLinear(c.B);
+        var rl = SrgbToLinear(color.R);
+        var gl = SrgbToLinear(color.G);
+        var bl = SrgbToLinear(color.B);
 
         return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
     }

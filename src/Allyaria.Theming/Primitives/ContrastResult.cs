@@ -7,7 +7,7 @@ namespace Allyaria.Theming.Primitives;
 /// <param name="BackgroundColor">BackgroundColor (opaque).</param>
 /// <param name="ContrastRatio">Computed contrast ratio.</param>
 /// <param name="MeetsMinimum">Whether the minimum was achieved.</param>
-public readonly record struct ContrastResult(
+internal readonly record struct ContrastResult(
     AllyariaColorValue ForegroundColor,
     AllyariaColorValue BackgroundColor,
     double ContrastRatio,
