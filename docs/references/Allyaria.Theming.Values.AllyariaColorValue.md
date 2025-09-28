@@ -61,9 +61,6 @@ CSS Web color names, and Material Design palette names, and provides conversions
 * `override bool Equals(object? obj)` — Equality against another object.
 * `override int GetHashCode()` — Hash code based on canonical string.
 
-* `AllyariaColorValue HoverColor()` — Returns a hover-friendly variant (lighten by 20 if `V < 50`, otherwise darken by
-  20).
-* `AllyariaColorValue ShiftColor(double percent)` — Adjusts brightness (`−100` to `+100`).
 * `string ToCss(string? propertyName)` — Converts to CSS declaration string (`"property: #RRGGBBAA;"`) or returns value
   if no property.
 * `override string ToString()` — Returns canonical `#RRGGBBAA` form.

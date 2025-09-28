@@ -28,10 +28,6 @@ It supports:
     * `HexRgb`, `HexRgba`
     * `Rgb`, `Rgba`
     * `Hsv`, `Hsva`
-* **Helpers**:
-
-    * `HoverColor()` → lightens or darkens by 20% for hover states
-    * `ShiftColor(percent)` → adjust brightness by ±percent
 * **Equality & ordering** by canonical `#RRGGBBAA` string
 
 All numeric operations use `InvariantCulture`, ensuring consistent, predictable behavior across cultures.

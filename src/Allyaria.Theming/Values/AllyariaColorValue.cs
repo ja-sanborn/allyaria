@@ -865,20 +865,6 @@ public sealed class AllyariaColorValue : ValueBase
             : 1.0;
     }
 
-    /// <summary>
-    /// Produces a hover-friendly variant: if <see cref="V" /> &lt; 50, lightens by 20; otherwise darkens by 20. Alpha is
-    /// preserved.
-    /// </summary>
-    /// <returns>A new <see cref="AllyariaColorValue" /> adjusted for hover states.</returns>
-    public AllyariaColorValue HoverColor()
-    {
-        var delta = V < 50
-            ? 20
-            : -20;
-
-        return ShiftColor(delta);
-    }
-
     /// <summary>Converts HSV to RGB bytes.</summary>
     /// <param name="h">Hue in degrees (<c>0..360</c>).</param>
     /// <param name="s">Saturation in percent (<c>0..100</c>).</param>
@@ -1075,19 +1061,6 @@ public sealed class AllyariaColorValue : ValueBase
 
         // Value
         v = max * 100.0;
-    }
-
-    /// <summary>Adjusts <see cref="V" /> (value/brightness) by the specified percentage.</summary>
-    /// <param name="percent">A value in [-100..100]. Positive to lighten; negative to darken.</param>
-    /// <returns>A new color with adjusted brightness; alpha is preserved.</returns>
-    public AllyariaColorValue ShiftColor(double percent)
-    {
-        percent = Math.Clamp(percent, -100, 100);
-        RgbToHsv(R, G, B, out var h, out var s, out var v);
-        var v2 = Math.Clamp(v + percent, 0, 100);
-        HsvToRgb(h, s, v2, out var r2, out var g2, out var b2);
-
-        return new AllyariaColorValue(r2, g2, b2, A);
     }
 
     /// <summary>Converts a single hexadecimal digit to its numeric nibble value.</summary>

@@ -388,25 +388,6 @@ public sealed class AllyariaColorValueTests
             .WithParameterName("a");
     }
 
-    [Theory]
-    [InlineData("#202020FF", "#535353FF")]
-    [InlineData("#C0C0C0FF", "#8D8D8DFF")]
-    public void HoverColor_Lightens_Or_Darkens_By_20_Depending_On_V(string input, string expected)
-    {
-        // Arrange
-        var sut = new AllyariaColorValue(input);
-
-        // Act
-        var hover = sut.HoverColor();
-
-        // Assert
-        hover.HexRgba.Should()
-            .Be(expected);
-
-        hover.A.Should()
-            .Be(sut.A);
-    }
-
     [Fact]
     public void Hsv_For_Black_Is_Zeroes_And_Hue_Is_Zero()
     {
@@ -581,25 +562,6 @@ public sealed class AllyariaColorValueTests
         // Assert
         rgba.Should()
             .Be("rgba(255, 0, 0, 0.25)");
-    }
-
-    [Theory]
-    [InlineData("#000000FF", 50, "#808080FF")] // v=0 -> +50 => mid gray
-    [InlineData("#FFFFFF80", -50, "#80808080")] // v=100 -> -50 => mid gray (alpha preserved)
-    public void ShiftColor_Adjusts_V_Clamped_And_Preserves_Alpha(string input, double delta, string expectedHex)
-    {
-        // Arrange
-        var sut = new AllyariaColorValue(input);
-
-        // Act
-        var shifted = sut.ShiftColor(delta);
-
-        // Assert
-        shifted.HexRgba.Should()
-            .Be(expectedHex);
-
-        shifted.A.Should()
-            .Be(sut.A);
     }
 
     [Fact]

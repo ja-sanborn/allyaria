@@ -94,12 +94,7 @@ public readonly record struct AllyariaPalette
     /// Gets the effective background color after precedence is applied. When a border is present, the background is slightly
     /// adjusted via <see cref="AllyariaColorValue.HoverColor()" /> for contrast.
     /// </summary>
-    public AllyariaColorValue BackgroundColor
-        => _backgroundColor is null
-            ? Colors.White
-            : HasBorder
-                ? _backgroundColor.HoverColor()
-                : _backgroundColor;
+    public AllyariaColorValue BackgroundColor => _backgroundColor ?? Colors.White;
 
     /// <summary>
     /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
@@ -115,10 +110,7 @@ public readonly record struct AllyariaPalette
     /// Gets the effective border color. If <see cref="HasBorder" /> is <see langword="false" />, the color is
     /// <see cref="Colors.Transparent" />.
     /// </summary>
-    public AllyariaColorValue BorderColor
-        => _borderColor ?? (HasBorder
-            ? _backgroundColor ?? Colors.White
-            : Colors.Transparent);
+    public AllyariaColorValue BorderColor => _borderColor ?? BackgroundColor;
 
     /// <summary>Gets the effective border radius declaration value, or <see langword="null" /> when not set.</summary>
     public AllyariaStringValue? BorderRadius => _borderRadius;

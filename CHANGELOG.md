@@ -14,7 +14,6 @@
         * Supports hex, rgb(a), hsv(a), CSS Web names, and Material Design names
         * Provides conversions between RGBA and HSVA
         * Exposes multiple string forms (`HexRgb`, `HexRgba`, `Rgb`, `Rgba`, `Hsv`, `Hsva`)
-        * Includes helpers: `HoverColor()` (20% lighten/darken) and `ShiftColor(percent)`
         * Implements value equality and total ordering by canonical `#RRGGBBAA`
     * Added `AllyariaStringValue` in `Allyaria.Theming.Values`
 

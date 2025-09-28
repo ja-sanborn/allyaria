@@ -24,13 +24,7 @@ public readonly record struct AllyariaStyle
     {
         Palette = palette;
         Typography = typography;
-
-        PaletteHover = paletteHover
-            ?? palette.Cascade(
-                palette.BackgroundColor.HoverColor(),
-                palette.ForegroundColor.HoverColor()
-            );
-
+        PaletteHover = paletteHover ?? palette;
         TypographyHover = typographyHover ?? typography;
     }
 
