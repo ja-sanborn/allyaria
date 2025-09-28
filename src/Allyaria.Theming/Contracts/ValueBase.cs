@@ -108,6 +108,24 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>The raw string value.</returns>
     public override string ToString() => Value;
 
+    /// <summary>Validates and normalizes a raw string input for use in theming value objects.</summary>
+    /// <param name="value">The input string to validate. Must not be <c>null</c>, empty, or whitespace-only.</param>
+    /// <returns>A trimmed version of <paramref name="value" /> with leading and trailing whitespace removed.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is <c>null</c>, empty, consists only of whitespace, or contains disallowed
+    /// control characters (all Unicode control characters except tab, line feed, and carriage return).
+    /// </exception>
+    protected static string ValidateInput(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+
+        var trimmed = value.Trim();
+
+        return trimmed.Any(static ch => char.IsControl(ch) && ch is not '\t' and not '\n' and not '\r')
+            ? throw new ArgumentException("Value contains control characters.", nameof(value))
+            : trimmed;
+    }
+
     /// <summary>Determines whether two instances are equal.</summary>
     public static bool operator ==(ValueBase? left, ValueBase? right) => Compare(left, right) == 0;
 
