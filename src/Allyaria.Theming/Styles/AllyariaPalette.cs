@@ -1,4 +1,5 @@
 ﻿using Allyaria.Theming.Constants;
+using Allyaria.Theming.Helpers;
 using Allyaria.Theming.Values;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -90,10 +91,7 @@ public readonly record struct AllyariaPalette
         _foregroundColor = foregroundColor;
     }
 
-    /// <summary>
-    /// Gets the effective background color after precedence is applied. When a border is present, the background is slightly
-    /// adjusted via <see cref="AllyariaColorValue.HoverColor()" /> for contrast.
-    /// </summary>
+    /// <summary>Gets the effective background color after precedence is applied.</summary>
     public AllyariaColorValue BackgroundColor => _backgroundColor ?? Colors.White;
 
     /// <summary>
@@ -127,13 +125,49 @@ public readonly record struct AllyariaPalette
             : null;
 
     /// <summary>
-    /// Gets the effective foreground (text) color. When not explicitly provided, this is computed from
-    /// <see cref="BackgroundColor" /> value/lightness for accessible contrast (dark backgrounds → white; light → black).
+    /// Gets the resolved foreground color to render against <see cref="BackgroundColor" />:
+    /// <list type="bullet">
+    ///     <item>
+    ///         <description>
+    ///         If no explicit foreground is set (<c>_foregroundColor</c> is <see langword="null" />), the getter chooses
+    ///         whichever of <see cref="Colors.White" /> or <see cref="Colors.Black" /> produces the higher WCAG contrast ratio
+    ///         against <see cref="BackgroundColor" />.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///         If an explicit foreground is provided, the getter ensures it meets at least the minimum accessibility contrast
+    ///         ratio (default 4.5:1 for normal text) using <see cref="ContrastHelper" />; it will preserve the original hue if
+    ///         possible and, if needed, adjust lightness or mix toward black/white to reach the target.
+    ///         </description>
+    ///     </item>
+    /// </list>
     /// </summary>
+    /// <remarks>
+    /// This property uses real WCAG contrast calculations rather than brightness heuristics (e.g. V or H from HSV). It ensures
+    /// text remains readable and accessible on the current background color while honoring any explicitly provided foreground
+    /// when possible.
+    /// </remarks>
     public AllyariaColorValue ForegroundColor
-        => _foregroundColor ?? (BackgroundColor.V < 50.0
-            ? Colors.White
-            : Colors.Black);
+    {
+        get
+        {
+            if (_foregroundColor is null)
+            {
+                var rWhite = ContrastHelper.ContrastRatio(Colors.White, BackgroundColor);
+                var rBlack = ContrastHelper.ContrastRatio(Colors.Black, BackgroundColor);
+
+                return rWhite >= rBlack
+                    ? Colors.White
+                    : Colors.Black;
+            }
+
+            // Ensure the explicit color meets contrast over the *effective* BackgroundColor
+            var result = ContrastHelper.EnsureMinimumContrast(_foregroundColor, BackgroundColor, 4.5);
+
+            return result.ForegroundColor;
+        }
+    }
 
     /// <summary>
     /// Gets a value indicating whether a background image is set and should take precedence over background color.
