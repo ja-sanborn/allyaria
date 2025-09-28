@@ -11,7 +11,4 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Allyaria.Theming.UnitTests"/>
     </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Allyaria.Primitives\Allyaria.Primitives.csproj"/>
-    </ItemGroup>
 </Project>

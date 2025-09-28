@@ -7,6 +7,24 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AllyariaPaletteTests
 {
     [Fact]
+    public void BorderColor_Should_Be_Transparent_When_No_Border_And_No_Explicit_Color()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.Black,
+            Colors.White,
+            borderWidth: 0
+        );
+
+        // Act
+        var actual = sut.BorderColor;
+
+        // Assert
+        actual.Should()
+            .Be(Colors.Transparent);
+    }
+
+    [Fact]
     public void BorderColor_Should_Default_To_BackgroundColor_Hover_When_Border_Present_And_No_Explicit_BorderColor()
     {
         // Arrange
@@ -25,6 +43,61 @@ public sealed class AllyariaPaletteTests
         // Assert
         css.Should()
             .Contain("border-color:#202020FF");
+    }
+
+    [Fact]
+    public void BorderColor_Should_Default_To_BackgroundColor_When_Border_Present_And_No_Explicit_Color()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.Black,
+            Colors.White,
+            borderWidth: 2
+        );
+
+        // Act
+        var actual = sut.BorderColor;
+
+        // Assert
+        actual.Should()
+            .Be(Colors.Black);
+    }
+
+    [Fact]
+    public void BorderColor_Should_Default_To_White_When_Border_Present_And_Background_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            null,
+            Colors.Black,
+            borderWidth: 1
+        );
+
+        // Act
+        var actual = sut.BorderColor;
+
+        // Assert
+        actual.Should()
+            .Be(Colors.White);
+    }
+
+    [Fact]
+    public void BorderColor_Should_Return_Explicit_Color_When_Provided_Irrespective_Of_Border()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            borderWidth: 0,
+            borderColor: Colors.Red
+        );
+
+        // Act
+        var actual = sut.BorderColor;
+
+        // Assert
+        actual.Should()
+            .Be(Colors.Red);
     }
 
     [Fact]
