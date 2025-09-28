@@ -34,6 +34,7 @@ public sealed class AllyariaPaletteTests
             darkBg,
             Colors.White,
             "",
+            false,
             2
         );
 
@@ -108,6 +109,7 @@ public sealed class AllyariaPaletteTests
             Colors.White,
             Colors.Black,
             "",
+            false,
             1,
             Colors.Red
         );
@@ -504,6 +506,7 @@ public sealed class AllyariaPaletteTests
             Colors.White,
             Colors.Black,
             "",
+            false,
             2,
             Colors.Black,
             new AllyariaStringValue("dashed"),

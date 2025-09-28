@@ -120,21 +120,25 @@ public sealed class AllyariaImageValue : ValueBase
     /// </exception>
     public static AllyariaImageValue Parse(string value) => new(value);
 
-    /// <summary>Builds a CSS declaration for the background image with a contrast-helping overlay.</summary>
-    /// <param name="backgroundColor">The known page/background color beneath the image.</param>
+    /// <summary>Builds CSS declarations for a background image with a contrast-enhancing overlay.</summary>
+    /// <param name="backgroundColor">
+    /// The known page or container background color beneath the image. Used to determine whether the overlay should be dark or
+    /// light for better contrast.
+    /// </param>
     /// <param name="stretch">
-    /// If <c>true</c>, returns a <c>background</c> shorthand declaration in which <em>both</em> layers—the gradient and the
-    /// image—include <c>center / cover no-repeat</c> so the image fills the area: <c>background: linear-gradient(...)</c>
-    /// <c> center / cover no-repeat, url("…") center / cover no-repeat;</c>. If <c>false</c>, returns a simpler
-    /// <c>background-image</c> declaration: <c>background-image: linear-gradient(...), url("…");</c>.
+    /// If <c>true</c>, returns a set of individual CSS declarations—<c>background-image</c>, <c>background-position</c>,
+    /// <c>background-repeat</c>, and <c>background-size</c>—so that the image covers the area and is centered with no repeat.
+    /// If <c>false</c>, returns only a single <c>background-image</c> declaration (no extra sizing or positioning).
     /// </param>
     /// <returns>
-    /// A single CSS declaration string that includes the computed overlay and the image URL. The property name used is
-    /// <c>background</c> when <paramref name="stretch" /> is <c>true</c>; otherwise <c>background-image</c>.
+    /// A CSS string: either just a <c>background-image</c> property (when <paramref name="stretch" /> is <c>false</c>), or
+    /// multiple declarations joined together to achieve a centered, cover-filling background (when <paramref name="stretch" />
+    /// is <c>true</c>).
     /// </returns>
     /// <remarks>
-    /// The overlay increases contrast: for light backgrounds (higher luminance) the overlay is <c>rgba(0, 0, 0, 0.5)</c>; for
-    /// dark backgrounds it is <c>rgba(255, 255, 255, 0.5)</c>.
+    /// The overlay increases contrast: – For light backgrounds (relative luminance ≥ 0.5), it uses <c>rgba(0,0,0,0.5)</c>. –
+    /// For dark backgrounds, it uses <c>rgba(255,255,255,0.5)</c>. This helps keep the background image legible regardless of
+    /// the page’s base color.
     /// </remarks>
     public string ToCssBackground(AllyariaColorValue backgroundColor, bool stretch = true)
     {
@@ -144,11 +148,53 @@ public sealed class AllyariaImageValue : ValueBase
             ? "rgba(0, 0, 0, 0.5)"
             : "rgba(255, 255, 255, 0.5)";
 
-        var gradient = $"linear-gradient({overlay},{overlay})";
+        var image = $"background-image:linear-gradient({overlay},{overlay}),{Value};";
+        var position = "background-position:center;";
+        var repeat = "background-repeat:no-repeat;";
+        var size = "background-size:cover";
 
         return stretch
-            ? $"background:{gradient} center / cover no-repeat,{Value} center / cover no-repeat"
-            : $"background-image:{gradient},{Value}";
+            ? $"{image}{position}{repeat}{size}"
+            : image;
+    }
+
+    /// <summary>Builds CSS variables for a background image with a contrast-enhancing overlay.</summary>
+    /// <param name="prefix">An string used to namespace the CSS variables.</param>
+    /// <param name="backgroundColor">
+    /// The known page or container background color beneath the image. Used to determine whether the overlay should be dark or
+    /// light for better contrast.
+    /// </param>
+    /// <param name="stretch">
+    /// If <c>true</c>, returns a set of individual CSS variables—<c>background-image</c>, <c>background-position</c>,
+    /// <c>background-repeat</c>, and <c>background-size</c>—so that the image covers the area and is centered with no repeat.
+    /// If <c>false</c>, returns only a single <c>background-image</c> declaration (no extra sizing or positioning).
+    /// </param>
+    /// <returns>
+    /// A CSS string: either just a <c>background-image</c> variable (when <paramref name="stretch" /> is <c>false</c>), or
+    /// multiple variables joined together to achieve a centered, cover-filling background (when <paramref name="stretch" /> is
+    /// <c>true</c>).
+    /// </returns>
+    /// <remarks>
+    /// The overlay increases contrast: – For light backgrounds (relative luminance ≥ 0.5), it uses <c>rgba(0,0,0,0.5)</c>. –
+    /// For dark backgrounds, it uses <c>rgba(255,255,255,0.5)</c>. This helps keep the background image legible regardless of
+    /// the page’s base color.
+    /// </remarks>
+    public string ToCssVarsBackground(string prefix, AllyariaColorValue backgroundColor, bool stretch = true)
+    {
+        var lum = ColorHelper.RelativeLuminance(backgroundColor);
+
+        var overlay = lum >= 0.5
+            ? "rgba(0, 0, 0, 0.5)"
+            : "rgba(255, 255, 255, 0.5)";
+
+        var image = $"{prefix}background-image:linear-gradient({overlay},{overlay}),{Value};";
+        var position = $"{prefix}background-position:center;";
+        var repeat = $"{prefix}background-repeat:no-repeat;";
+        var size = $"{prefix}background-size:cover";
+
+        return stretch
+            ? $"{image}{position}{repeat}{size}"
+            : image;
     }
 
     /// <summary>Attempts to parse the specified string into an <see cref="AllyariaImageValue" />.</summary>
@@ -210,5 +256,5 @@ public sealed class AllyariaImageValue : ValueBase
     /// <returns>The underlying normalized string value (a canonical CSS <c>url("…")</c> token).</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
     public static implicit operator string(AllyariaImageValue value)
-        => value?.Value ?? throw new ArgumentNullException(nameof(value));
+        => value.Value ?? throw new ArgumentNullException(nameof(value));
 }
