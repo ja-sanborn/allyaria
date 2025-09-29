@@ -14,20 +14,26 @@
         * Supports hex, rgb(a), hsv(a), CSS Web names, and Material Design names
         * Provides conversions between RGBA and HSVA
         * Exposes multiple string forms (`HexRgb`, `HexRgba`, `Rgb`, `Rgba`, `Hsv`, `Hsva`)
-        * Includes helpers: `HoverColor()` (20% lighten/darken) and `ShiftColor(percent)`
         * Implements value equality and total ordering by canonical `#RRGGBBAA`
     * Added `AllyariaStringValue` in `Allyaria.Theming.Values`
 
         * Immutable, validated wrapper for theme strings (trimmed; rejects null/whitespace)
         * Provides `Parse` and `TryParse` helpers
         * Implicit conversions: `string → AllyariaStringValue` and `AllyariaStringValue → string`
+    * Added `AllyariaImageValue` in `Allyaria.Theming.Values`
+
+        * Immutable, strongly typed CSS image token with canonical `url("…")` wrapping
+        * Allows only safe URL schemes and normalizes inputs
+        * Provides `Parse` and `TryParse` helpers
+        * Provides CSS helpers like `ToCss()` and background emission helpers
+        * Implicit conversions: `string → AllyariaImageValue` and `AllyariaImageValue → string`
     * Added `AllyariaPalette` struct in `Allyaria.Theming.Styles`
 
-        * Provides immutable, strongly typed palette for background, foreground, border, and hover states
+        * Provides immutable, strongly typed palette for background, foreground, border, hover, and disabled states
         * Enforces theming precedence rules (background images > background colors, explicit overrides > defaults,
           borders opt-in)
         * Computes accessible foreground colors when not explicitly set
-        * Supports hover state adjustment when a border is present for better contrast
+        * Supports hover and disabled state derivation while preserving hue
         * Supports `Cascade()` method to create derived palettes by selectively overriding base values
         * Supports `ToCss()` for inline CSS generation
         * Supports `ToCssVars(string prefix = "")` for emitting CSS custom properties with normalized prefixes
@@ -45,8 +51,19 @@
           sizes, spacing)
         * Provides `ToCss()` for combined inline CSS output
         * Provides `ToCssHover()` for combined inline CSS hover output
-        * Provides `ToCssVars(string prefix = "")` for exporting combined CSS custom properties including hover states
+        * Provides `ToCssVars(string prefix = "")` for exporting combined CSS custom properties including hover and
+          disabled states
         * Implements value semantics via record struct equality
+    * Added `ColorHelper` static class in `Allyaria.Theming.Helpers`
+
+        * Provides WCAG-aware contrast ratio calculation
+        * Ensures minimum contrast by adjusting foreground colors while preserving hue where possible
+        * Provides sRGB color mixing and scalar blending
+        * Provides relative luminance calculations
+    * Added `ContrastResult` record struct in `Allyaria.Theming.Primitives`
+
+        * Immutable result describing resolved foreground and background colors, achieved contrast ratio, and compliance
+          with minimum requirements
     * Added `Colors` static class in `Allyaria.Theming.Constants`
 
         * Provides strongly typed `AllyariaColorValue` properties for CSS Web and Material Design colors

@@ -12,36 +12,49 @@ public readonly record struct AllyariaStyle
     /// <summary>Initializes a new instance of the <see cref="AllyariaStyle" /> struct.</summary>
     /// <param name="palette">The color palette to apply.</param>
     /// <param name="typography">The typography settings to apply.</param>
-    /// <param name="paletteHover">The color palette to apply for hover effects. Defaults to a derived hover palette.</param>
+    /// <param name="paletteHover">
+    /// The color palette to apply for hover effects. If null, it is derived from <paramref name="palette" />.
+    /// </param>
     /// <param name="typographyHover">
     /// The typography settings to apply for hover effects. Defaults to
+    /// <paramref name="typography" />.
+    /// </param>
+    /// <param name="paletteDisabled">
+    /// The color palette to apply for disabled state. If null, it is derived from <paramref name="palette" />.
+    /// </param>
+    /// <param name="typographyDisabled">
+    /// The typography settings to apply for disabled state. Defaults to
     /// <paramref name="typography" />.
     /// </param>
     public AllyariaStyle(AllyariaPalette palette,
         AllyariaTypography typography,
         AllyariaPalette? paletteHover = null,
-        AllyariaTypography? typographyHover = null)
+        AllyariaTypography? typographyHover = null,
+        AllyariaPalette? paletteDisabled = null,
+        AllyariaTypography? typographyDisabled = null)
     {
         Palette = palette;
         Typography = typography;
-
-        PaletteHover = paletteHover
-            ?? palette.Cascade(
-                palette.BackgroundColor.HoverColor(),
-                palette.ForegroundColor.HoverColor()
-            );
-
+        PaletteHover = paletteHover ?? palette.ToHoverPalette();
         TypographyHover = typographyHover ?? typography;
+        PaletteDisabled = paletteDisabled ?? palette.ToDisabledPalette();
+        TypographyDisabled = typographyDisabled ?? typography;
     }
 
     /// <summary>Gets the color palette to apply.</summary>
     public AllyariaPalette Palette { get; }
+
+    /// <summary>Gets the color palette to apply for disabled state.</summary>
+    public AllyariaPalette PaletteDisabled { get; }
 
     /// <summary>Gets the color palette to apply for hover effects.</summary>
     public AllyariaPalette PaletteHover { get; }
 
     /// <summary>Gets the typography settings to apply.</summary>
     public AllyariaTypography Typography { get; }
+
+    /// <summary>Gets the typography settings to apply for disabled state.</summary>
+    public AllyariaTypography TypographyDisabled { get; }
 
     /// <summary>Gets the typography settings to apply for hover effects.</summary>
     public AllyariaTypography TypographyHover { get; }
@@ -84,11 +97,14 @@ public readonly record struct AllyariaStyle
             basePrefix = "aa";
         }
 
+        var disabledPrefix = $"{basePrefix}-disabled";
         var hoverPrefix = $"{basePrefix}-hover";
 
         return string.Concat(
             Palette.ToCssVars(basePrefix),
             Typography.ToCssVars(basePrefix),
+            PaletteDisabled.ToCssVars(disabledPrefix),
+            TypographyDisabled.ToCssVars(disabledPrefix),
             PaletteHover.ToCssVars(hoverPrefix),
             TypographyHover.ToCssVars(hoverPrefix)
         );

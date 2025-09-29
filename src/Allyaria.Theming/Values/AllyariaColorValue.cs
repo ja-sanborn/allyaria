@@ -505,26 +505,6 @@ public sealed class AllyariaColorValue : ValueBase
     private AllyariaColorValue(double h, double s, double v, double a = 1.0)
         : base(string.Empty)
     {
-        if (h is < 0 or > 360)
-        {
-            throw new ArgumentOutOfRangeException(nameof(h), h, "H must be between 0 and 360.");
-        }
-
-        if (s is < 0 or > 100)
-        {
-            throw new ArgumentOutOfRangeException(nameof(s), s, "S must be between 0 and 100.");
-        }
-
-        if (v is < 0 or > 100)
-        {
-            throw new ArgumentOutOfRangeException(nameof(v), v, "V must be between 0 and 100.");
-        }
-
-        if (a is < 0 or > 1.0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(a), a, "A must be between 0 and 1.0.");
-        }
-
         HsvToRgb(h, s, v, out var r, out var g, out var b);
         R = r;
         G = g;
@@ -793,7 +773,21 @@ public sealed class AllyariaColorValue : ValueBase
     /// <param name="v">Value (brightness) in percent, clamped to [0..100].</param>
     /// <param name="a">Alpha in [0..1], clamped.</param>
     /// <returns>The <see cref="AllyariaColorValue" /> from the HSVA channels.</returns>
-    public static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0) => new(h, s, v, a);
+    public static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0)
+    {
+        var hh = h % 360.0;
+
+        if (hh < 0.0)
+        {
+            hh += 360.0;
+        }
+
+        var ss = Math.Clamp(s, 0.0, 100.0);
+        var vv = Math.Clamp(v, 0.0, 100.0);
+        var aa = Math.Clamp(a, 0.0, 1.0);
+
+        return new AllyariaColorValue(hh, ss, vv, aa);
+    }
 
     /// <summary>Parses an <c>hsv(H,S%,V%)</c> or <c>hsva(H,S%,V%,A)</c> CSS color function.</summary>
     /// <param name="s">The input string to parse.</param>
@@ -863,20 +857,6 @@ public sealed class AllyariaColorValue : ValueBase
         a = m.Groups["a"].Success
             ? Math.Clamp(ParseDouble(m.Groups["a"].Value, "a", 0, 1), 0.0, 1.0)
             : 1.0;
-    }
-
-    /// <summary>
-    /// Produces a hover-friendly variant: if <see cref="V" /> &lt; 50, lightens by 20; otherwise darkens by 20. Alpha is
-    /// preserved.
-    /// </summary>
-    /// <returns>A new <see cref="AllyariaColorValue" /> adjusted for hover states.</returns>
-    public AllyariaColorValue HoverColor()
-    {
-        var delta = V < 50
-            ? 20
-            : -20;
-
-        return ShiftColor(delta);
     }
 
     /// <summary>Converts HSV to RGB bytes.</summary>
@@ -1075,19 +1055,6 @@ public sealed class AllyariaColorValue : ValueBase
 
         // Value
         v = max * 100.0;
-    }
-
-    /// <summary>Adjusts <see cref="V" /> (value/brightness) by the specified percentage.</summary>
-    /// <param name="percent">A value in [-100..100]. Positive to lighten; negative to darken.</param>
-    /// <returns>A new color with adjusted brightness; alpha is preserved.</returns>
-    public AllyariaColorValue ShiftColor(double percent)
-    {
-        percent = Math.Clamp(percent, -100, 100);
-        RgbToHsv(R, G, B, out var h, out var s, out var v);
-        var v2 = Math.Clamp(v + percent, 0, 100);
-        HsvToRgb(h, s, v2, out var r2, out var g2, out var b2);
-
-        return new AllyariaColorValue(r2, g2, b2, A);
     }
 
     /// <summary>Converts a single hexadecimal digit to its numeric nibble value.</summary>

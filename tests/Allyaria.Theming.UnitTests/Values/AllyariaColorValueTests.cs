@@ -96,6 +96,20 @@ public sealed class AllyariaColorValueTests
     }
 
     [Theory]
+    [InlineData("hsva(0, 0%, 0%, -0.01)")]
+    [InlineData("hsva(0, 0%, 0%, 1.01)")]
+    public void Ctor_String_Hsva_Alpha_OutOfRange_Throws(string input)
+    {
+        // Arrange + Act
+        var sut = () => new AllyariaColorValue(input);
+
+        // Assert
+        sut.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("*Unrecognized color*");
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("not-a-color")]
     [InlineData("#12")]
@@ -324,6 +338,17 @@ public sealed class AllyariaColorValueTests
     }
 
     [Fact]
+    public void FromHsva_Covers_HsvToRgb_Sector3()
+    {
+        // Arrange + Act
+        var sut = AllyariaColorValue.FromHsva(180, 100, 100); // sector 3
+
+        // Assert
+        sut.HexRgba.Should()
+            .Be("#00FFFFFF");
+    }
+
+    [Fact]
     public void FromHsva_Grayscale_When_Saturation_Is_Zero()
     {
         // Arrange
@@ -351,27 +376,20 @@ public sealed class AllyariaColorValueTests
     }
 
     [Theory]
-    [InlineData(-1, 0, 0, 1.0, "h")]
-    [InlineData(361, 0, 0, 1.0, "h")]
-    [InlineData(0, -0.1, 0, 1.0, "s")]
-    [InlineData(0, 100.1, 0, 1.0, "s")]
-    [InlineData(0, 0, -0.1, 1.0, "v")]
-    [InlineData(0, 0, 100.1, 1.0, "v")]
-    [InlineData(0, 0, 0, -0.01, "a")]
-    [InlineData(0, 0, 0, 1.01, "a")]
-    public void FromHsva_Should_ThrowArgumentOutOfRange_When_Channel_OutOfRange(double h,
+    [InlineData(-720.0, 150.0, -50.0, 2.0, "#000000FF")] // hue normalizes to 0, s/v clamp, a clamp to 1.0
+    [InlineData(-1.0, -10.0, 150.0, -0.5, "#FFFFFF00")] // hue normalizes, s->0 (white), v->100, a->0
+    public void FromHsva_Should_Clamp_And_Normalize_When_Inputs_OutOfRange(double h,
         double s,
         double v,
         double a,
-        string paramName)
+        string expectedHex)
     {
-        // Arrange
-        var act = () => AllyariaColorValue.FromHsva(h, s, v, a);
+        // Arrange + Act
+        var sut = AllyariaColorValue.FromHsva(h, s, v, a);
 
-        // Act + Assert
-        act.Should()
-            .Throw<ArgumentOutOfRangeException>()
-            .WithParameterName(paramName);
+        // Assert
+        sut.HexRgba.Should()
+            .Be(expectedHex);
     }
 
     [Theory]
@@ -386,25 +404,6 @@ public sealed class AllyariaColorValueTests
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
             .WithParameterName("a");
-    }
-
-    [Theory]
-    [InlineData("#202020FF", "#535353FF")]
-    [InlineData("#C0C0C0FF", "#8D8D8DFF")]
-    public void HoverColor_Lightens_Or_Darkens_By_20_Depending_On_V(string input, string expected)
-    {
-        // Arrange
-        var sut = new AllyariaColorValue(input);
-
-        // Act
-        var hover = sut.HoverColor();
-
-        // Assert
-        hover.HexRgba.Should()
-            .Be(expected);
-
-        hover.A.Should()
-            .Be(sut.A);
     }
 
     [Fact]
@@ -583,25 +582,6 @@ public sealed class AllyariaColorValueTests
             .Be("rgba(255, 0, 0, 0.25)");
     }
 
-    [Theory]
-    [InlineData("#000000FF", 50, "#808080FF")] // v=0 -> +50 => mid gray
-    [InlineData("#FFFFFF80", -50, "#80808080")] // v=100 -> -50 => mid gray (alpha preserved)
-    public void ShiftColor_Adjusts_V_Clamped_And_Preserves_Alpha(string input, double delta, string expectedHex)
-    {
-        // Arrange
-        var sut = new AllyariaColorValue(input);
-
-        // Act
-        var shifted = sut.ShiftColor(delta);
-
-        // Assert
-        shifted.HexRgba.Should()
-            .Be(expectedHex);
-
-        shifted.A.Should()
-            .Be(sut.A);
-    }
-
     [Fact]
     public void ToCss_Should_Not_Include_Spaces_Around_Colon_And_Must_End_With_Semicolon()
     {
@@ -722,6 +702,27 @@ public sealed class AllyariaColorValueTests
 
         mat?.HexRgb.Should()
             .Be("#B39DDB");
+    }
+
+    [Fact]
+    public void TryParse_ReturnsTrue_For_ShortHex_Forms_RGB_And_RGBA()
+    {
+        // Arrange + Act
+        var okRgb = AllyariaColorValue.TryParse("#abc", out var rgb);
+        var okRgba = AllyariaColorValue.TryParse("#0f3c", out var rgba);
+
+        // Assert
+        okRgb.Should()
+            .BeTrue();
+
+        rgb!.HexRgba.Should()
+            .Be("#AABBCCFF");
+
+        okRgba.Should()
+            .BeTrue();
+
+        rgba!.HexRgba.Should()
+            .Be("#00FF33CC");
     }
 
     [Fact]

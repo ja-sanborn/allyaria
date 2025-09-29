@@ -140,4 +140,16 @@ public sealed class AllyariaStringValueTests
         result.Value.Should()
             .Be("something");
     }
+
+    [Fact]
+    public void ValidateInput_Should_Throw_When_Value_Has_Disallowed_Control_Characters_Invoked()
+    {
+        // Arrange + Act
+        var sut = () => new AllyariaStringValue($"ok{Environment.NewLine}bad");
+
+        // Assert
+        sut.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("*Value contains control characters.*");
+    }
 }

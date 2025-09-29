@@ -14,13 +14,10 @@ public sealed class AllyariaStringValue : ValueBase
     /// <summary>Normalizes the input string by trimming and validating it.</summary>
     /// <param name="value">The string value to normalize.</param>
     /// <returns>The normalized (trimmed) string.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is <c>null</c>, empty, or whitespace.</exception>
-    private static string Normalize(string value)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-
-        return value.Trim();
-    }
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value" /> is <c>null</c>, empty, whitespace, or contains control characters.
+    /// </exception>
+    private static string Normalize(string value) => ValidateInput(value);
 
     /// <summary>Parses the specified string into an <see cref="AllyariaStringValue" />.</summary>
     /// <param name="value">The input string to parse.</param>
