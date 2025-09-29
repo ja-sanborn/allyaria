@@ -1,4 +1,5 @@
 ﻿using Allyaria.Theming.Values;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Primitives;
 
@@ -7,6 +8,7 @@ namespace Allyaria.Theming.Primitives;
 /// <param name="BackgroundColor">BackgroundColor (opaque).</param>
 /// <param name="ContrastRatio">Computed contrast ratio.</param>
 /// <param name="MeetsMinimum">Whether the minimum was achieved.</param>
+[ExcludeFromCodeCoverage(Justification = "This is a simple readonly record struct with no logic.")]
 internal readonly record struct ContrastResult(
     AllyariaColorValue ForegroundColor,
     AllyariaColorValue BackgroundColor,

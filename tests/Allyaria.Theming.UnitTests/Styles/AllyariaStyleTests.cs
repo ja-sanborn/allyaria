@@ -7,6 +7,24 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AllyariaStyleTests
 {
     [Fact]
+    public void Constructor_Should_Use_Derived_DisabledPalette_When_PaletteDisabled_NotProvided()
+    {
+        // Arrange
+        var palette = new AllyariaPalette(Colors.White, Colors.Black);
+        var typography = new AllyariaTypography(new AllyariaStringValue("Arial"));
+
+        // Act
+        var sut = new AllyariaStyle(palette, typography);
+
+        // Assert
+        sut.PaletteDisabled.Should()
+            .NotBeNull();
+
+        sut.PaletteDisabled.Should()
+            .NotBeEquivalentTo(palette); // disabled derived with different colors
+    }
+
+    [Fact]
     public void Constructor_Should_Use_Derived_HoverPalette_When_PaletteHover_NotProvided()
     {
         // Arrange
@@ -25,6 +43,22 @@ public sealed class AllyariaStyleTests
 
         sut.TypographyHover.Should()
             .BeEquivalentTo(typography);
+    }
+
+    [Fact]
+    public void Constructor_Should_Use_Provided_DisabledPalette_When_Specified()
+    {
+        // Arrange
+        var palette = new AllyariaPalette(Colors.White, Colors.Black);
+        var typography = new AllyariaTypography(new AllyariaStringValue("Arial"));
+        var disabledPalette = new AllyariaPalette(Colors.Red, Colors.Blue);
+
+        // Act
+        var sut = new AllyariaStyle(palette, typography, null, null, disabledPalette);
+
+        // Assert
+        sut.PaletteDisabled.Should()
+            .BeEquivalentTo(disabledPalette);
     }
 
     [Fact]
