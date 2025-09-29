@@ -201,8 +201,6 @@ public sealed class ColorHelperTests
         // Arrange
         var fg = Colors.White;
         var bg = Colors.Black;
-        const double minimum = 3.0;
-
         var startRatio = ColorHelper.ContrastRatio(fg, bg);
 
         // Act
