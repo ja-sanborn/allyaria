@@ -255,6 +255,5 @@ public sealed class AllyariaImageValue : ValueBase
     /// <param name="value">The <see cref="AllyariaImageValue" /> instance.</param>
     /// <returns>The underlying normalized string value (a canonical CSS <c>url("…")</c> token).</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator string(AllyariaImageValue value)
-        => value.Value ?? throw new ArgumentNullException(nameof(value));
+    public static implicit operator string(AllyariaImageValue value) => value.Value;
 }
