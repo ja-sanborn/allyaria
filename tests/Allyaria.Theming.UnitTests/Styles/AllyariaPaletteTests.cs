@@ -93,6 +93,21 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void Cascade_Should_Override_BackgroundImageStretch_When_Provided()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, "pic.png", false);
+
+        // Act
+        var cascaded = sut.Cascade(backgroundImageStretch: true);
+        var css = cascaded.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-size:cover");
+    }
+
+    [Fact]
     public void Cascade_Should_Override_BorderColor_When_Provided()
     {
         // Arrange
@@ -368,6 +383,23 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCss_Should_Include_BackgroundImage_Positioning_When_Stretch_True()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, "hero.jpg");
+
+        // Act
+        var css = sut.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("url(\"hero.jpg\")")
+            .And.Contain("background-position:center")
+            .And.Contain("background-repeat:no-repeat")
+            .And.Contain("background-size:cover");
+    }
+
+    [Fact]
     public void ToCss_Should_Include_BorderRadius_When_Radius_Is_Provided()
     {
         // Arrange
@@ -382,6 +414,22 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCss_Should_Not_Emit_Border_When_BorderWidth_Is_Null()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: null);
+
+        // Act
+        var css = sut.ToCss();
+
+        // Assert
+        css.Should()
+            .NotContain("border-color")
+            .And.NotContain("border-style")
+            .And.NotContain("border-width");
+    }
+
+    [Fact]
     public void ToCss_Should_Not_Include_BorderRadius_When_Radius_Is_Null()
     {
         // Arrange
@@ -393,6 +441,22 @@ public sealed class AllyariaPaletteTests
         // Assert
         css.Should()
             .NotContain("border-radius:");
+    }
+
+    [Fact]
+    public void ToCss_Should_Not_Include_Image_Positioning_When_Stretch_False()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.Black, Colors.White, "hero.jpg", false);
+
+        // Act
+        var css = sut.ToCss();
+
+        // Assert
+        css.Should()
+            .Contain("background-image:")
+            .And.NotContain("background-position:")
+            .And.NotContain("background-size:cover");
     }
 
     [Fact]
@@ -413,6 +477,35 @@ public sealed class AllyariaPaletteTests
             .NotContain("border-color")
             .And.NotContain("border-style")
             .And.NotContain("border-width");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Default_BorderStyle_To_Solid_When_Width_Positive_And_Style_Not_Specified()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, borderWidth: 1);
+
+        // Act
+        var css = sut.ToCssVars("Theme");
+
+        // Assert
+        css.Should()
+            .Contain("--theme-border-style:solid");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Default_Prefix_To_AA_When_Empty_Or_Whitespace()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black);
+
+        // Act
+        var css = sut.ToCssVars("   ");
+
+        // Assert
+        css.Should()
+            .Contain("--aa-color:#000000FF")
+            .And.Contain("--aa-background-color:#000000FF");
     }
 
     [Fact]
@@ -455,6 +548,39 @@ public sealed class AllyariaPaletteTests
     }
 
     [Fact]
+    public void ToCssVars_Should_Include_Image_Vars_With_Normalized_Prefix_When_Image_And_Stretch_True()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.White, Colors.Black, "banner.png");
+
+        // Act
+        var css = sut.ToCssVars("My Theme");
+
+        // Assert
+        css.Should()
+            .Contain("--my-theme-background-image:")
+            .And.Contain("--my-theme-background-position:center")
+            .And.Contain("--my-theme-background-repeat:no-repeat")
+            .And.Contain("--my-theme-background-size:cover");
+    }
+
+    [Fact]
+    public void ToCssVars_Should_Include_Only_BackgroundImage_Var_When_Stretch_False()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(Colors.Black, Colors.White, "img.png", false);
+
+        // Act
+        var css = sut.ToCssVars();
+
+        // Assert
+        css.Should()
+            .Contain("--aa-background-image:")
+            .And.NotContain("--aa-background-position")
+            .And.NotContain("--aa-background-size");
+    }
+
+    [Fact]
     public void ToCssVars_Should_Not_Emit_Border_Vars_When_Border_Not_Present()
     {
         // Arrange
@@ -468,5 +594,83 @@ public sealed class AllyariaPaletteTests
             .NotContain("--theme-border-color")
             .And.NotContain("--theme-border-style")
             .And.NotContain("--theme-border-width");
+    }
+
+    [Fact]
+    public void ToDisabledPalette_Should_Desaturate_Compress_Value_And_Adjust_Border()
+    {
+        // Arrange
+        var bg = AllyariaColorValue.FromHsva(120, 80, 80);
+        var border = AllyariaColorValue.FromHsva(120, 80, 70);
+        var sut = new AllyariaPalette(bg, Colors.Black, borderWidth: 1, borderColor: border);
+
+        // Act
+        var disabled = sut.ToDisabledPalette(); // default: desaturate 60, blend 0.15
+
+        // Assert
+        disabled.BackgroundColor.S.Should()
+            .BeApproximately(20.0, 1.0);
+
+        disabled.BackgroundColor.V.Should()
+            .BeApproximately(75.5, 1.0);
+
+        disabled.BorderColor.S.Should()
+            .BeApproximately(20.0, 1.0);
+
+        disabled.BorderColor.V.Should()
+            .BeApproximately(67.0, 1.0);
+    }
+
+    [Fact]
+    public void ToDisabledPalette_Should_Leave_Border_Omitted_When_Not_Present()
+    {
+        // Arrange
+        var sut = new AllyariaPalette(AllyariaColorValue.FromHsva(0, 50, 60), Colors.Black, borderWidth: 0);
+
+        // Act
+        var disabled = sut.ToDisabledPalette();
+        var css = disabled.ToCss();
+
+        // Assert
+        css.Should()
+            .NotContain("border-");
+    }
+
+    [Fact]
+    public void ToHoverPalette_Should_Darken_Light_Surface_And_Adjust_Border()
+    {
+        // Arrange
+        var bg = AllyariaColorValue.FromHsva(0, 0, 90);
+        var border = AllyariaColorValue.FromHsva(0, 100, 50);
+        var sut = new AllyariaPalette(bg, Colors.Black, borderWidth: 1, borderColor: border);
+
+        // Act
+        var hover = sut.ToHoverPalette(); // default 6 / 8
+
+        // Assert
+        hover.BackgroundColor.V.Should()
+            .BeApproximately(84.0, 1.0);
+
+        hover.BorderColor.V.Should()
+            .BeApproximately(42.0, 1.0);
+    }
+
+    [Fact]
+    public void ToHoverPalette_Should_Lighten_Dark_Surface_And_Adjust_Border()
+    {
+        // Arrange
+        var bg = AllyariaColorValue.FromHsva(210, 50, 20);
+        var border = AllyariaColorValue.FromHsva(210, 50, 10);
+        var sut = new AllyariaPalette(bg, Colors.White, borderWidth: 1, borderColor: border);
+
+        // Act
+        var hover = sut.ToHoverPalette();
+
+        // Assert
+        hover.BackgroundColor.V.Should()
+            .BeApproximately(26.0, 1.0);
+
+        hover.BorderColor.V.Should()
+            .BeApproximately(18.0, 1.0);
     }
 }

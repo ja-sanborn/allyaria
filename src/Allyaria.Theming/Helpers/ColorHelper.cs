@@ -116,26 +116,12 @@ internal static class ColorHelper
             return second;
         }
 
-        // 3) Guarantee path: mix toward black and white; prefer any that meets; otherwise best-approaching.
-        var towardWhite = SearchTowardPole(foreground, Colors.White, background, minimumRatio);
-        var towardBlack = SearchTowardPole(foreground, Colors.Black, background, minimumRatio);
+        // 3) Guarantee path: mix toward white; prefer any that meets; otherwise best-approaching.
+        var towardPole = SearchTowardPole(foreground, Colors.White, background, minimumRatio);
 
-        if (towardWhite.MeetsMinimum && towardBlack.MeetsMinimum)
+        if (towardPole.MeetsMinimum)
         {
-            // Prefer higher ratio (or the one closer to the threshold depending on your policy).
-            return towardWhite.ContrastRatio >= towardBlack.ContrastRatio
-                ? towardWhite
-                : towardBlack;
-        }
-
-        if (towardWhite.MeetsMinimum)
-        {
-            return towardWhite;
-        }
-
-        if (towardBlack.MeetsMinimum)
-        {
-            return towardBlack;
+            return towardPole;
         }
 
         // 4) Still not met: return the best-approaching overall.
@@ -146,14 +132,9 @@ internal static class ColorHelper
             best = second;
         }
 
-        if (towardWhite.ContrastRatio > best.ContrastRatio)
+        if (towardPole.ContrastRatio > best.ContrastRatio)
         {
-            best = towardWhite;
-        }
-
-        if (towardBlack.ContrastRatio > best.ContrastRatio)
-        {
-            best = towardBlack;
+            best = towardPole;
         }
 
         return best;
@@ -278,8 +259,8 @@ internal static class ColorHelper
         }
         else
         {
-            lo = 0.0;
-            hi = vStart;
+            lo = vStart;
+            hi = 0.0;
         }
 
         const int iters = 18;

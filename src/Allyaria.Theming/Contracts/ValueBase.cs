@@ -121,7 +121,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
 
         var trimmed = value.Trim();
 
-        return trimmed.Any(static ch => char.IsControl(ch) && ch is not '\t' and not '\n' and not '\r')
+        return trimmed.Any(static c => char.IsControl(c))
             ? throw new ArgumentException("Value contains control characters.", nameof(value))
             : trimmed;
     }
