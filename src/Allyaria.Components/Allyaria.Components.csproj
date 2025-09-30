@@ -15,10 +15,12 @@
         <SupportedPlatform Include="browser"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Allyaria.Theming"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Allyaria.Components.UnitTests"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Allyaria.Theming\Allyaria.Theming.csproj"/>
     </ItemGroup>
 </Project>

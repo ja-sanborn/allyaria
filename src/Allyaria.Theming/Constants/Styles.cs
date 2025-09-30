@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Styles;
+using Allyaria.Theming.Styles;
 using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,7 +12,7 @@ public static class Styles
     public static AllyariaStyle Dark { get; } = new(
         new AllyariaPalette(Colors.Grey900, Colors.Grey50),
         new AllyariaTypography(
-            new AllyariaStringValue("Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+            new AllyariaStringValue("Segoe UI, Helvetica, Arial, sans-serif"),
             new AllyariaStringValue("1rem")
         )
     );
@@ -21,7 +21,7 @@ public static class Styles
     public static AllyariaStyle HighContrast { get; } = new(
         new AllyariaPalette(Colors.White, Colors.Black),
         new AllyariaTypography(
-            new AllyariaStringValue("Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+            new AllyariaStringValue("Segoe UI, Helvetica, Arial, sans-serif"),
             new AllyariaStringValue("1rem")
         )
     );
@@ -30,7 +30,7 @@ public static class Styles
     public static AllyariaStyle Light { get; } = new(
         new AllyariaPalette(Colors.Grey50, Colors.Grey900),
         new AllyariaTypography(
-            new AllyariaStringValue("Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+            new AllyariaStringValue("Segoe UI, Helvetica, Arial, sans-serif"),
             new AllyariaStringValue("1rem")
         )
     );

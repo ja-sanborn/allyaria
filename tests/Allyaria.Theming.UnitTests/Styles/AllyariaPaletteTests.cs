@@ -1,9 +1,9 @@
 ﻿using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
-using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaPaletteTests
 {
     [Fact]

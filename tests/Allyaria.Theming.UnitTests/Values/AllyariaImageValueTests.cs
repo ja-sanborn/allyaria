@@ -1,7 +1,6 @@
-﻿using Allyaria.Theming.Values;
+﻿namespace Allyaria.Theming.UnitTests.Values;
 
-namespace Allyaria.Theming.UnitTests.Values;
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaImageValueTests
 {
     [Theory]
@@ -103,9 +102,8 @@ public sealed class AllyariaImageValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Unsupported URI scheme*")
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*Unsupported URI scheme*");
     }
 
     [Fact]
@@ -119,9 +117,8 @@ public sealed class AllyariaImageValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Unsupported URI scheme*")
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*Unsupported URI scheme*");
     }
 
     [Fact]
@@ -135,9 +132,8 @@ public sealed class AllyariaImageValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Unsupported URI scheme*")
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*Unsupported URI scheme*");
     }
 
     [Fact]
@@ -151,9 +147,8 @@ public sealed class AllyariaImageValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Value contains control characters.*")
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*Value contains control characters.*");
     }
 
     [Fact]

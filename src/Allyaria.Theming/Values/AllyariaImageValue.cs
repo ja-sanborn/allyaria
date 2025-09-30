@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Contracts;
 using Allyaria.Theming.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
@@ -19,7 +19,7 @@ public sealed class AllyariaImageValue : ValueBase
     /// The raw image reference to normalize (absolute/relative URL, data/blob URI, or any string containing a <c>url(...)</c>
     /// ).
     /// </param>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="AllyariaArgumentException">
     /// Thrown when <paramref name="value" /> is <c>null</c>, empty, whitespace, contains disallowed control characters, or
     /// resolves to an unsupported URI scheme (e.g., <c>javascript:</c>, <c>vbscript:</c>).
     /// </exception>
@@ -31,6 +31,7 @@ public sealed class AllyariaImageValue : ValueBase
     /// are <c>http</c>, <c>https</c>, <c>data</c>, and <c>blob</c>. Relative values are permitted.
     /// </summary>
     /// <param name="value">The value to check.</param>
+    /// <exception cref="AllyariaArgumentException">Thrown when an absolute URI uses a disallowed scheme.</exception>
     private static void EnsureAllowedAbsoluteSchemeIfPresent(string value)
     {
         if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
@@ -42,22 +43,23 @@ public sealed class AllyariaImageValue : ValueBase
 
             if (!allowed)
             {
-                throw new ArgumentException($"Unsupported URI scheme '{uri.Scheme}'.", nameof(value));
+                throw new AllyariaArgumentException($"Unsupported URI scheme '{uri.Scheme}'.", nameof(value), value);
             }
         }
     }
 
     /// <summary>
-    /// Throws <see cref="ArgumentException" /> when <paramref name="value" /> starts with a dangerous scheme such as
+    /// Throws <see cref="AllyariaArgumentException" /> when <paramref name="value" /> starts with a dangerous scheme such as
     /// <c>javascript:</c> or <c>vbscript:</c> (case-insensitive).
     /// </summary>
     /// <param name="value">The value to inspect.</param>
+    /// <exception cref="AllyariaArgumentException">Thrown when a dangerous scheme prefix is detected.</exception>
     private static void EnsureNoDangerousSchemes(string value)
     {
         if (value.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase) ||
             value.StartsWith("vbscript:", StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentException("Unsupported URI scheme for CSS image value.", nameof(value));
+            throw new AllyariaArgumentException("Unsupported URI scheme for CSS image value.", nameof(value), value);
         }
     }
 
@@ -93,7 +95,7 @@ public sealed class AllyariaImageValue : ValueBase
     /// Raw image reference. May be a bare path/URI or a larger CSS value containing one or more <c>url(...)</c> tokens.
     /// </param>
     /// <returns>A trimmed, validated, and escaped string in the form <c>url("…")</c>.</returns>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="AllyariaArgumentException">
     /// Thrown when <paramref name="value" /> is <c>null</c>, empty, whitespace, contains disallowed control characters, or
     /// resolves to an unsupported URI scheme (e.g., <c>javascript:</c>, <c>vbscript:</c>).
     /// </exception>
@@ -114,9 +116,8 @@ public sealed class AllyariaImageValue : ValueBase
     /// <summary>Parses the specified string into an <see cref="AllyariaImageValue" />.</summary>
     /// <param name="value">The input string to parse.</param>
     /// <returns>A new <see cref="AllyariaImageValue" /> containing the normalized <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is invalid; see
-    /// <see cref="Normalize(string)" />.
+    /// <exception cref="AllyariaArgumentException">
+    /// Thrown when <paramref name="value" /> is invalid; see <see cref="Normalize(string)" /> for the validation rules.
     /// </exception>
     public static AllyariaImageValue Parse(string value) => new(value);
 
@@ -159,7 +160,7 @@ public sealed class AllyariaImageValue : ValueBase
     }
 
     /// <summary>Builds CSS variables for a background image with a contrast-enhancing overlay.</summary>
-    /// <param name="prefix">An string used to namespace the CSS variables.</param>
+    /// <param name="prefix">A string used to namespace the CSS variables.</param>
     /// <param name="backgroundColor">
     /// The known page or container background color beneath the image. Used to determine whether the overlay should be dark or
     /// light for better contrast.
@@ -245,15 +246,17 @@ public sealed class AllyariaImageValue : ValueBase
     /// <summary>Defines an implicit conversion from <see cref="string" /> to <see cref="AllyariaImageValue" />.</summary>
     /// <param name="value">The string value to convert.</param>
     /// <returns>A new <see cref="AllyariaImageValue" /> containing the normalized <paramref name="value" />.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is invalid; see
-    /// <see cref="Normalize(string)" />.
+    /// <exception cref="AllyariaArgumentException">
+    /// Thrown when <paramref name="value" /> is invalid; see <see cref="Normalize(string)" /> for the validation rules.
     /// </exception>
     public static implicit operator AllyariaImageValue(string value) => new(value);
 
     /// <summary>Defines an implicit conversion from <see cref="AllyariaImageValue" /> to <see cref="string" />.</summary>
     /// <param name="value">The <see cref="AllyariaImageValue" /> instance.</param>
     /// <returns>The underlying normalized string value (a canonical CSS <c>url("…")</c> token).</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <c>null</c>.</exception>
+    /// <remarks>
+    /// Passing a <c>null</c> reference for <paramref name="value" /> will result in a runtime
+    /// <see cref="NullReferenceException" />.
+    /// </remarks>
     public static implicit operator string(AllyariaImageValue value) => value.Value;
 }

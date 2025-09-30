@@ -1,9 +1,9 @@
 ﻿using Allyaria.Theming.Constants;
 using Allyaria.Theming.Helpers;
-using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Helpers;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class ColorHelperTests
 {
     [Fact]

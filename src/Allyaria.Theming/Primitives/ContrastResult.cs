@@ -1,13 +1,21 @@
-﻿using Allyaria.Theming.Values;
+using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Primitives;
 
-/// <summary>Immutable result describing the resolved foreground, the background, and the achieved ratio.</summary>
-/// <param name="ForegroundColor">Resolved foreground (opaque).</param>
-/// <param name="BackgroundColor">BackgroundColor (opaque).</param>
-/// <param name="ContrastRatio">Computed contrast ratio.</param>
-/// <param name="MeetsMinimum">Whether the minimum was achieved.</param>
+/// <summary>
+/// Immutable result that describes the outcome of a contrast resolution operation, including the chosen foreground color,
+/// the background color, the achieved contrast ratio, and whether the minimum requirement was satisfied.
+/// </summary>
+/// <param name="ForegroundColor">The resolved foreground color (opaque).</param>
+/// <param name="BackgroundColor">The background color (opaque).</param>
+/// <param name="ContrastRatio">
+/// The computed contrast ratio between <paramref name="ForegroundColor" /> and <paramref name="BackgroundColor" />.
+/// </param>
+/// <param name="MeetsMinimum">
+/// <c>true</c> if the computed ratio meets or exceeds the required minimum; otherwise
+/// <c>false</c>.
+/// </param>
 [ExcludeFromCodeCoverage(Justification = "This is a simple readonly record struct with no logic.")]
 internal readonly record struct ContrastResult(
     AllyariaColorValue ForegroundColor,

@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ". root", ". root", "{6126D2C4-AD6A-4628-9273-AFC17CFAFA31}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -56,36 +59,30 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theming", "Theming", "{96DF5FAE-0244-456C-B280-825769704835}"
 	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md
-		docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md
-		docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md
-		docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md
-		docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md
-		docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md
 		docs\references\Theming\Allyaria.Theming.Constants.Colors.md = docs\references\Theming\Allyaria.Theming.Constants.Colors.md
 		docs\references\Theming\Allyaria.Theming.Constants.Styles.md = docs\references\Theming\Allyaria.Theming.Constants.Styles.md
 		docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md = docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md
 		docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md = docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md
+		docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md
+		docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md
+		docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md
+		docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md
+		docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md
+		docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Components", "src\Allyaria.Components\Allyaria.Components.csproj", "{DB19205F-2EC1-46FC-9E75-53470A927B98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Components.UnitTests", "tests\Allyaria.Components.UnitTests\Allyaria.Components.UnitTests.csproj", "{E4057D3A-1685-455B-888A-8AE1256E4F95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Abstractions", "src\Allyaria.Abstractions\Allyaria.Abstractions.csproj", "{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Abstractions.UnitTests", "tests\Allyaria.Abstractions.UnitTests\Allyaria.Abstractions.UnitTests.csproj", "{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC} = {1B86380D-66BD-4FD7-85ED-484DE3340089}
-		{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC} = {38DECD57-882D-484C-A729-22BD05B403BD}
-		{AF51AB5D-4C0C-4069-A1DA-3926999E7641} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
-		{F1658959-606D-4B4A-A768-89741991B4B9} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
-		{87ECEB69-9E94-4136-B906-1322CA050981} = {38DECD57-882D-484C-A729-22BD05B403BD}
-		{96DF5FAE-0244-456C-B280-825769704835} = {87ECEB69-9E94-4136-B906-1322CA050981}
-		{DB19205F-2EC1-46FC-9E75-53470A927B98} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
-		{E4057D3A-1685-455B-888A-8AE1256E4F95} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AF51AB5D-4C0C-4069-A1DA-3926999E7641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -104,5 +101,31 @@ Global
 		{E4057D3A-1685-455B-888A-8AE1256E4F95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4057D3A-1685-455B-888A-8AE1256E4F95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4057D3A-1685-455B-888A-8AE1256E4F95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1AF8D2FF-6534-46BF-BB7C-C21C36D3B1BC} = {1B86380D-66BD-4FD7-85ED-484DE3340089}
+		{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC} = {38DECD57-882D-484C-A729-22BD05B403BD}
+		{AF51AB5D-4C0C-4069-A1DA-3926999E7641} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{F1658959-606D-4B4A-A768-89741991B4B9} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+		{87ECEB69-9E94-4136-B906-1322CA050981} = {38DECD57-882D-484C-A729-22BD05B403BD}
+		{96DF5FAE-0244-456C-B280-825769704835} = {87ECEB69-9E94-4136-B906-1322CA050981}
+		{DB19205F-2EC1-46FC-9E75-53470A927B98} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{E4057D3A-1685-455B-888A-8AE1256E4F95} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+		{BC2A8FA6-2E1E-44B1-9BE2-0C561F6CCC94} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
 	EndGlobalSection
 EndGlobal

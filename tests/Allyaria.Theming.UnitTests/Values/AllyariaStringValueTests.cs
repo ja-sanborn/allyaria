@@ -1,7 +1,6 @@
-﻿using Allyaria.Theming.Values;
+﻿namespace Allyaria.Theming.UnitTests.Values;
 
-namespace Allyaria.Theming.UnitTests.Values;
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaStringValueTests
 {
     [Theory]
@@ -19,18 +18,18 @@ public sealed class AllyariaStringValueTests
     }
 
     [Theory]
-    [InlineData(null!)]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Constructor_Should_ThrowArgumentException_When_InputIsNullOrWhitespace(string invalid)
+    public void Constructor_Should_ThrowArgumentException_When_InputIsNullOrWhitespace(string? invalid)
     {
         // Arrange
-        var act = () => new AllyariaStringValue(invalid);
+        var act = () => new AllyariaStringValue(invalid!);
 
         // Act & Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*cannot be null, empty or whitespace*");
     }
 
     [Fact]
@@ -45,21 +44,21 @@ public sealed class AllyariaStringValueTests
     }
 
     [Theory]
-    [InlineData(null!)]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ImplicitConversionFromString_Should_ThrowArgumentException_When_InputIsInvalid(string invalid)
+    public void ImplicitConversionFromString_Should_ThrowArgumentException_When_InputIsInvalid(string? invalid)
     {
         // Arrange
         var act = () =>
         {
-            AllyariaStringValue _ = invalid;
+            AllyariaStringValue _ = invalid!;
         };
 
         // Act & Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*cannot be null, empty or whitespace*");
     }
 
     [Fact]
@@ -90,28 +89,28 @@ public sealed class AllyariaStringValueTests
     }
 
     [Theory]
-    [InlineData(null!)]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Parse_Should_ThrowArgumentException_When_InputIsInvalid(string invalid)
+    public void Parse_Should_ThrowArgumentException_When_InputIsInvalid(string? invalid)
     {
         // Arrange
-        var act = () => AllyariaStringValue.Parse(invalid);
+        var act = () => AllyariaStringValue.Parse(invalid!);
 
         // Act & Assert
         act.Should()
-            .Throw<ArgumentException>()
-            .WithParameterName("value");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*cannot be null, empty or whitespace*");
     }
 
     [Theory]
-    [InlineData(null!)]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void TryParse_Should_ReturnFalseAndNullResult_When_InputIsInvalid(string invalid)
+    public void TryParse_Should_ReturnFalseAndNullResult_When_InputIsInvalid(string? invalid)
     {
         // Act
-        var success = AllyariaStringValue.TryParse(invalid, out var result);
+        var success = AllyariaStringValue.TryParse(invalid!, out var result);
 
         // Assert
         success.Should()
@@ -149,7 +148,7 @@ public sealed class AllyariaStringValueTests
 
         // Assert
         sut.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Value contains control characters.*");
     }
 }

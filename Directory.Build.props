@@ -30,4 +30,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
     </ItemGroup>
+    <ItemGroup>
+        <Using Include="System.Collections"/>
+    </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
 using Allyaria.Theming.Contracts;
-using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.UnitTests.Values;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaColorValueTests
 {
     [Fact]
@@ -27,7 +27,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -91,7 +91,7 @@ public sealed class AllyariaColorValueTests
 
         // Act + Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -105,7 +105,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         sut.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -122,7 +122,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -149,7 +149,7 @@ public sealed class AllyariaColorValueTests
 
         // Act + Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -161,7 +161,7 @@ public sealed class AllyariaColorValueTests
 
         // Act + Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -209,7 +209,7 @@ public sealed class AllyariaColorValueTests
 
         // Act + Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("*Unrecognized color*");
     }
 
@@ -263,7 +263,10 @@ public sealed class AllyariaColorValueTests
         var sut = new AllyariaColorValue("#11223344");
 
         // Act
+        // ReSharper disable once SuspiciousTypeConversion.Global
         var resultWithString = sut.Equals("not-a-valuebase");
+
+        // ReSharper disable once SuspiciousTypeConversion.Global
         var resultWithInt = sut.Equals(123);
 
         // Assert
@@ -297,11 +300,12 @@ public sealed class AllyariaColorValueTests
         var other = new AllyariaStringValue("black"); // different ValueBase subtype
 
         // Act
+        // ReSharper disable once SuspiciousTypeConversion.Global
         var act = () => sut.Equals((object)other);
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("Cannot compare values of different types.");
     }
 
@@ -317,7 +321,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("Cannot compare values of different types.");
     }
 
@@ -402,8 +406,8 @@ public sealed class AllyariaColorValueTests
 
         // Act + Assert
         act.Should()
-            .Throw<ArgumentOutOfRangeException>()
-            .WithParameterName("a");
+            .Throw<AllyariaArgumentException>()
+            .WithMessage("*must be*");
     }
 
     [Fact]
@@ -787,7 +791,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("Cannot compare values of different types.");
     }
 
@@ -831,7 +835,7 @@ public sealed class AllyariaColorValueTests
 
         // Assert
         act.Should()
-            .Throw<ArgumentException>()
+            .Throw<AllyariaArgumentException>()
             .WithMessage("Cannot compare values of different types.");
     }
 
