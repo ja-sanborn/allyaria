@@ -153,7 +153,7 @@ jobs:
 
       - name: Upload site artifact for Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
