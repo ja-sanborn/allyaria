@@ -162,12 +162,11 @@ public sealed class AllyariaNumberValue : ValueBase
     private static string Normalize(string raw, out double number, out LengthUnits? unit)
     {
         var value = ValidateInput(raw);
+        number = 0.0;
+        unit = null;
 
         if (value.Equals("auto", StringComparison.OrdinalIgnoreCase))
         {
-            number = 0;
-            unit = null;
-
             return "auto";
         }
 
@@ -188,7 +187,7 @@ public sealed class AllyariaNumberValue : ValueBase
             : null;
 
         if (!double.TryParse(numText, NumberStyles.Float, CultureInfo.InvariantCulture, out number) ||
-            double.IsNaN(number) || double.IsInfinity(number))
+            double.IsInfinity(number))
         {
             throw new AllyariaArgumentException("Number is not a finite value.", nameof(raw), raw);
         }
@@ -213,7 +212,7 @@ public sealed class AllyariaNumberValue : ValueBase
         string numCanonical;
         var abs = Math.Abs(number);
 
-        if ((abs > 0 && abs < 0.0001) || abs >= 1e6)
+        if (abs is > 0 and < 0.0001 || abs >= 1e6)
         {
             numCanonical = number.ToString("G17", CultureInfo.InvariantCulture);
         }
