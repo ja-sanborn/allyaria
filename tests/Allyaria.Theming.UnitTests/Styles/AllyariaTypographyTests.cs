@@ -10,8 +10,8 @@ public sealed class AllyariaTypographyTests
     {
         // Arrange
         var oFamily = new AllyariaStringValue("Arial, sans-serif");
-        var oLineHeight = new AllyariaStringValue("1.8");
-        var oWordSpacing = new AllyariaStringValue("0.2em");
+        var oLineHeight = new AllyariaNumberValue("1.8");
+        var oWordSpacing = new AllyariaNumberValue("0.2em");
 
         var sut = new AllyariaTypography(); // all nulls
 
@@ -57,10 +57,10 @@ public sealed class AllyariaTypographyTests
     public void Cascade_Should_NotMutate_OriginalInstance_When_Called()
     {
         // Arrange
-        var originalFontSize = new AllyariaStringValue("12px");
-        var sut = new AllyariaTypography(FontSize: originalFontSize);
+        var originalFontSize = new AllyariaNumberValue("12px");
+        var sut = new AllyariaTypography(fontSize: originalFontSize);
 
-        var overrideFontSize = new AllyariaStringValue("18px");
+        var overrideFontSize = new AllyariaNumberValue("18px");
 
         // Act
         var cascaded = sut.Cascade(fontSize: overrideFontSize);
@@ -79,7 +79,7 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var existingFamily = new AllyariaStringValue("Inter");
         var existingWeight = new AllyariaStringValue("400");
-        var sut = new AllyariaTypography(existingFamily, FontWeight: existingWeight);
+        var sut = new AllyariaTypography(existingFamily, fontWeight: existingWeight);
 
         var newWeight = new AllyariaStringValue("600"); // only override weight
         var newTextAlign = new AllyariaStringValue("right"); // and add a previously null field
@@ -106,16 +106,16 @@ public sealed class AllyariaTypographyTests
     {
         // Arrange
         var fontFamily = new AllyariaStringValue("Inter");
-        var fontSize = new AllyariaStringValue("14px");
+        var fontSize = new AllyariaNumberValue("14px");
         var fontStyle = new AllyariaStringValue("normal");
         var fontWeight = new AllyariaStringValue("500");
-        var letterSpacing = new AllyariaStringValue("0.01em");
-        var lineHeight = new AllyariaStringValue("1.5");
+        var letterSpacing = new AllyariaNumberValue("0.01em");
+        var lineHeight = new AllyariaNumberValue("1.5");
         var textAlign = new AllyariaStringValue("justify");
         var textDecoration = new AllyariaStringValue("line-through");
         var textTransform = new AllyariaStringValue("capitalize");
         var verticalAlign = new AllyariaStringValue("top");
-        var wordSpacing = new AllyariaStringValue("0.05em");
+        var wordSpacing = new AllyariaNumberValue("0.05em");
 
         var sut = new AllyariaTypography(
             fontFamily,
@@ -175,29 +175,29 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var original = new AllyariaTypography(
             new AllyariaStringValue("Inter"),
-            new AllyariaStringValue("14px"),
+            new AllyariaNumberValue("14px"),
             new AllyariaStringValue("normal"),
             new AllyariaStringValue("400"),
-            new AllyariaStringValue("0.01em"),
-            new AllyariaStringValue("1.4"),
+            new AllyariaNumberValue("0.01em"),
+            new AllyariaNumberValue("1.4"),
             new AllyariaStringValue("left"),
             new AllyariaStringValue("none"),
             new AllyariaStringValue("none"),
             new AllyariaStringValue("baseline"),
-            new AllyariaStringValue("0")
+            new AllyariaNumberValue("0")
         );
 
         var oFontFamily = new AllyariaStringValue("Segoe UI");
-        var oFontSize = new AllyariaStringValue("16px");
+        var oFontSize = new AllyariaNumberValue("16px");
         var oFontStyle = new AllyariaStringValue("italic");
         var oFontWeight = new AllyariaStringValue("700");
-        var oLetterSpacing = new AllyariaStringValue("0.02em");
-        var oLineHeight = new AllyariaStringValue("1.6");
+        var oLetterSpacing = new AllyariaNumberValue("0.02em");
+        var oLineHeight = new AllyariaNumberValue("1.6");
         var oTextAlign = new AllyariaStringValue("center");
         var oTextDecoration = new AllyariaStringValue("underline");
         var oTextTransform = new AllyariaStringValue("uppercase");
         var oVerticalAlign = new AllyariaStringValue("middle");
-        var oWordSpacing = new AllyariaStringValue("0.1em");
+        var oWordSpacing = new AllyariaNumberValue("0.1em");
 
         var sut = original;
 
@@ -257,7 +257,7 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var sut = new AllyariaTypography(new AllyariaStringValue("Inter"));
 
-        var firstSize = new AllyariaStringValue("14px");
+        var firstSize = new AllyariaNumberValue("14px");
         var secondWeight = new AllyariaStringValue("700");
         var thirdTransform = new AllyariaStringValue("uppercase");
 
@@ -285,16 +285,16 @@ public sealed class AllyariaTypographyTests
     {
         // Arrange
         var fontFamily = new AllyariaStringValue("Inter, Segoe UI, sans-serif");
-        var fontSize = new AllyariaStringValue("16px");
+        var fontSize = new AllyariaNumberValue("16px");
         var fontStyle = new AllyariaStringValue("normal");
         var fontWeight = new AllyariaStringValue("400");
-        var letterSpacing = new AllyariaStringValue("0.01em");
-        var lineHeight = new AllyariaStringValue("1.6");
+        var letterSpacing = new AllyariaNumberValue("0.01em");
+        var lineHeight = new AllyariaNumberValue("1.6");
         var textAlign = new AllyariaStringValue("left");
         var textDecoration = new AllyariaStringValue("none");
         var textTransform = new AllyariaStringValue("none");
         var verticalAlign = new AllyariaStringValue("baseline");
-        var wordSpacing = new AllyariaStringValue("0");
+        var wordSpacing = new AllyariaNumberValue("0");
 
         var sut = new AllyariaTypography(
             fontFamily,
@@ -335,7 +335,7 @@ public sealed class AllyariaTypographyTests
     {
         // Arrange
         var fontFamily = new AllyariaStringValue("Inter, Segoe UI, sans-serif");
-        var fontSize = new AllyariaStringValue("14px");
+        var fontSize = new AllyariaNumberValue("14px");
         var fontStyle = new AllyariaStringValue("italic");
 
         var sut = new AllyariaTypography(
@@ -376,7 +376,7 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var textAlign = new AllyariaStringValue("center");
         var textTransform = new AllyariaStringValue("uppercase");
-        var sut = new AllyariaTypography(TextAlign: textAlign, TextTransform: textTransform);
+        var sut = new AllyariaTypography(textAlign: textAlign, textTransform: textTransform);
 
         // Act
         var css = sut.ToCss();
@@ -426,16 +426,16 @@ public sealed class AllyariaTypographyTests
         // Arrange
         var sut = new AllyariaTypography(
             new AllyariaStringValue("Inter"),
-            new AllyariaStringValue("16px"),
+            new AllyariaNumberValue("16px"),
             new AllyariaStringValue("italic"),
             new AllyariaStringValue("600"),
-            new AllyariaStringValue("0.02em"),
-            new AllyariaStringValue("1.4"),
+            new AllyariaNumberValue("0.02em"),
+            new AllyariaNumberValue("1.4"),
             new AllyariaStringValue("center"),
             new AllyariaStringValue("underline"),
             new AllyariaStringValue("uppercase"),
             new AllyariaStringValue("baseline"),
-            new AllyariaStringValue("0.1em")
+            new AllyariaNumberValue("0.1em")
         );
 
         // Act

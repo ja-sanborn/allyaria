@@ -85,7 +85,7 @@ public readonly record struct AllyariaPalette
         _backgroundColor = backgroundColor;
         _backgroundImage = backgroundImage;
         _backgroundImageStretch = backgroundImageStretch;
-        _borderColor = borderColor;
+        _borderColor = borderColor ?? _backgroundColor;
         _borderRadius = borderRadius;
         _borderStyle = borderStyle;
         _borderWidth = borderWidth;
@@ -118,9 +118,9 @@ public readonly record struct AllyariaPalette
     /// Gets the effective border width declaration as a CSS token (e.g., <c>1px</c>), or <see langword="null" /> when no
     /// border should be rendered.
     /// </summary>
-    public AllyariaStringValue? BorderWidth
+    public AllyariaNumberValue? BorderWidth
         => _borderWidth > 0
-            ? new AllyariaStringValue($"{_borderWidth}px")
+            ? new AllyariaNumberValue($"{_borderWidth}px")
             : null;
 
     /// <summary>

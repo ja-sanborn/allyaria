@@ -239,7 +239,7 @@ public sealed class AllyariaArgumentException : AllyariaException
     {
         if (argValue is null || argValue.Value.Equals(default(T)))
         {
-            ThrowError("cannot be null or the default argValue", argName, argValue);
+            ThrowError("cannot be null or the default value", argName, argValue);
         }
     }
 
