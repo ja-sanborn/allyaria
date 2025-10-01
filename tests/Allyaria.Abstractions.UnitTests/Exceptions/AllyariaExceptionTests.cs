@@ -1,6 +1,4 @@
-﻿using Allyaria.Abstractions.Exceptions;
-
-namespace Allyaria.Abstractions.UnitTests.Exceptions;
+﻿namespace Allyaria.Abstractions.UnitTests.Exceptions;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaExceptionTests

@@ -51,7 +51,7 @@ public static class StringExtensions
     /// Produces a word whose first character is uppercase and remaining characters are lowercase, honoring the specified
     /// culture's casing rules.
     /// </summary>
-    public static string Capitalize(string? word, CultureInfo? culture = null)
+    public static string Capitalize(this string? word, CultureInfo? culture = null)
     {
         if (string.IsNullOrEmpty(word))
         {
@@ -72,49 +72,6 @@ public static class StringExtensions
     /// <remarks>Example: for <c>'-'</c>, the effective pattern is <c>"-+"</c>; for <c>'_'</c>, <c>"_+"</c>.</remarks>
     private static Regex CollapseSeparatorRegex(char replaceChar)
         => new($"[{Regex.Escape(replaceChar.ToString())}]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
-    /// <summary>Concatenates a sequence of words into a PascalCase identifier while preserving acronyms.</summary>
-    private static string Concatenate(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return string.Empty;
-        }
-
-        var words = value.Split(
-            [
-                ' ',
-                '\t',
-                '\r',
-                '\n'
-            ], StringSplitOptions.RemoveEmptyEntries
-        );
-
-        var sb = new StringBuilder(value.Length);
-
-        foreach (var word in words)
-        {
-            var normalized = word.NormalizeAccents().Trim();
-
-            if (normalized.Length == 0)
-            {
-                continue;
-            }
-
-            if (normalized.All(char.IsUpper))
-            {
-                // Preserve acronyms as-is (e.g., "HTTP")
-                sb.Append(normalized);
-            }
-            else
-            {
-                // Capitalize using invariant culture for stable casing
-                sb.Append(Capitalize(normalized, CultureInfo.InvariantCulture));
-            }
-        }
-
-        return sb.ToString();
-    }
 
     /// <summary>Converts a camelCase identifier into a human-readable string with spaces.</summary>
     /// <exception cref="AllyariaArgumentException">Thrown when the trimmed input is not a valid camelCase identifier.</exception>
@@ -300,13 +257,8 @@ public static class StringExtensions
     /// Replaces all occurrences of a specified separator character in the input string with spaces, collapsing multiple
     /// consecutive separators into a single space.
     /// </summary>
-    private static string ReplaceAndCollapseSeparators(string? value, char replaceChar)
+    private static string ReplaceAndCollapseSeparators(string value, char replaceChar)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return string.Empty;
-        }
-
         var text = value.Trim();
 
         return CollapseSeparatorRegex(replaceChar).Replace(text, " ").Trim();
@@ -350,14 +302,76 @@ public static class StringExtensions
     /// <summary>Converts a string into camelCase form (first letter lowercased, subsequent words capitalized).</summary>
     public static string ToCamelCase(this string? value)
     {
-        var pascal = Concatenate(value);
-
-        if (pascal.Length == 0)
+        if (string.IsNullOrWhiteSpace(value))
         {
             return string.Empty;
         }
 
-        return char.ToLower(pascal[0], CultureInfo.InvariantCulture) + pascal[1..];
+        var text = value.Trim();
+
+        // If there is no whitespace, infer token boundaries from concatenated identifiers (e.g., "XMLHttpRequest" -> "XML Http Request").
+        var tokenSource = text.IndexOfAny(
+            [
+                ' ',
+                '\t',
+                '\r',
+                '\n'
+            ]
+        ) >= 0
+            ? text
+            : SplitConcatenated(text);
+
+        var words = tokenSource.Split(
+            [
+                ' ',
+                '\t',
+                '\r',
+                '\n'
+            ], StringSplitOptions.RemoveEmptyEntries
+        );
+
+        var sb = new StringBuilder(text.Length);
+
+        for (var i = 0; i < words.Length; i++)
+        {
+            var w = words[i].NormalizeAccents().Trim();
+
+            if (w.Length == 0)
+            {
+                continue;
+            }
+
+            if (i == 0)
+            {
+                // First token: if it's an acronym, lower it fully; otherwise lower first char and the rest.
+                if (w.All(char.IsUpper))
+                {
+                    sb.Append(w.ToLowerInvariant());
+                }
+                else
+                {
+                    sb.Append(char.ToLower(w[0], CultureInfo.InvariantCulture));
+
+                    if (w.Length > 1)
+                    {
+                        sb.Append(w[1..].ToLower(CultureInfo.InvariantCulture));
+                    }
+                }
+            }
+            else
+            {
+                // Subsequent tokens: TitleCase the lower-cased token (acronyms like HTTP -> Http).
+                var lower = w.ToLower(CultureInfo.InvariantCulture);
+                sb.Append(char.ToUpper(lower[0], CultureInfo.InvariantCulture));
+
+                if (lower.Length > 1)
+                {
+                    sb.Append(lower[1..]);
+                }
+            }
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>Converts a string into kebab-case form (words separated by hyphens, lowercased).</summary>
@@ -378,7 +392,42 @@ public static class StringExtensions
     }
 
     /// <summary>Converts a string into PascalCase, preserving acronyms.</summary>
-    public static string ToPascalCase(this string? value) => Concatenate(value);
+    public static string ToPascalCase(this string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        var words = value.Split(
+            [
+                ' ',
+                '\t',
+                '\r',
+                '\n'
+            ], StringSplitOptions.RemoveEmptyEntries
+        );
+
+        var sb = new StringBuilder(value.Length);
+
+        foreach (var word in words)
+        {
+            var normalized = word.NormalizeAccents().Trim();
+
+            if (normalized.Length == 0)
+            {
+                continue;
+            }
+
+            sb.Append(
+                normalized.All(char.IsUpper)
+                    ? normalized
+                    : Capitalize(normalized, CultureInfo.InvariantCulture)
+            );
+        }
+
+        return sb.ToString();
+    }
 
     /// <summary>Converts a string into snake_case form (words separated by underscores, lowercased).</summary>
     public static string ToSnakeCase(this string? value)

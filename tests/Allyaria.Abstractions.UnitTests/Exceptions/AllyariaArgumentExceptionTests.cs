@@ -1,5 +1,4 @@
-﻿using Allyaria.Abstractions.Exceptions;
-using System.Buffers;
+﻿using System.Buffers;
 
 namespace Allyaria.Abstractions.UnitTests.Exceptions;
 
