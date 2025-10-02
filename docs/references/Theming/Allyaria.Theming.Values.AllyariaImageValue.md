@@ -1,78 +1,125 @@
 # Allyaria.Theming.Values.AllyariaImageValue
 
-`AllyariaImageValue` is a strongly-typed CSS image wrapper with immutable value semantics. It normalizes any provided
-input
-into a canonical CSS `url("…")` token. If the input already contains a `url(...)` (even inside a longer CSS expression),
-only the first `url(...)` is extracted; the rest is discarded. Otherwise, the raw input is validated, stripped of
-optional
-quotes, safely escaped, and wrapped as `url("…")`. It also supports safe scheme checking and convenience CSS generation
-methods.
+`AllyariaImageValue` is a sealed, immutable theming type that represents a `CSS image value` normalized into a canonical
+`url("…")` form.
+It *inherits from `ValueBase`*, gaining string-based equality, ordering, hashing, and CSS declaration emission.
+Parsing enforces security restrictions (no `javascript:` or `vbscript:` schemes, only safe protocols allowed).
 
 ---
 
 ## Constructors
 
-* `AllyariaImageValue(string value)`
-  Creates a normalized CSS image token from `value`. Trims leading/trailing whitespace, rejects disallowed control
-  characters, ensures safe schemes (`http`, `https`, `data`, `blob`), and blocks dangerous ones (like `javascript:` or
-  `vbscript:`). Throws if the input is invalid.
+`AllyariaImageValue(string value)`
+Initializes and normalizes a CSS image value. If the input contains a `url(...)` token, only the `first URL` is
+extracted. Otherwise the string is validated, unwrapped of quotes, escaped, and wrapped as `url("…")`.
+
+* Exceptions:
+
+    * `AllyariaArgumentException` — if the input is `null`, empty, whitespace, contains control chars, or resolves to a
+      disallowed URI scheme (e.g., `javascript:`).
 
 ---
 
 ## Properties
 
-* `string Value` — The underlying normalized string (a canonical CSS `url("…")` token, inherited from `ValueBase`).
-
----
-
-## Events
-
-* *None*
+| Name    | Type     | Description                                 |
+|---------|----------|---------------------------------------------|
+| `Value` | `string` | Canonical normalized CSS `url("…")` string. |
 
 ---
 
 ## Methods
 
-* `static AllyariaImageValue Parse(string value)` — Parses and normalizes `value`; throws on invalid input.
-
-* `static bool TryParse(string value, out AllyariaImageValue? result)` — Attempts to parse; returns `true` and sets
-  `result` on success, otherwise `false` with `result = null`.
-
-* `string ToCss(string propertyName)` — Formats a CSS declaration using the current value.
-  Returns `"propertyName:value;"` (with a lower-cased, trimmed property name). If `propertyName` is `null`/whitespace,
-  returns just `Value`. *(inherited from `ValueBase`)*
-
-* `string ToCssBackground(AllyariaColorValue backgroundColor, bool stretch = true)` — Builds CSS declarations for a
-  background image with a contrast-enhancing overlay. Adds a semi-transparent dark or light overlay based on the
-  background’s relative luminance and optionally expands into positioning and sizing rules when `stretch = true`.
-
-* `string ToCssVarsBackground(string prefix, AllyariaColorValue backgroundColor, bool stretch = true)` — Same as
-  `ToCssBackground` but generates CSS custom properties (`--prefixbackground-image`, etc.) instead of direct
-  declarations.
-
-* `int CompareTo(ValueBase other)` — Ordinal comparison by `Value`. *(inherited)*
-
-* `bool Equals(ValueBase other)` / `override bool Equals(object? obj)` — Ordinal equality by `Value`. *(inherited)*
-
-* `override int GetHashCode()` — Based on `Value`. *(inherited)*
-
-* `override string ToString()` — Returns `Value`. *(inherited)*
+| Name                                                                                          | Returns              | Description                                                                                                                                                                                                                             |
+|-----------------------------------------------------------------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Parse(string value)`                                                                         | `AllyariaImageValue` | Parses and normalizes input into an image value. Throws on invalid input.                                                                                                                                                               |
+| `TryParse(string value, out AllyariaImageValue? result)`                                      | `bool`               | Attempts to parse; returns false on failure.                                                                                                                                                                                            |
+| `ToCssBackground(AllyariaColorValue backgroundColor, bool stretch = true)`                    | `string`             | Builds `background-image` CSS (with contrast overlay). If `stretch` is true, also outputs position, repeat, and size. Overlay color depends on luminance of background (`rgba(0,0,0,0.5)` for light, `rgba(255,255,255,0.5)` for dark). |
+| `ToCssVarsBackground(string prefix, AllyariaColorValue backgroundColor, bool stretch = true)` | `string`             | Builds CSS variable declarations for a background image (with overlay). Uses provided prefix for variable names.                                                                                                                        |
+| `Compare(ValueBase? left, ValueBase? right)`                                                  | `int`                | Static comparison using ordinal semantics. Throws if operand types differ.                                                                                                                                                              |
+| `CompareTo(ValueBase? other)`                                                                 | `int`                | Compares with another value of the same type by `Value`.                                                                                                                                                                                |
+| `Equals(object? obj)`                                                                         | `bool`               | Equality check against object.                                                                                                                                                                                                          |
+| `Equals(ValueBase? other)`                                                                    | `bool`               | Equality check against another `ValueBase` of the same type.                                                                                                                                                                            |
+| `GetHashCode()`                                                                               | `int`                | Ordinal hash of `Value`.                                                                                                                                                                                                                |
+| `ToCss(string propertyName)`                                                                  | `string`             | Formats `"property:value;"` or returns raw `Value` if no property provided.                                                                                                                                                             |
+| `ToString()`                                                                                  | `string`             | Returns `Value`.                                                                                                                                                                                                                        |
 
 ---
 
 ## Operators
 
-* `==`, `!=`, `<`, `<=`, `>`, `>=` — Ordinal comparison/equality by `Value` (inherited from `ValueBase`). Comparing
-  different concrete `ValueBase` types throws.
-* `implicit operator AllyariaImageValue(string)` — Converts a `string` to a normalized `AllyariaImageValue` (throws on
-  invalid input).
-* `implicit operator string(AllyariaImageValue)` — Extracts the underlying normalized `Value`.
+| Operator                                | Returns              | Description                                                                           |
+|-----------------------------------------|----------------------|---------------------------------------------------------------------------------------|
+| `implicit string -> AllyariaImageValue` | `AllyariaImageValue` | Parses and normalizes string into image value.                                        |
+| `implicit AllyariaImageValue -> string` | `string`             | Returns canonical `url("…")` string.                                                  |
+| `==`, `!=`                              | `bool`               | Ordinal equality via `ValueBase`. Only equal for same type + same `Value`.            |
+| `>`, `<`, `>=`, `<=`                    | `bool`               | Ordinal ordering via `ValueBase`. Throws if comparing across different derived types. |
+
+---
+
+## Events
+
+*None*
 
 ---
 
 ## Exceptions
 
-* `ArgumentException` — Thrown when constructing/parsing with `null`, empty, whitespace-only input, invalid control
-  characters, unsupported or dangerous URI schemes (`javascript:`, `vbscript:`), or when comparing values of different
-  concrete `ValueBase` types.
-* `ArgumentNullException` — Thrown when implicitly converting a `null` `AllyariaImageValue` to string.
+* `AllyariaArgumentException` — invalid input (null/whitespace/control chars), unsupported URI scheme, or unsafe schemes
+  like `javascript:`.
+* `NullReferenceException` — if implicit conversion to string is called on a null instance.
+
+---
+
+## Behavior Notes
+
+* Canonicalizes all inputs into `url("…")`.
+* If input includes `url(...)` tokens, only the `first` is kept.
+* Escapes backslashes (`\`) and double quotes (`"`) inside URL values.
+* Supports relative URLs, `http`, `https`, `data`, and `blob` schemes.
+* Unsafe schemes (`javascript:`, `vbscript:`) are blocked.
+* Provides contrast overlays when building background CSS to ensure legibility.
+* Equality and ordering semantics come from `ValueBase` (ordinal comparison of `Value`).
+
+---
+
+## Examples
+
+### Minimal Example
+
+```csharp
+using Allyaria.Theming.Values;
+
+var image = new AllyariaImageValue("logo.png");
+Console.WriteLine(image.Value); 
+// url("logo.png")
+Console.WriteLine(image.ToCss("background-image")); 
+// background-image:url("logo.png");
+```
+
+### Expanded Example
+
+```csharp
+using Allyaria.Theming.Values;
+using Allyaria.Theming.Constants;
+
+public class ImageDemo
+{
+    public void ApplyImage()
+    {
+        var bg = new AllyariaImageValue("https://example.com/bg.jpg");
+
+        string css = bg.ToCssBackground(Colors.White);
+        Console.WriteLine(css);
+        // background-image:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url("https://example.com/bg.jpg");
+        // background-position:center;background-repeat:no-repeat;background-size:cover
+
+        string vars = bg.ToCssVarsBackground("--btn-", Colors.Black);
+        Console.WriteLine(vars);
+        // --btn-background-image:linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5)),url("https://example.com/bg.jpg");
+        // --btn-background-position:center;--btn-background-repeat:no-repeat;--btn-background-size:cover
+    }
+}
+```
+
+> *Rev Date: 2025-10-01*

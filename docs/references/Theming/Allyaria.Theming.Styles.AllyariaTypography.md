@@ -1,60 +1,104 @@
 # Allyaria.Theming.Styles.AllyariaTypography
 
-`AllyariaTypography` is a lightweight, immutable **record struct** representing a set of typography tokens
-(e.g., family, size, weight) and providing **inline CSS** and **CSS custom property** emission. Only **non-null**
-values are rendered, and output uses concise `prop:value;` declarations in a deterministic order.
-
----
+`AllyariaTypography` is a strongly typed typography definition for Allyaria theming.
+It encapsulates optional font properties and provides conversion to inline CSS and CSS variables.
+Unset values are omitted from CSS emission. Supports non-destructive overrides via `Cascade`.
 
 ## Constructors
 
-`AllyariaTypography(AllyariaStringValue? fontFamily = null, AllyariaStringValue? fontSize = null, AllyariaStringValue? fontStyle = null, AllyariaStringValue? fontWeight = null, AllyariaStringValue? letterSpacing = null, AllyariaStringValue? lineHeight = null, AllyariaStringValue? textAlign = null, AllyariaStringValue? textDecoration = null, AllyariaStringValue? textTransform = null, AllyariaStringValue? verticalAlign = null, AllyariaStringValue? wordSpacing = null)`
-Initializes an immutable typography definition. All parameters are optional; **null** values are omitted from output.
+`AllyariaTypography(AllyariaStringValue? fontFamily = null, AllyariaNumberValue? fontSize = null, AllyariaStringValue? fontStyle = null, AllyariaStringValue? fontWeight = null, AllyariaNumberValue? letterSpacing = null, AllyariaNumberValue? lineHeight = null, AllyariaStringValue? textAlign = null, AllyariaStringValue? textDecoration = null, AllyariaStringValue? textTransform = null, AllyariaStringValue? verticalAlign = null, AllyariaNumberValue? wordSpacing = null)`
+Initializes typography with optional font family, size, style, weight, spacing, alignment, and decoration values.
+Any parameter left `null` is considered unset.
 
----
+* Exceptions: *None*
 
 ## Properties
 
-* `AllyariaStringValue? FontFamily` — The font family to use (e.g., `"Inter, Segoe UI, sans-serif"`).
-* `AllyariaStringValue? FontSize` — The font size (e.g., `14px`, `1rem`).
-* `AllyariaStringValue? FontStyle` — The font style (e.g., `normal`, `italic`).
-* `AllyariaStringValue? FontWeight` — The font weight (e.g., `400`, `bold`).
-* `AllyariaStringValue? LetterSpacing` — The letter spacing (e.g., `0.5px`).
-* `AllyariaStringValue? LineHeight` — The line height (e.g., `1.5`, `24px`).
-* `AllyariaStringValue? TextAlign` — The text alignment (e.g., `left`, `center`).
-* `AllyariaStringValue? TextDecoration` — The text decoration (e.g., `underline`).
-* `AllyariaStringValue? TextTransform` — The text transform (e.g., `uppercase`).
-* `AllyariaStringValue? VerticalAlign` — The vertical alignment (e.g., `middle`, `baseline`).
-* `AllyariaStringValue? WordSpacing` — The word spacing (e.g., `2px`).
-
----
-
-## Events
-
-* *None*
-
----
+| Name             | Type                   | Description                                                |
+|------------------|------------------------|------------------------------------------------------------|
+| `FontFamily`     | `AllyariaStringValue?` | Font family token (e.g., `Inter, "Segoe UI", sans-serif`). |
+| `FontSize`       | `AllyariaNumberValue?` | Font size token (e.g., `14px`, `1rem`).                    |
+| `FontStyle`      | `AllyariaStringValue?` | Font style (e.g., `normal`, `italic`).                     |
+| `FontWeight`     | `AllyariaStringValue?` | Font weight (e.g., `400`, `bold`, `600`).                  |
+| `LetterSpacing`  | `AllyariaNumberValue?` | Letter spacing (e.g., `0.02em`).                           |
+| `LineHeight`     | `AllyariaNumberValue?` | Line height (e.g., `1.5`, `24px`).                         |
+| `TextAlign`      | `AllyariaStringValue?` | Text alignment (e.g., `start`, `center`).                  |
+| `TextDecoration` | `AllyariaStringValue?` | Text decoration (e.g., `underline`, `none`).               |
+| `TextTransform`  | `AllyariaStringValue?` | Text transform (e.g., `uppercase`).                        |
+| `VerticalAlign`  | `AllyariaStringValue?` | Vertical alignment (e.g., `baseline`, `middle`).           |
+| `WordSpacing`    | `AllyariaNumberValue?` | Word spacing (e.g., `0.1em`).                              |
 
 ## Methods
 
-* `AllyariaTypography Cascade(AllyariaStringValue? fontFamily = null, AllyariaStringValue? fontSize = null, AllyariaStringValue? fontStyle = null, AllyariaStringValue? fontWeight = null, AllyariaStringValue? letterSpacing = null, AllyariaStringValue? lineHeight = null, AllyariaStringValue? textAlign = null, AllyariaStringValue? textDecoration = null, AllyariaStringValue? textTransform = null, AllyariaStringValue? verticalAlign = null, AllyariaStringValue? wordSpacing = null)` —
-Creates a new instance by applying non-null overrides to the current values.
-
-* `string ToCss()` — Builds an **inline CSS** declaration list, appending a declaration **only when the corresponding
-  value is non-null**.
-  Emits (in order):
-  `font-family; font-size; font-style; font-weight; letter-spacing; line-height; text-align; text-decoration; text-transform; vertical-align; word-spacing`.
-  Each declaration is emitted as `prop:value;` (lower-cased property names).
-
-* `string ToCssVars(string prefix = "")` — Builds a **CSS custom properties** string using the same omission and order
-  rules.
-  The prefix is normalized by trimming whitespace and dashes, converting to lowercase, and replacing spaces with
-  hyphens. If empty or whitespace, variables default to the `--aa-` prefix.
-  Emits variables like:
-  `--{prefix}font-family; --{prefix}font-size; --{prefix}font-style; --{prefix}font-weight; --{prefix}letter-spacing; --{prefix}line-height; --{prefix}text-align; --{prefix}text-decoration; --{prefix}text-transform; --{prefix}vertical-align; --{prefix}word-spacing`.
-
----
+| Name                                                                                                                                                    | Returns              | Description                                                                                      |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|--------------------------------------------------------------------------------------------------|
+| `Cascade(fontFamily, fontSize, fontStyle, fontWeight, letterSpacing, lineHeight, textAlign, textDecoration, textTransform, verticalAlign, wordSpacing)` | `AllyariaTypography` | Returns a new instance with overrides applied; retains existing values where not specified.      |
+| `ToCss()`                                                                                                                                               | `string`             | Builds inline CSS declarations for non-null properties.                                          |
+| `ToCssVars(prefix = "")`                                                                                                                                | `string`             | Builds CSS variable declarations. Normalizes prefix to kebab-case; defaults to `--aa-` if empty. |
 
 ## Operators
 
-* `==`, `!=` — Value equality/inequality provided by `record struct` semantics. No ordering operators are defined.
+| Operator    | Returns | Description                                           |
+|-------------|---------|-------------------------------------------------------|
+| `==` / `!=` | `bool`  | Equality comparison (inherited from `record struct`). |
+
+## Events
+
+*None*
+
+## Exceptions
+
+*None*
+
+## Behavior Notes
+
+* All properties are optional.
+* Unset values are not included in generated CSS.
+* `ToCssVars` normalizes prefixes:
+
+    * `"Editor Typography"` → `--editor-typography-`.
+    * Empty prefix defaults to `--aa-`.
+* Designed for inline CSS and theme variable emission.
+* Immutable; use `Cascade` to apply overrides non-destructively.
+
+## Examples
+
+### Minimal Example
+
+```csharp
+using Allyaria.Theming.Styles;
+using Allyaria.Theming.Values;
+
+var typography = new AllyariaTypography(fontSize: new AllyariaNumberValue("16px"));
+Console.WriteLine(typography.ToCss()); 
+// "font-size:16px;"
+```
+
+### Expanded Example
+
+```csharp
+using Allyaria.Theming.Styles;
+using Allyaria.Theming.Values;
+
+public class TypographyDemo
+{
+    public void ApplyTypography()
+    {
+        var baseTypography = new AllyariaTypography(
+            fontFamily: new AllyariaStringValue("system-ui, sans-serif"),
+            fontSize: new AllyariaNumberValue("14px"),
+            lineHeight: new AllyariaNumberValue("1.5")
+        );
+
+        var updated = baseTypography.Cascade(
+            fontWeight: new AllyariaStringValue("600"),
+            letterSpacing: new AllyariaNumberValue("0.02em")
+        );
+
+        Console.WriteLine("Base: " + baseTypography.ToCss());
+        Console.WriteLine("Updated: " + updated.ToCssVars("editor"));
+    }
+}
+```
+
+> *Rev Date: 2025-10-01*

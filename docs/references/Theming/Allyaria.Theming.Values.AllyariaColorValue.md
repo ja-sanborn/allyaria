@@ -1,98 +1,120 @@
 # Allyaria.Theming.Values.AllyariaColorValue
 
-`AllyariaColorValue` represents a framework-agnostic color value with CSS-oriented parsing and formatting, immutable
-value semantics, and total ordering based on the canonical uppercase `#RRGGBBAA` form. It supports parsing from
-CSS-style
-strings, CSS Web color names, and Material Design palette names, and provides conversions between RGBA and HSVA models.
-
----
+`AllyariaColorValue` is a sealed, immutable theming type that represents a `framework-agnostic color value`.
+It *inherits from `ValueBase`* (ordinal, string-based equality/ordering and CSS emission). Parsing supports CSS
+hex/functions, CSS Web color names, and Material palette names. It exposes RGBA channels and derived HSVA properties,
+provides conversions, and participates in value comparison and CSS formatting via its base semantics.
 
 ## Constructors
 
-* `AllyariaColorValue(string value)`
-  Parses a color from hex (`#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`), `rgb()`/`rgba()`, `hsv()`/`hsva()`, CSS Web names,
-  or Material Design names. Throws an exception if unrecognized.
+`AllyariaColorValue(string value)`
+Parses a color from one of: `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`, `rgb(r,g,b)`, `rgba(r,g,b,a)`, `hsv(H,S%,V%)`,
+`hsva(H,S%,V%,A)`, `CSS Web color name`, or `Material color name`.
 
-* `static AllyariaColorValue FromHsva(double h, double s, double v, double a = 1.0)`
-  Creates a color from HSVA channels. Throws `ArgumentOutOfRangeException` if any component lies outside its valid
-  range.
+* Exceptions:
 
-* `static AllyariaColorValue FromRgba(byte r, byte g, byte b, double a = 1.0)`
-  Creates a color from RGBA channels. Throws `ArgumentOutOfRangeException` if alpha is outside `[0..1]`.
-
----
+    * `AllyariaArgumentException` — when parsing fails or input is invalid.
 
 ## Properties
 
-* `byte R` — Red channel (0–255).
-
-* `byte G` — Green channel (0–255).
-
-* `byte B` — Blue channel (0–255).
-
-* `double A` — Alpha channel (0–1).
-
-* `double H` — Hue in degrees (0–360), derived from RGB.
-
-* `double S` — Saturation percentage (0–100), derived from RGB.
-
-* `double V` — Value (brightness) percentage (0–100), derived from RGB.
-
-* `string HexRgb` — Uppercase `#RRGGBB` string.
-
-* `string HexRgba` — Uppercase `#RRGGBBAA` string (alpha included).
-
-* `string Rgb` — `"rgb(r, g, b)"` string.
-
-* `string Rgba` — `"rgba(r, g, b, a)"` string with alpha in `[0–1]`.
-
-* `string Hsv` — `"hsv(H, S%, V%)"` string using invariant culture.
-
-* `string Hsva` — `"hsva(H, S%, V%, A)"` string using invariant culture.
-
-* `override string Value` — The canonical string form (`#RRGGBBAA`).
-
----
-
-## Events
-
-* *None*
-
----
+| Name      | Type     | Description                                          |
+|-----------|----------|------------------------------------------------------|
+| `A`       | `double` | Alpha channel in `[0..1]`.                           |
+| `R`       | `byte`   | Red channel `[0..255]`.                              |
+| `G`       | `byte`   | Green channel `[0..255]`.                            |
+| `B`       | `byte`   | Blue channel `[0..255]`.                             |
+| `H`       | `double` | Hue (degrees) derived from RGB in `[0..360]`.        |
+| `S`       | `double` | Saturation (%) derived from RGB in `[0..100]`.       |
+| `V`       | `double` | Value/brightness (%) derived from RGB in `[0..100]`. |
+| `HexRgb`  | `string` | Uppercase `#RRGGBB`.                                 |
+| `HexRgba` | `string` | Uppercase `canonical` `#RRGGBBAA`.                   |
+| `Hsv`     | `string` | `hsv(H, S%, V%)` using invariant culture.            |
+| `Hsva`    | `string` | `hsva(H, S%, V%, A)` using invariant culture.        |
+| `Rgb`     | `string` | `rgb(r, g, b)`.                                      |
+| `Rgba`    | `string` | `rgba(r, g, b, a)` using invariant culture.          |
+| `Value`   | `string` | Canonical string for ordering/equality — `HexRgba`.  |
 
 ## Methods
 
-* `static AllyariaColorValue Parse(string value)` — Parses a color or throws if invalid.
-
-* `static bool TryParse(string value, out AllyariaColorValue? result)` — Attempts to parse a color, returns `true` if
-  successful.
-
-* `int CompareTo(ValueBase other)` — Compares two values by their canonical string. *(inherited)*
-
-* `bool Equals(ValueBase other)` / `override bool Equals(object? obj)` — Ordinal equality by canonical string. *(
-  inherited)*
-
-* `override int GetHashCode()` — Hash code based on canonical string. *(inherited)*
-
-* `string ToCss(string? propertyName)` — Converts to CSS declaration string (`"property:#RRGGBBAA;"`) or returns just
-  the value
-  if no property is provided. *(inherited)*
-
-* `override string ToString()` — Returns canonical `#RRGGBBAA` form.
-
----
+| Name                                                     | Returns              | Description                                                                                                            |
+|----------------------------------------------------------|----------------------|------------------------------------------------------------------------------------------------------------------------|
+| `FromHsva(double h, double s, double v, double a = 1.0)` | `AllyariaColorValue` | Factory: clamps/normalizes HSVA, converts to RGB, returns a new color.                                                 |
+| `FromRgba(byte r, byte g, byte b, double a = 1.0)`       | `AllyariaColorValue` | Factory: clamps alpha, returns a new color.                                                                            |
+| `Parse(string value)`                                    | `AllyariaColorValue` | Parses or throws `AllyariaArgumentException`.                                                                          |
+| `TryParse(string value, out AllyariaColorValue? result)` | `bool`               | Attempts parse; `false` on failure.                                                                                    |
+| `Compare(ValueBase? left, ValueBase? right)`             | `int`                | Ordinal comparison by `Value`. Throws if operand runtime types differ when both non-null.                              |
+| `CompareTo(ValueBase? other)`                            | `int`                | Ordinal comparison with another value; throws when runtime types differ.                                               |
+| `Equals(object? obj)`                                    | `bool`               | Equality by canonical `Value`.                                                                                         |
+| `Equals(ValueBase? other)`                               | `bool`               | Equality by canonical `Value`; `true` only if same runtime type and same `Value`.                                      |
+| `GetHashCode()`                                          | `int`                | Ordinal hash of `Value`.                                                                                               |
+| `ToCss(string propertyName)`                             | `string`             | Formats `"property:value;"` (e.g., `"color:#FF0000FF;"`), or returns raw `Value` if `propertyName` is null/whitespace. |
+| `ToString()`                                             | `string`             | Returns `Value` (`#RRGGBBAA`).                                                                                         |
 
 ## Operators
 
-* `==`, `!=` — Equality/inequality by value. *(inherited)*
-* `<`, `<=`, `>`, `>=` — Ordering by canonical string. *(inherited)*
-* `implicit operator AllyariaColorValue(string)` — Parses from a color string.
-* `implicit operator string(AllyariaColorValue)` — Converts to canonical string.
+| Operator                                | Returns              | Description                                                                          |
+|-----------------------------------------|----------------------|--------------------------------------------------------------------------------------|
+| `implicit string -> AllyariaColorValue` | `AllyariaColorValue` | Parses string into a color (throws on invalid input).                                |
+| `implicit AllyariaColorValue -> string` | `string`             | Returns canonical `#RRGGBBAA`.                                                       |
+| `==`, `!=`                              | `bool`               | Ordinal equality by `Value`. Works between two `AllyariaColorValue` instances.       |
+| `>`, `<`, `>=`, `<=`                    | `bool`               | Ordinal ordering by `Value`. *Comparing different `ValueBase`-derived types throws.* |
 
----
+## Events
+
+*None*
 
 ## Exceptions
 
-* `ArgumentException` — Thrown when constructing/parsing with `null`, empty, whitespace-only input, invalid control
-  characters, unsupported color formats, or when comparing values of different concrete `ValueBase` types.
-* `ArgumentOutOfRangeException` — Thrown when HSVA or RGBA channel values are outside their valid ranges.
+* `AllyariaArgumentException` — invalid/unsupported color input, out-of-range channel, or attempting to compare two
+  `different` `ValueBase`-derived types with comparison operators or `Compare*`.
+* `ArgumentException` — invalid hex digit when parsing hex strings.
+
+## Behavior Notes
+
+* `Canonical form`: All ordering/equality is based on uppercase `#RRGGBBAA` (`Value`).
+* `Parsing sources`: CSS hex forms, `rgb()/rgba()`, `hsv()/hsva()`, `CSS Web color names`, and
+  `Material Design palette names` (case-insensitive; whitespace/dashes/underscores ignored for Material names).
+* `Normalization`: Hue wraps to `[0..360)`, S/V clamp to `[0..100]`, alpha clamps to `[0..1]`.
+* `Culture`: All numeric parsing/formatting uses `InvariantCulture`.
+* `CSS emission`: Use `ToCss("color")` to emit inline declarations; property name is lower-cased/trimmed.
+* `Type safety`: Comparison with a `different` `ValueBase` subtype (e.g., `AllyariaNumberValue`) throws.
+
+## Examples
+
+### Minimal
+
+```csharp
+using Allyaria.Theming.Values;
+
+var red = new AllyariaColorValue("#FF0000");
+Console.WriteLine(red.HexRgba);       // "#FF0000FF"
+Console.WriteLine(red.ToCss("color")); // "color:#FF0000FF;"
+```
+
+### Expanded
+
+```csharp
+using Allyaria.Theming.Values;
+using Allyaria.Theming.Contracts;
+
+var c1 = AllyariaColorValue.Parse("DeepPurple500");
+var c2 = AllyariaColorValue.Parse("rgb(255,0,0)");
+var c3 = AllyariaColorValue.FromHsva(200, 100, 50);
+
+// Equality / ordering (ordinal by #RRGGBBAA)
+bool same = c1 == c1;                       // true
+int cmp  = ValueBase.Compare(c1, c2);       // works with AllyariaColorValue operands
+bool gt  = c1 > c2;                         // inherited operator
+
+// CSS emission
+string cssColor = c2.ToCss("color");        // "color:#FF0000FF;"
+string raw      = c3.ToString();            // "#??????FF" (canonical)
+
+// Safe parsing
+if (AllyariaColorValue.TryParse("hsva(210,50%,40%,0.8)", out var parsed))
+{
+    Console.WriteLine(parsed!.Rgba);        // "rgba(r, g, b, 0.8)"
+}
+```
+
+> *Rev Date: 2025-10-01*

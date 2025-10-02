@@ -1,73 +1,106 @@
-﻿# Allyaria.Theming.Styles.AllyariaPalette
+# Allyaria.Theming.Styles.AllyariaPalette
 
-`AllyariaPalette` is an immutable record-struct that computes effective foreground, background, and border styles (with
-Allyaria precedence rules) and is optimized for inline CSS generation and CSS custom property emission. It supports
-optional background images (with a readability overlay), opt-in borders, and sensible defaults for contrast.
-
----
+`AllyariaPalette` is an immutable, strongly typed palette used by the Allyaria theme engine to compute effective *
+*foreground, background, and border styles**, including hover and disabled variants.
+It enforces documented precedence rules: background images override region colors; explicit overrides beat defaults;
+borders render only when a width is provided.
+Intended for inline style generation and CSS custom property emission.
 
 ## Constructors
 
-`AllyariaPalette(AllyariaColorValue? backgroundColor = null, AllyariaColorValue? foregroundColor = null, string? backgroundImage = "", int? borderWidth = 0, AllyariaColorValue? borderColor = null, AllyariaStringValue? borderStyle = null, AllyariaStringValue? borderRadius = null)`
-Creates a palette with optional overrides.
+`AllyariaPalette(AllyariaColorValue? backgroundColor = null, AllyariaColorValue? foregroundColor = null, AllyariaImageValue? backgroundImage = null, bool backgroundImageStretch = true, int? borderWidth = 0, AllyariaColorValue? borderColor = null, AllyariaStringValue? borderStyle = null, AllyariaStringValue? borderRadius = null)`
+Initializes a new immutable palette with optional colors, borders, and image. Applies default precedence and values.
 
-* `backgroundColor` — Base background; when omitted defaults to `Colors.White`.
-* `foregroundColor` — Explicit foreground; when omitted, computed from effective background lightness (`V < 50 → White`,
-  else `Black`).
-* `backgroundImage` — Optional URL. If non-empty, becomes a composite value:
-  `linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5)),url("<trimmed-lowercased>")`. Whitespace is trimmed and
-  the URL lower-cased.
-* `borderWidth` — Pixels. `<= 0` omits the border; `> 0` emits `border-width` (stored as `int?`).
-* `borderColor` — When border is present and color omitted, defaults to the **base** background color (or white) for
-  cohesion.
-* `borderStyle` — Token such as `solid`; defaults to `solid`.
-* `borderRadius` — Optional radius (e.g., `4px`); **emitted whenever set**, independent of whether a border exists.
-
----
+* Exceptions: *None*
 
 ## Properties
 
-* `AllyariaColorValue BackgroundColor` — Effective background after precedence.
-* `AllyariaStringValue? BackgroundImage` — Composite background-image declaration or `null` when not set.
-* `AllyariaColorValue BorderColor` — Effective border color when a border is present; `Transparent` when not. Defaults
-  to base background (or white) if not explicitly set.
-* `AllyariaStringValue? BorderRadius` — Optional radius token.
-* `AllyariaStringValue BorderStyle` — Border style token; defaults to `solid`.
-* `AllyariaStringValue? BorderWidth` — Width token like `1px` when `> 0`; otherwise `null`.
-* `AllyariaColorValue ForegroundColor` — Effective text color; uses background lightness to choose black/white when not
-  explicitly provided.
-
----
-
-## Events
-
-* *None*
-
----
+| Name              | Type                   | Description                                                                                                                            |
+|-------------------|------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `BackgroundColor` | `AllyariaColorValue`   | Effective background color; defaults to `Colors.White` when unset.                                                                     |
+| `BackgroundImage` | `AllyariaImageValue?`  | Effective background image, or `null` when none.                                                                                       |
+| `BorderColor`     | `AllyariaColorValue`   | Effective border color; defaults to `BackgroundColor` if none supplied.                                                                |
+| `BorderRadius`    | `AllyariaStringValue?` | Border radius token (e.g., `4px`), or `null` if unset.                                                                                 |
+| `BorderStyle`     | `AllyariaStringValue`  | Border style token (e.g., `solid`); defaults to `solid`.                                                                               |
+| `BorderWidth`     | `AllyariaNumberValue?` | Border width declaration (e.g., `1px`), or `null` if no border.                                                                        |
+| `ForegroundColor` | `AllyariaColorValue`   | Effective foreground: chosen for highest WCAG contrast against background, or adjusted from explicit foreground to meet minimum ratio. |
 
 ## Methods
 
-* `string ToCss()` — Builds inline CSS. Always emits `color`.
-  If a background image is set, emits `background-image` plus
-  `background-position:center; background-repeat:no-repeat; background-size:cover;`; otherwise emits
-  `background-color`.
-  If a border is present, emits `border-color`, `border-style`, `border-width`.
-  Emits `border-radius` when a radius is set (independent of border).
-
-* `string ToCssVars(string prefix = "")` — Emits CSS custom properties for theme-aware styling. The `prefix` is
-  normalized by trimming, lowercasing, replacing spaces with hyphens, and stripping leading/trailing dashes; empty
-  resolves to `--aa-`.
-  Outputs `--{prefix}color`. If a background image is set, outputs `--{prefix}background-image`; otherwise outputs
-  `--{prefix}background-color`.
-  When a border is present, outputs `--{prefix}border-color`, `--{prefix}border-style`, `--{prefix}border-width`.
-  Emits `--{prefix}border-radius` when a radius is set (independent of border).
-
-* `AllyariaPalette Cascade(AllyariaColorValue? backgroundColor = null, AllyariaColorValue? foregroundColor = null, string? backgroundImage = null, int? borderWidth = null, AllyariaColorValue? borderColor = null, AllyariaStringValue? borderStyle = null, AllyariaStringValue? borderRadius = null)` —
-Returns a new palette applying overrides to **base** values (does not re-apply derived precedence). Negative
-`borderWidth` is treated as `null` (no border).
-
----
+| Name                                                                                                                                      | Returns           | Description                                                                                                      |
+|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------|------------------------------------------------------------------------------------------------------------------|
+| `Cascade(backgroundColor, foregroundColor, backgroundImage, backgroundImageStretch, borderWidth, borderColor, borderStyle, borderRadius)` | `AllyariaPalette` | Produces a new palette by applying raw overrides, falling back to current values.                                |
+| `ToCss()`                                                                                                                                 | `string`          | Builds inline CSS declarations (`color`, `background-color`, border, radius) according to precedence rules.      |
+| `ToCssVars(prefix = "")`                                                                                                                  | `string`          | Builds CSS custom property declarations. Normalizes optional prefix to kebab-case.                               |
+| `ToDisabledPalette(desaturateBy = 60, valueBlendTowardMid = 0.15, minimumContrast = 3.0)`                                                 | `AllyariaPalette` | Produces a palette for disabled state by desaturating background/border and relaxing contrast.                   |
+| `ToHoverPalette(backgroundDeltaV = 6, borderDeltaV = 8, minimumContrast = 4.5)`                                                           | `AllyariaPalette` | Produces a palette for hover state by adjusting Value (V) of background/border and ensuring readable foreground. |
 
 ## Operators
 
-* `==`, `!=` — Value equality/inequality provided by `record struct` semantics. No ordering operators are defined.
+| Operator    | Returns | Description          |
+|-------------|---------|----------------------|
+| `==` / `!=` | `bool`  | Equality comparison. |
+
+## Events
+
+*None*
+
+## Exceptions
+
+*None*
+
+## Behavior Notes
+
+* Background images take precedence over background colors.
+* Explicit overrides (foreground, border) beat defaults.
+* Borders render only when `BorderWidth > 0`.
+* `ForegroundColor` uses **WCAG contrast ratio calculations**:
+
+    * Auto-selects white/black when unset.
+    * Adjusts explicit foreground to minimum 4.5:1 against background.
+* `ToCssVars` normalizes prefixes: `"My Theme"` → `--my-theme-`. Defaults to `--aa-`.
+* Disabled palettes reduce saturation and blend Value toward mid-range (50).
+* Hover palettes adjust Value directionally (darken light surfaces, lighten dark surfaces).
+
+## Examples
+
+### Minimal Example
+
+```csharp
+using Allyaria.Theming.Styles;
+using Allyaria.Theming.Constants;
+
+var palette = new AllyariaPalette(backgroundColor: Colors.Grey50);
+var css = palette.ToCss(); 
+// "background-color:#fafafa;color:#000;border-style:solid;..."
+```
+
+### Expanded Example
+
+```csharp
+using Allyaria.Theming.Styles;
+using Allyaria.Theming.Constants;
+using Allyaria.Theming.Values;
+
+public class PaletteDemo
+{
+    public void ApplyPalettes()
+    {
+        var basePalette = new AllyariaPalette(
+            backgroundColor: Colors.Grey100,
+            borderWidth: 1,
+            borderStyle: new AllyariaStringValue("solid"),
+            borderRadius: new AllyariaStringValue("8px")
+        );
+
+        var hover = basePalette.ToHoverPalette();
+        var disabled = basePalette.ToDisabledPalette();
+
+        Console.WriteLine("Base: " + basePalette.ToCss());
+        Console.WriteLine("Hover: " + hover.ToCss());
+        Console.WriteLine("Disabled: " + disabled.ToCssVars("btn"));
+    }
+}
+```
+
+> *Rev Date: 2025-10-01*

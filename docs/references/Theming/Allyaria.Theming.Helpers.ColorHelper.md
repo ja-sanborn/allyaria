@@ -1,82 +1,85 @@
-﻿# Allyaria.Theming.Helpers.ColorHelper
+# Allyaria.Theming.Helpers.ColorHelper
 
-`ColorHelper` provides WCAG-aware color utilities used by theming: contrast ratio computation, hue-preserving contrast
-repair for opaque colors, sRGB mixing, scalar blending, and luminance. It’s a static, allocation-free helper (no canvas
-alpha blending), designed to support palette derivations.
-
----
+`ColorHelper` is an internal static class providing **WCAG contrast computation and color adjustment utilities**.
+It includes methods for scalar blending, sRGB interpolation, relative luminance, and hue-preserving contrast repair for
+opaque colors.
+All methods are allocation-free and optimized for theming scenarios—no alpha/canvas blending is performed.
 
 ## Constructors
 
-* *None* (static class)
-
----
+*None*
 
 ## Properties
 
-* *None*
-
----
-
-## Events
-
-* *None*
-
----
+*None*
 
 ## Methods
 
-* `static double Blend(double start, double target, double t)`
-  Linearly blends a scalar toward a `target` by factor `t ∈ [0..1]`. `0 → start`, `1 → target`.
+| Name                                              | Returns              | Description                                                                                                              |
+|---------------------------------------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `Blend(start, target, t)`                         | `double`             | Linearly blends a scalar toward a target by factor `t ∈ [0,1]`.                                                          |
+| `ContrastRatio(fg, bg)`                           | `double`             | Computes the WCAG contrast ratio between two opaque sRGB colors.                                                         |
+| `EnsureMinimumContrast(fg, bg, minimumRatio=3.0)` | `ContrastResult`     | Adjusts the foreground color along HSV value (V) to meet or best-approach a minimum contrast ratio against a background. |
+| `MixSrgb(a, b, t)`                                | `AllyariaColorValue` | Linear interpolation (LERP) in sRGB between two opaque colors.                                                           |
+| `RelativeLuminance(color)`                        | `double`             | Computes WCAG relative luminance from an opaque sRGB color.                                                              |
 
-* `static double ContrastRatio(AllyariaColorValue foreground, AllyariaColorValue background)`
-  Computes WCAG contrast between two **opaque sRGB** colors as `(Llighter + 0.05) / (Ldarker + 0.05)` using relative
-  luminance.
+## Operators
 
-* `static ContrastResult EnsureMinimumContrast(AllyariaColorValue foreground, AllyariaColorValue background, double minimumRatio = 3.0)`
-Resolves a foreground that **meets or best-approaches** `minimumRatio` over `background`. Strategy:
+*None*
 
-    1. keep **H**/**S** and binary-search **V** in the locally better direction;
-    2. try the opposite **V** direction if needed;
-    3. if still unmet, **mix toward white** in sRGB;
-       returns the first solution that meets the target, otherwise the best-approaching result. The returned
-       `ContrastResult` includes the final color, background, achieved ratio, and a flag indicating whether the minimum
-       was
-       met.
+## Events
 
-* `static AllyariaColorValue MixSrgb(AllyariaColorValue a, AllyariaColorValue b, double t)`
-  Linear interpolation between two **opaque** colors in sRGB (`t ∈ [0..1]`). Note: not perceptually uniform.
+*None*
 
-* `static double RelativeLuminance(AllyariaColorValue color)`
-  Computes WCAG relative luminance from sRGB bytes via linearized channels.
+## Exceptions
 
----
+*None*
 
-## Usage
+## Behavior Notes
 
-### Ensure accessible text color
+* `EnsureMinimumContrast` preserves hue/saturation and adjusts only value (V). If target cannot be met along the HSV
+  rail, it mixes toward black/white poles.
+* `ContrastRatio` follows WCAG formula: `(Lighter + 0.05) / (Darker + 0.05)`.
+* `Blend` and `MixSrgb` both clamp blend factor `t` to `[0,1]`.
+* All methods are deterministic and allocation-free.
+* Designed for opaque colors (`AllyariaColorValue`); alpha blending is not supported.
 
-```csharp
-var bg = new AllyariaColorValue("#0F172AFF");   // slate-900
-var fg = new AllyariaColorValue("#334155FF");   // slate-700 (may be too low contrast)
+## Examples
 
-var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimumRatio: 4.5);
-var accessibleFg = result.ForegroundColor;      // hue-preserving adjustment when possible
-var ratio = result.ContrastRatio;               // ≥ 4.5 if `MeetsMinimum` is true
-```
-
-### Simple sRGB mix
+### Minimal Example
 
 ```csharp
-var a = new AllyariaColorValue("#FF0000FF");
-var b = new AllyariaColorValue("#0000FFFF");
-var mid = ColorHelper.MixSrgb(a, b, 0.5);  // #800080FF (approximate, sRGB-linear mix)
+using Allyaria.Theming.Helpers;
+using Allyaria.Theming.Values;
+
+// Contrast ratio between white and black
+var ratio = ColorHelper.ContrastRatio(Colors.White, Colors.Black); // 21.0
 ```
 
----
+### Expanded Example
 
-## Notes
+```csharp
+using Allyaria.Theming.Helpers;
+using Allyaria.Theming.Values;
 
-* All inputs/outputs are **opaque** (`#RRGGBBAA`, `A = 1`), and operations are tuned for UI theme work.
-* `ColorHelper` is internal; it’s consumed by higher-level types (e.g., palettes) to derive hover/disabled states and to
-  enforce readable foregrounds.
+public class ContrastDemo
+{
+    public ContrastResult EnsureReadable(AllyariaColorValue foreground, AllyariaColorValue background)
+    {
+        // Require WCAG AA body text ratio
+        return ColorHelper.EnsureMinimumContrast(foreground, background, minimumRatio: 4.5);
+    }
+
+    public void ExampleUsage()
+    {
+        var fg = Colors.Grey500;
+        var bg = Colors.White;
+
+        var result = EnsureReadable(fg, bg);
+
+        Console.WriteLine($"Adjusted: {result.Foreground}, Ratio: {result.ContrastRatio}, Met: {result.MeetsMinimum}");
+    }
+}
+```
+
+> *Rev Date: 2025-10-01*

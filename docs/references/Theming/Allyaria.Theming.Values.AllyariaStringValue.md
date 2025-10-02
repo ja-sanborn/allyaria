@@ -1,69 +1,113 @@
 # Allyaria.Theming.Values.AllyariaStringValue
 
-`AllyariaStringValue` is a normalized theming string wrapper with immutable value semantics. It trims input, rejects
-`null`/empty/whitespace, and rejects any control characters. It leverages `ValueBase` for ordinal comparison/equality
-and CSS
-declaration formatting (e.g., `"property:value;"`). It is ideal for safely carrying CSS token values (sizes, keywords,
-etc.)
-through theming pipelines.
+`AllyariaStringValue` is a sealed, immutable theming type that represents a *normalized string value*.
+It *inherits from `ValueBase`*, which provides canonical string storage, equality, ordering, and CSS emission.
+Input is always validated (non-null, trimmed, no whitespace-only or control characters).
 
 ---
 
 ## Constructors
 
-* `AllyariaStringValue(string value)`
-  Creates a normalized value from `value`. Trims leading/trailing whitespace, rejects control characters, and throws if
-  `value` is `null`, empty, or whitespace-only.
+`AllyariaStringValue(string value)`
+Creates a new instance by validating and normalizing the provided string.
+
+* Exceptions:
+
+    * `AllyariaArgumentException` — if the input is null, empty, whitespace-only, or contains control characters.
 
 ---
 
 ## Properties
 
-* `string Value` — The underlying normalized string (inherited from `ValueBase`).
-
----
-
-## Events
-
-* *None*
+| Name    | Type     | Description                  |
+|---------|----------|------------------------------|
+| `Value` | `string` | Normalized canonical string. |
 
 ---
 
 ## Methods
 
-* `static AllyariaStringValue Parse(string value)` — Parses and normalizes `value`; throws on invalid input.
-
-* `static bool TryParse(string value, out AllyariaStringValue? result)` — Attempts to parse; returns `true` and sets
-  `result` on success, otherwise `false` with `result = null`.
-
-* `string ToCss(string propertyName)` — Formats a CSS declaration using the current value.
-  Returns `"propertyName:value;"` (with a lower-cased, trimmed property name). If `propertyName` is `null`/whitespace,
-  returns just `Value`. *(inherited from `ValueBase`)*
-
-* `int CompareTo(ValueBase other)` — Ordinal comparison by `Value`. *(inherited)*
-
-* `bool Equals(ValueBase other)` / `override bool Equals(object? obj)` — Ordinal equality by `Value`. *(inherited)*
-
-* `override int GetHashCode()` — Based on `Value`. *(inherited)*
-
-* `override string ToString()` — Returns `Value`. *(inherited)*
+| Name                                                      | Returns               | Description                                                              |
+|-----------------------------------------------------------|-----------------------|--------------------------------------------------------------------------|
+| `Parse(string value)`                                     | `AllyariaStringValue` | Parses a raw string, throws if invalid.                                  |
+| `TryParse(string value, out AllyariaStringValue? result)` | `bool`                | Attempts parsing, returns false on failure.                              |
+| `Compare(ValueBase? left, ValueBase? right)`              | `int`                 | Static comparison by `Value`. Throws if types differ.                    |
+| `CompareTo(ValueBase? other)`                             | `int`                 | Ordinal comparison with another instance.                                |
+| `Equals(object? obj)`                                     | `bool`                | Equality check against object.                                           |
+| `Equals(ValueBase? other)`                                | `bool`                | Equality by `Value` with another `ValueBase` of the same type.           |
+| `GetHashCode()`                                           | `int`                 | Ordinal hash of `Value`.                                                 |
+| `ToCss(string propertyName)`                              | `string`              | `"property:value;"` if property provided, otherwise returns raw `Value`. |
+| `ToString()`                                              | `string`              | Returns `Value`.                                                         |
 
 ---
 
 ## Operators
 
-* `==`, `!=`, `<`, `<=`, `>`, `>=` — Ordinal comparison/equality by `Value` (inherited from `ValueBase`). Comparing
-  different
-  concrete `ValueBase` types throws.
-* `implicit operator AllyariaStringValue(string)` — Converts a `string` to a normalized `AllyariaStringValue` (throws on
-  invalid input).
-* `implicit operator string(AllyariaStringValue)` — Extracts the underlying normalized `Value`.
+| Operator                                 | Returns               | Description                                                                      |
+|------------------------------------------|-----------------------|----------------------------------------------------------------------------------|
+| `implicit string -> AllyariaStringValue` | `AllyariaStringValue` | Converts string into validated `AllyariaStringValue`.                            |
+| `implicit AllyariaStringValue -> string` | `string`              | Returns canonical `Value`.                                                       |
+| `==`, `!=`                               | `bool`                | Ordinal equality by canonical `Value`. Only equal if same runtime type.          |
+| `>`, `<`, `>=`, `<=`                     | `bool`                | Ordinal ordering by `Value`. Throws if comparing across different derived types. |
+
+---
+
+## Events
+
+*None*
 
 ---
 
 ## Exceptions
 
-* `ArgumentException` — Thrown when constructing/parsing with `null`, empty, whitespace-only input, or input containing
-  control
-  characters.
-* `ArgumentException` — Thrown when comparing values of different concrete `ValueBase` types. *(inherited)*
+* `AllyariaArgumentException` — thrown when invalid string input is provided (null/whitespace/control chars) or when
+  comparing across different `ValueBase`-derived types.
+* `NullReferenceException` — thrown if implicit conversion to string is attempted on a null instance.
+
+---
+
+## Behavior Notes
+
+* Canonical form is always trimmed input with no surrounding whitespace or control characters.
+* Input that is empty or only whitespace is rejected.
+* Equality and ordering semantics are strict ordinal comparisons of canonical strings.
+* Inherits immutability and type-safe comparison rules from `ValueBase`.
+
+---
+
+## Examples
+
+### Minimal Example
+
+```csharp
+using Allyaria.Theming.Values;
+
+var token = new AllyariaStringValue("  bold  ");
+Console.WriteLine(token.Value); // "bold"
+Console.WriteLine(token.ToCss("font-weight")); // "font-weight:bold;"
+```
+
+### Expanded Example
+
+```csharp
+using Allyaria.Theming.Values;
+
+public class StringDemo
+{
+    public void Demo()
+    {
+        var v1 = AllyariaStringValue.Parse("center");
+        var v2 = new AllyariaStringValue("uppercase");
+
+        Console.WriteLine(v1 == v2);        // false
+        Console.WriteLine(v1.ToCss("text-align")); // "text-align:center;"
+
+        if (AllyariaStringValue.TryParse("italic", out var parsed))
+        {
+            Console.WriteLine(parsed); // "italic"
+        }
+    }
+}
+```
+
+> *Rev Date: 2025-10-01*

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ". root", ". root", "{6126D2C4-AD6A-4628-9273-AFC17CFAFA31}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,6 +35,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "standards", "standards", "{51BF1563-9AE2-430B-ADDC-3C6B97FFD3FC}"
 	ProjectSection(SolutionItems) = preProject
 		docs\standards\Accessibility.md = docs\standards\Accessibility.md
+		docs\standards\APITemplate.md = docs\standards\APITemplate.md
 		docs\standards\CSharp.md = docs\standards\CSharp.md
 		docs\standards\CSS.md = docs\standards\CSS.md
 		docs\standards\JavaScript.md = docs\standards\JavaScript.md
@@ -49,9 +50,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming", "src\Allyaria.Theming\Allyaria.Theming.csproj", "{AF51AB5D-4C0C-4069-A1DA-3926999E7641}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}"
-	ProjectSection(SolutionItems) = preProject
-		tests\.editorconfig = tests\.editorconfig
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.UnitTests", "tests\Allyaria.Theming.UnitTests\Allyaria.Theming.UnitTests.csproj", "{F1658959-606D-4B4A-A768-89741991B4B9}"
 EndProject
@@ -60,14 +58,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theming", "Theming", "{96DF5FAE-0244-456C-B280-825769704835}"
 	ProjectSection(SolutionItems) = preProject
 		docs\references\Theming\Allyaria.Theming.Constants.Colors.md = docs\references\Theming\Allyaria.Theming.Constants.Colors.md
+		docs\references\Theming\Allyaria.Theming.Constants.Sizing.md = docs\references\Theming\Allyaria.Theming.Constants.Sizing.md
 		docs\references\Theming\Allyaria.Theming.Constants.Styles.md = docs\references\Theming\Allyaria.Theming.Constants.Styles.md
 		docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md = docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md
 		docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md = docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md
+		docs\references\Theming\Allyaria.Theming.Styles.AllyariaSpacing.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaSpacing.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaTypography.md
 		docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaColorValue.md
 		docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaImageValue.md
+		docs\references\Theming\Allyaria.Theming.Values.AllyariaNumberValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaNumberValue.md
 		docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md = docs\references\Theming\Allyaria.Theming.Values.AllyariaStringValue.md
 	EndProjectSection
 EndProject

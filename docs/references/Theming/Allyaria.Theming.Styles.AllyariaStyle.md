@@ -1,137 +1,108 @@
 # Allyaria.Theming.Styles.AllyariaStyle
 
-`AllyariaStyle` is an immutable **record-struct** that composes an `AllyariaPalette` (colors, borders, backgrounds) with
-`AllyariaTypography` (font family, size, weight, line-height, etc.) and exposes helpers to emit **inline CSS** and **CSS
-custom properties** for its base, hover, and disabled states. It concatenates each sub-type’s CSS fragments—so all
-precedence rules for colors, images, borders, and state-specific behavior are inherited from `AllyariaPalette`, while
-all
-font rules are inherited from `AllyariaTypography`.
-
----
+`AllyariaStyle` is an immutable record struct representing a combined style configuration.
+It encapsulates **palette, typography, and spacing** for the base state, and derived or overridden values for the hover
+and disabled states. Provides helpers to generate CSS fragments and CSS custom property declarations.
 
 ## Constructors
 
-`AllyariaStyle(AllyariaPalette palette, AllyariaTypography typography, AllyariaPalette? paletteHover = null, AllyariaTypography? typographyHover = null, AllyariaPalette? paletteDisabled = null, AllyariaTypography? typographyDisabled = null)`
-Creates a style by pairing a palette with a typography definition, with optional **hover** and **disabled** overrides.
+`AllyariaStyle(AllyariaPalette palette, AllyariaTypography typography, AllyariaSpacing spacing, AllyariaPalette? paletteHover = null, AllyariaTypography? typographyHover = null, AllyariaPalette? paletteDisabled = null, AllyariaTypography? typographyDisabled = null)`
+Initializes a new style with palette, typography, and spacing. Hover and disabled values may be provided; if omitted,
+they are derived from base palette/typography.
 
-  * `palette` — The computed color/border/background model.
-  * `typography` — The text styling model (font stack, sizing, weights, spacing).
-  * `paletteHover` — Optional hover palette. If omitted, a derived hover palette is created from `palette`.
-  * `typographyHover` — Optional hover typography. Defaults to `typography` when omitted.
-  * `paletteDisabled` — Optional disabled palette. If omitted, a derived disabled palette is created from `palette`.
-  * `typographyDisabled` — Optional disabled typography. Defaults to `typography` when omitted.
-
----
+* Exceptions: *None*
 
 ## Properties
 
-* `Palette` — The base color/background/border source.
-* `PaletteHover` — The hover palette used by `ToCssHover()` and hover variable emission.
-* `PaletteDisabled` — The disabled palette used by variable emission.
-* `Typography` — The base typography source.
-* `TypographyHover` — The hover typography used by `ToCssHover()` and hover variable emission.
-* `TypographyDisabled` — The disabled typography used by variable emission.
-
-> **Immutability:** Being a `record struct` with readonly members, instances are value-type, copyable, and safe to
-> pass by value without defensive cloning. Equality and deconstruction follow record semantics.
-
----
-
-## Events
-
-* *None*
-
----
+| Name                 | Type                 | Description                                                       |
+|----------------------|----------------------|-------------------------------------------------------------------|
+| `Palette`            | `AllyariaPalette`    | Base color palette.                                               |
+| `PaletteDisabled`    | `AllyariaPalette`    | Palette for disabled state (derived if not provided).             |
+| `PaletteHover`       | `AllyariaPalette`    | Palette for hover state (derived if not provided).                |
+| `Spacing`            | `AllyariaSpacing`    | Margins and paddings applied across all states.                   |
+| `Typography`         | `AllyariaTypography` | Base typography settings.                                         |
+| `TypographyDisabled` | `AllyariaTypography` | Typography for disabled state (defaults to base if not provided). |
+| `TypographyHover`    | `AllyariaTypography` | Typography for hover state (defaults to base if not provided).    |
 
 ## Methods
 
-* `string ToCss()`
-  Returns the concatenation of `Palette.ToCss()` and `Typography.ToCss()`.
-  Use when emitting **non-hover** inline declarations (e.g., on a root element). Palette emission includes `color` and
-  either `background-color` or `background-image` + sizing rules; border declarations are included when configured.
-  Typography emission includes font-related declarations.
-
-* `string ToCssHover()`
-  Returns the concatenation of `PaletteHover.ToCss()` and `TypographyHover.ToCss()`.
-  Use for **`:hover`** inline declarations or when composing style strings for interactive states.
-
-* `string ToCssVars(string prefix = "")`
-  Emits custom properties (CSS variables) for **base, disabled, and hover states** using a normalized prefix.
-
-    * **Prefix normalization:** Input `prefix` is trimmed of leading/trailing hyphens, collapses whitespace/dashes to a
-      single hyphen, and is lowercased. If the result is empty/whitespace, the default prefix **`aa`** is used.
-    * **State namespaces:** Disabled variables reuse the same normalized prefix with **`-disabled`** appended. Hover
-      variables use **`-hover`**.
-    * **Output composition:** Concatenates the variable declarations from `Palette` and `Typography` for the base
-      prefix,
-      then `PaletteDisabled` and `TypographyDisabled` for the disabled prefix, and `PaletteHover` and
-      `TypographyHover` for the hover prefix.
-
-  Use this when exposing **CSS custom properties** (e.g., `--aa-…`) that component-scoped CSS can consume without
-  relying on global overrides.
-
----
+| Name                     | Returns  | Description                                                                                     |
+|--------------------------|----------|-------------------------------------------------------------------------------------------------|
+| `ToCss()`                | `string` | Builds CSS for the base state (palette + typography + spacing).                                 |
+| `ToCssDisabled()`        | `string` | Builds CSS for the disabled state (disabled palette + disabled typography + spacing).           |
+| `ToCssHover()`           | `string` | Builds CSS for the hover state (hover palette + hover typography + spacing).                    |
+| `ToCssVars(prefix = "")` | `string` | Builds CSS variable declarations for base, disabled, and hover states, using normalized prefix. |
 
 ## Operators
 
-* `==`, `!=` — Value equality provided by `record struct` semantics (compares all palette and typography states).
-  No ordering operators are defined.
+| Operator    | Returns | Description          |
+|-------------|---------|----------------------|
+| `==` / `!=` | `bool`  | Equality comparison. |
 
----
+## Events
 
-## Usage
+*None*
 
-### Build a style and apply inline CSS
+## Exceptions
+
+*None*
+
+## Behavior Notes
+
+* `PaletteHover` defaults to `Palette.ToHoverPalette()` if not specified.
+* `PaletteDisabled` defaults to `Palette.ToDisabledPalette()` if not specified.
+* Typography hover/disabled default to base `Typography`.
+* `ToCssVars` normalizes prefix:
+
+    * `"Editor Theme"` → `--editor-theme-`
+    * Empty → `--aa-`
+    * Also appends `-disabled` and `-hover` for state-specific sets.
+* Concatenated CSS strings are suitable for inline `style` attributes.
+
+## Examples
+
+### Minimal Example
 
 ```csharp
 using Allyaria.Theming.Styles;
+using Allyaria.Theming.Constants;
 
-var palette = new AllyariaPalette(
-    backgroundColor: Colors.White,
-    foregroundColor: Colors.Black,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: Colors.Gray700);
+var style = new AllyariaStyle(
+    Styles.DefaultPalette,
+    Styles.DefaultTypography,
+    Styles.DefaultSpacing
+);
 
-var typography = new AllyariaTypography(
-    fontFamily: "Inter, system-ui, sans-serif",
-    fontSize: "14px",
-    lineHeight: "1.5",
-    fontWeight: 500);
-
-// Hover and disabled states optional — if omitted, derived automatically
-var style = new AllyariaStyle(palette, typography);
-
-var css         = style.ToCss();        // base declarations
-var cssHover    = style.ToCssHover();   // hover declarations
-var cssVars     = style.ToCssVars();    // base + disabled + hover CSS variables
+Console.WriteLine(style.ToCss());
+// "background-color:#fafafa;color:#212121;font-family:...;margin:...;padding:..."
 ```
 
----
+### Expanded Example
 
-## Behavior & Precedence Notes
+```csharp
+using Allyaria.Theming.Styles;
+using Allyaria.Theming.Constants;
 
-* **Colors & Backgrounds:** `AllyariaStyle` defers to `AllyariaPalette` for all background/foreground/border logic,
-  including hover and disabled adjustments.
-* **Hover & Disabled Strategies:** By default, hover and disabled states are derived from the base palette and
-  typography
-  when not explicitly provided.
-* **CSS Variables:** `ToCssVars(prefix)` emits **base**, **disabled**, and **hover** variable sets under the normalized
-  prefix.
+public class StyleDemo
+{
+    public void ApplyStyles()
+    {
+        var baseStyle = new AllyariaStyle(
+            Styles.DefaultPalette,
+            Styles.DefaultTypography,
+            Styles.DefaultSpacing
+        );
 
----
+        var hoverCss = baseStyle.ToCssHover();
+        var disabledCss = baseStyle.ToCssDisabled();
+        var vars = baseStyle.ToCssVars("btn");
 
-## Performance
+        Console.WriteLine("Base: " + baseStyle.ToCss());
+        Console.WriteLine("Hover: " + hoverCss);
+        Console.WriteLine("Disabled: " + disabledCss);
+        Console.WriteLine("CSS Vars: " + vars);
+    }
+}
+```
 
-* **Allocation-lean:** Methods use `string.Concat` to join palette and typography fragments, avoiding unnecessary
-  intermediates.
-* **Value semantics:** As a small `record struct`, instances are cheap to copy and compare; equality comparisons are
-  structural across all states.
-
----
-
-## Related
-
-* **`AllyariaPalette`** — Background/foreground/border logic and CSS emission, including hover, disabled, and CSS
-  variables.
-* **`AllyariaTypography`** — Font stack, size, weight, spacing, and corresponding CSS/variable emission.
+> *Rev Date: 2025-10-01*

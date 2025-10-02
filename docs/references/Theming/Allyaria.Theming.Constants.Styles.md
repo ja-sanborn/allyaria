@@ -1,90 +1,93 @@
 # Allyaria.Theming.Constants.Styles
 
-`Styles` provides a small, curated set of **predefined theme presets**—ready-to-use `AllyariaStyle` instances that
-combine an `AllyariaPalette` (foreground/background, borders, hover) with an `AllyariaTypography` (font family/size,
-etc.). These presets are intended as sane defaults for Light, Dark, and High-Contrast experiences and are WCAG-minded
-out of the box.
+`Styles` is a static class that provides **predefined style presets** for Allyaria’s theming system.
+These presets combine **palette, typography, and spacing** into WCAG-compliant configurations aligned with Material
+Design guidelines.
+They serve as **safe defaults** for light, dark, and high-contrast themes, while also exposing individual constants for
+direct reuse or composition.
 
-> This page follows the structure used by `Allyaria.Theming.Constants.Colors`, but instead of listing many color tokens,
-> it catalogs a few **opinionated style bundles**.
+## Constructors
 
----
+*None*
 
-## Presets
+## Properties
 
-| Property       | Palette (Bg → Fg)    | Typography (Family, Size)                                | Intent / Notes                                              |
-|----------------|----------------------|----------------------------------------------------------|-------------------------------------------------------------|
-| `Dark`         | `Grey900` → `Grey50` | `Segoe UI, Roboto, Helvetica, Arial, sans-serif`, `1rem` | High contrast on dark background; suitable for dark UIs.    |
-| `HighContrast` | `White` → `Black`    | `Segoe UI, Roboto, Helvetica, Arial, sans-serif`, `1rem` | Maximum contrast grayscale; useful for accessibility modes. |
-| `Light`        | `Grey50` → `Grey900` | `Segoe UI, Roboto, Helvetica, Arial, sans-serif`, `1rem` | Comfortable default for light UIs.                          |
+| Name                       | Type                 | Description                                                                               |
+|----------------------------|----------------------|-------------------------------------------------------------------------------------------|
+| `DefaultPalette`           | `AllyariaPalette`    | The default palette (light surface `Grey50` with dark foreground `Grey900`).              |
+| `DefaultSpacing`           | `AllyariaSpacing`    | Default spacing (8px margins, 16px paddings), aligned with Material Design 8dp grid.      |
+| `DefaultThemeDark`         | `AllyariaStyle`      | WCAG-compliant dark theme (dark surface `Grey900`, light foreground `Grey50`).            |
+| `DefaultThemeHighContrast` | `AllyariaStyle`      | High-contrast grayscale theme (white surface, black text). Useful for maximum legibility. |
+| `DefaultThemeLight`        | `AllyariaStyle`      | WCAG-compliant light theme (light surface `Grey50`, dark foreground `Grey900`).           |
+| `DefaultTypography`        | `AllyariaTypography` | Default typography: system-first font stack with a base size of `1rem`.                   |
 
-> Palette colors reference the centralized named color library documented in **`Allyaria.Theming.Constants.Colors`**.
+## Methods
 
----
+*None*
 
-## API
+## Operators
 
-### Static Class
+*None*
 
-```csharp
-public static class Styles
-```
+## Events
 
-### Members
+*None*
 
-* `public static AllyariaStyle DarkStyle { get; }` — WCAG-friendly dark preset (Grey900 background, Grey50 text).
-* `public static AllyariaStyle HighContrast { get; }` — High-contrast white/black preset.
-* `public static AllyariaStyle LightStyle { get; }` — WCAG-friendly light preset (Grey50 background, Grey900 text).
+## Exceptions
 
-All presets use a neutral, widely available sans-serif stack and a base size of `1rem`, encouraging user-controlled
-scaling.
+*None*
 
----
+## Behavior Notes
 
-## Usage
+* Presets are **immutable** (`AllyariaStyle`, `AllyariaPalette`, `AllyariaSpacing`, `AllyariaTypography` instances).
+* All presets are **WCAG 2.2 AA compliant** by default.
+* `DefaultThemeHighContrast` is designed for accessibility contexts requiring maximum legibility.
+* `DefaultTypography` uses a system-first stack:
 
-### Inline styles
+  ```
+  system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif
+  ```
+* The spacing values align with `Sizing` constants (`Size2 = 8px`, `Size3 = 16px`).
+
+## Examples
+
+### Minimal Example
 
 ```csharp
 using Allyaria.Theming.Constants;
 
-var style = Styles.DarkStyle;
-var css       = style.ToCss();      // normal state
-var cssHover  = style.ToCssHover(); // hover state
-var cssTokens = style.ToCssVars();  // CSS custom properties
+var darkTheme = Styles.DefaultThemeDark;
 ```
 
-### In Razor
+### Expanded Example
 
-```razor
-@using Allyaria.Theming.Constants
+```csharp
+using Allyaria.Theming.Constants;
+using Allyaria.Theming.Styles;
 
-<div class="card" style="@Styles.LightStyle.ToCss()">
-  <h2>Title</h2>
-  <p>Body text…</p>
-</div>
+public class ThemeManager
+{
+    public AllyariaStyle ActiveTheme { get; private set; } = Styles.DefaultThemeLight;
 
-<style>
-.card:hover { @Styles.LightStyle.ToCssHover() }   /* hover colors */
-.card { @Styles.LightStyle.ToCssVars() }          /* expose tokens for isolated CSS */
-</style>
+    public void ToggleTheme(bool useDarkMode, bool highContrast)
+    {
+        if (highContrast)
+        {
+            ActiveTheme = Styles.DefaultThemeHighContrast;
+        }
+        else
+        {
+            ActiveTheme = useDarkMode 
+                ? Styles.DefaultThemeDark
+                : Styles.DefaultThemeLight;
+        }
+    }
+
+    public void ApplyToComponent(MyComponent component)
+    {
+        component.Style = ActiveTheme;
+    }
+}
 ```
 
----
-
-## Accessibility & Design Notes
-
-* **Contrast:** Each preset pairs foreground/background to meet common contrast targets for body text; use
-  component-level checks for specific sizes/weights as needed.
-* **Typography scaling:** `1rem` respects user zoom and OS text settings; avoid hard-coding pixel sizes downstream.
-* **Extensibility:** Treat these presets as starting points—compose new `AllyariaStyle` values from `Colors` and custom
-  type ramps for brand alignment.
-
----
-
-## Related
-
-* **`AllyariaStyle`** — Combined palette + typography with `ToCss()`, `ToCssHover()`, `ToCssVars()`.
-* **`AllyariaPalette`** — Colors/backgrounds/borders + hover logic.
-* **`AllyariaTypography`** — Font family/size/weight/spacing.
-* **`Colors`** — Named CSS & Material color tokens used by these presets. 
+> *Rev Date: 2025-10-01*
