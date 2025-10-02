@@ -80,7 +80,6 @@ After parsing:
 
 * `AllyariaArgumentException` — invalid/null input, unsupported unit, non-finite number, or comparison across different
   `ValueBase`-derived types.
-* `NullReferenceException` — if converting a null instance to string via implicit operator.
 
 ---
 

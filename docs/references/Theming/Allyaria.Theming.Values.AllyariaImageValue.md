@@ -67,7 +67,6 @@ extracted. Otherwise the string is validated, unwrapped of quotes, escaped, and 
 
 * `AllyariaArgumentException` — invalid input (null/whitespace/control chars), unsupported URI scheme, or unsafe schemes
   like `javascript:`.
-* `NullReferenceException` — if implicit conversion to string is called on a null instance.
 
 ---
 

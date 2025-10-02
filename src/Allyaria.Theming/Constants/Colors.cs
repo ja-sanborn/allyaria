@@ -751,6 +751,9 @@ public static class Colors
     /// <summary>Represents the <see cref="LimeA700" /> color with the hexidecimal value of #AEEA00FF</summary>
     public static AllyariaColorValue LimeA700 => new("#AEEA00FF");
 
+    /// <summary>Represents the <see cref="LimeGreen" /> color with the hexidecimal value of #32CD32FF</summary>
+    public static AllyariaColorValue LimeGreen => new("#32CD32FF");
+
     /// <summary>Represents the <see cref="Linen" /> color with the hexidecimal value of #FAF0E6FF</summary>
     public static AllyariaColorValue Linen => new("#FAF0E6FF");
 

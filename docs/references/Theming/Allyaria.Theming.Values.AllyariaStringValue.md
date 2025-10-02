@@ -62,7 +62,6 @@ Creates a new instance by validating and normalizing the provided string.
 
 * `AllyariaArgumentException` — thrown when invalid string input is provided (null/whitespace/control chars) or when
   comparing across different `ValueBase`-derived types.
-* `NullReferenceException` — thrown if implicit conversion to string is attempted on a null instance.
 
 ---
 

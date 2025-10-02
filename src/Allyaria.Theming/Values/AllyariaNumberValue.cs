@@ -289,6 +289,5 @@ public sealed class AllyariaNumberValue : ValueBase
     /// </summary>
     /// <param name="value">The instance to convert.</param>
     /// <returns>The canonical string form.</returns>
-    /// <remarks>Passing a <c>null</c> reference will result in a <see cref="NullReferenceException" />.</remarks>
     public static implicit operator string(AllyariaNumberValue value) => value.Value;
 }

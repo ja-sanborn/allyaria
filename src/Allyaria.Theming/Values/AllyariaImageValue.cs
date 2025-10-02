@@ -254,9 +254,5 @@ public sealed class AllyariaImageValue : ValueBase
     /// <summary>Defines an implicit conversion from <see cref="AllyariaImageValue" /> to <see cref="string" />.</summary>
     /// <param name="value">The <see cref="AllyariaImageValue" /> instance.</param>
     /// <returns>The underlying normalized string value (a canonical CSS <c>url("…")</c> token).</returns>
-    /// <remarks>
-    /// Passing a <c>null</c> reference for <paramref name="value" /> will result in a runtime
-    /// <see cref="NullReferenceException" />.
-    /// </remarks>
     public static implicit operator string(AllyariaImageValue value) => value.Value;
 }

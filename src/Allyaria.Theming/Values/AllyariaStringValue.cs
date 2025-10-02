@@ -63,9 +63,5 @@ public sealed class AllyariaStringValue : ValueBase
     /// <summary>Defines an implicit conversion from <see cref="AllyariaStringValue" /> to <see cref="string" />.</summary>
     /// <param name="value">The <see cref="AllyariaStringValue" /> instance.</param>
     /// <returns>The underlying normalized string value.</returns>
-    /// <remarks>
-    /// Passing a <c>null</c> reference for <paramref name="value" /> will result in a <see cref="NullReferenceException" /> at
-    /// runtime.
-    /// </remarks>
     public static implicit operator string(AllyariaStringValue value) => value.Value;
 }

@@ -67,7 +67,6 @@ Parses a color from one of: `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`, `rgb(r,g,b)
 
 * `AllyariaArgumentException` — invalid/unsupported color input, out-of-range channel, or attempting to compare two
   `different` `ValueBase`-derived types with comparison operators or `Compare*`.
-* `ArgumentException` — invalid hex digit when parsing hex strings.
 
 ## Behavior Notes
 

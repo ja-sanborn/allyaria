@@ -260,6 +260,7 @@ hexadecimal RGBA value.
 | `LimeA200`             | `AllyariaColorValue` | Material Color – #EEFF41FF |
 | `LimeA400`             | `AllyariaColorValue` | Material Color – #C6FF00FF |
 | `LimeA700`             | `AllyariaColorValue` | Material Color – #AEEA00FF |
+| `LimeGreen`            | `AllyariaColorValue` | Material Color – #32CD32FF |
 | `Linen`                | `AllyariaColorValue` | Web Color – #FAF0E6FF      |
 | `Magenta`              | `AllyariaColorValue` | Web Color – #FF00FFFF      |
 | `Maroon`               | `AllyariaColorValue` | Web Color – #800000FF      |
