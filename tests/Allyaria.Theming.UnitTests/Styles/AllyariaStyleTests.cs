@@ -129,6 +129,8 @@ public sealed class AllyariaStyleTests
         var typography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
         var sut = new AllyariaStyle(palette, typography, spacing);
+        var paletteDisabled = palette.ToDisabledPalette();
+        var paletteHover = palette.ToHoverPalette();
 
         // Act
         var actual = sut.ToCssVars(given);
@@ -138,9 +140,9 @@ public sealed class AllyariaStyleTests
             spacing.ToCssVars(normalizedBase),
             palette.ToCssVars(normalizedBase),
             typography.ToCssVars(normalizedBase),
-            palette.ToCssVars(normalizedBase + "-disabled"),
+            paletteDisabled.ToCssVars(normalizedBase + "-disabled"),
             typography.ToCssVars(normalizedBase + "-disabled"),
-            palette.ToCssVars(normalizedBase + "-hover"),
+            paletteHover.ToCssVars(normalizedBase + "-hover"),
             typography.ToCssVars(normalizedBase + "-hover")
         );
 
@@ -159,6 +161,8 @@ public sealed class AllyariaStyleTests
         var typography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
         var sut = new AllyariaStyle(palette, typography, spacing);
+        var paletteDisabled = palette.ToDisabledPalette();
+        var paletteHover = palette.ToHoverPalette();
 
         // Act
         var actual = sut.ToCssVars(given);
@@ -172,9 +176,9 @@ public sealed class AllyariaStyleTests
             spacing.ToCssVars(expectedBasePrefix),
             palette.ToCssVars(expectedBasePrefix),
             typography.ToCssVars(expectedBasePrefix),
-            palette.ToCssVars(expectedBasePrefix + "-disabled"),
+            paletteDisabled.ToCssVars(expectedBasePrefix + "-disabled"),
             typography.ToCssVars(expectedBasePrefix + "-disabled"),
-            palette.ToCssVars(expectedBasePrefix + "-hover"),
+            paletteHover.ToCssVars(expectedBasePrefix + "-hover"),
             typography.ToCssVars(expectedBasePrefix + "-hover")
         );
 

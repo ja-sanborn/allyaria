@@ -207,7 +207,7 @@ public sealed class AllyariaImageValueTests
         // Assert
         css.Should()
             .Be(
-                @"background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""hero.jpg"");background-position:center;background-repeat:no-repeat;background-size:cover"
+                @"background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""hero.jpg"");background-position:center;background-repeat:no-repeat;background-size:cover;"
             );
     }
 
@@ -260,7 +260,7 @@ public sealed class AllyariaImageValueTests
         // Assert
         css.Should()
             .Be(
-                @"--x-background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""banner.png"");--x-background-position:center;--x-background-repeat:no-repeat;--x-background-size:cover"
+                @"--x-background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""banner.png"");--x-background-position:center;--x-background-repeat:no-repeat;--x-background-size:cover;"
             );
     }
 

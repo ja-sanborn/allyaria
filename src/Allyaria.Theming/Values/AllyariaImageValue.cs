@@ -152,7 +152,7 @@ public sealed class AllyariaImageValue : ValueBase
         var image = $"background-image:linear-gradient({overlay},{overlay}),{Value};";
         var position = "background-position:center;";
         var repeat = "background-repeat:no-repeat;";
-        var size = "background-size:cover";
+        var size = "background-size:cover;";
 
         return stretch
             ? $"{image}{position}{repeat}{size}"
@@ -191,7 +191,7 @@ public sealed class AllyariaImageValue : ValueBase
         var image = $"{prefix}background-image:linear-gradient({overlay},{overlay}),{Value};";
         var position = $"{prefix}background-position:center;";
         var repeat = $"{prefix}background-repeat:no-repeat;";
-        var size = $"{prefix}background-size:cover";
+        var size = $"{prefix}background-size:cover;";
 
         return stretch
             ? $"{image}{position}{repeat}{size}"
