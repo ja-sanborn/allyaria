@@ -12,5 +12,8 @@ public enum ComponentState
     /// <summary>
     /// The component is disabled, preventing user interaction and typically rendered with reduced emphasis.
     /// </summary>
-    Disabled
+    Disabled,
+
+    /// <summary>The component is hidden, preventing the control from being displayed in the user interface.</summary>
+    Hidden
 }
