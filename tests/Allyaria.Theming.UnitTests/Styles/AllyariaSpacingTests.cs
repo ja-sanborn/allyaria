@@ -1,3 +1,4 @@
+using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Styles;
@@ -6,276 +7,237 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AllyariaSpacingTests
 {
     [Fact]
-    public void Cascade_Should_Keep_Existing_Values_When_Override_Is_Null()
+    public void Cascade_Should_NotMutateOriginal_When_CreatingNewInstance()
     {
         // Arrange
-        var sut = new AllyariaSpacing(
-            new AllyariaNumberValue("1px"),
-            new AllyariaNumberValue("2px"),
-            new AllyariaNumberValue("3px"),
-            new AllyariaNumberValue("4px"),
-            new AllyariaNumberValue("5px"),
-            new AllyariaNumberValue("6px"),
-            new AllyariaNumberValue("7px"),
-            new AllyariaNumberValue("8px")
+        var original = new AllyariaSpacing(
+            Sizing.Size1,
+            Sizing.Size2,
+            Sizing.Size3,
+            Sizing.Size4,
+            Sizing.Size5,
+            Sizing.Size6,
+            Sizing.Size7,
+            Sizing.Size8
         );
 
         // Act
-        // Provide no overrides (all null)
-        var cascaded = sut.Cascade();
+        _ = original.Cascade(Sizing.Size9);
 
         // Assert
-        cascaded.Should().BeEquivalentTo(sut);
+        original.MarginTop.Should().Be(Sizing.Size1);
+        original.MarginRight.Should().Be(Sizing.Size2);
+        original.MarginBottom.Should().Be(Sizing.Size3);
+        original.MarginLeft.Should().Be(Sizing.Size4);
+        original.PaddingTop.Should().Be(Sizing.Size5);
+        original.PaddingRight.Should().Be(Sizing.Size6);
+        original.PaddingBottom.Should().Be(Sizing.Size7);
+        original.PaddingLeft.Should().Be(Sizing.Size8);
     }
 
     [Fact]
-    public void Cascade_Should_Override_Only_Specified_Sides()
+    public void Cascade_Should_OverrideSpecified_When_ArgsProvided()
     {
         // Arrange
         var sut = new AllyariaSpacing(
-            new AllyariaNumberValue("1px"),
-            new AllyariaNumberValue("2px"),
-            new AllyariaNumberValue("3px"),
-            new AllyariaNumberValue("4px"),
-            new AllyariaNumberValue("5px"),
-            new AllyariaNumberValue("6px"),
-            new AllyariaNumberValue("7px"),
-            new AllyariaNumberValue("8px")
+            "1px",
+            "2px",
+            "3px",
+            "4px",
+            "5px",
+            "6px",
+            "7px",
+            "8px"
         );
 
         // Act
-        var cascaded = sut.Cascade(
-            marginRight: new AllyariaNumberValue("22px"),
-            paddingBottom: new AllyariaNumberValue("77px")
+        var result = sut.Cascade(
+            marginLeft: "40px",
+            paddingRight: "60px"
         );
 
         // Assert
-        cascaded.MarginTop!.ToCss("margin-top").Should().Be("margin-top:1px;");
-        cascaded.MarginRight!.ToCss("margin-right").Should().Be("margin-right:22px;");
-        cascaded.MarginBottom!.ToCss("margin-bottom").Should().Be("margin-bottom:3px;");
-        cascaded.MarginLeft!.ToCss("margin-left").Should().Be("margin-left:4px;");
-        cascaded.PaddingTop!.ToCss("padding-top").Should().Be("padding-top:5px;");
-        cascaded.PaddingRight!.ToCss("padding-right").Should().Be("padding-right:6px;");
-        cascaded.PaddingBottom!.ToCss("padding-bottom").Should().Be("padding-bottom:77px;");
-        cascaded.PaddingLeft!.ToCss("padding-left").Should().Be("padding-left:8px;");
+        result.MarginTop.Should().Be(new AllyariaNumberValue("1px"));
+        result.MarginRight.Should().Be(new AllyariaNumberValue("2px"));
+        result.MarginBottom.Should().Be(new AllyariaNumberValue("3px"));
+        result.MarginLeft.Should().Be(new AllyariaNumberValue("40px"));
+        result.PaddingTop.Should().Be(new AllyariaNumberValue("5px"));
+        result.PaddingRight.Should().Be(new AllyariaNumberValue("60px"));
+        result.PaddingBottom.Should().Be(new AllyariaNumberValue("7px"));
+        result.PaddingLeft.Should().Be(new AllyariaNumberValue("8px"));
     }
 
     [Fact]
-    public void Ctor_Should_Set_All_Properties_When_Provided()
+    public void Cascade_Should_PreserveExisting_When_ArgsNull()
     {
         // Arrange
-        var mt = new AllyariaNumberValue("1px");
-        var mr = new AllyariaNumberValue("2px");
-        var mb = new AllyariaNumberValue("3px");
-        var ml = new AllyariaNumberValue("4px");
-        var pt = new AllyariaNumberValue("5px");
-        var pr = new AllyariaNumberValue("6px");
-        var pb = new AllyariaNumberValue("7px");
-        var pl = new AllyariaNumberValue("8px");
+        var original = new AllyariaSpacing(
+            "11px",
+            "12px",
+            "13px",
+            "14px",
+            "15px",
+            "16px",
+            "17px",
+            "18px"
+        );
+
+        var sut = original;
+
+        // Act
+        var result = sut.Cascade();
+
+        // Assert
+        result.Should().BeEquivalentTo(original);
+    }
+
+    [Fact]
+    public void Constructor_Should_ApplyProvidedValues_When_ArgumentsGiven()
+    {
+        // Arrange
+        AllyariaNumberValue mt = "1px";
+        AllyariaNumberValue mr = "2px";
+        AllyariaNumberValue mb = "3px";
+        AllyariaNumberValue ml = "4px";
+        AllyariaNumberValue pt = "5px";
+        AllyariaNumberValue pr = "6px";
+        AllyariaNumberValue pb = "7px";
+        AllyariaNumberValue pl = "8px";
 
         // Act
         var sut = new AllyariaSpacing(mt, mr, mb, ml, pt, pr, pb, pl);
 
         // Assert
-        sut.MarginTop.Should().NotBeNull();
-        sut.MarginRight.Should().NotBeNull();
-        sut.MarginBottom.Should().NotBeNull();
-        sut.MarginLeft.Should().NotBeNull();
-        sut.PaddingTop.Should().NotBeNull();
-        sut.PaddingRight.Should().NotBeNull();
-        sut.PaddingBottom.Should().NotBeNull();
-        sut.PaddingLeft.Should().NotBeNull();
+        sut.MarginTop.Should().Be(mt);
+        sut.MarginRight.Should().Be(mr);
+        sut.MarginBottom.Should().Be(mb);
+        sut.MarginLeft.Should().Be(ml);
+        sut.PaddingTop.Should().Be(pt);
+        sut.PaddingRight.Should().Be(pr);
+        sut.PaddingBottom.Should().Be(pb);
+        sut.PaddingLeft.Should().Be(pl);
     }
 
     [Fact]
-    public void FromSingle_Should_Set_All_Sides_When_Given_Margin_And_Padding()
+    public void Constructor_Should_UseDefaults_When_ArgumentsOmitted()
+    {
+        // Arrange & Act
+        var sut = new AllyariaSpacing();
+
+        // Assert
+        sut.MarginTop.Should().Be(StyleDefaults.Margin);
+        sut.MarginRight.Should().Be(StyleDefaults.Margin);
+        sut.MarginBottom.Should().Be(StyleDefaults.Margin);
+        sut.MarginLeft.Should().Be(StyleDefaults.Margin);
+        sut.PaddingTop.Should().Be(StyleDefaults.Padding);
+        sut.PaddingRight.Should().Be(StyleDefaults.Padding);
+        sut.PaddingBottom.Should().Be(StyleDefaults.Padding);
+        sut.PaddingLeft.Should().Be(StyleDefaults.Padding);
+    }
+
+    [Fact]
+    public void FromSingle_Should_SetAllSidesUniformly()
     {
         // Arrange
-        var margin = new AllyariaNumberValue("10px");
-        var padding = new AllyariaNumberValue("1rem");
+        AllyariaNumberValue margin = "5px";
+        AllyariaNumberValue padding = "7px";
 
         // Act
         var sut = AllyariaSpacing.FromSingle(margin, padding);
 
         // Assert
-        sut.MarginTop!.ToCss("margin-top").Should().Be("margin-top:10px;");
-        sut.MarginRight!.ToCss("margin-right").Should().Be("margin-right:10px;");
-        sut.MarginBottom!.ToCss("margin-bottom").Should().Be("margin-bottom:10px;");
-        sut.MarginLeft!.ToCss("margin-left").Should().Be("margin-left:10px;");
-        sut.PaddingTop!.ToCss("padding-top").Should().Be("padding-top:1rem;");
-        sut.PaddingRight!.ToCss("padding-right").Should().Be("padding-right:1rem;");
-        sut.PaddingBottom!.ToCss("padding-bottom").Should().Be("padding-bottom:1rem;");
-        sut.PaddingLeft!.ToCss("padding-left").Should().Be("padding-left:1rem;");
+        sut.MarginTop.Should().Be(margin);
+        sut.MarginRight.Should().Be(margin);
+        sut.MarginBottom.Should().Be(margin);
+        sut.MarginLeft.Should().Be(margin);
+        sut.PaddingTop.Should().Be(padding);
+        sut.PaddingRight.Should().Be(padding);
+        sut.PaddingBottom.Should().Be(padding);
+        sut.PaddingLeft.Should().Be(padding);
     }
 
     [Fact]
-    public void FromSymmetric_Should_Assign_Vertical_And_Horizontal_Correctly()
+    public void FromSymmetric_Should_SetHorizontalAndVerticalCorrectly()
     {
         // Arrange
-        var marginHorizontal = new AllyariaNumberValue("4px");
-        var marginVertical = new AllyariaNumberValue("8px");
-        var paddingHorizontal = new AllyariaNumberValue("2%");
-        var paddingVertical = new AllyariaNumberValue("3%");
+        AllyariaNumberValue mh = "1px";
+        AllyariaNumberValue mv = "2px";
+        AllyariaNumberValue ph = "3px";
+        AllyariaNumberValue pv = "4px";
 
         // Act
-        var sut = AllyariaSpacing.FromSymmetric(marginHorizontal, marginVertical, paddingHorizontal, paddingVertical);
+        var sut = AllyariaSpacing.FromSymmetric(mh, mv, ph, pv);
 
         // Assert
-        sut.MarginTop!.ToCss("margin-top").Should().Be("margin-top:8px;");
-        sut.MarginRight!.ToCss("margin-right").Should().Be("margin-right:4px;");
-        sut.MarginBottom!.ToCss("margin-bottom").Should().Be("margin-bottom:8px;");
-        sut.MarginLeft!.ToCss("margin-left").Should().Be("margin-left:4px;");
-        sut.PaddingTop!.ToCss("padding-top").Should().Be("padding-top:3%;");
-        sut.PaddingRight!.ToCss("padding-right").Should().Be("padding-right:2%;");
-        sut.PaddingBottom!.ToCss("padding-bottom").Should().Be("padding-bottom:3%;");
-        sut.PaddingLeft!.ToCss("padding-left").Should().Be("padding-left:2%;");
+        sut.MarginTop.Should().Be(mv);
+        sut.MarginBottom.Should().Be(mv);
+        sut.MarginLeft.Should().Be(mh);
+        sut.MarginRight.Should().Be(mh);
+        sut.PaddingTop.Should().Be(pv);
+        sut.PaddingBottom.Should().Be(pv);
+        sut.PaddingLeft.Should().Be(ph);
+        sut.PaddingRight.Should().Be(ph);
     }
 
     [Fact]
-    public void ToCss_Should_Concatenate_In_Defined_Order_When_Some_Values_Set()
-    {
-        // Arrange
-        var mt = new AllyariaNumberValue("1px");
-        var mb = new AllyariaNumberValue("3px");
-        var pr = new AllyariaNumberValue("6px");
-        var pl = new AllyariaNumberValue("8px");
-
-        // only set a subset to ensure AppendIfNotNull covers both branches
-        var sut = new AllyariaSpacing(mt, marginBottom: mb, paddingRight: pr, paddingLeft: pl);
-
-        // Act
-        var css = sut.ToCss();
-
-        // Assert
-        // Order should be: margin-top, margin-right, margin-bottom, margin-left, padding-top, padding-right,
-        //                  padding-bottom, padding-left — but only those set are emitted.
-        css.Should().Be("margin-top:1px;margin-bottom:3px;padding-right:6px;padding-left:8px;");
-    }
-
-    [Fact]
-    public void ToCss_Should_Handle_All_Sides_Set()
+    public void ToCss_Should_BuildCssDeclarations_When_NoPrefix()
     {
         // Arrange
         var sut = new AllyariaSpacing(
-            new AllyariaNumberValue("1px"),
-            new AllyariaNumberValue("2px"),
-            new AllyariaNumberValue("3px"),
-            new AllyariaNumberValue("4px"),
-            new AllyariaNumberValue("5px"),
-            new AllyariaNumberValue("6px"),
-            new AllyariaNumberValue("7px"),
-            new AllyariaNumberValue("8px")
+            "1px",
+            "2px",
+            "3px",
+            "4px",
+            "5px",
+            "6px",
+            "7px",
+            "8px"
         );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
-        css.Should().Be(
-            "margin-top:1px;" +
+        var expected = "margin-top:1px;" +
             "margin-right:2px;" +
             "margin-bottom:3px;" +
             "margin-left:4px;" +
             "padding-top:5px;" +
             "padding-right:6px;" +
             "padding-bottom:7px;" +
-            "padding-left:8px;"
-        );
+            "padding-left:8px;";
+
+        css.Should().Be(expected);
     }
 
     [Fact]
-    public void ToCss_Should_Return_EmptyString_When_All_Values_Are_Null()
-    {
-        // Arrange
-        var sut = new AllyariaSpacing();
-
-        // Act
-        var css = sut.ToCss();
-
-        // Assert
-        css.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Handle_All_Sides_Set_With_DefaultPrefix()
+    public void ToCss_Should_UseCssVariables_When_PrefixProvided()
     {
         // Arrange
         var sut = new AllyariaSpacing(
-            new AllyariaNumberValue("1px"),
-            new AllyariaNumberValue("2px"),
-            new AllyariaNumberValue("3px"),
-            new AllyariaNumberValue("4px"),
-            new AllyariaNumberValue("5px"),
-            new AllyariaNumberValue("6px"),
-            new AllyariaNumberValue("7px"),
-            new AllyariaNumberValue("8px")
+            "10px",
+            "20px",
+            "30px",
+            "40px",
+            "50px",
+            "60px",
+            "70px",
+            "80px"
         );
 
         // Act
-        var cssVars = sut.ToCssVars(); // default/empty -> "--aa-"
+        var css = sut.ToCss("  Theme  --Primary  ");
 
         // Assert
-        cssVars.Should().Be(
-            "--aa-margin-top:1px;" +
-            "--aa-margin-right:2px;" +
-            "--aa-margin-bottom:3px;" +
-            "--aa-margin-left:4px;" +
-            "--aa-padding-top:5px;" +
-            "--aa-padding-right:6px;" +
-            "--aa-padding-bottom:7px;" +
-            "--aa-padding-left:8px;"
-        );
-    }
+        var expected = "--theme-primary-var-margin-top:10px;" +
+            "--theme-primary-var-margin-right:20px;" +
+            "--theme-primary-var-margin-bottom:30px;" +
+            "--theme-primary-var-margin-left:40px;" +
+            "--theme-primary-var-padding-top:50px;" +
+            "--theme-primary-var-padding-right:60px;" +
+            "--theme-primary-var-padding-bottom:70px;" +
+            "--theme-primary-var-padding-left:80px;";
 
-    [Theory]
-    [InlineData("", "--aa-")] // empty -> default
-    [InlineData("   ", "--aa-")] // whitespace -> default
-    [InlineData("editor", "--editor-")] // simple custom
-    [InlineData("  My--Fancy  Prefix  ", "--my-fancy-prefix-")] // collapse dashes/whitespace, trim, lowercase
-    [InlineData("---X---", "--x-")] // leading/trailing dashes trimmed
-    public void ToCssVars_Should_Normalize_Prefix_Correctly(string given, string expectedBase)
-    {
-        // Arrange
-        var mt = new AllyariaNumberValue("10px");
-        var pl = new AllyariaNumberValue("2rem");
-        var sut = new AllyariaSpacing(mt, paddingLeft: pl);
-
-        // Act
-        var cssVars = sut.ToCssVars(given);
-
-        // Assert
-        cssVars.Should().Be($"{expectedBase}margin-top:10px;{expectedBase}padding-left:2rem;");
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Return_EmptyString_When_All_Values_Are_Null()
-    {
-        // Arrange
-        var sut = new AllyariaSpacing();
-
-        // Act
-        var cssVars = sut.ToCssVars();
-
-        // Assert
-        cssVars.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Throw_ArgumentNullException_When_Prefix_Is_Null()
-    {
-        // Arrange
-        var sut = new AllyariaSpacing(new AllyariaNumberValue("1px"));
-
-        // Act
-        var act = () => sut.ToCssVars(null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>()
-            .Where(ex => ex.ParamName == "input" || ex.ParamName == "input" || ex.Message.Contains("input") ||
-                ex.ParamName == "pattern" || ex.ParamName == "input"
-            )
-
-            // .NET's Regex.Replace throws for null "input" parameter; across frameworks ParamName can be "input".
-            ;
+        css.Should().Be(expected);
     }
 }

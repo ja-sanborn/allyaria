@@ -1,30 +1,39 @@
+using Allyaria.Theming.Constants;
+using Allyaria.Theming.Helpers;
 using Allyaria.Theming.Values;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Styles;
 
 /// <summary>
-/// Strongly typed spacing definition (margins and paddings) for Allyaria theming. Each side is represented by an optional
-/// <see cref="AllyariaNumberValue" /> (e.g., <c>16px</c>, <c>1rem</c>, <c>8%</c>). When a side is <see langword="null" />,
-/// it is considered unset and will not be emitted by <see cref="ToCss" /> or <see cref="ToCssVars(string)" />. Supports
-/// non-destructive overrides via <see cref="Cascade" />.
+/// Represents logical spacing (margins and paddings) for a themable element, providing strongly typed values and helpers
+/// to compute CSS declarations.
 /// </summary>
+/// <remarks>
+/// Defaults are taken from <see cref="StyleDefaults" /> when constructor arguments are not provided. This type is
+/// immutable (readonly record struct) and safe for value semantics.
+/// </remarks>
 public readonly record struct AllyariaSpacing
 {
     /// <summary>
-    /// Initializes a new <see cref="AllyariaSpacing" /> with optional per-side margins and paddings in TRBL order. Pass
-    /// <see langword="null" /> for any side to leave it unset (it will not be emitted by <see cref="ToCss" /> or
-    /// <see cref="ToCssVars(string)" />).
+    /// Initializes a new instance of the <see cref="AllyariaSpacing" /> struct using all default margin and padding values
+    /// from <see cref="StyleDefaults" />.
     /// </summary>
-    /// <param name="marginTop">Optional margin-top.</param>
-    /// <param name="marginRight">Optional margin-right.</param>
-    /// <param name="marginBottom">Optional margin-bottom.</param>
-    /// <param name="marginLeft">Optional margin-left.</param>
-    /// <param name="paddingTop">Optional padding-top.</param>
-    /// <param name="paddingRight">Optional padding-right.</param>
-    /// <param name="paddingBottom">Optional padding-bottom.</param>
-    /// <param name="paddingLeft">Optional padding-left.</param>
+    public AllyariaSpacing()
+        : this(null) { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AllyariaSpacing" /> struct, applying provided values or falling back to
+    /// <see cref="StyleDefaults.Margin" /> and <see cref="StyleDefaults.Padding" /> when a value is not supplied.
+    /// </summary>
+    /// <param name="marginTop">The margin on the top side, or <c>null</c> to use the default margin.</param>
+    /// <param name="marginRight">The margin on the right side, or <c>null</c> to use the default margin.</param>
+    /// <param name="marginBottom">The margin on the bottom side, or <c>null</c> to use the default margin.</param>
+    /// <param name="marginLeft">The margin on the left side, or <c>null</c> to use the default margin.</param>
+    /// <param name="paddingTop">The padding on the top side, or <c>null</c> to use the default padding.</param>
+    /// <param name="paddingRight">The padding on the right side, or <c>null</c> to use the default padding.</param>
+    /// <param name="paddingBottom">The padding on the bottom side, or <c>null</c> to use the default padding.</param>
+    /// <param name="paddingLeft">The padding on the left side, or <c>null</c> to use the default padding.</param>
     public AllyariaSpacing(AllyariaNumberValue? marginTop = null,
         AllyariaNumberValue? marginRight = null,
         AllyariaNumberValue? marginBottom = null,
@@ -34,66 +43,53 @@ public readonly record struct AllyariaSpacing
         AllyariaNumberValue? paddingBottom = null,
         AllyariaNumberValue? paddingLeft = null)
     {
-        MarginTop = marginTop;
-        MarginRight = marginRight;
-        MarginBottom = marginBottom;
-        MarginLeft = marginLeft;
-        PaddingTop = paddingTop;
-        PaddingRight = paddingRight;
-        PaddingBottom = paddingBottom;
-        PaddingLeft = paddingLeft;
+        MarginTop = marginTop ?? StyleDefaults.Margin;
+        MarginRight = marginRight ?? StyleDefaults.Margin;
+        MarginBottom = marginBottom ?? StyleDefaults.Margin;
+        MarginLeft = marginLeft ?? StyleDefaults.Margin;
+        PaddingTop = paddingTop ?? StyleDefaults.Padding;
+        PaddingRight = paddingRight ?? StyleDefaults.Padding;
+        PaddingBottom = paddingBottom ?? StyleDefaults.Padding;
+        PaddingLeft = paddingLeft ?? StyleDefaults.Padding;
     }
 
-    /// <summary>Gets or initializes the margin on the bottom side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? MarginBottom { get; init; }
+    /// <summary>Gets or initializes the margin on the bottom side.</summary>
+    public AllyariaNumberValue MarginBottom { get; init; }
 
-    /// <summary>Gets or initializes the margin on the left side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? MarginLeft { get; init; }
+    /// <summary>Gets or initializes the margin on the left side.</summary>
+    public AllyariaNumberValue MarginLeft { get; init; }
 
-    /// <summary>Gets or initializes the margin on the right side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? MarginRight { get; init; }
+    /// <summary>Gets or initializes the margin on the right side.</summary>
+    public AllyariaNumberValue MarginRight { get; init; }
 
-    /// <summary>Gets or initializes the margin on the top side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? MarginTop { get; init; }
+    /// <summary>Gets or initializes the margin on the top side.</summary>
+    public AllyariaNumberValue MarginTop { get; init; }
 
-    /// <summary>Gets or initializes the padding on the bottom side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? PaddingBottom { get; init; }
+    /// <summary>Gets or initializes the padding on the bottom side.</summary>
+    public AllyariaNumberValue PaddingBottom { get; init; }
 
-    /// <summary>Gets or initializes the padding on the left side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? PaddingLeft { get; init; }
+    /// <summary>Gets or initializes the padding on the left side.</summary>
+    public AllyariaNumberValue PaddingLeft { get; init; }
 
-    /// <summary>Gets or initializes the padding on the right side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? PaddingRight { get; init; }
+    /// <summary>Gets or initializes the padding on the right side.</summary>
+    public AllyariaNumberValue PaddingRight { get; init; }
 
-    /// <summary>Gets or initializes the padding on the top side, or <see langword="null" /> when unset.</summary>
-    public AllyariaNumberValue? PaddingTop { get; init; }
-
-    /// <summary>Appends a CSS declaration to the builder when the provided value is non-null.</summary>
-    /// <param name="builder">The destination <see cref="StringBuilder" />.</param>
-    /// <param name="value">The optional <see cref="AllyariaNumberValue" /> to emit.</param>
-    /// <param name="propertyName">The CSS property name (e.g., <c>margin-top</c>).</param>
-    private static void AppendIfNotNull(StringBuilder builder, AllyariaNumberValue? value, string propertyName)
-    {
-        if (value is not null)
-        {
-            builder.Append(value.ToCss(propertyName));
-        }
-    }
+    /// <summary>Gets or initializes the padding on the top side.</summary>
+    public AllyariaNumberValue PaddingTop { get; init; }
 
     /// <summary>
-    /// Returns a new spacing definition by applying per-side overrides in TRBL order for both margin and padding. Each
-    /// parameter is optional; when <see langword="null" />, the existing value for that side is kept (which may also be
-    /// <see langword="null" />).
+    /// Returns a copy of this instance with the provided values overriding existing ones. Any argument left as <c>null</c>
+    /// preserves the corresponding current value.
     /// </summary>
-    /// <param name="marginTop">Optional new margin-top.</param>
-    /// <param name="marginRight">Optional new margin-right.</param>
-    /// <param name="marginBottom">Optional new margin-bottom.</param>
-    /// <param name="marginLeft">Optional new margin-left.</param>
-    /// <param name="paddingTop">Optional new padding-top.</param>
-    /// <param name="paddingRight">Optional new padding-right.</param>
-    /// <param name="paddingBottom">Optional new padding-bottom.</param>
-    /// <param name="paddingLeft">Optional new padding-left.</param>
-    /// <returns>A new <see cref="AllyariaSpacing" /> with the applied overrides.</returns>
+    /// <param name="marginTop">Optional new top margin.</param>
+    /// <param name="marginRight">Optional new right margin.</param>
+    /// <param name="marginBottom">Optional new bottom margin.</param>
+    /// <param name="marginLeft">Optional new left margin.</param>
+    /// <param name="paddingTop">Optional new top padding.</param>
+    /// <param name="paddingRight">Optional new right padding.</param>
+    /// <param name="paddingBottom">Optional new bottom padding.</param>
+    /// <param name="paddingLeft">Optional new left padding.</param>
+    /// <returns>A new <see cref="AllyariaSpacing" /> with supplied values applied and unspecified values preserved.</returns>
     public AllyariaSpacing Cascade(AllyariaNumberValue? marginTop = null,
         AllyariaNumberValue? marginRight = null,
         AllyariaNumberValue? marginBottom = null,
@@ -102,7 +98,7 @@ public readonly record struct AllyariaSpacing
         AllyariaNumberValue? paddingRight = null,
         AllyariaNumberValue? paddingBottom = null,
         AllyariaNumberValue? paddingLeft = null)
-        => new()
+        => this with
         {
             MarginTop = marginTop ?? MarginTop,
             MarginRight = marginRight ?? MarginRight,
@@ -140,54 +136,25 @@ public readonly record struct AllyariaSpacing
             paddingVertical, paddingHorizontal
         );
 
-    /// <summary>
-    /// Builds a CSS style string (e.g., <c>margin-top:8px;padding-right:12px;</c>). Only non-<see langword="null" /> sides are
-    /// emitted.
-    /// </summary>
-    /// <returns>A concatenated CSS declaration string suitable for an inline <c>style</c> attribute.</returns>
-    public string ToCss()
+    /// <summary>Builds CSS declarations for margins and paddings using physical properties.</summary>
+    /// <param name="varPrefix">
+    /// A prefix for CSS variables (if the underlying values resolve to variables), or an empty string for none.
+    /// </param>
+    /// <returns>
+    /// A <see cref="string" /> containing CSS declarations for all margin and padding sides, each terminated with a semicolon.
+    /// </returns>
+    public string ToCss(string varPrefix = "")
     {
-        var sb = new StringBuilder();
+        var builder = new StringBuilder();
+        builder.ToCss(MarginTop, "margin-top", varPrefix);
+        builder.ToCss(MarginRight, "margin-right", varPrefix);
+        builder.ToCss(MarginBottom, "margin-bottom", varPrefix);
+        builder.ToCss(MarginLeft, "margin-left", varPrefix);
+        builder.ToCss(PaddingTop, "padding-top", varPrefix);
+        builder.ToCss(PaddingRight, "padding-right", varPrefix);
+        builder.ToCss(PaddingBottom, "padding-bottom", varPrefix);
+        builder.ToCss(PaddingLeft, "padding-left", varPrefix);
 
-        AppendIfNotNull(sb, MarginTop, "margin-top");
-        AppendIfNotNull(sb, MarginRight, "margin-right");
-        AppendIfNotNull(sb, MarginBottom, "margin-bottom");
-        AppendIfNotNull(sb, MarginLeft, "margin-left");
-        AppendIfNotNull(sb, PaddingTop, "padding-top");
-        AppendIfNotNull(sb, PaddingRight, "padding-right");
-        AppendIfNotNull(sb, PaddingBottom, "padding-bottom");
-        AppendIfNotNull(sb, PaddingLeft, "padding-left");
-
-        return sb.ToString();
-    }
-
-    /// <summary>
-    /// Builds a CSS custom-properties string for this spacing. The optional <paramref name="prefix" /> is normalized by
-    /// collapsing runs of whitespace/dashes, trimming leading/trailing dashes, and lowercasing. If empty, the default
-    /// <c>--aa-</c> prefix is used; otherwise variables emit as <c>--{prefix}-margin-top</c>, etc. Only non-null sides are
-    /// emitted.
-    /// </summary>
-    /// <param name="prefix">Optional namespace for variables (e.g., <c>editor</c>).</param>
-    /// <returns>A CSS variables string containing only non-null sides.</returns>
-    public string ToCssVars(string prefix = "")
-    {
-        var basePrefix = Regex.Replace(prefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
-
-        basePrefix = string.IsNullOrWhiteSpace(basePrefix)
-            ? "--aa-"
-            : $"--{basePrefix}-";
-
-        var sb = new StringBuilder();
-
-        AppendIfNotNull(sb, MarginTop, $"{basePrefix}margin-top");
-        AppendIfNotNull(sb, MarginRight, $"{basePrefix}margin-right");
-        AppendIfNotNull(sb, MarginBottom, $"{basePrefix}margin-bottom");
-        AppendIfNotNull(sb, MarginLeft, $"{basePrefix}margin-left");
-        AppendIfNotNull(sb, PaddingTop, $"{basePrefix}padding-top");
-        AppendIfNotNull(sb, PaddingRight, $"{basePrefix}padding-right");
-        AppendIfNotNull(sb, PaddingBottom, $"{basePrefix}padding-bottom");
-        AppendIfNotNull(sb, PaddingLeft, $"{basePrefix}padding-left");
-
-        return sb.ToString();
+        return builder.ToString();
     }
 }
