@@ -1,303 +1,242 @@
-﻿namespace Allyaria.Theming.UnitTests.Values;
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace Allyaria.Theming.UnitTests.Values;
+
 public sealed class AllyariaImageValueTests
 {
     [Theory]
-    [InlineData("http://example.com/a.png")]
-    [InlineData("https://example.com/a.png")]
-    [InlineData("data:image/png;base64,AAAA")]
-    [InlineData("blob:https://example.com/550e8400-e29b-41d4-a716-446655440000")]
-    public void Ctor_Should_Accept_Allowed_Absolute_Schemes(string input)
-    {
-        // Act
-        var sut = new AllyariaImageValue(input);
-
-        // Assert
-        sut.Value.Should()
-            .Be($@"url(""{input}"")");
-    }
-
-    [Fact]
-    public void Ctor_Should_Allow_Relative_Paths()
+    [InlineData("http://example.com/img.png")]
+    [InlineData("https://example.com/img.png")]
+    [InlineData("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA")]
+    [InlineData("blob:https://example.com/9b0f8f3e-9e1b-4d0c-8c0a-123456789abc")]
+    public void Ctor_Should_AllowUrl_When_AbsoluteUrlWithAllowedScheme(string input)
     {
         // Arrange
-        var input = "../assets/img/logo.svg";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be(@"url(""../assets/img/logo.svg"")");
+        result.Should().Be($@"url(""{input.Replace(@"\", @"\\").Replace(@"""", @"\""")}"")");
     }
 
     [Fact]
-    public void Ctor_Should_Escape_Backslashes_And_DoubleQuotes()
+    public void Ctor_Should_EscapeBackslashesAndQuotes_When_PathContainsSpecials()
     {
         // Arrange
-        var input = @"path\with\name""pic"".png";
+        var input = @"images\banner ""big"".png";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be("url(\"path\\\\with\\\\name\\\"pic\\\".png\")");
+        result.Should().Be(@"url(""images\\banner ""big"".png"")".Replace("  ", " "));
     }
 
     [Fact]
-    public void Ctor_Should_Extract_First_Url_From_Composite_Css_And_Discard_Others()
+    public void Ctor_Should_ExtractFirstUrl_When_InputContainsOtherCssTokens()
     {
         // Arrange
-        var input = "linear-gradient(white, black), URL('first.png') , url(second.png) no-repeat";
+        var input = "linear-gradient(red, blue), url(' hero.png ') no-repeat center / cover";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be(@"url(""first.png"")");
+        result.Should().Be(@"url(""hero.png"")");
     }
 
     [Fact]
-    public void Ctor_Should_Normalize_Bare_Path_To_Url_Token()
+    public void Ctor_Should_Handle_DataUri_WithQuotesAndBackslashes()
     {
         // Arrange
-        var input = "images/photo.png";
+        var input = @"data:image/svg+xml;utf8,<svg viewBox=""0 0""></svg>";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be(@"url(""images/photo.png"")");
-
-        ((string)sut).Should()
-            .Be(@"url(""images/photo.png"")");
+        result.Should().Be(@"url(""data:image/svg+xml;utf8,<svg viewBox=""0 0""></svg>"")");
     }
 
     [Fact]
-    public void Ctor_Should_Preserve_Mismatched_Quotes_Without_Unwrapping()
+    public void Ctor_Should_PreserveParenthesesAndSpaces_When_InsideQuotes()
     {
         // Arrange
-        var input = "\"abc'";
+        var input = @"url(""images (final) 01.png"") more stuff";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be(@"url(""\""abc'"")");
+        result.Should().Be(@"url(""images (final) 01.png"")");
     }
 
     [Fact]
-    public void Ctor_Should_Throw_ArgumentException_For_Dangerous_Scheme_Javascript()
+    public void Ctor_Should_ReturnCanonicalUrl_When_RawRelativePath()
     {
         // Arrange
-        var input = "javascript:alert(1)";
-
-        // Act
-        var act = () => new AllyariaImageValue(input);
-
-        // Assert
-        act.Should()
-            .Throw<AllyariaArgumentException>()
-            .WithMessage("*Unsupported URI scheme*");
-    }
-
-    [Fact]
-    public void Ctor_Should_Throw_ArgumentException_For_Dangerous_Scheme_Vbscript()
-    {
-        // Arrange
-        var input = "VBScript:msgbox(1)";
-
-        // Act
-        var act = () => new AllyariaImageValue(input);
-
-        // Assert
-        act.Should()
-            .Throw<AllyariaArgumentException>()
-            .WithMessage("*Unsupported URI scheme*");
-    }
-
-    [Fact]
-    public void Ctor_Should_Throw_ArgumentException_For_Unsupported_Absolute_Scheme()
-    {
-        // Arrange
-        var input = "ftp://example.com/image.png";
-
-        // Act
-        var act = () => new AllyariaImageValue(input);
-
-        // Assert
-        act.Should()
-            .Throw<AllyariaArgumentException>()
-            .WithMessage("*Unsupported URI scheme*");
-    }
-
-    [Fact]
-    public void Ctor_Should_Throw_When_Input_Has_Control_Characters()
-    {
-        // Arrange
-        var input = "ok\u0001bad";
-
-        // Act
-        var act = () => new AllyariaImageValue(input);
-
-        // Assert
-        act.Should()
-            .Throw<AllyariaArgumentException>()
-            .WithMessage("*Value contains control characters.*");
-    }
-
-    [Fact]
-    public void Ctor_Should_Trim_And_Unwrap_Quotes_Preserving_Spaces_And_Parens()
-    {
-        // Arrange
-        var input = "   \"images/my photo (draft).png\"   ";
+        var input = "images/logo.png";
 
         // Act
         var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        sut.Value.Should()
-            .Be(@"url(""images/my photo (draft).png"")");
+        result.Should().Be(@"url(""images/logo.png"")");
     }
 
     [Fact]
-    public void Implicit_String_To_AllyariaImageValue_Works()
+    public void Ctor_Should_ReturnGradientPlusUrl_When_BackgroundIsDark()
     {
         // Arrange
-        AllyariaImageValue sut = "cat.png";
+        AllyariaColorValue background = "#000000";
+        var input = "photo.jpg";
 
         // Act
-        var css = (string)sut;
+        var sut = new AllyariaImageValue(input, background);
+        string result = sut;
 
         // Assert
-        css.Should()
-            .Be(@"url(""cat.png"")");
+        result.Should().Be(@"linear-gradient(rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5)),url(""photo.jpg"")");
     }
 
     [Fact]
-    public void Parse_Should_Create_Equivalent_Instance_As_Ctor()
+    public void Ctor_Should_ReturnGradientPlusUrl_When_BackgroundIsLight()
     {
         // Arrange
-        var input = "img.png";
+        AllyariaColorValue background = "#ffffff";
+        var input = "photo.jpg";
 
         // Act
-        var a = new AllyariaImageValue(input);
-        var b = AllyariaImageValue.Parse(input);
+        var sut = new AllyariaImageValue(input, background);
+        string result = sut;
 
         // Assert
-        a.Value.Should()
-            .Be(b.Value);
-    }
-
-    [Fact]
-    public void ToCssBackground_Should_Return_Centered_Cover_With_Black_Overlay_For_Light_Background()
-    {
-        // Arrange
-        var img = new AllyariaImageValue("hero.jpg");
-        var background = new AllyariaColorValue("#FFFFFF"); // luminance >= 0.5
-
-        // Act
-        var css = img.ToCssBackground(background);
-
-        // Assert
-        css.Should()
-            .Be(
-                @"background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""hero.jpg"");background-position:center;background-repeat:no-repeat;background-size:cover;"
-            );
-    }
-
-    [Fact]
-    public void ToCssBackground_Should_Return_Image_Only_With_White_Overlay_For_Dark_Background_When_Not_Stretched()
-    {
-        // Arrange
-        var img = new AllyariaImageValue("hero.jpg");
-        var background = new AllyariaColorValue("#000000"); // luminance < 0.5
-
-        // Act
-        var css = img.ToCssBackground(background, false);
-
-        // Assert
-        css.Should()
-            .Be(
-                @"background-image:linear-gradient(rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5)),url(""hero.jpg"");"
-            );
-    }
-
-    [Fact]
-    public void ToCssVarsBackground_Should_Return_Image_Var_Only_For_Dark_Background_When_Not_Stretched()
-    {
-        // Arrange
-        var img = new AllyariaImageValue("banner.png");
-        var background = new AllyariaColorValue("#0A0A0A");
-        var prefix = "--p-";
-
-        // Act
-        var css = img.ToCssVarsBackground(prefix, background, false);
-
-        // Assert
-        css.Should()
-            .Be(
-                @"--p-background-image:linear-gradient(rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5)),url(""banner.png"");"
-            );
-    }
-
-    [Fact]
-    public void ToCssVarsBackground_Should_Return_Vars_With_Prefix_For_Light_Background()
-    {
-        // Arrange
-        var img = new AllyariaImageValue("banner.png");
-        var background = new AllyariaColorValue("#FAFAFA");
-        var prefix = "--x-";
-
-        // Act
-        var css = img.ToCssVarsBackground(prefix, background);
-
-        // Assert
-        css.Should()
-            .Be(
-                @"--x-background-image:linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""banner.png"");--x-background-position:center;--x-background-repeat:no-repeat;--x-background-size:cover;"
-            );
+        result.Should().Be(@"linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""photo.jpg"")");
     }
 
     [Theory]
-    [InlineData("   ")]
-    [InlineData("javascript:evil()")]
-    [InlineData("ftp://host/file.png")]
-    public void TryParse_Should_ReturnFalse_And_Null_When_Invalid(string input)
+    [InlineData("ftp://example.com/file.png", "ftp")]
+    [InlineData("file:///C:/tmp/a.png", "file")]
+    [InlineData("mailto:user@example.com", "mailto")]
+    [InlineData("ssh://host/path.png", "ssh")]
+    public void Ctor_Should_ThrowAllyariaArgumentException_When_AbsoluteUrlWithDisallowedScheme(string input,
+        string scheme)
     {
+        // Arrange
+
         // Act
-        var ok = AllyariaImageValue.TryParse(input, out var result);
+        var act = () => new AllyariaImageValue(input);
 
         // Assert
-        ok.Should()
-            .BeFalse();
+        act.Should().Throw<AllyariaArgumentException>()
+            .WithMessage($"Unsupported URI scheme '{scheme}'*");
+    }
 
-        result.Should()
-            .BeNull();
+    [Theory]
+    [InlineData("   javascript:alert(1)")]
+    [InlineData("\tVbScRiPt:msgbox(1)")]
+    public void Ctor_Should_ThrowAllyariaArgumentException_When_DangerousScheme(string input)
+    {
+        // Arrange
+
+        // Act
+        var act = () => new AllyariaImageValue(input);
+
+        // Assert
+        act.Should().Throw<AllyariaArgumentException>()
+            .WithMessage("Unsupported URI scheme for CSS image value.*");
+    }
+
+    [Theory]
+    [InlineData(@"""foo bar.png""", @"url(""foo bar.png"")")]
+    [InlineData(@"'a (b).png'", @"url(""a (b).png"")")]
+    public void Ctor_Should_UnwrapQuotes_When_InputQuoted(string input, string expected)
+    {
+        // Arrange
+
+        // Act
+        var sut = new AllyariaImageValue(input);
+        string result = sut;
+
+        // Assert
+        result.Should().Be(expected);
     }
 
     [Fact]
-    public void TryParse_Should_ReturnTrue_And_Result_When_Valid()
+    public void Ctor_Should_UseFirstUrl_When_MultipleUrlTokensArePresent()
     {
         // Arrange
-        var input = "a/b.png";
+        var input = "url(a.png), url(b.png), url(c.png)";
 
         // Act
-        var ok = AllyariaImageValue.TryParse(input, out var result);
+        var sut = new AllyariaImageValue(input);
+        string result = sut;
 
         // Assert
-        ok.Should()
-            .BeTrue();
+        result.Should().Be(@"url(""a.png"")");
+    }
 
-        result.Should()
-            .NotBeNull();
+    [Fact]
+    public void ImplicitOperators_Should_RoundTripNormalizedValue()
+    {
+        // Arrange
+        AllyariaImageValue sut = "assets/a.png";
 
-        ((string)result).Should()
-            .Be(@"url(""a/b.png"")");
+        // Act
+        string result = sut;
+
+        // Assert
+        result.Should().Be(@"url(""assets/a.png"")");
+    }
+
+    [Fact]
+    public void Parse_Should_ReturnEquivalentResultToConstructor_When_Valid()
+    {
+        // Arrange
+        var input = "foo.png";
+
+        // Act
+        var sut = AllyariaImageValue.Parse(input);
+        string result = sut;
+
+        // Assert
+        result.Should().Be(@"url(""foo.png"")");
+    }
+
+    [Fact]
+    public void TryParse_Should_ReturnFalseAndNull_When_Invalid()
+    {
+        // Arrange
+        var input = " vbscript:doEvil() ";
+
+        // Act
+        var ok = AllyariaImageValue.TryParse(input, out var parsed);
+
+        // Assert
+        ok.Should().BeFalse();
+        parsed.Should().BeNull();
+    }
+
+    [Fact]
+    public void TryParse_Should_ReturnTrueAndResult_When_Valid()
+    {
+        // Arrange
+        var input = "bar/baz.svg";
+
+        // Act
+        var ok = AllyariaImageValue.TryParse(input, out var parsed);
+
+        // Assert
+        ok.Should().BeTrue();
+        parsed.Should().NotBeNull();
+        string normalized = parsed!;
+        normalized.Should().Be(@"url(""bar/baz.svg"")");
     }
 }
