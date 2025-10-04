@@ -166,7 +166,7 @@ public readonly record struct AllyariaPalette
     /// Hue is preserved for background and border; only S and V are adjusted. Background images remain unchanged (image
     /// precedence still applies).
     /// </remarks>
-    public AllyariaPalette ToDisabledPalette(double desaturateBy = 60.0,
+    public AllyariaPalette ToDisabled(double desaturateBy = 60.0,
         double valueBlendTowardMid = 0.15,
         double minimumContrast = 3.0)
     {
@@ -205,7 +205,7 @@ public readonly record struct AllyariaPalette
     /// Background images are not altered by this method. If a background image is active, precedence still applies; the
     /// derived background participates only in contrast calculations for a readable foreground.
     /// </remarks>
-    public AllyariaPalette ToHoverPalette(double backgroundDeltaV = 6.0,
+    public AllyariaPalette ToHover(double backgroundDeltaV = 6.0,
         double borderDeltaV = 8.0,
         double minimumContrast = 4.5)
     {

@@ -239,7 +239,7 @@ public sealed class AllyariaPaletteTests
         var basePalette = new AllyariaPalette(Colors.Blue500, Colors.Blue100, Colors.Blue700);
 
         // Act
-        var disabled = basePalette.ToDisabledPalette();
+        var disabled = basePalette.ToDisabled();
 
         // Assert:
         disabled.BackgroundColor.H.Should().BeApproximately(basePalette.BackgroundColor.H, 0.6);
@@ -280,7 +280,7 @@ public sealed class AllyariaPaletteTests
         var borderV0 = basePalette.BorderColor.V;
 
         // Act
-        var hover = basePalette.ToHoverPalette();
+        var hover = basePalette.ToHover();
 
         // Assert
         hover.BackgroundColor.V.Should().BeApproximately(Math.Clamp(bgV0 + 6.0, 0.0, 100.0), 0.25);
@@ -304,7 +304,7 @@ public sealed class AllyariaPaletteTests
         var borderV0 = basePalette.BorderColor.V;
 
         // Act
-        var hover = basePalette.ToHoverPalette();
+        var hover = basePalette.ToHover();
 
         // Assert
         hover.BackgroundColor.V.Should().BeApproximately(Math.Clamp(bgV0 - 6.0, 0.0, 100.0), 0.25);
