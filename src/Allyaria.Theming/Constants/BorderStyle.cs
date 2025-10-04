@@ -3,9 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 
-/// <summary>
-/// Provides strongly typed constants representing standard CSS border styles.
-/// </summary>
+/// <summary>Provides strongly typed constants representing standard CSS border styles.</summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class BorderStyle
 {

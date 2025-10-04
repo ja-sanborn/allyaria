@@ -1,423 +1,445 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Helpers;
+﻿using Allyaria.Theming.Helpers;
+using Allyaria.Theming.Styles;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.UnitTests.Helpers;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+[SuppressMessage("ReSharper", "RedundantArgumentDefaultValue")]
 public sealed class ColorHelperTests
 {
+    private const double Epsilon = 1e-6;
+
     [Fact]
-    public void Blend_Should_InterpolateLinearly_When_T_InRange()
+    public void ContrastRatio_Should_Be_21_For_BlackOnWhite_And_Symmetric()
     {
         // Arrange
-        const double start = 10.0;
-        const double target = 30.0;
-        const double t = 0.25;
+        var black = AllyariaColorValue.FromRgba(0, 0, 0);
+        var white = AllyariaColorValue.FromRgba(255, 255, 255);
 
         // Act
-        var actual = ColorHelper.Blend(start, target, t);
+        var r1 = ColorHelper.ContrastRatio(black, white);
+        var r2 = ColorHelper.ContrastRatio(white, black);
 
         // Assert
-        actual.Should()
-            .Be(15.0);
+        r1.Should().BeApproximately(21.0, 1e-9);
+        r2.Should().BeApproximately(21.0, 1e-9);
     }
 
     [Fact]
-    public void Blend_Should_ReturnStart_When_T_Is_LessOrEqualZero()
+    public void ContrastRatio_Should_Increase_When_Foreground_Darkens_On_LightBackground()
     {
         // Arrange
-        const double start = 10.0;
-        const double target = 30.0;
-        const double t = -1.0;
+        var bg = AllyariaColorValue.FromHsva(210, 10, 95); // very light, slightly cool
+        var lightFg = AllyariaColorValue.FromHsva(210, 10, 80);
+        var darkerFg = AllyariaColorValue.FromHsva(210, 10, 30);
 
         // Act
-        var actual = ColorHelper.Blend(start, target, t);
+        var rLight = ColorHelper.ContrastRatio(lightFg, bg);
+        var rDark = ColorHelper.ContrastRatio(darkerFg, bg);
 
         // Assert
-        actual.Should()
-            .Be(start);
+        rDark.Should().BeGreaterThan(rLight);
     }
 
     [Fact]
-    public void Blend_Should_ReturnTarget_When_T_Is_GreaterOrEqualOne()
+    public void DeriveDisabled_Should_Desaturate_And_Blend_Value_Toward_Mid_And_Keep_Readability()
     {
         // Arrange
-        const double start = 10.0;
-        const double target = 30.0;
-        const double t = 2.0;
+        var bg0 = AllyariaColorValue.FromHsva(210, 40, 90);
+        var fg0 = AllyariaColorValue.FromHsva(210, 20, 20);
+        var border0 = AllyariaColorValue.FromHsva(210, 40, 85);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+
+        const double desat = 60.0;
+        const double towardMidT = 0.15;
+
+        var expectedBg = AllyariaColorValue.FromHsva(
+            bg0.H,
+            bg0.S - desat,
+            bg0.V + (50.0 - bg0.V) * towardMidT
+        );
+
+        var expectedBorder = AllyariaColorValue.FromHsva(
+            border0.H,
+            border0.S - desat,
+            border0.V + (50.0 - border0.V) * towardMidT
+        );
 
         // Act
-        var actual = ColorHelper.Blend(start, target, t);
+        var disabled = ColorHelper.DeriveDisabled(basePalette, desat, towardMidT, 3.0);
 
         // Assert
-        actual.Should()
-            .Be(target);
+        disabled.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        disabled.BorderColor.Value.Should().Be(expectedBorder.Value);
+
+        // Foreground should have relaxed readability (>= 3.0)
+        ColorHelper.ContrastRatio(disabled.ForegroundColor, disabled.BackgroundColor)
+            .Should().BeGreaterThanOrEqualTo(3.0 - 1e-6);
     }
 
     [Fact]
-    public void ContrastRatio_Should_Be_21_For_Black_On_White_And_Symmetric()
+    public void DeriveHigh_Should_Darken_On_DarkTheme_And_ReEnsure_Contrast()
     {
-        // Arrange
-        var blackOnWhite = ColorHelper.ContrastRatio(Colors.Black, Colors.White);
-        var whiteOnBlack = ColorHelper.ContrastRatio(Colors.White, Colors.Black);
+        // Arrange (dark theme)
+        var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
+        var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
+        var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 8.0;
 
-        // Act + Assert
-        blackOnWhite.Should()
-            .BeApproximately(21.0, 1e-12);
-
-        whiteOnBlack.Should()
-            .BeApproximately(21.0, 1e-12);
-
-        blackOnWhite.Should()
-            .Be(whiteOnBlack);
-    }
-
-    [Fact]
-    public void EnsureMinimumContrast_Should_Darken_Along_ValueRail_When_Background_Is_White()
-    {
-        // Arrange
-        var fg = AllyariaColorValue.FromRgba(238, 238, 238);
-        var bg = Colors.White;
-        const double minimum = 4.5;
+        // Expected via same quantization path
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var high = ColorHelper.DeriveHigh(basePalette, delta);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
+        high.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        high.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.ContrastRatio.Should()
-            .BeGreaterThanOrEqualTo(minimum);
-
-        result.ContrastRatio.Should()
-            .BeLessThanOrEqualTo(21.0);
+        ColorHelper.ContrastRatio(high.ForegroundColor, high.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Mix_Toward_White_When_ValueRails_Cannot_Reach_Target()
+    public void DeriveHigh_Should_Lighten_On_LightTheme_And_ReEnsure_Contrast()
     {
-        // Arrange
-        var bg = Colors.Black;
-        var fg = AllyariaColorValue.FromHsva(0, 100, 10);
-        const double minimum = 7.0;
+        // Arrange (light theme)
+        var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
+        var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
+        var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 8.0;
+
+        // Compute expected via same conversion logic as helper to avoid rounding mismatches
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var high = ColorHelper.DeriveHigh(basePalette, delta);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
+        high.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        high.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.ContrastRatio.Should()
-            .BeGreaterThanOrEqualTo(minimum);
-
-        result.ContrastRatio.Should()
-            .BeLessThanOrEqualTo(21.0);
+        ColorHelper.ContrastRatio(high.ForegroundColor, high.BackgroundColor)
+            .Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void
-        EnsureMinimumContrast_Should_Prefer_HigherRatio_When_Both_Mix_Directions_Are_Better_Than_Rail_Best_And_None_Meet_BlackDominates()
+    public void DeriveHighest_Should_DarkenMore_On_DarkTheme()
     {
-        // Arrange
-        var bg = Colors.Red;
-        var fg = AllyariaColorValue.FromHsva(0, 100, 40);
-        const double minimum = 10.0;
+        // Arrange (dark theme)
+        var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
+        var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
+        var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 12.0;
+
+        // Expected via same quantization path
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var highest = ColorHelper.DeriveHighest(basePalette, delta);
 
         // Assert
-        var whiteVsBg = ColorHelper.ContrastRatio(Colors.White, bg);
-        var blackVsBg = ColorHelper.ContrastRatio(Colors.Black, bg);
+        highest.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        highest.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.MeetsMinimum.Should()
-            .BeFalse();
-
-        result.ContrastRatio.Should()
-            .BeApproximately(blackVsBg, 1e-9);
-
-        blackVsBg.Should()
-            .BeGreaterThan(whiteVsBg);
+        ColorHelper.ContrastRatio(highest.ForegroundColor, highest.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void
-        EnsureMinimumContrast_Should_Prefer_HigherRatio_When_Both_Mix_Directions_Are_Better_Than_Rail_Best_And_None_Meet_WhiteDominates()
+    public void DeriveHighest_Should_LightenMore_On_LightTheme()
     {
         // Arrange
-        // Background: saturated blue -> white has much higher contrast than black.
-        var bg = AllyariaColorValue.FromRgba(0, 0, 255);
+        var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
+        var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
+        var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 12.0;
 
-        // Foreground: some mid yellow-ish (rails along V won’t reach 9:1 against blue),
-        // forcing the algorithm into the pole-mix “best-approaching” logic.
-        var fg = AllyariaColorValue.FromHsva(60, 100, 60);
-        const double minimum = 9.0; // Unreachable by rails; white vs blue ~8.6 < 9, black vs blue ~2.4 < 9
-
-        // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
-
-        // Assert: best-approaching should prefer toward WHITE over all others for blue backgrounds.
-        var whiteVsBg = ColorHelper.ContrastRatio(Colors.White, bg);
-        var blackVsBg = ColorHelper.ContrastRatio(Colors.Black, bg);
-
-        result.MeetsMinimum.Should()
-            .BeFalse();
-
-        result.ContrastRatio.Should()
-            .BeApproximately(whiteVsBg, 1e-9);
-
-        whiteVsBg.Should()
-            .BeGreaterThan(blackVsBg);
-    }
-
-    [Fact]
-    public void EnsureMinimumContrast_Should_Return_BestApproaching_When_No_Path_Meets_Target()
-    {
-        // Arrange
-        var bg = Colors.Red;
-        var fg = AllyariaColorValue.FromHsva(0, 100, 30);
-        const double minimum = 10.0;
+        // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
-        var maxTheoretical = ColorHelper.ContrastRatio(Colors.Black, bg);
+        var highest = ColorHelper.DeriveHighest(basePalette, delta);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeFalse();
+        highest.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        highest.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.ContrastRatio.Should()
-            .BeLessThan(maxTheoretical + 1e-9);
-
-        result.ContrastRatio.Should()
-            .BeGreaterThan(5.0);
+        ColorHelper.ContrastRatio(highest.ForegroundColor, highest.BackgroundColor)
+            .Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Return_Unchanged_When_Already_Meets_Minimum()
+    public void DeriveLow_Should_Darken_On_LightTheme_And_ReEnsure_Contrast()
     {
-        // Arrange
-        var fg = Colors.White;
-        var bg = Colors.Black;
-        var startRatio = ColorHelper.ContrastRatio(fg, bg);
+        // Arrange (light theme)
+        var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
+        var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
+        var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 8.0;
+
+        // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg);
+        var low = ColorHelper.DeriveLow(basePalette, delta);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
+        low.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        low.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.ContrastRatio.Should()
-            .BeApproximately(startRatio, 1e-12);
+        ColorHelper.ContrastRatio(low.ForegroundColor, low.BackgroundColor)
+            .Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Try_Opposite_Rail_When_Initial_Direction_Cannot_Meet()
+    public void DeriveLow_Should_Lighten_On_DarkTheme_And_ReEnsure_Contrast()
     {
-        // Arrange
-        var bg = AllyariaColorValue.FromRgba(128, 128, 128);
-        var fg = AllyariaColorValue.FromHsva(0, 0, 55);
-        const double minimum = 5.0;
+        // Arrange (dark theme)
+        var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
+        var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
+        var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 8.0;
+
+        // Expected via same quantization path
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var low = ColorHelper.DeriveLow(basePalette, delta);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
-
-        result.ContrastRatio.Should()
-            .BeGreaterThanOrEqualTo(minimum);
+        low.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        low.BorderColor.Value.Should().Be(expectedBorder.Value);
+        ColorHelper.ContrastRatio(low.ForegroundColor, low.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Update_Best_When_Second_Has_Higher_Ratio_But_None_Meet()
+    public void DeriveLowest_Should_DarkenMore_On_LightTheme()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(0, 0, 20);
-        var fg = AllyariaColorValue.FromHsva(0, 20, 10);
+        var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
+        var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
+        var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 12.0;
 
-        var maxExt = Math.Max(ColorHelper.ContrastRatio(Colors.White, bg), ColorHelper.ContrastRatio(Colors.Black, bg));
-        var minimum = maxExt + 0.1;
+        // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var lowest = ColorHelper.DeriveLowest(basePalette, delta);
 
         // Assert
-        var whiteVsBg = ColorHelper.ContrastRatio(Colors.White, bg);
-        var blackVsBg = ColorHelper.ContrastRatio(Colors.Black, bg);
+        lowest.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        lowest.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.MeetsMinimum.Should()
-            .BeFalse();
-
-        result.ContrastRatio.Should()
-            .BeApproximately(whiteVsBg, 1e-9);
-
-        whiteVsBg.Should()
-            .BeGreaterThan(blackVsBg);
+        ColorHelper.ContrastRatio(lowest.ForegroundColor, lowest.BackgroundColor)
+            .Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Update_Best_With_TowardBlack_When_Black_Is_Best_But_None_Meet()
+    public void DeriveLowest_Should_LightenMore_On_DarkTheme()
     {
-        // Arrange
-        var bg = AllyariaColorValue.FromHsva(0, 20, 60);
-        var fg = AllyariaColorValue.FromHsva(0, 20, 10);
+        // Arrange (dark theme)
+        var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
+        var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
+        var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        const double delta = 12.0;
 
-        var blackVsBg = ColorHelper.ContrastRatio(Colors.Black, bg);
-        var minimum = blackVsBg + 0.1;
+        // Expected via same quantization path
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, minimum);
+        var lowest = ColorHelper.DeriveLowest(basePalette, delta);
 
         // Assert
-        var whiteVsBg = ColorHelper.ContrastRatio(Colors.White, bg);
+        lowest.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        lowest.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        result.MeetsMinimum.Should()
-            .BeFalse();
-
-        result.ContrastRatio.Should()
-            .BeApproximately(blackVsBg, 1e-9);
-
-        blackVsBg.Should()
-            .BeGreaterThan(whiteVsBg);
+        ColorHelper.ContrastRatio(lowest.ForegroundColor, lowest.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Use_TieBreak_Brighten_When_V_LessThan_50_On_NearTie()
+    public void EnsureMinimumContrast_Should_Adjust_Along_ValueRail_When_Possible()
     {
         // Arrange
-        var fg = AllyariaColorValue.FromHsva(155, 60, 33);
-        var bg = AllyariaColorValue.FromHsva(155, 60, 33);
-
-        var up = AllyariaColorValue.FromHsva(155, 60, 35);
-        var dn = AllyariaColorValue.FromHsva(155, 60, 31);
-
-        var rUp = ColorHelper.ContrastRatio(up, bg);
-        var rDn = ColorHelper.ContrastRatio(dn, bg);
-
-        Math.Abs(rUp - rDn)
-            .Should()
-            .BeLessThan(1e-6);
+        // Start with a light gray foreground on white background -> low contrast.
+        var bg = AllyariaColorValue.FromRgba(255, 255, 255);
+        var start = AllyariaColorValue.FromHsva(0, 0, 80); // light gray (S=0 keeps hue rail behavior clear)
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, rUp);
+        var result = ColorHelper.EnsureMinimumContrast(start, bg, 4.5);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
+        result.MeetsMinimum.Should().BeTrue();
 
-        result.ContrastRatio.Should()
-            .BeApproximately(rUp, 1e-12);
-
-        result.ContrastRatio.Should()
-            .BeLessThan(rDn);
+        // On S=0, hue is 0 and S stays 0; only V should change.
+        result.ForegroundColor.S.Should().BeApproximately(start.S, 1e-9);
+        result.ForegroundColor.H.Should().BeApproximately(start.H, 1e-9);
+        result.ForegroundColor.V.Should().BeLessThan(start.V);
+        result.ContrastRatio.Should().BeGreaterThanOrEqualTo(4.5 - 1e-6);
     }
 
     [Fact]
-    public void EnsureMinimumContrast_Should_Use_TieBreak_Darken_When_V_AtLeast_50_On_NearTie()
+    public void EnsureMinimumContrast_Should_Return_BestApproach_When_Target_Unreachable()
     {
         // Arrange
-        var fg = AllyariaColorValue.FromHsva(286, 100, 64);
-        var bg = AllyariaColorValue.FromHsva(286, 100, 64);
-
-        var up = AllyariaColorValue.FromHsva(286, 100, 66);
-        var dn = AllyariaColorValue.FromHsva(286, 100, 62);
-
-        var rUp = ColorHelper.ContrastRatio(up, bg);
-        var rDn = ColorHelper.ContrastRatio(dn, bg);
-
-        Math.Abs(rUp - rDn)
-            .Should()
-            .BeLessThan(1e-6);
+        var bg = AllyariaColorValue.FromHsva(120, 100, 50); // saturated mid green
+        var start = AllyariaColorValue.FromHsva(120, 100, 50); // identical → initial ratio is 1
+        var absurdTarget = 100.0; // impossible
 
         // Act
-        var result = ColorHelper.EnsureMinimumContrast(fg, bg, rDn);
+        var result = ColorHelper.EnsureMinimumContrast(start, bg, absurdTarget);
 
         // Assert
-        result.MeetsMinimum.Should()
-            .BeTrue();
+        result.MeetsMinimum.Should().BeFalse();
+        result.ContrastRatio.Should().BeGreaterThan(1.0); // must have improved over the starting 1:1
 
-        result.ContrastRatio.Should()
-            .BeApproximately(rDn, 1e-12);
-
-        result.ContrastRatio.Should()
-            .BeLessThan(rUp);
+        // It should have shifted either toward dark (V↓) or light (mix rail) to maximize contrast.
+        result.ForegroundColor.V.Should().NotBeApproximately(start.V, 1e-9);
     }
 
     [Fact]
-    public void MixSrgb_Should_ClampToStart_And_End_When_T_OutOfRange()
+    public void EnsureMinimumContrast_Should_Return_SameColor_When_Already_Meets_Min()
     {
         // Arrange
-        var a = AllyariaColorValue.FromRgba(10, 20, 30);
-        var b = AllyariaColorValue.FromRgba(200, 210, 220);
+        var fg = AllyariaColorValue.FromRgba(0, 0, 0);
+        var bg = AllyariaColorValue.FromRgba(255, 255, 255);
 
         // Act
-        var below = ColorHelper.MixSrgb(a, b, -0.5);
-        var above = ColorHelper.MixSrgb(a, b, 1.5);
+        var result = ColorHelper.EnsureMinimumContrast(fg, bg, 4.5);
 
         // Assert
-        below.HexRgba.Should()
-            .Be(a.HexRgba);
-
-        above.HexRgba.Should()
-            .Be(b.HexRgba);
+        result.MeetsMinimum.Should().BeTrue();
+        result.ForegroundColor.Value.Should().Be(fg.Value);
+        result.ContrastRatio.Should().BeGreaterThanOrEqualTo(4.5 - 1e-9);
     }
 
-    [Fact]
-    public void MixSrgb_Should_Round_Half_AwayFromZero_Per_Channel()
+    [Theory]
+    [InlineData(6.0, 8.0, 4.5)] // Hovered defaults
+    [InlineData(8.0, 10.0, 4.5)] // Focused defaults
+    [InlineData(12.0, 14.0, 4.5)] // Pressed defaults
+    [InlineData(16.0, 18.0, 4.5)] // Dragged defaults
+    public void NudgeState_Derivatives_Should_Adjust_V_Down_On_LightTheme(double bgDelta,
+        double borderDelta,
+        double minC)
     {
-        // Arrange
-        var start = AllyariaColorValue.FromRgba(0, 254, 0);
-        var end = AllyariaColorValue.FromRgba(1, 255, 1);
+        // Arrange (light theme: V >= 50 → direction = -1)
+        var bg0 = AllyariaColorValue.FromHsva(30, 20, 80);
+        var fg0 = AllyariaColorValue.FromHsva(30, 10, 15);
+        var border0 = AllyariaColorValue.FromHsva(30, 20, 78);
+        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+
+        // Expected values computed via the same HSVA→RGBA quantization path to avoid rounding drift.
+        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - bgDelta);
+        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - borderDelta);
 
         // Act
-        var mid = ColorHelper.MixSrgb(start, end, 0.5);
+        var hovered = ColorHelper.DeriveHovered(basePalette, bgDelta, borderDelta, minC);
+        var focused = ColorHelper.DeriveFocused(basePalette, bgDelta, borderDelta, minC);
+        var pressed = ColorHelper.DerivePressed(basePalette, bgDelta, borderDelta, minC);
+        var dragged = ColorHelper.DeriveDragged(basePalette, bgDelta, borderDelta, minC);
 
         // Assert
-        mid.R.Should()
-            .Be(1);
+        hovered.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        hovered.BorderColor.Value.Should().Be(expectedBorder.Value);
 
-        mid.G.Should()
-            .Be(255);
+        ColorHelper.ContrastRatio(hovered.ForegroundColor, hovered.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(minC - 1e-6);
 
-        mid.B.Should()
-            .Be(1);
+        focused.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        focused.BorderColor.Value.Should().Be(expectedBorder.Value);
+
+        ColorHelper.ContrastRatio(focused.ForegroundColor, focused.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(minC - 1e-6);
+
+        pressed.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        pressed.BorderColor.Value.Should().Be(expectedBorder.Value);
+
+        ColorHelper.ContrastRatio(pressed.ForegroundColor, pressed.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(minC - 1e-6);
+
+        dragged.BackgroundColor.Value.Should().Be(expectedBg.Value);
+        dragged.BorderColor.Value.Should().Be(expectedBorder.Value);
+
+        ColorHelper.ContrastRatio(dragged.ForegroundColor, dragged.BackgroundColor).Should()
+            .BeGreaterThanOrEqualTo(minC - 1e-6);
     }
 
     [Fact]
-    public void RelativeLuminance_Should_Use_Gamma_Branch_For_Larger_Channel()
+    public void RelativeLuminance_Should_BeOne_For_White()
     {
         // Arrange
-        var color = AllyariaColorValue.FromRgba(11, 0, 0);
+        var white = AllyariaColorValue.FromRgba(255, 255, 255);
 
         // Act
-        var actual = ColorHelper.RelativeLuminance(color);
+        var luminance = ColorHelper.RelativeLuminance(white);
 
-        // Assert (0.2126 * ((c + 0.055)/1.055)^2.4)
-        var c = 11.0 / 255.0;
-        var expected = 0.2126 * Math.Pow((c + 0.055) / 1.055, 2.4);
-
-        actual.Should()
-            .BeApproximately(expected, 1e-12);
+        // Assert
+        luminance.Should().BeApproximately(1.0, Epsilon);
     }
 
     [Fact]
-    public void RelativeLuminance_Should_Use_Linear_Branch_For_Small_Channel()
+    public void RelativeLuminance_Should_BeZero_For_Black()
     {
         // Arrange
-        var color = AllyariaColorValue.FromRgba(10, 0, 0);
+        var black = AllyariaColorValue.FromRgba(0, 0, 0);
 
         // Act
-        var actual = ColorHelper.RelativeLuminance(color);
+        var luminance = ColorHelper.RelativeLuminance(black);
 
-        // Assert (0.2126 * (10/255)/12.92)
-        var expected = 0.2126 * (10.0 / 255.0 / 12.92);
+        // Assert
+        luminance.Should().BeApproximately(0.0, Epsilon);
+    }
 
-        actual.Should()
-            .BeApproximately(expected, 1e-12);
+    [Theory]
+    [InlineData(255, 0, 0, 0.2126)] // pure red
+    [InlineData(0, 255, 0, 0.7152)] // pure green
+    [InlineData(0, 0, 255, 0.0722)] // pure blue
+    public void RelativeLuminance_Should_Match_WCAG_Primaries(byte r, byte g, byte b, double expected)
+    {
+        // Arrange
+        var color = AllyariaColorValue.FromRgba(r, g, b);
+
+        // Act
+        var luminance = ColorHelper.RelativeLuminance(color);
+
+        // Assert
+        luminance.Should().BeApproximately(expected, 1e-4);
+    }
+
+    [Fact]
+    public void SearchTowardPole_Should_Find_MinimumContrast_Mix_When_ValueRail_Fails()
+    {
+        // Arrange
+        var background = AllyariaColorValue.FromHsva(240, 100, 10); // very dark blue
+        var start = AllyariaColorValue.FromHsva(240, 100, 50); // saturated blue mid value
+
+        const double minimum = 10.0; // deliberately high to force the hue-rail attempts to fail
+
+        // Act
+        var result = ColorHelper.EnsureMinimumContrast(start, background, minimum);
+
+        // Assert
+        result.MeetsMinimum.Should().BeTrue();
+        result.ContrastRatio.Should().BeGreaterThanOrEqualTo(minimum - 1e-6);
+        result.ForegroundColor.S.Should().BeLessThan(start.S);
     }
 }

@@ -1,5 +1,6 @@
 using Allyaria.Theming.Constants;
 using Allyaria.Theming.Primitives;
+using Allyaria.Theming.Styles;
 using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.Helpers;
@@ -19,7 +20,7 @@ internal static class ColorHelper
     /// returns <paramref name="target" />.
     /// </param>
     /// <returns>The blended scalar.</returns>
-    public static double Blend(double start, double target, double t)
+    private static double Blend(double start, double target, double t)
     {
         t = Math.Clamp(t, 0.0, 1.0);
 
@@ -37,21 +38,15 @@ internal static class ColorHelper
     {
         const double step = 2.0; // percent V
 
-        double h = foreground.H, s = foreground.S, v = foreground.V;
+        var h = foreground.H;
+        var s = foreground.S;
+        var v = foreground.V;
 
-        var up = AllyariaColorValue.FromHsva(h, s, Math.Clamp(v + step, 0.0, 100.0));
-        var dn = AllyariaColorValue.FromHsva(h, s, Math.Clamp(v - step, 0.0, 100.0));
+        var up = AllyariaColorValue.FromHsva(h, s, v + step);
+        var dn = AllyariaColorValue.FromHsva(h, s, v - step);
 
         var rUp = ContrastRatio(up, background);
         var rDn = ContrastRatio(dn, background);
-
-        if (Math.Abs(rUp - rDn) < 1e-6)
-        {
-            // Tie-break: push away from mid to reach an extreme sooner
-            return v >= 50.0
-                ? -1
-                : +1;
-        }
 
         return rUp > rDn
             ? +1
@@ -74,6 +69,135 @@ internal static class ColorHelper
 
         return (lighter + 0.05) / (darker + 0.05);
     }
+
+    /// <summary>
+    /// Derives a disabled state palette by desaturating colors, biasing value toward mid-tone, and ensuring readable
+    /// foreground contrast at a relaxed requirement (defaults to 3.0).
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="desaturateBy">Amount to reduce saturation (percent points).</param>
+    /// <param name="valueBlendTowardMid">Blend factor toward V=50% mid-tone.</param>
+    /// <param name="minContrast">Minimum contrast ratio for disabled text.</param>
+    /// <returns>A derived palette suitable for disabled state.</returns>
+    public static AllyariaPalette DeriveDisabled(AllyariaPalette palette,
+        double desaturateBy = 60.0,
+        double valueBlendTowardMid = 0.15,
+        double minContrast = 3.0)
+    {
+        var background = AllyariaColorValue.FromHsva(
+            palette.BackgroundColor.H,
+            palette.BackgroundColor.S - desaturateBy,
+            Blend(palette.BackgroundColor.V, 50.0, valueBlendTowardMid)
+        );
+
+        var border = AllyariaColorValue.FromHsva(
+            palette.BorderColor.H,
+            palette.BorderColor.S - desaturateBy,
+            Blend(palette.BorderColor.V, 50.0, valueBlendTowardMid)
+        );
+
+        var foreground = EnsureMinimumContrast(palette.ForegroundColor, background, minContrast).ForegroundColor;
+
+        return palette.Cascade(background, foreground, border);
+    }
+
+    /// <summary>
+    /// Derives a dragged state palette (for drag-and-drop affordances) with the strongest delta among pointer states, keeping
+    /// foreground contrast above <paramref name="minContrast" />.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="backgroundDeltaV">Background value (V) delta.</param>
+    /// <param name="borderDeltaV">Border value (V) delta.</param>
+    /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
+    /// <returns>A derived palette suitable for the dragged state.</returns>
+    public static AllyariaPalette DeriveDragged(AllyariaPalette palette,
+        double backgroundDeltaV = 16.0,
+        double borderDeltaV = 18.0,
+        double minContrast = 4.5)
+        => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
+
+    /// <summary>
+    /// Derives a focused state palette with stronger nudge than hover to increase perceptibility while maintaining minimum
+    /// foreground contrast.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="backgroundDeltaV">Background value (V) delta.</param>
+    /// <param name="borderDeltaV">Border value (V) delta.</param>
+    /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
+    /// <returns>A derived palette suitable for the focused state.</returns>
+    public static AllyariaPalette DeriveFocused(AllyariaPalette palette,
+        double backgroundDeltaV = 8.0,
+        double borderDeltaV = 10.0,
+        double minContrast = 4.5)
+        => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
+
+    /// <summary>
+    /// Derives a higher elevation palette (high) by nudging background/border and re-ensuring minimum foreground contrast.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="delta">Magnitude of value (V) change.</param>
+    /// <returns>The derived high elevation palette.</returns>
+    public static AllyariaPalette DeriveHigh(AllyariaPalette palette, double delta = 8.0)
+        => NudgeElevation(palette, delta, false);
+
+    /// <summary>
+    /// Derives a higher-tier elevation palette (highest) by nudging background/border in the opposite direction of the lower
+    /// tiers relative to theme brightness.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="delta">Magnitude of value (V) change.</param>
+    /// <returns>The derived highest elevation palette.</returns>
+    public static AllyariaPalette DeriveHighest(AllyariaPalette palette, double delta = 12.0)
+        => NudgeElevation(palette, delta, false);
+
+    /// <summary>
+    /// Derives a hovered state palette by nudging background/border contrast while preserving hue and ensuring foreground
+    /// contrast is at least <paramref name="minContrast" />.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="backgroundDeltaV">Magnitude of background value (V) change in percent.</param>
+    /// <param name="borderDeltaV">Magnitude of border value (V) change in percent.</param>
+    /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
+    /// <returns>A derived palette suitable for the hovered state.</returns>
+    public static AllyariaPalette DeriveHovered(AllyariaPalette palette,
+        double backgroundDeltaV = 6.0,
+        double borderDeltaV = 8.0,
+        double minContrast = 4.5)
+        => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
+
+    /// <summary>
+    /// Derives a lower elevation palette (low) by nudging background/border appropriately for current brightness.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="delta">Magnitude of value (V) change.</param>
+    /// <returns>The derived low elevation palette.</returns>
+    public static AllyariaPalette DeriveLow(AllyariaPalette palette, double delta = 8.0)
+        => NudgeElevation(palette, delta, true);
+
+    /// <summary>
+    /// Derives a lower-tier elevation palette (lowest) by nudging background toward the appropriate darker/lighter direction
+    /// for the current theme brightness.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="delta">Magnitude of value (V) change.</param>
+    /// <returns>The derived lowest elevation palette.</returns>
+    public static AllyariaPalette DeriveLowest(AllyariaPalette palette, double delta = 12.0)
+        => NudgeElevation(palette, delta, true);
+
+    /// <summary>
+    /// Derives a pressed (active) state palette with a stronger delta to convey interaction depth while maintaining minimum
+    /// foreground contrast.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="backgroundDeltaV">Background value (V) delta.</param>
+    /// <param name="borderDeltaV">Border value (V) delta.</param>
+    /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
+    /// <returns>A derived palette suitable for the pressed state.</returns>
+    public static AllyariaPalette DerivePressed(AllyariaPalette palette,
+        double backgroundDeltaV = 12.0,
+        double borderDeltaV = 14.0,
+        double minContrast = 4.5)
+        => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
 
     /// <summary>
     /// Resolves a foreground color that meets (or best-approaches) a minimum contrast ratio over the background by preserving
@@ -125,14 +249,29 @@ internal static class ColorHelper
         }
 
         // 3) Guarantee path: mix toward white; prefer any that meets; otherwise best-approaching.
-        var towardPole = SearchTowardPole(foreground, Colors.White, background, minimumRatio);
+        var towardWhite = SearchTowardPole(foreground, Colors.White, background, minimumRatio);
 
-        if (towardPole.MeetsMinimum)
+        if (towardWhite.MeetsMinimum)
         {
-            return towardPole;
+            return towardWhite;
         }
 
-        // 4) Still not met: return the best-approaching overall.
+        // 4) Guarantee path: mix toward black; prefer any that meets; otherwise best-approaching.
+        var towardBlack = SearchTowardPole(foreground, Colors.Black, background, minimumRatio);
+
+        if (towardBlack.MeetsMinimum && towardWhite.MeetsMinimum)
+        {
+            return towardWhite.ContrastRatio >= towardBlack.ContrastRatio
+                ? towardWhite
+                : towardBlack;
+        }
+
+        if (towardBlack.MeetsMinimum)
+        {
+            return towardBlack;
+        }
+
+        // 5) Still not met: return the best-approaching overall.
         var best = first;
 
         if (second.ContrastRatio > best.ContrastRatio)
@@ -140,9 +279,9 @@ internal static class ColorHelper
             best = second;
         }
 
-        if (towardPole.ContrastRatio > best.ContrastRatio)
+        if (towardWhite.ContrastRatio > best.ContrastRatio)
         {
-            best = towardPole;
+            best = towardWhite;
         }
 
         return best;
@@ -169,12 +308,80 @@ internal static class ColorHelper
         );
     }
 
-    /// <summary>sRGB-space linear interpolation between two opaque colors.</summary>
-    /// <param name="a">Start color.</param>
-    /// <param name="b">End color.</param>
-    /// <param name="t">Blend factor clamped to <c>[0, 1]</c>.</param>
-    /// <returns>Blended color in sRGB.</returns>
-    public static AllyariaColorValue MixSrgb(AllyariaColorValue a, AllyariaColorValue b, double t) => LerpSrgb(a, b, t);
+    /// <summary>
+    /// Adjusts elevation by nudging background and border value (V) in the direction appropriate for the current brightness
+    /// and re-ensures foreground contrast.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="delta">Magnitude of value (V) change.</param>
+    /// <param name="lowerTier">
+    /// If <see langword="true" />, derives a lower tier (darker on light themes, lighter on dark themes); otherwise derives a
+    /// higher tier.
+    /// </param>
+    /// <returns>The derived elevation palette.</returns>
+    private static AllyariaPalette NudgeElevation(AllyariaPalette palette, double delta, bool lowerTier)
+    {
+        var isLight = palette.BackgroundColor.V >= 50.0;
+
+        var sign = (isLight, lowerTier) switch
+        {
+            (true, true) => -1, // darker on light
+            (true, false) => +1, // lighter on light
+            (false, true) => +1, // lighter on dark
+            (false, false) => -1 // darker on dark
+        };
+
+        var background = AllyariaColorValue.FromHsva(
+            palette.BackgroundColor.H,
+            palette.BackgroundColor.S,
+            palette.BackgroundColor.V + sign * delta
+        );
+
+        var border = AllyariaColorValue.FromHsva(
+            palette.BorderColor.H,
+            palette.BorderColor.S,
+            palette.BorderColor.V + sign * (delta + 2.0)
+        );
+
+        var foreground = EnsureMinimumContrast(palette.ForegroundColor, background, 4.5).ForegroundColor;
+
+        return palette.Cascade(background, foreground, border);
+    }
+
+    /// <summary>
+    /// Adjusts interaction state by nudging background and border value (V) relative to theme brightness and then ensuring
+    /// minimum foreground contrast.
+    /// </summary>
+    /// <param name="palette">Base palette.</param>
+    /// <param name="backgroundDelta">Magnitude of background value (V) change.</param>
+    /// <param name="borderDelta">Magnitude of border value (V) change.</param>
+    /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
+    /// <returns>The derived state palette.</returns>
+    private static AllyariaPalette NudgeState(AllyariaPalette palette,
+        double backgroundDelta,
+        double borderDelta,
+        double minContrast)
+    {
+        var direction = palette.BackgroundColor.V >= 50.0
+            ? -1.0
+            : 1.0; // lighten dark; darken light
+
+        var background = AllyariaColorValue.FromHsva(
+            palette.BackgroundColor.H,
+            palette.BackgroundColor.S,
+            palette.BackgroundColor.V + direction * backgroundDelta
+        );
+
+        var border = AllyariaColorValue.FromHsva(
+            palette.BorderColor.H,
+            palette.BorderColor.S,
+            palette.BorderColor.V + direction * borderDelta
+        );
+
+        var foreground = EnsureMinimumContrast(palette.ForegroundColor, background, minContrast).ForegroundColor;
+
+        return palette.Cascade(background, foreground, border);
+    }
 
     /// <summary>Computes WCAG relative luminance from an opaque sRGB color.</summary>
     /// <param name="color">Opaque sRGB color.</param>
@@ -202,7 +409,8 @@ internal static class ColorHelper
         AllyariaColorValue background,
         double minimumRatio)
     {
-        double lo = 0.0, hi = 1.0;
+        var lo = 0.0;
+        var hi = 1.0;
         const int iters = 18;
         var bestRatio = -1.0;
         var bestColor = start;
@@ -320,7 +528,7 @@ internal static class ColorHelper
     {
         var c = c8 / 255.0;
 
-        return c <= 0.03928
+        return c <= 0.04045
             ? c / 12.92
             : Math.Pow((c + 0.055) / 1.055, 2.4);
     }
