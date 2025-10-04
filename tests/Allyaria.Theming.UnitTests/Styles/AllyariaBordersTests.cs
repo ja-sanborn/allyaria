@@ -15,10 +15,10 @@ public sealed class AllyariaBordersTests
             new AllyariaNumberValue("1px"),
             new AllyariaNumberValue("1px"),
             new AllyariaNumberValue("1px"),
-            BorderStyles.Solid,
-            BorderStyles.Solid,
-            BorderStyles.Solid,
-            BorderStyles.Solid,
+            BorderStyle.Solid,
+            BorderStyle.Solid,
+            BorderStyle.Solid,
+            BorderStyle.Solid,
             new AllyariaNumberValue("2px"),
             new AllyariaNumberValue("2px"),
             new AllyariaNumberValue("2px"),
@@ -28,7 +28,7 @@ public sealed class AllyariaBordersTests
         // Act
         var sut = original.Cascade(
             new AllyariaNumberValue("10px"),
-            leftStyle: BorderStyles.Dashed,
+            leftStyle: BorderStyle.Dashed,
             bottomLeftRadius: new AllyariaNumberValue("12px")
         );
 
@@ -41,7 +41,7 @@ public sealed class AllyariaBordersTests
         sut.TopStyle.Should().Be(original.TopStyle);
         sut.RightStyle.Should().Be(original.RightStyle);
         sut.BottomStyle.Should().Be(original.BottomStyle);
-        sut.LeftStyle.Should().Be(BorderStyles.Dashed);
+        sut.LeftStyle.Should().Be(BorderStyle.Dashed);
 
         sut.TopLeftRadius.Should().Be(original.TopLeftRadius);
         sut.TopRightRadius.Should().Be(original.TopRightRadius);
@@ -58,10 +58,10 @@ public sealed class AllyariaBordersTests
             new AllyariaNumberValue("2px"),
             new AllyariaNumberValue("3px"),
             new AllyariaNumberValue("4px"),
-            BorderStyles.Solid,
-            BorderStyles.Dashed,
-            BorderStyles.Dotted,
-            BorderStyles.None,
+            BorderStyle.Solid,
+            BorderStyle.Dashed,
+            BorderStyle.Dotted,
+            BorderStyle.None,
             new AllyariaNumberValue("1px"),
             new AllyariaNumberValue("2px"),
             new AllyariaNumberValue("3px"),
@@ -79,8 +79,8 @@ public sealed class AllyariaBordersTests
     public void Cascade_Should_ReturnNewInstance_When_OverridesApplied()
     {
         // Arrange
-        var original = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
-        var overrideTopStyle = BorderStyles.Dashed;
+        var original = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyle.Solid, Sizing.Size2);
+        var overrideTopStyle = BorderStyle.Dashed;
 
         // Act
         var result = original.Cascade(topStyle: overrideTopStyle);
@@ -104,9 +104,9 @@ public sealed class AllyariaBordersTests
         var wLeft = new AllyariaNumberValue("0.5rem");
 
         var sTop = new AllyariaStringValue("dashed");
-        var sRight = BorderStyles.Dotted;
-        var sBottom = BorderStyles.Double;
-        var sLeft = BorderStyles.None;
+        var sRight = BorderStyle.Dotted;
+        var sBottom = BorderStyle.Double;
+        var sLeft = BorderStyle.None;
 
         var rTl = new AllyariaNumberValue("4px");
         var rTr = new AllyariaNumberValue("6px");
@@ -144,20 +144,20 @@ public sealed class AllyariaBordersTests
         var sut = new AllyariaBorders();
 
         // Assert
-        sut.TopWidth.Should().Be(StyleDefaults.BorderWidth);
-        sut.RightWidth.Should().Be(StyleDefaults.BorderWidth);
-        sut.BottomWidth.Should().Be(StyleDefaults.BorderWidth);
-        sut.LeftWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.TopWidth.Should().Be(StyleDefault.BorderWidth);
+        sut.RightWidth.Should().Be(StyleDefault.BorderWidth);
+        sut.BottomWidth.Should().Be(StyleDefault.BorderWidth);
+        sut.LeftWidth.Should().Be(StyleDefault.BorderWidth);
 
-        sut.TopStyle.Should().Be(StyleDefaults.BorderStyle);
-        sut.RightStyle.Should().Be(StyleDefaults.BorderStyle);
-        sut.BottomStyle.Should().Be(StyleDefaults.BorderStyle);
-        sut.LeftStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.TopStyle.Should().Be(StyleDefault.BorderStyle);
+        sut.RightStyle.Should().Be(StyleDefault.BorderStyle);
+        sut.BottomStyle.Should().Be(StyleDefault.BorderStyle);
+        sut.LeftStyle.Should().Be(StyleDefault.BorderStyle);
 
-        sut.TopLeftRadius.Should().Be(StyleDefaults.BorderRadius);
-        sut.TopRightRadius.Should().Be(StyleDefaults.BorderRadius);
-        sut.BottomRightRadius.Should().Be(StyleDefaults.BorderRadius);
-        sut.BottomLeftRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.TopLeftRadius.Should().Be(StyleDefault.BorderRadius);
+        sut.TopRightRadius.Should().Be(StyleDefault.BorderRadius);
+        sut.BottomRightRadius.Should().Be(StyleDefault.BorderRadius);
+        sut.BottomLeftRadius.Should().Be(StyleDefault.BorderRadius);
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public sealed class AllyariaBordersTests
     {
         // Arrange
         var width = Sizing.Thin;
-        var style = BorderStyles.Dotted;
+        var style = BorderStyle.Dotted;
         var radius = Sizing.Size3;
 
         // Act
@@ -194,8 +194,8 @@ public sealed class AllyariaBordersTests
         // Arrange
         var wH = new AllyariaNumberValue("5px");
         var wV = new AllyariaNumberValue("7px");
-        var sH = BorderStyles.Double;
-        var sV = BorderStyles.Groove;
+        var sH = BorderStyle.Double;
+        var sV = BorderStyle.Groove;
         var rTop = new AllyariaNumberValue("3px");
         var rBottom = new AllyariaNumberValue("9px");
 
@@ -221,7 +221,7 @@ public sealed class AllyariaBordersTests
     public void ToCss_Should_ApplyNormalizedVariablePrefix_When_PrefixProvided()
     {
         // Arrange
-        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
+        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyle.Solid, Sizing.Size2);
         var rawPrefix = "  My  --Cool__Prefix  ";
 
         // Act
@@ -250,7 +250,7 @@ public sealed class AllyariaBordersTests
     public void ToCss_Should_EmitAllDeclarations_InCorrectOrder_When_NoPrefix()
     {
         // Arrange
-        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
+        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyle.Solid, Sizing.Size2);
 
         // Act
         var css = sut.ToCss();

@@ -9,7 +9,7 @@ namespace Allyaria.Theming.Constants;
 /// system.
 /// </summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
-public static class BorderStyles
+public static class BorderStyle
 {
     /// <summary>Represents a dashed border style.</summary>
     public static readonly AllyariaStringValue Dashed = new("dashed");
