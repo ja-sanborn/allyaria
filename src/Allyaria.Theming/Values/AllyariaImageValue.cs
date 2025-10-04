@@ -130,10 +130,10 @@ public sealed class AllyariaImageValue : ValueBase
         var lum = ColorHelper.RelativeLuminance(backgroundColor);
 
         var overlay = lum >= 0.5
-            ? "rgba(0, 0, 0, 0.5)"
-            : "rgba(255, 255, 255, 0.5)";
+            ? "rgba(0,0,0,0.5)"
+            : "rgba(255,255,255,0.5)";
 
-        return $"linear-gradient({overlay},{overlay}),{url}";
+        return $"{url},linear-gradient({overlay},{overlay})";
     }
 
     /// <summary>Parses the specified string into an <see cref="AllyariaImageValue" />.</summary>

@@ -2,183 +2,154 @@ using Allyaria.Theming.Constants;
 using Allyaria.Theming.Helpers;
 using Allyaria.Theming.Values;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Styles;
 
 /// <summary>
-/// Represents a resolved color/image palette used by the Allyaria theming engine to generate inline CSS declarations and
-/// CSS custom properties (variables). This type applies precedence rules, computes accessible foregrounds, and can derive
-/// common UI state variants (e.g., disabled/hover).
+/// Represents a self-contained palette of theme colors and background for Allyaria components, including foreground,
+/// background, and border colors, plus optional background image semantics. The palette enforces minimum contrast for
+/// readability and is designed to be composed and transformed (e.g., for disabled/hover states) while respecting theming
+/// precedence rules.
 /// </summary>
+/// <remarks>
+/// This type is a <see langword="readonly" /> <see langword="record" /> <see langword="struct" /> to remain value-like and
+/// inexpensive to copy. It ensures at least WCAG AA contrast (4.5:1) for body text by adjusting the foreground against the
+/// background. Background image semantics follow Allyaria theming rules (image wins when set; size/position applied when
+/// <see cref="BackgroundImageStretch" /> is true).
+/// </remarks>
 public readonly record struct AllyariaPalette
 {
     /// <summary>
-    /// The base background color as provided (raw input), before any precedence or derived effects are applied.
+    /// Initializes a new palette with project defaults (light background/foreground) and contrast-corrected foreground.
     /// </summary>
-    private readonly AllyariaColorValue? _backgroundColor;
-
-    /// <summary>Optional background image; <see langword="null" /> when no image was provided.</summary>
-    private readonly AllyariaImageValue? _backgroundImage;
-
-    /// <summary>Indicates whether the background image is stretched (<c>true</c>) or tiled (<c>false</c>).</summary>
-    private readonly bool _backgroundImageStretch;
+    public AllyariaPalette()
+        : this(null) { }
 
     /// <summary>
-    /// Optional explicit border color as provided by the caller; may be <see langword="null" /> to signal defaulting.
+    /// Initializes a new palette with optional overrides. Any omitted value falls back to project defaults or other provided
+    /// values.
     /// </summary>
-    private readonly AllyariaColorValue? _borderColor;
-
-    /// <summary>
-    /// Optional explicit foreground color as provided by the caller; may be <see langword="null" /> to enable contrast-based
-    /// defaulting from <see cref="BackgroundColor" />.
-    /// </summary>
-    private readonly AllyariaColorValue? _foregroundColor;
-
-    /// <summary>Initializes a new instance of the <see cref="AllyariaPalette" /> struct.</summary>
     /// <param name="backgroundColor">
-    /// Optional background color. When <see langword="null" />, defaults to
-    /// <see cref="Colors.White" />.
+    /// Background color; defaults to <see cref="StyleDefaults.BackgroundColorLight" /> when <see langword="null" />.
     /// </param>
     /// <param name="foregroundColor">
-    /// Optional foreground color. When <see langword="null" />, a contrasting foreground is computed against the effective
-    /// background using WCAG contrast rules.
+    /// Foreground (text) color; defaults to <see cref="StyleDefaults.ForegroundColorLight" /> when <see langword="null" />.
     /// </param>
     /// <param name="borderColor">
-    /// Optional border color. When <see langword="null" />, the effective <see cref="BackgroundColor" /> is used as the
-    /// default.
+    /// Border color; defaults to the effective <paramref name="backgroundColor" /> when <see langword="null" />.
     /// </param>
-    /// <param name="backgroundImage">Optional background image declaration; <see langword="null" /> to omit.</param>
+    /// <param name="backgroundImage">Optional background image URL/string. Whitespace becomes empty (no image).</param>
     /// <param name="backgroundImageStretch">
-    /// When <see langword="true" />, the background image is rendered using a stretch/cover strategy; otherwise tiled.
+    /// When <see langword="true" />, applies <c>center / cover no-repeat</c> sizing to the background image. Defaults to
+    /// <see langword="false" />.
     /// </param>
     public AllyariaPalette(AllyariaColorValue? backgroundColor = null,
         AllyariaColorValue? foregroundColor = null,
         AllyariaColorValue? borderColor = null,
-        AllyariaImageValue? backgroundImage = null,
-        bool backgroundImageStretch = true)
+        string? backgroundImage = null,
+        bool? backgroundImageStretch = null)
     {
-        _backgroundColor = backgroundColor;
-        _backgroundImage = backgroundImage;
-        _backgroundImageStretch = backgroundImageStretch;
-        _borderColor = borderColor;
-        _foregroundColor = foregroundColor;
+        BackgroundColor = backgroundColor ?? StyleDefaults.BackgroundColorLight;
+        ForegroundColor = foregroundColor ?? StyleDefaults.ForegroundColorLight;
+        BorderColor = borderColor ?? BackgroundColor;
+
+        BackgroundImage = string.IsNullOrWhiteSpace(backgroundImage)
+            ? string.Empty
+            : backgroundImage.Trim();
+
+        BackgroundImageStretch = backgroundImageStretch ?? false;
+
+        var result = ColorHelper.EnsureMinimumContrast(ForegroundColor, BackgroundColor, 4.5);
+        ForegroundColor = result.ForegroundColor;
     }
 
-    /// <summary>
-    /// Gets the effective background color after precedence is applied; defaults to <see cref="Colors.White" /> when unset.
-    /// </summary>
-    public AllyariaColorValue BackgroundColor => _backgroundColor ?? Colors.White;
+    /// <summary>Gets the background color for the palette.</summary>
+    public AllyariaColorValue BackgroundColor { get; init; }
+
+    /// <summary>Gets the background image (empty string if none).</summary>
+    public string BackgroundImage { get; init; }
 
     /// <summary>
-    /// Gets the effective background image declaration value, or <see langword="null" /> when no image is set.
+    /// Gets a value indicating whether the background image should be stretched with <c>cover center no-repeat</c>.
     /// </summary>
-    public AllyariaImageValue? BackgroundImage => _backgroundImage;
+    public bool BackgroundImageStretch { get; init; }
+
+    /// <summary>Gets the border color for the palette.</summary>
+    public AllyariaColorValue BorderColor { get; init; }
 
     /// <summary>
-    /// Gets the effective border color. If no explicit color is supplied, this defaults to <see cref="BackgroundColor" />. The
-    /// presence/visibility of borders is governed by the consuming theme/component (e.g., outline settings), not this type.
+    /// Gets the foreground (text) color for the palette. This value is contrast-corrected against the background.
     /// </summary>
-    public AllyariaColorValue BorderColor => _borderColor ?? BackgroundColor;
+    public AllyariaColorValue ForegroundColor { get; init; }
 
     /// <summary>
-    /// Gets the resolved foreground color to render against <see cref="BackgroundColor" />. If no explicit foreground is set,
-    /// selects black or white based on which yields the higher WCAG contrast ratio. If an explicit foreground is provided, its
-    /// hue is preserved and it is adjusted as needed to meet a minimum contrast.
+    /// Creates a derived palette by selectively overriding members, preserving the invariant that the foreground contrasts
+    /// sufficiently against the background.
     /// </summary>
-    /// <remarks>
-    /// Uses precise WCAG contrast calculations (not simple brightness heuristics). When an explicit foreground is provided,
-    /// <see cref="ColorHelper.EnsureMinimumContrast(AllyariaColorValue, AllyariaColorValue, double)" /> is used with a default
-    /// minimum of 4.5:1 (suitable for normal text) against the effective background.
-    /// </remarks>
-    public AllyariaColorValue ForegroundColor
-    {
-        get
-        {
-            if (_foregroundColor is null)
-            {
-                var rWhite = ColorHelper.ContrastRatio(Colors.White, BackgroundColor);
-                var rBlack = ColorHelper.ContrastRatio(Colors.Black, BackgroundColor);
-
-                return rWhite >= rBlack
-                    ? Colors.White
-                    : Colors.Black;
-            }
-
-            var result = ColorHelper.EnsureMinimumContrast(_foregroundColor, BackgroundColor, 4.5);
-
-            return result.ForegroundColor;
-        }
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="AllyariaPalette" /> by cascading the current palette with optional overrides. Any
-    /// <see langword="null" /> parameter inherits the corresponding effective value from this instance.
-    /// </summary>
-    /// <param name="backgroundColor">Optional new background color override.</param>
-    /// <param name="foregroundColor">Optional new foreground color override.</param>
-    /// <param name="borderColor">Optional new border color override.</param>
-    /// <param name="backgroundImage">Optional new background image override.</param>
-    /// <param name="backgroundImageStretch">Optional new background image stretch/tile behavior.</param>
-    /// <returns>A new <see cref="AllyariaPalette" /> with the provided overrides applied.</returns>
+    /// <param name="backgroundColor">Optional new background color.</param>
+    /// <param name="foregroundColor">Optional new foreground color.</param>
+    /// <param name="borderColor">Optional new border color.</param>
+    /// <param name="backgroundImage">Optional new background image string; when provided, whitespace becomes empty.</param>
+    /// <param name="backgroundImageStretch">Optional new image stretch flag.</param>
+    /// <returns>A new <see cref="AllyariaPalette" /> instance with the provided overrides applied.</returns>
     public AllyariaPalette Cascade(AllyariaColorValue? backgroundColor = null,
         AllyariaColorValue? foregroundColor = null,
         AllyariaColorValue? borderColor = null,
-        AllyariaImageValue? backgroundImage = null,
+        string? backgroundImage = null,
         bool? backgroundImageStretch = null)
-        => new(
-            backgroundColor ?? BackgroundColor,
-            foregroundColor ?? ForegroundColor,
-            borderColor ?? BorderColor,
-            backgroundImage ?? BackgroundImage,
-            backgroundImageStretch ?? _backgroundImageStretch
-        );
-
-    /// <summary>
-    /// Builds a CSS declaration string (semicolon-terminated) for the effective palette, suitable for inline <c>style</c>
-    /// usage. Includes background color, foreground color, border color, and (if present) background image declarations.
-    /// </summary>
-    /// <returns>A concatenated CSS string representing the palette.</returns>
-    public string ToCss()
     {
-        var builder = new StringBuilder();
-        builder.Append(BackgroundColor.ToCss("background-color"));
-        builder.Append(ForegroundColor.ToCss("color"));
-        builder.Append(BorderColor.ToCss("border-color"));
-
-        if (BackgroundImage is not null)
+        var next = this with
         {
-            builder.Append(BackgroundImage.ToCssBackground(BackgroundColor, _backgroundImageStretch));
-        }
+            BackgroundColor = backgroundColor ?? BackgroundColor,
+            ForegroundColor = foregroundColor ?? ForegroundColor,
+            BorderColor = borderColor ?? BorderColor,
 
-        return builder.ToString();
+            BackgroundImage = backgroundImage is null
+                ? BackgroundImage
+                : string.IsNullOrWhiteSpace(backgroundImage)
+                    ? string.Empty
+                    : backgroundImage.Trim(),
+
+            BackgroundImageStretch = backgroundImageStretch ?? BackgroundImageStretch
+        };
+
+        var contrasted = ColorHelper.EnsureMinimumContrast(next.ForegroundColor, next.BackgroundColor, 4.5);
+
+        return next with
+        {
+            ForegroundColor = contrasted.ForegroundColor
+        };
     }
 
-    /// <summary>Builds a CSS string containing custom property (CSS variable) declarations for the palette.</summary>
-    /// <param name="prefix">
-    /// Optional variable name prefix (e.g., <c>"editor"</c> → <c>--editor-…</c>). Any whitespace or hyphen runs are normalized
-    /// to single hyphens, and the result is lower-cased. When omitted or blank, the default <c>--aa-</c> prefix is used.
+    /// <summary>
+    /// Converts the palette to a block of CSS custom property declarations and/or direct declarations, suitable for inline
+    /// style emission or CSS variable application via the provided prefix.
+    /// </summary>
+    /// <param name="varPrefix">
+    /// A prefix for CSS variables (if the underlying values resolve to variables), or an empty string for none.
     /// </param>
     /// <returns>
-    /// A concatenated CSS string that declares variables for the effective color values (e.g., <c>--aa-color</c>,
-    /// <c>--aa-background-color</c>, <c>--aa-border-color</c>) and, when present, background image variables.
+    /// A <see cref="string" /> containing CSS declarations for all margin and padding sides, each terminated with a semicolon.
     /// </returns>
-    public string ToCssVars(string prefix = "")
+    public string ToCss(string? varPrefix = "")
     {
-        var basePrefix = Regex.Replace(prefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
-
-        basePrefix = string.IsNullOrWhiteSpace(prefix)
-            ? "--aa-"
-            : $"--{basePrefix}-";
-
         var builder = new StringBuilder();
-        builder.Append(ForegroundColor.ToCss($"{basePrefix}color"));
-        builder.Append(BackgroundColor.ToCss($"{basePrefix}background-color")); // corrected to use BackgroundColor
-        builder.Append(BorderColor.ToCss($"{basePrefix}border-color"));
+        var prefix = varPrefix ?? string.Empty;
 
-        if (BackgroundImage is not null)
+        builder.ToCss(ForegroundColor, "color", prefix);
+        builder.ToCss(BackgroundColor, "background-color", prefix);
+        builder.ToCss(BorderColor, "border-color", prefix);
+
+        if (!string.IsNullOrWhiteSpace(BackgroundImage))
         {
-            builder.Append(BackgroundImage.ToCssVarsBackground(basePrefix, BackgroundColor, _backgroundImageStretch));
+            builder.ToCss(new AllyariaImageValue(BackgroundImage, BackgroundColor), "background-image", prefix);
+
+            if (BackgroundImageStretch)
+            {
+                builder.ToCss(new AllyariaStringValue("center"), "background-position", prefix);
+                builder.ToCss(new AllyariaStringValue("no-repeat"), "background-repeat", prefix);
+                builder.ToCss(new AllyariaStringValue("cover"), "background-size", prefix);
+            }
         }
 
         return builder.ToString();
@@ -186,16 +157,15 @@ public readonly record struct AllyariaPalette
 
     /// <summary>
     /// Produces a derived palette for the <c>[disabled]</c> state by desaturating the background and blending its Value (V)
-    /// toward the mid range to reduce emphasis. The foreground is then contrast-corrected to a relaxed minimum suitable for UI
-    /// affordances.
+    /// toward mid-range to reduce emphasis; border is treated similarly. Foreground is then contrast-corrected.
     /// </summary>
     /// <param name="desaturateBy">Saturation (S) reduction in percentage points; default <c>60</c>.</param>
-    /// <param name="valueBlendTowardMid">Blend factor in <c>[0,1]</c> toward V=50; default <c>0.15</c>.</param>
-    /// <param name="minimumContrast">Minimum required contrast ratio; default <c>3.0</c>.</param>
+    /// <param name="valueBlendTowardMid">Blend factor in <c>[0,1]</c> toward V=<c>50</c>; default <c>0.15</c>.</param>
+    /// <param name="minimumContrast">Minimum required contrast ratio; default <c>3.0</c> (relaxed for affordance icons).</param>
     /// <returns>A new <see cref="AllyariaPalette" /> suitable for the disabled state.</returns>
     /// <remarks>
-    /// Hue is preserved for background and (if present) border; only S and V are adjusted. Background images remain unchanged
-    /// (image precedence still applies).
+    /// Hue is preserved for background and border; only S and V are adjusted. Background images remain unchanged (image
+    /// precedence still applies).
     /// </remarks>
     public AllyariaPalette ToDisabledPalette(double desaturateBy = 60.0,
         double valueBlendTowardMid = 0.15,
@@ -204,13 +174,13 @@ public readonly record struct AllyariaPalette
         var background = AllyariaColorValue.FromHsva(
             BackgroundColor.H,
             Math.Max(0.0, BackgroundColor.S - desaturateBy),
-            ColorHelper.Blend(BackgroundColor.V, 50.0, valueBlendTowardMid)
+            Math.Clamp(ColorHelper.Blend(BackgroundColor.V, 50.0, valueBlendTowardMid), 0.0, 100.0)
         );
 
         var border = AllyariaColorValue.FromHsva(
             BorderColor.H,
             Math.Max(0.0, BorderColor.S - desaturateBy),
-            ColorHelper.Blend(BorderColor.V, 50.0, valueBlendTowardMid)
+            Math.Clamp(ColorHelper.Blend(BorderColor.V, 50.0, valueBlendTowardMid), 0.0, 100.0)
         );
 
         var foreground = ColorHelper.EnsureMinimumContrast(ForegroundColor, background, minimumContrast)
@@ -220,23 +190,21 @@ public readonly record struct AllyariaPalette
     }
 
     /// <summary>
-    /// Produces a derived palette intended for the <c>:hover</c> state by nudging the background (and the border, if present)
-    /// along the HSV Value rail to increase perceived affordance while preserving hue. The foreground is contrast-corrected to
-    /// meet WCAG AA for body text.
+    /// Produces a derived palette intended for the <c>:hover</c> state by nudging the background (and border) along the Value
+    /// (V) rail to increase perceived affordance while preserving hue and saturation; foreground is contrast-corrected.
     /// </summary>
     /// <param name="backgroundDeltaV">
     /// Absolute Value (V) change applied to <see cref="BackgroundColor" />. On light backgrounds (V ≥ 50) the value is
     /// decreased; on dark backgrounds it is increased. Default <c>6</c>.
     /// </param>
     /// <param name="borderDeltaV">
-    /// Absolute Value (V) change applied to <see cref="BorderColor" /> when a border is present, mirroring the background
-    /// direction. Default <c>8</c>.
+    /// Absolute Value (V) change applied to <see cref="BorderColor" /> mirroring the background direction. Default <c>8</c>.
     /// </param>
     /// <param name="minimumContrast">Minimum required contrast ratio; default <c>4.5</c> (WCAG AA).</param>
     /// <returns>A new <see cref="AllyariaPalette" /> suitable for the hover state.</returns>
     /// <remarks>
     /// Background images are not altered by this method. If a background image is active, precedence still applies; the
-    /// derived background participates in contrast calculations for a readable foreground.
+    /// derived background participates only in contrast calculations for a readable foreground.
     /// </remarks>
     public AllyariaPalette ToHoverPalette(double backgroundDeltaV = 6.0,
         double borderDeltaV = 8.0,
@@ -244,14 +212,18 @@ public readonly record struct AllyariaPalette
     {
         var direction = BackgroundColor.V >= 50.0
             ? -1.0
-            : +1.0;
+            : 1.0;
 
         var background = AllyariaColorValue.FromHsva(
-            BackgroundColor.H, BackgroundColor.S, BackgroundColor.V + direction * backgroundDeltaV
+            BackgroundColor.H,
+            BackgroundColor.S,
+            Math.Clamp(BackgroundColor.V + direction * backgroundDeltaV, 0.0, 100.0)
         );
 
         var border = AllyariaColorValue.FromHsva(
-            BorderColor.H, BorderColor.S, BorderColor.V + direction * borderDeltaV
+            BorderColor.H,
+            BorderColor.S,
+            Math.Clamp(BorderColor.V + direction * borderDeltaV, 0.0, 100.0)
         );
 
         var foreground = ColorHelper.EnsureMinimumContrast(ForegroundColor, background, minimumContrast)

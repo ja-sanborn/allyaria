@@ -1,5 +1,4 @@
 ﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Helpers;
 using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Styles;
@@ -7,344 +6,314 @@ namespace Allyaria.Theming.UnitTests.Styles;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaPaletteTests
 {
+    private static double Blend(double start, double target, double t)
+        => start + (target - start) * Math.Clamp(t, 0.0, 1.0);
+
     [Fact]
-    public void BackgroundColor_Should_DefaultToWhite_When_NotProvided()
+    public void Cascade_Should_ApplyOverrides_TrimImage_And_EmptyOnWhitespace()
     {
         // Arrange
-        var sut = new AllyariaPalette();
+        var basePalette = new AllyariaPalette(Colors.Grey100, Colors.Grey900, Colors.Grey100, "url(x)");
+        var newBg = Colors.White;
+        var newFg = Colors.Black;
+        var newBorder = Colors.Grey300;
 
         // Act
-        var result = sut.BackgroundColor;
+        var next1 = basePalette.Cascade(newBg, newFg, newBorder, "   wall.png   ", true);
+        var next2 = basePalette.Cascade(backgroundImage: "   ");
 
         // Assert
-        result.Should().BeEquivalentTo(Colors.White);
+        next1.BackgroundColor.Should().BeSameAs(newBg);
+        next1.BorderColor.Should().BeSameAs(newBorder);
+        next1.BackgroundImage.Should().Be("wall.png");
+        next1.BackgroundImageStretch.Should().BeTrue();
+        ContrastRatio(next1.ForegroundColor, next1.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
+
+        next2.BackgroundImage.Should().BeEmpty();
     }
 
     [Fact]
-    public void BorderColor_Should_DefaultToBackgroundColor_When_NotProvided()
+    public void Cascade_Should_PreserveExisting_When_NullsPassed_And_RecomputeContrast()
     {
         // Arrange
-        var background = AllyariaColorValue.FromHsva(200, 20, 90);
-        var sut = new AllyariaPalette(background);
-
-        // Act
-        var result = sut.BorderColor;
-
-        // Assert
-        result.Should().BeEquivalentTo(background);
-    }
-
-    [Fact]
-    public void Cascade_Should_ApplyOverrides_When_ValuesProvided()
-    {
-        // Arrange
-        var sut = new AllyariaPalette();
-        var newBg = new AllyariaColorValue("#12345678");
-        var newFg = new AllyariaColorValue("#FFCC9966");
-        var newBorder = new AllyariaColorValue("#98765432");
-
-        // Act
-        var cascaded = sut.Cascade(newBg, newFg, newBorder, null, false);
-
-        // Assert
-        cascaded.BackgroundColor.Should().Be(newBg);
-        cascaded.ForegroundColor.Should().Be(newFg);
-        cascaded.BorderColor.Should().Be(newBorder);
-    }
-
-    [Fact]
-    public void Cascade_Should_InheritExistingValues_When_OverridesAreNull()
-    {
-        // Arrange
-        var background = AllyariaColorValue.FromHsva(330, 40, 40);
-        var foreground = AllyariaColorValue.FromHsva(330, 15, 90);
-        var border = AllyariaColorValue.FromHsva(330, 40, 30);
-        var sut = new AllyariaPalette(background, foreground, border);
-
-        // Act
-        var cascaded = sut.Cascade();
-
-        // Assert
-        cascaded.BackgroundColor.Should().BeEquivalentTo(sut.BackgroundColor);
-        cascaded.ForegroundColor.Should().BeEquivalentTo(sut.ForegroundColor);
-        cascaded.BorderColor.Should().BeEquivalentTo(sut.BorderColor);
-        cascaded.BackgroundImage.Should().BeNull();
-    }
-
-    [Fact]
-    public void Cascade_Should_Preserve_BackgroundImage_And_Stretch_When_NotOverridden()
-    {
-        // Arrange
-        var basePalette = new AllyariaPalette(Colors.White, Colors.Black, Colors.Black);
-
-        var withImage = basePalette.Cascade(
-            backgroundImage: new AllyariaImageValue("url(\"/img.png\")"), backgroundImageStretch: false
+        var basePalette = new AllyariaPalette(
+            Colors.Grey200,
+            Colors.Grey100,
+            Colors.Grey300,
+            ""
         );
 
         // Act
-        var cascaded = withImage.Cascade();
+        var next = basePalette.Cascade();
 
         // Assert
-        cascaded.BackgroundImage.Should().NotBeNull();
+        next.Should().NotBeSameAs(basePalette);
+        next.BackgroundColor.Should().Be(basePalette.BackgroundColor);
+        next.BorderColor.Should().Be(basePalette.BorderColor);
+        next.BackgroundImage.Should().Be(basePalette.BackgroundImage);
+        next.BackgroundImageStretch.Should().Be(basePalette.BackgroundImageStretch);
 
-        // Ensure we didn't accidentally drop the image when overrides are null.
-        cascaded.BackgroundImage!.Value.Should().Contain("/img.png");
+        ContrastRatio(next.ForegroundColor, next.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
     }
 
     [Fact]
-    public void ForegroundColor_Should_AdjustExplicitForeground_ToMeetContrast()
+    public void Cascade_Should_RetainExistingImage_When_NullPassed()
     {
         // Arrange
-        var background = AllyariaColorValue.FromHsva(210, 20, 80);
-        var weakForeground = AllyariaColorValue.FromHsva(210, 22, 78);
-        var sut = new AllyariaPalette(background, weakForeground);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: "photo.jpg",
+            backgroundImageStretch: false
+        );
 
         // Act
-        var result = sut.ForegroundColor;
+        var cascaded = sut.Cascade(backgroundImage: null, backgroundImageStretch: true);
 
         // Assert
-        ColorHelper.ContrastRatio(result, background).Should().BeGreaterThanOrEqualTo(4.5);
-        Math.Abs(result.H - weakForeground.H).Should().BeLessThanOrEqualTo(2.0);
+        cascaded.BackgroundImage.Should().Be("photo.jpg");
+        cascaded.BackgroundImageStretch.Should().BeTrue();
+    }
+
+    private static double ContrastRatio(AllyariaColorValue fg, AllyariaColorValue bg)
+    {
+        var lf = RelativeLuminance(fg);
+        var lb = RelativeLuminance(bg);
+        var lighter = Math.Max(lf, lb);
+        var darker = Math.Min(lf, lb);
+
+        return (lighter + 0.05) / (darker + 0.05);
     }
 
     [Fact]
-    public void ForegroundColor_Should_ChooseBlack_When_BackgroundIsWhite()
+    public void Ctor_Should_TrimBackgroundImage_And_DefaultBorderToBackground_When_ProvidedValues()
     {
         // Arrange
-        var sut = new AllyariaPalette(Colors.White);
+        var bg = Colors.Blue100;
+        var fg = Colors.Blue50;
+        var img = "   https://example.com/hero.jpg   ";
 
         // Act
-        var result = sut.ForegroundColor;
+        var sut = new AllyariaPalette(bg, fg, null, img, true);
 
         // Assert
-        result.Should().BeEquivalentTo(Colors.Black);
-
-        ColorHelper.ContrastRatio(result, sut.BackgroundColor).Should()
-            .BeGreaterThan(ColorHelper.ContrastRatio(Colors.White, sut.BackgroundColor));
+        sut.BackgroundColor.Should().BeSameAs(bg);
+        sut.BorderColor.Should().BeSameAs(bg);
+        sut.BackgroundImage.Should().Be("https://example.com/hero.jpg");
+        sut.BackgroundImageStretch.Should().BeTrue();
+        ContrastRatio(sut.ForegroundColor, sut.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
     }
 
     [Fact]
-    public void ForegroundColor_Should_ChooseWhite_When_BackgroundIsBlack()
+    public void Ctor_Should_TurnWhitespaceImageIntoEmptyString_When_BackgroundImageIsWhitespace()
     {
-        // Arrange
-        var sut = new AllyariaPalette(Colors.Black);
-
-        // Act
-        var result = sut.ForegroundColor;
+        // Arrange & Act
+        var sut = new AllyariaPalette(backgroundImage: "   \t   ");
 
         // Assert
-        result.Should().BeEquivalentTo(Colors.White);
-
-        ColorHelper.ContrastRatio(result, sut.BackgroundColor).Should()
-            .BeGreaterThan(ColorHelper.ContrastRatio(Colors.Black, sut.BackgroundColor));
+        sut.BackgroundImage.Should().BeEmpty();
     }
 
     [Fact]
-    public void ToCss_Should_AppendBackgroundImageCss_When_ImageProvided_StretchTrue()
+    public void Ctor_Should_UseDefaultsAndFixContrast_When_NoArgs()
+    {
+        // Arrange & Act
+        var sut = new AllyariaPalette();
+
+        // Assert
+        sut.BackgroundColor.Should().BeSameAs(StyleDefaults.BackgroundColorLight);
+        sut.BorderColor.Should().BeSameAs(StyleDefaults.BackgroundColorLight);
+        sut.ForegroundColor.Should().BeSameAs(StyleDefaults.ForegroundColorLight);
+        sut.BackgroundImage.Should().BeEmpty();
+        sut.BackgroundImageStretch.Should().BeFalse();
+
+        ContrastRatio(sut.ForegroundColor, sut.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
+    }
+
+    private static double RelativeLuminance(AllyariaColorValue c)
+    {
+        static double SrgbToLinear(byte v)
+        {
+            var x = v / 255.0;
+
+            return x <= 0.03928
+                ? x / 12.92
+                : Math.Pow((x + 0.055) / 1.055, 2.4);
+        }
+
+        var r = SrgbToLinear(c.R);
+        var g = SrgbToLinear(c.G);
+        var b = SrgbToLinear(c.B);
+
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    [Fact]
+    public void ToCss_Should_EmitColor_Background_Border_InOrder_When_NoImage()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(0, 0, 100);
-        var fg = AllyariaColorValue.FromHsva(0, 0, 0);
-        var border = AllyariaColorValue.FromHsva(0, 0, 50);
-        var image = new AllyariaImageValue("url(\"/img.png\")");
-        var sut = new AllyariaPalette(bg, fg, border, image);
+        var sut = new AllyariaPalette(Colors.Grey200, Colors.Grey900, Colors.Grey400);
 
         // Act
         var css = sut.ToCss();
 
         // Assert
-        css.Should().Contain("background-color")
-            .And.Contain("color")
-            .And.Contain("border-color");
+        css.Should().NotBeNullOrEmpty();
+        var idxColor = css.IndexOf("color:", StringComparison.OrdinalIgnoreCase);
+        var idxBg = css.IndexOf("background-color:", StringComparison.OrdinalIgnoreCase);
+        var idxBorder = css.IndexOf("border-color:", StringComparison.OrdinalIgnoreCase);
 
-        css.Should().Contain("/img.png");
-        css.Trim().Should().EndWith(";");
+        idxColor.Should().BeGreaterThanOrEqualTo(0);
+        idxBg.Should().BeGreaterThan(idxColor);
+        idxBorder.Should().BeGreaterThan(idxBg);
+
+        css.Should().Contain("color:");
+        css.Should().Contain(Colors.Grey900.Value);
+        css.Should().Contain(Colors.Grey200.Value);
+        css.Should().Contain(Colors.Grey400.Value);
+        css.Should().NotContain("background-image:");
     }
 
     [Fact]
-    public void ToCss_Should_IncludeColorAndBorderDeclarations()
+    public void ToCss_Should_IncludeImage_And_StretchDeclarations_When_ImageSet()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(0, 0, 100); // white
-        var fg = AllyariaColorValue.FromHsva(0, 0, 0); // black
-        var border = AllyariaColorValue.FromHsva(0, 0, 50);
-        var sut = new AllyariaPalette(bg, fg, border);
+        var sut = new AllyariaPalette(
+            Colors.Grey50,
+            Colors.Grey900,
+            Colors.Grey200,
+            "banner.png",
+            true
+        );
 
         // Act
         var css = sut.ToCss();
 
         // Assert
-        css.Should().Contain("background-color");
-        css.Should().Contain("color");
-        css.Should().Contain("border-color");
-        css.Trim().Should().EndWith(";");
+        css.Should().Contain("background-image:");
+        css.Should().MatchRegex(@"background-image:url\(");
+        css.Should().Contain("linear-gradient(");
+        css.Should().Contain("background-position:center;");
+        css.Should().Contain("background-repeat:no-repeat;");
+        css.Should().Contain("background-size:cover;");
     }
 
     [Fact]
-    public void ToCss_Should_ReflectStretchFlag_InOutput_When_TogglingStretch()
+    public void ToCss_Should_NotEmitImageDeclarations_When_ImageIsEmpty()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(210, 20, 80);
-        var fg = AllyariaColorValue.FromHsva(210, 10, 10);
-        var border = AllyariaColorValue.FromHsva(210, 20, 60);
-        var image = new AllyariaImageValue("url(\"/bg-pattern.svg\")");
-        var sutStretch = new AllyariaPalette(bg, fg, border, image);
-        var sutTile = new AllyariaPalette(bg, fg, border, image, false);
+        var sut = new AllyariaPalette(
+            Colors.White,
+            Colors.Black,
+            backgroundImage: ""
+        );
 
         // Act
-        var cssStretch = sutStretch.ToCss();
-        var cssTile = sutTile.ToCss();
+        var css = sut.ToCss();
 
         // Assert
-        cssStretch.Should().Contain("/bg-pattern.svg");
-        cssTile.Should().Contain("/bg-pattern.svg");
-        cssStretch.Should().NotBe(cssTile);
-    }
-
-    [Fact]
-    public void ToCssVars_Should_AppendBackgroundImageVars_When_ImageProvided_WithDefaultPrefix()
-    {
-        // Arrange
-        var bg = AllyariaColorValue.FromHsva(0, 0, 100);
-        var fg = AllyariaColorValue.FromHsva(0, 0, 0);
-        var border = AllyariaColorValue.FromHsva(0, 0, 50);
-        var image = new AllyariaImageValue("url(\"/texture.png\")");
-        var sutNoImg = new AllyariaPalette(bg, fg, border);
-        var sutWithImg = new AllyariaPalette(bg, fg, border, image);
-
-        // Act
-        var cssNoImg = sutNoImg.ToCssVars();
-        var cssWithImg = sutWithImg.ToCssVars();
-
-        // Assert
-        cssWithImg.Should().Contain("--aa-color")
-            .And.Contain("--aa-background-color")
-            .And.Contain("--aa-border-color");
-
-        cssWithImg.Should().Contain("/texture.png");
-        cssWithImg.Length.Should().BeGreaterThan(cssNoImg.Length);
-        cssWithImg.Should().NotBe(cssNoImg);
-    }
-
-    [Fact]
-    public void ToCssVars_Should_AppendBackgroundImageVars_WithNormalizedCustomPrefix()
-    {
-        // Arrange
-        var bg = AllyariaColorValue.FromHsva(30, 30, 90);
-        var fg = AllyariaColorValue.FromHsva(30, 10, 10);
-        var border = AllyariaColorValue.FromHsva(30, 25, 70);
-        var image = new AllyariaImageValue("url(\"/hero/banner@2x.jpg\")");
-        var sut = new AllyariaPalette(bg, fg, border, image, false);
-
-        // Act
-        var css = sut.ToCssVars("  Editor  Theme  ");
-
-        // Assert
-        css.Should().Contain("--editor-theme-color")
-            .And.Contain("--editor-theme-background-color")
-            .And.Contain("--editor-theme-border-color");
-
-        css.Should().Contain("/hero/banner@2x.jpg");
+        css.Should().NotContain("background-image:");
+        css.Should().NotContain("background-position:");
+        css.Should().NotContain("background-repeat:");
+        css.Should().NotContain("background-size:");
     }
 
     [Theory]
-    [InlineData("Editor", "--editor-")]
-    [InlineData(" editor  theme ", "--editor-theme-")]
-    [InlineData("EDITOR---THEME", "--editor-theme-")]
-    public void ToCssVars_Should_NormalizeAndLowercasePrefix_When_PrefixProvided(string input, string expectedPrefix)
+    [InlineData(null, "color:")]
+    [InlineData("", "color:")]
+    [InlineData("AppTheme", "--apptheme-var-color:")]
+    [InlineData("  app-- theme  ", "--app-theme-var-color:")]
+    public void ToCss_Should_RespectVarPrefix_When_PrefixProvided(string? prefix, string expectedPropertyPrefix)
     {
         // Arrange
-        var sut = new AllyariaPalette(Colors.White, Colors.Black, Colors.Black);
+        var sut = new AllyariaPalette();
 
         // Act
-        var css = sut.ToCssVars(input);
+        var css = sut.ToCss(prefix);
 
         // Assert
-        css.Should().Contain($"{expectedPrefix}color");
-        css.Should().Contain($"{expectedPrefix}background-color");
-        css.Should().Contain($"{expectedPrefix}border-color");
+        css.Should().Contain(expectedPropertyPrefix);
     }
 
     [Fact]
-    public void ToCssVars_Should_UseDefaultPrefix_When_PrefixBlank()
+    public void ToDisabledPalette_Should_Desaturate_And_BlendValue_TowardMid_And_FixContrast()
     {
         // Arrange
-        var sut = new AllyariaPalette(Colors.White, Colors.Black, Colors.Black);
+        var basePalette = new AllyariaPalette(Colors.Blue500, Colors.Blue100, Colors.Blue700);
 
         // Act
-        var css = sut.ToCssVars();
+        var disabled = basePalette.ToDisabledPalette();
 
-        // Assert
-        css.Should().Contain("--aa-color");
-        css.Should().Contain("--aa-background-color");
-        css.Should().Contain("--aa-border-color");
-        css.Trim().Should().EndWith(";");
+        // Assert:
+        disabled.BackgroundColor.H.Should().BeApproximately(basePalette.BackgroundColor.H, 0.6);
+        disabled.BorderColor.H.Should().BeApproximately(basePalette.BorderColor.H, 0.6);
+
+        var expectedSBg = Math.Max(0.0, basePalette.BackgroundColor.S - 60.0);
+
+        var expectedVBg = Math.Clamp(
+            basePalette.BackgroundColor.V + (50.0 - basePalette.BackgroundColor.V) * 0.15, 0.0, 100.0
+        );
+
+        disabled.BackgroundColor.S.Should().BeApproximately(expectedSBg, 0.25);
+        disabled.BackgroundColor.V.Should().BeApproximately(expectedVBg, 0.25);
+
+        var expectedSBorder = Math.Max(0.0, basePalette.BorderColor.S - 60.0);
+
+        var expectedVBorder = Math.Clamp(
+            basePalette.BorderColor.V + (50.0 - basePalette.BorderColor.V) * 0.15, 0.0, 100.0
+        );
+
+        disabled.BorderColor.S.Should().BeApproximately(expectedSBorder, 0.25);
+        disabled.BorderColor.V.Should().BeApproximately(expectedVBorder, 0.25);
+
+        ContrastRatio(disabled.ForegroundColor, disabled.BackgroundColor).Should().BeGreaterThanOrEqualTo(3.0);
     }
 
     [Fact]
-    public void ToDisabledPalette_Should_DesaturateAndBlendTowardMid_And_RelaxContrast()
+    public void ToHoverPalette_Should_BrightenDarkBackgrounds_And_FixContrast()
     {
         // Arrange
-        var background = AllyariaColorValue.FromHsva(270, 70, 20);
-        var border = AllyariaColorValue.FromHsva(270, 60, 25);
-        var sut = new AllyariaPalette(background, null, border);
+        var basePalette = new AllyariaPalette(
+            Colors.Grey900,
+            Colors.Grey200,
+            Colors.Grey800
+        );
+
+        var bgV0 = basePalette.BackgroundColor.V;
+        var borderV0 = basePalette.BorderColor.V;
 
         // Act
-        var disabled = sut.ToDisabledPalette();
+        var hover = basePalette.ToHoverPalette();
 
         // Assert
-        disabled.BackgroundColor.S.Should().BeGreaterThanOrEqualTo(0.0);
-        disabled.BackgroundColor.S.Should().BeLessThanOrEqualTo(background.S);
-        (disabled.BackgroundColor.V - 50.0).Should().BeLessThan(Math.Abs(background.V - 50.0));
-        disabled.BackgroundColor.H.Should().BeApproximately(background.H, 0.001);
-        disabled.BorderColor.S.Should().BeLessThanOrEqualTo(border.S);
-        (disabled.BorderColor.V - 50.0).Should().BeLessThan(Math.Abs(border.V - 50.0));
-
-        if (disabled.BorderColor.S > 0.0)
-        {
-            disabled.BorderColor.H.Should().BeApproximately(border.H, 0.001);
-        }
-
-        ColorHelper.ContrastRatio(disabled.ForegroundColor, disabled.BackgroundColor).Should()
-            .BeGreaterThanOrEqualTo(3.0);
+        hover.BackgroundColor.V.Should().BeApproximately(Math.Clamp(bgV0 + 6.0, 0.0, 100.0), 0.25);
+        hover.BorderColor.V.Should().BeApproximately(Math.Clamp(borderV0 + 8.0, 0.0, 100.0), 0.25);
+        hover.BackgroundColor.H.Should().BeApproximately(basePalette.BackgroundColor.H, 1e-6);
+        hover.BorderColor.H.Should().BeApproximately(basePalette.BorderColor.H, 1e-6);
+        ContrastRatio(hover.ForegroundColor, hover.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
     }
 
     [Fact]
-    public void ToHoverPalette_Should_DecreaseV_OnLightBackground_And_AdjustBorder_And_EnsureContrast()
+    public void ToHoverPalette_Should_DarkenLightBackgrounds_And_FixContrast()
     {
         // Arrange
-        var lightBg = AllyariaColorValue.FromHsva(30, 30, 75);
-        var border = AllyariaColorValue.FromHsva(30, 30, 65);
-        var sut = new AllyariaPalette(lightBg, null, border);
+        var basePalette = new AllyariaPalette(
+            Colors.Grey200,
+            Colors.Grey700,
+            Colors.Grey500
+        );
+
+        var bgV0 = basePalette.BackgroundColor.V;
+        var borderV0 = basePalette.BorderColor.V;
 
         // Act
-        var hover = sut.ToHoverPalette();
+        var hover = basePalette.ToHoverPalette();
 
         // Assert
-        hover.BackgroundColor.V.Should().BeApproximately(lightBg.V - 6.0, 0.2);
-        hover.BorderColor.V.Should().BeApproximately(border.V - 8.0, 0.2);
-        ColorHelper.ContrastRatio(hover.ForegroundColor, hover.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
-
-        hover.BackgroundColor.H.Should().BeApproximately(lightBg.H, 0.2);
-        hover.BorderColor.H.Should().BeApproximately(border.H, 0.2);
-    }
-
-    [Fact]
-    public void ToHoverPalette_Should_IncreaseV_OnDarkBackground()
-    {
-        // Arrange
-        var darkBg = AllyariaColorValue.FromHsva(200, 20, 25);
-        var border = AllyariaColorValue.FromHsva(200, 20, 30);
-        var sut = new AllyariaPalette(darkBg, null, border);
-
-        // Act
-        var hover = sut.ToHoverPalette(5.0, 7.0);
-
-        // Assert
-        const double quantizationHalfStep = 100.0 / 255.0 / 2.0;
-        hover.BackgroundColor.V.Should().BeApproximately(darkBg.V + 5.0, quantizationHalfStep);
-        hover.BorderColor.V.Should().BeApproximately(border.V + 7.0, quantizationHalfStep);
-        hover.BackgroundColor.H.Should().BeApproximately(darkBg.H, 1.5);
-        hover.BorderColor.H.Should().BeApproximately(border.H, 1.5);
+        hover.BackgroundColor.V.Should().BeApproximately(Math.Clamp(bgV0 - 6.0, 0.0, 100.0), 0.25);
+        hover.BorderColor.V.Should().BeApproximately(Math.Clamp(borderV0 - 8.0, 0.0, 100.0), 0.25);
+        hover.BackgroundColor.H.Should().BeApproximately(basePalette.BackgroundColor.H, 1e-6);
+        hover.BorderColor.H.Should().BeApproximately(basePalette.BorderColor.H, 1e-6);
+        ContrastRatio(hover.ForegroundColor, hover.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
     }
 }

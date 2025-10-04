@@ -103,7 +103,7 @@ public sealed class AllyariaImageValueTests
         string result = sut;
 
         // Assert
-        result.Should().Be(@"linear-gradient(rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5)),url(""photo.jpg"")");
+        result.Should().Be(@"url(""photo.jpg""),linear-gradient(rgba(255,255,255,0.5),rgba(255,255,255,0.5))");
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public sealed class AllyariaImageValueTests
         string result = sut;
 
         // Assert
-        result.Should().Be(@"linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url(""photo.jpg"")");
+        result.Should().Be(@"url(""photo.jpg""),linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5))");
     }
 
     [Theory]
