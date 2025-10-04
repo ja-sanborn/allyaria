@@ -1,5 +1,4 @@
 ﻿using Allyaria.Theming.Styles;
-using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 
@@ -7,7 +6,7 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public class AllyariaStyleTests
 {
     [Fact]
-    public void Cascade_WithNoArgs_Returns_Identical_InstanceValues()
+    public void Cascade_With_No_Args_Returns_Same_Values()
     {
         // Arrange
         var original = new AllyariaStyle();
@@ -16,141 +15,95 @@ public class AllyariaStyleTests
         var cascaded = original.Cascade();
 
         // Assert
-        cascaded.Palette.Should().Be(original.Palette);
-        cascaded.Typography.Should().Be(original.Typography);
-        cascaded.Spacing.Should().Be(original.Spacing);
-        cascaded.Border.Should().Be(original.Border);
+        cascaded.Default.Should().Be(original.Default);
+        cascaded.Disabled.Should().Be(original.Disabled);
+        cascaded.Hover.Should().Be(original.Hover);
     }
 
     [Fact]
-    public void Cascade_WithOverrides_Replaces_Only_Provided_Subcomponents()
+    public void Cascade_With_Partial_Overrides_Replaces_Only_Specified()
     {
         // Arrange
         var original = new AllyariaStyle();
-        var newPalette = new AllyariaPalette();
-        var newTypography = new AllyariaTypography();
-        var newSpacing = new AllyariaSpacing();
-        var newBorders = new AllyariaBorders();
+        var newDefault = new AllyariaStyleVariant();
+        var newDisabled = newDefault.Cascade(newDefault.Palette.ToDisabled());
+        var newHover = newDefault.Cascade(newDefault.Palette.ToHover());
 
         // Act
-        var cascaded = original.Cascade(
-            newPalette,
-            newTypography,
-            newSpacing,
-            newBorders
-        );
+        var changedDefault = original.Cascade(newDefault);
+        var changedDisabled = original.Cascade(disabledStyle: newDisabled);
+        var changedHover = original.Cascade(hoverStyle: newHover);
+        var changedAll = original.Cascade(newDefault, newDisabled, newHover);
 
         // Assert
-        cascaded.Palette.Should().Be(newPalette);
-        cascaded.Typography.Should().Be(newTypography);
-        cascaded.Spacing.Should().Be(newSpacing);
-        cascaded.Border.Should().Be(newBorders);
+        changedDefault.Default.Should().Be(newDefault);
+        changedDefault.Disabled.Should().Be(original.Disabled);
+        changedDefault.Hover.Should().Be(original.Hover);
+
+        changedDisabled.Default.Should().Be(original.Default);
+        changedDisabled.Disabled.Should().Be(newDisabled);
+        changedDisabled.Hover.Should().Be(original.Hover);
+
+        changedHover.Default.Should().Be(original.Default);
+        changedHover.Disabled.Should().Be(original.Disabled);
+        changedHover.Hover.Should().Be(newHover);
+
+        changedAll.Default.Should().Be(newDefault);
+        changedAll.Disabled.Should().Be(newDisabled);
+        changedAll.Hover.Should().Be(newHover);
     }
 
     [Fact]
-    public void Ctor_Default_Initializes_All_Default_Subcomponents()
+    public void Ctor_Defaults_When_All_Null()
     {
         // Arrange
+        AllyariaStyleVariant? @default = null;
+        AllyariaStyleVariant? disabled = null;
+        AllyariaStyleVariant? hover = null;
 
         // Act
-        var style = new AllyariaStyle();
+        var style = new AllyariaStyle(@default, disabled, hover);
 
         // Assert
-        style.Palette.Should().NotBeNull();
-        style.Typography.Should().NotBeNull();
-        style.Spacing.Should().NotBeNull();
-        style.Border.Should().NotBeNull();
+        style.Default.Should().NotBeNull();
+        style.Disabled.Should().NotBeNull();
+        style.Hover.Should().NotBeNull();
+
+        style.Disabled.Should().NotBe(style.Default);
+        style.Hover.Should().NotBe(style.Default);
     }
 
     [Fact]
-    public void Ctor_WithNulls_Initializes_All_Default_Subcomponents()
+    public void Ctor_Respects_All_Provided_Variants()
     {
         // Arrange
-        AllyariaPalette? palette = null;
-        AllyariaTypography? typography = null;
-        AllyariaSpacing? spacing = null;
-        AllyariaBorders? borders = null;
+        var providedDefault = new AllyariaStyleVariant();
+        var providedDisabled = providedDefault.Cascade(providedDefault.Palette.ToDisabled());
+        var providedHover = providedDefault.Cascade(providedDefault.Palette.ToHover());
 
         // Act
-        var style = new AllyariaStyle(palette, typography, spacing, borders);
+        var style = new AllyariaStyle(providedDefault, providedDisabled, providedHover);
 
         // Assert
-        style.Palette.Should().NotBeNull();
-        style.Typography.Should().NotBeNull();
-        style.Spacing.Should().NotBeNull();
-        style.Border.Should().NotBeNull();
+        style.Default.Should().Be(providedDefault);
+        style.Disabled.Should().Be(providedDisabled);
+        style.Hover.Should().Be(providedHover);
     }
 
     [Fact]
-    public void Ctor_WithOverrides_Uses_Provided_Subcomponents()
+    public void Ctor_Uses_Provided_Variants_And_Derives_Missing_Ones()
     {
         // Arrange
-        var customPalette = new AllyariaPalette();
-        var customTypography = new AllyariaTypography();
-        var customSpacing = new AllyariaSpacing();
-        var customBorders = new AllyariaBorders();
+        var providedDefault = new AllyariaStyleVariant();
+        AllyariaStyleVariant? providedDisabled = null;
+        AllyariaStyleVariant? providedHover = null;
 
         // Act
-        var style = new AllyariaStyle(customPalette, customTypography, customSpacing, customBorders);
+        var style = new AllyariaStyle(providedDefault, providedDisabled, providedHover);
 
         // Assert
-        style.Palette.Should().Be(customPalette);
-        style.Typography.Should().Be(customTypography);
-        style.Spacing.Should().Be(customSpacing);
-        style.Border.Should().Be(customBorders);
-    }
-
-    [Fact]
-    public void ToCss_WithEmptyPrefix_Concatenates_All_Subcomponents_Css()
-    {
-        // Arrange
-        var style = new AllyariaStyle();
-
-        // Act
-        var css = style.ToCss();
-
-        // Assert
-        css.Should().NotBeNull();
-        css.Should().NotBeEmpty();
-
-        css.Should().Contain("font-")
-            .And.Contain("margin-")
-            .And.Contain("padding-");
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("  ")]
-    [InlineData("Ui-Theme")]
-    [InlineData("ui theme")]
-    public void ToCss_WithPrefix_Normalizes_And_Propagates_To_Subcomponents(string? prefix)
-    {
-        // Arrange
-        var style = new AllyariaStyle();
-
-        // Act
-        var css = style.ToCss(prefix);
-
-        // Assert
-        css.Should().NotBeNullOrEmpty();
-
-        var normalized = (prefix ?? string.Empty).Trim();
-
-        if (string.IsNullOrWhiteSpace(normalized))
-        {
-            css.Should().NotContain("--");
-        }
-        else
-        {
-            var expectedPart = "--" + Regex
-                .Replace(normalized, @"[\s-]+", "-")
-                .Trim('-')
-                .ToLowerInvariant();
-
-            css.Should().Contain(expectedPart + "-var-font-")
-                .And.Contain(expectedPart + "-var-margin-")
-                .And.Contain(expectedPart + "-var-padding-");
-        }
+        style.Default.Should().Be(providedDefault);
+        style.Disabled.Should().NotBeNull().And.NotBe(providedDefault);
+        style.Hover.Should().NotBeNull().And.NotBe(providedDefault);
     }
 }
