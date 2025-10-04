@@ -115,6 +115,32 @@ public readonly record struct AllyariaSpacing
         };
 
     /// <summary>
+    /// Creates an <see cref="AllyariaSpacing" /> where all margins use the same value and all paddings use the same value.
+    /// </summary>
+    /// <param name="margin">The margin value to apply to all sides.</param>
+    /// <param name="padding">The padding value to apply to all sides.</param>
+    /// <returns>A new <see cref="AllyariaSpacing" /> instance with uniform margins and paddings.</returns>
+    public static AllyariaSpacing FromSingle(AllyariaNumberValue margin, AllyariaNumberValue padding)
+        => new(margin, margin, margin, margin, padding, padding, padding, padding);
+
+    /// <summary>
+    /// Creates an <see cref="AllyariaSpacing" /> with symmetric horizontal and vertical margins and paddings.
+    /// </summary>
+    /// <param name="marginHorizontal">The margin value for left and right sides.</param>
+    /// <param name="marginVertical">The margin value for top and bottom sides.</param>
+    /// <param name="paddingHorizontal">The padding value for left and right sides.</param>
+    /// <param name="paddingVertical">The padding value for top and bottom sides.</param>
+    /// <returns>A new <see cref="AllyariaSpacing" /> instance with symmetric spacing.</returns>
+    public static AllyariaSpacing FromSymmetric(AllyariaNumberValue marginHorizontal,
+        AllyariaNumberValue marginVertical,
+        AllyariaNumberValue paddingHorizontal,
+        AllyariaNumberValue paddingVertical)
+        => new(
+            marginVertical, marginHorizontal, marginVertical, marginHorizontal, paddingVertical, paddingHorizontal,
+            paddingVertical, paddingHorizontal
+        );
+
+    /// <summary>
     /// Builds a CSS style string (e.g., <c>margin-top:8px;padding-right:12px;</c>). Only non-<see langword="null" /> sides are
     /// emitted.
     /// </summary>

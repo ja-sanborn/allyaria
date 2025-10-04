@@ -16,9 +16,9 @@ direct reuse or composition.
 |----------------------------|----------------------|-------------------------------------------------------------------------------------------|
 | `DefaultPalette`           | `AllyariaPalette`    | The default palette (light surface `Grey50` with dark foreground `Grey900`).              |
 | `DefaultSpacing`           | `AllyariaSpacing`    | Default spacing (8px margins, 16px paddings), aligned with Material Design 8dp grid.      |
-| `DefaultThemeDark`         | `AllyariaStyle`      | WCAG-compliant dark theme (dark surface `Grey900`, light foreground `Grey50`).            |
-| `DefaultThemeHighContrast` | `AllyariaStyle`      | High-contrast grayscale theme (white surface, black text). Useful for maximum legibility. |
-| `DefaultThemeLight`        | `AllyariaStyle`      | WCAG-compliant light theme (light surface `Grey50`, dark foreground `Grey900`).           |
+| `DefaultStyleDark`         | `AllyariaStyle`      | WCAG-compliant dark theme (dark surface `Grey900`, light foreground `Grey50`).            |
+| `DefaultStyleHighContrast` | `AllyariaStyle`      | High-contrast grayscale theme (white surface, black text). Useful for maximum legibility. |
+| `DefaultStyleLight`        | `AllyariaStyle`      | WCAG-compliant light theme (light surface `Grey50`, dark foreground `Grey900`).           |
 | `DefaultTypography`        | `AllyariaTypography` | Default typography: system-first font stack with a base size of `1rem`.                   |
 
 ## Methods
@@ -90,4 +90,4 @@ public class ThemeManager
 }
 ```
 
-> *Rev Date: 2025-10-01*
+> *Rev Date: 2025-10-03*

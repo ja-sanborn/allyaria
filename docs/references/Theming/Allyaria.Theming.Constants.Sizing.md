@@ -23,6 +23,8 @@ These values ensure consistency in margins, paddings, and component dimensions a
 | `Size9`  | `AllyariaNumberValue` | `64px` — extra large spacing step.                                   |
 | `Size10` | `AllyariaNumberValue` | `72px` — extra large spacing step.                                   |
 | `Size11` | `AllyariaNumberValue` | `80px` — extra large spacing step, upper bound of the default scale. |
+| `Thick`  | `AllyariaNumberValue` | `2px` — double pixel spacing, usually used for borders.              |
+| `Thin`   | `AllyariaNumberValue` | `1px` — single pixel spacing, usually used for borders.              |
 
 ## Methods
 
@@ -77,4 +79,4 @@ public class LayoutExample
 }
 ```
 
-> *Rev Date: 2025-10-01*
+> *Rev Date: 2025-10-03*

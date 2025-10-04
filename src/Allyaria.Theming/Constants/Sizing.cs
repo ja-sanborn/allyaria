@@ -1,11 +1,11 @@
-﻿using Allyaria.Theming.Values;
+using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 
 /// <summary>
-/// Provides Material Design–compliant sizing constants based on a 4px/8px grid.
-/// These values can be used for consistent margins, paddings, and component dimensions.
+/// Provides Material Design–compliant sizing constants based on a 4px/8px grid. These values can be used for consistent
+/// margins, paddings, and component dimensions.
 /// </summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class Sizing
@@ -15,6 +15,12 @@ public static class Sizing
 
     /// <summary>4px — micro spacing, used sparingly for fine alignment.</summary>
     public static AllyariaNumberValue Size1 => new("4px");
+
+    /// <summary>72px — extra large spacing step.</summary>
+    public static AllyariaNumberValue Size10 => new("72px");
+
+    /// <summary>80px — extra large spacing step, upper bound of the default scale.</summary>
+    public static AllyariaNumberValue Size11 => new("80px");
 
     /// <summary>8px — base spacing unit (1 step on Material grid).</summary>
     public static AllyariaNumberValue Size2 => new("8px");
@@ -40,9 +46,9 @@ public static class Sizing
     /// <summary>64px — extra large spacing step.</summary>
     public static AllyariaNumberValue Size9 => new("64px");
 
-    /// <summary>72px — extra large spacing step.</summary>
-    public static AllyariaNumberValue Size10 => new("72px");
+    /// <summary>2px — double pixel spacing, usually used for borders.</summary>
+    public static AllyariaNumberValue Thick => new("2px");
 
-    /// <summary>80px — extra large spacing step, upper bound of the default scale.</summary>
-    public static AllyariaNumberValue Size11 => new("80px");
+    /// <summary>1px — single pixel spacing, usually used for borders.</summary>
+    public static AllyariaNumberValue Thin => new("1px");
 }

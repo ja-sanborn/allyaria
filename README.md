@@ -1,6 +1,6 @@
 # Allyaria
 
-> *Version 1: 2025-09-28*
+> *Version 1: 2025-10-03*
 >
 > [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
 >
@@ -11,162 +11,55 @@ core. It is flexible, customizable, and extensible, written entirely in Blazor w
 
 ## Theming Features
 
-### AllyariaColorValue
+The Allyaria theming system provides a consistent, accessibility-first way to style Blazor components. It is built on
+strongly typed value objects (colors, typography, spacing, borders, images) that can be combined into full style bundles
+and safely cascaded. This allows developers to adopt predefined, WCAG-compliant defaults or extend them with minimal
+effort.
 
-`AllyariaColorValue` is an immutable, framework-agnostic color type with CSS-oriented parsing, formatting, and value
-semantics.
-It supports:
+At the core is the `AllyariaStyle` bundle, which groups together a `Palette` (colors and images), `Typography` (fonts,
+weight, spacing), `Spacing` (margins and paddings), and `Borders` (widths, radii, styles). Each style can also define
+hover and disabled variants. Styles can be emitted as inline CSS or as scoped CSS variables, giving developers
+flexibility: use variables for runtime theme switching and component isolation, or direct CSS for static scenarios.
 
-* **Parsing** from multiple formats:
+Themes are designed to be **flexible, customizable, and accessible**. Color palettes are validated to ensure proper
+contrasts are maintained, with foreground colors automatically adjusted if necessary to meet WCAG requirements.
+Background images are layered with contrast overlays to guarantee legibility regardless of the underlying image.
 
-    * Hex: `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`
-    * Functional: `rgb()`, `rgba()`, `hsv()`, `hsva()`
-    * Named colors: CSS Web color names and Material Design palette names
-* **Conversions** between RGBA and HSVA (Hue 0–360°, Saturation/Value 0–100%, Alpha 0–1)
-* **Formatting** to string forms:
+Developers have two main entry points:
 
-    * `HexRgb`, `HexRgba`
-    * `Rgb`, `Rgba`
-    * `Hsv`, `Hsva`
-* **Equality & ordering** by canonical `#RRGGBBAA` string
+* **Predefined defaults** – Safe, accessible presets such as `DefaultThemeLight`, `DefaultThemeDark`, and
+  `DefaultThemeHighContrast` are available for immediate use. These are built on the token sets provided in `Colors` and
+  `Sizing`, and already meet contrast requirements.
+* **Custom cascades** – Any theme can be extended or overridden using the `Cascade` pattern. For example, you can start
+  with the light theme and cascade a new accent color or typography setting while inheriting all other defaults.
 
-All numeric operations use `InvariantCulture`, ensuring consistent, predictable behavior across cultures.
+By design, the theming layer integrates cleanly with Allyaria Blazor components. Every component consumes an
+`AllyariaStyle`, either from its own parameters or cascaded from parent/global settings. Because styles emit valid CSS
+or CSS variables, developers can easily integrate them into their rendering strategy while still benefiting from
+accessibility, flexibility, and predictable styling across the application.
 
-### AllyariaStringValue
+Themes in Allyaria Blazor components respect a clear precedence model: **Component theme → Parent theme → Global theme →
+Fallback**. This ensures that a developer can define styles as locally or globally as needed without breaking
+accessibility or consistency. Defaults always guarantee readable foreground/background combinations, and overlays are
+automatically applied to background images to maintain contrast.
 
-`AllyariaStringValue` is an immutable, normalized wrapper for theme strings.
-It guarantees **non-null, non-empty, non-whitespace** input and stores the **trimmed** value.
-
-Key features:
-
-* **Normalization & validation** — throws on `null`/empty/whitespace; value is trimmed and control characters rejected.
-* **Parsing helpers** — `Parse(string)` and `TryParse(string, out AllyariaStringValue?)`.
-* **Ergonomic conversions** — implicit cast **from** `string` and **to** `string` for seamless usage.
-* **Immutable value semantics** — safe to pass around and reuse in theming/style composition.
-
-### AllyariaImageValue
-
-`AllyariaImageValue` is an immutable, strongly-typed CSS image token that normalizes input into a canonical
-`url("…")`. If the input already contains a `url(...)`, only the **first** one is extracted; otherwise the raw value
-is validated, unwrapped (if quoted), escaped, and wrapped as `url("…")`.
-
-Highlights:
-
-* **Scheme safety** — allows `http`, `https`, `data`, `blob`; blocks dangerous schemes (e.g., `javascript:`).
-* **Parsing helpers** — `Parse(string)` and `TryParse(string, out AllyariaImageValue?)`.
-* **CSS helpers** — `ToCss(property)` and background helpers:
-
-    * `ToCssBackground(AllyariaColorValue backgroundColor, bool stretch = true)`
-    * `ToCssVarsBackground(string prefix, AllyariaColorValue backgroundColor, bool stretch = true)`
-* **Ergonomic conversions** — implicit cast **from** `string` and **to** `string`.
-
-### AllyariaPalette
-
-`AllyariaPalette` is an immutable, strongly typed palette used by the Allyaria theme engine.
-It defines background, foreground, border, hover, and disabled states with clear **precedence rules**:
-
-* **Background images** can be emitted with a readability overlay and precedence over background colors.
-* **Explicit overrides** beat computed defaults.
-* **Borders** are opt-in (width > 0) and may include color, style, and radius.
-* **Foreground colors** default to contrast-safe values based on the background (WCAG-aware).
-* **Hover / Disabled derivation** — helpers to create accessible variants while preserving hue.
-* **CSS variable generation** — supports normalized prefixes and consistent naming for theming.
-* **Cascade support** — the `Cascade()` method creates derived palettes by selectively overriding base values.
-
-Conversion helpers are provided to:
-
-* **Inline CSS styles** via `ToCss()`
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
-
-This ensures consistent, accessible, and theme-driven styling across components.
-
-### AllyariaTypography
-
-`AllyariaTypography` is a strongly typed struct for defining typography within the Allyaria theming system.
-It encapsulates font-related properties (family, size, weight, style, spacing, alignment, decoration, transform, etc.)
-and provides conversion helpers to:
-
-* **Inline CSS styles** via `ToCss()`
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
-* **Cascade support** — the `Cascade()` method allows creating derived typography definitions by selectively overriding
-  base values.
-
-Only non-null values are emitted, making it safe to compose flexible, theme-driven typography definitions without
-unnecessary noise in the resulting CSS.
-
-### AllyariaStyle
-
-`AllyariaStyle` is an immutable, strongly typed record-struct that **combines a palette and typography** into a single
-style definition.
-
-It provides:
-
-* **Composition** of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts, sizes, spacing).
-* **Inline CSS styles** via `ToCss()` — for base state.
-* **Inline CSS styles for hover states** via `ToCssHover()`.
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")` — exportable tokens for base, disabled,
-  and hover states.
-
-This ensures consistent, accessible, theme-driven styling across components, with **value semantics** for easy equality
-checks and copy-by-value safety.
-
-### ColorHelper
-
-`ColorHelper` provides WCAG-aware color utilities for the theming pipeline:
-
-* **Contrast** — `ContrastRatio(fg, bg)` computes the WCAG ratio; `EnsureMinimumContrast(fg, bg, min)` repairs color to
-  meet or best-approach a target, preserving hue when possible.
-* **Blending** — `MixSrgb(a, b, t)` mixes opaque colors in sRGB; `Blend(start, target, t)` mixes scalars.
-* **Luminance** — `RelativeLuminance(color)` returns WCAG relative luminance.
-
-These helpers power `AllyariaPalette` derivations (hover/disabled) and automatic foreground selection.
-
-### ContrastResult
-
-`ContrastResult` is a small immutable record-struct that reports the outcome of contrast adjustment:
-
-* `ForegroundColor` — the resolved (possibly repaired) opaque text color
-* `BackgroundColor` — the background used for evaluation
-* `ContrastRatio` — achieved WCAG ratio
-* `MeetsMinimum` — whether the requested minimum ratio was satisfied
-
-### Colors
-
-The `Colors` class provides a consolidated, strongly typed library of named colors for Allyaria theming.
-
-* **Includes** both **CSS Web colors** and **Material Design palette colors**.
-* Each color is exposed as a static `AllyariaColorValue` property (e.g., `Colors.Red500`, `Colors.BlueA700`,
-  `Colors.White`).
-* Values are defined in canonical `#RRGGBBAA` form for consistency.
-* Properties are alphabetically organized for quick lookup.
-* Designed for convenient use in theming, palette composition, and inline style generation.
-
-### Styles
-
-The `Styles` class provides a set of **predefined theme presets** as ready-to-use `AllyariaStyle` instances.
-
-Available presets:
-
-* **Light** — Light UI preset (`Grey50` background, `Grey900` foreground) with sans-serif typography.
-* **Dark** — Dark UI preset (`Grey900` background, `Grey50` foreground) with sans-serif typography.
-* **HighContrast** — Maximum-contrast preset (`White` background, `Black` foreground) for accessibility.
-
-Each preset combines an `AllyariaPalette` and `AllyariaTypography`, and supports:
-
-* **Inline CSS styles** via `ToCss()`
-* **Inline CSS styles for hover states** via `ToCssHover()`
-* **CSS custom properties (variables)** via `ToCssVars()`
-
-These serve as accessible defaults while allowing extension or replacement with custom brand themes.
+For additional details on available tokens, style objects, and customization options, see the
+*[theming API documentation](./docs/references/Theming)*.
 
 ## License
 
-* **Allyaria** is licensed under the *Mozilla Public License Version 2.0*.
+**Allyaria** is licensed under the *[Mozilla Public License Version 2.0](./LICENSE)*.
 
 ## Installation
 
-* Pending
+*Pending*
 
 ## Contributing
 
-* Pending
+Thank you for your interest in contributing to **Allyaria Editor**!
+
+We welcome bug reports, feature requests, documentation improvements, and code contributions.
+
+By contributing to Allyaria Editor, you agree to abide by the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details.

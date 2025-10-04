@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 namespace Allyaria.Theming.Styles;
 
 /// <summary>
-/// Represents a combined Allyaria style that encapsulates spacing, palette, and typography settings. Provides helpers to
-/// generate CSS fragments and CSS custom property declarations for the base, hover, and disabled states.
+/// Represents a combined Allyaria style that encapsulates palette, typography, spacing, and border settings. Provides
+/// helpers to generate CSS fragments and CSS custom property declarations for the base, hover, and disabled states.
 /// </summary>
 public readonly record struct AllyariaStyle
 {
@@ -12,6 +12,7 @@ public readonly record struct AllyariaStyle
     /// <param name="palette">The base color palette to apply.</param>
     /// <param name="typography">The base typography settings to apply.</param>
     /// <param name="spacing">The spacing values (margins/paddings) to apply for all states.</param>
+    /// <param name="border">The border values (per-side width/style and per-corner radius) to apply for all states.</param>
     /// <param name="paletteHover">
     /// Optional palette to apply for the <c>:hover</c> state. If <see langword="null" />, it is derived from
     /// <paramref name="palette" /> via <see cref="AllyariaPalette.ToHoverPalette" />.
@@ -31,19 +32,30 @@ public readonly record struct AllyariaStyle
     public AllyariaStyle(AllyariaPalette palette,
         AllyariaTypography typography,
         AllyariaSpacing spacing,
+        AllyariaBorders border,
         AllyariaPalette? paletteHover = null,
         AllyariaTypography? typographyHover = null,
         AllyariaPalette? paletteDisabled = null,
         AllyariaTypography? typographyDisabled = null)
     {
         Spacing = spacing;
+        Border = border;
+
         Palette = palette;
         Typography = typography;
+
         PaletteHover = paletteHover ?? palette.ToHoverPalette();
         TypographyHover = typographyHover ?? typography;
+
         PaletteDisabled = paletteDisabled ?? palette.ToDisabledPalette();
         TypographyDisabled = typographyDisabled ?? typography;
     }
+
+    /// <summary>
+    /// Gets the border values (per-side width/style and per-corner radius) applied consistently across base, hover, and
+    /// disabled states.
+    /// </summary>
+    public AllyariaBorders Border { get; }
 
     /// <summary>Gets the base color palette.</summary>
     public AllyariaPalette Palette { get; }
@@ -69,30 +81,34 @@ public readonly record struct AllyariaStyle
     public AllyariaTypography TypographyHover { get; }
 
     /// <summary>
-    /// Builds the full CSS string for this style, concatenating palette, typography, and spacing CSS declarations for the base
-    /// state.
+    /// Builds the full CSS string for this style, concatenating palette, typography, spacing, and border CSS declarations for
+    /// the base state.
     /// </summary>
     /// <returns>
-    /// A concatenated CSS string that includes base palette, typography, and spacing declarations (e.g.,
-    /// <c>background-color</c>, <c>color</c>, font properties, margins, paddings).
+    /// A concatenated CSS string that includes base palette, typography, spacing, and border declarations (e.g.,
+    /// <c>background-color</c>, <c>color</c>, font properties, margins, paddings, and border properties).
     /// </returns>
-    public string ToCss() => string.Concat(Palette.ToCss(), Typography.ToCss(), Spacing.ToCss());
+    public string ToCss() => string.Concat(Palette.ToCss(), Typography.ToCss(), Spacing.ToCss(), Border.ToCss());
 
     /// <summary>
-    /// Builds the full CSS string for the disabled state, concatenating disabled palette, disabled typography, and spacing
-    /// CSS.
+    /// Builds the full CSS string for the disabled state, concatenating disabled palette, disabled typography, spacing, and
+    /// border CSS declarations.
     /// </summary>
     /// <returns>
-    /// A concatenated CSS string that includes disabled palette, disabled typography, and spacing declarations.
+    /// A concatenated CSS string that includes disabled palette, disabled typography, spacing, and border declarations.
     /// </returns>
     public string ToCssDisabled()
-        => string.Concat(PaletteDisabled.ToCss(), TypographyDisabled.ToCss(), Spacing.ToCss());
+        => string.Concat(PaletteDisabled.ToCss(), TypographyDisabled.ToCss(), Spacing.ToCss(), Border.ToCss());
 
     /// <summary>
-    /// Builds the full CSS string for the <c>:hover</c> state, concatenating hover palette, hover typography, and spacing CSS.
+    /// Builds the full CSS string for the <c>:hover</c> state, concatenating hover palette, hover typography, spacing, and
+    /// border CSS declarations.
     /// </summary>
-    /// <returns>A concatenated CSS string that includes hover palette, hover typography, and spacing declarations.</returns>
-    public string ToCssHover() => string.Concat(PaletteHover.ToCss(), TypographyHover.ToCss(), Spacing.ToCss());
+    /// <returns>
+    /// A concatenated CSS string that includes hover palette, hover typography, spacing, and border declarations.
+    /// </returns>
+    public string ToCssHover()
+        => string.Concat(PaletteHover.ToCss(), TypographyHover.ToCss(), Spacing.ToCss(), Border.ToCss());
 
     /// <summary>
     /// Builds CSS custom property (variable) declarations representing this style for the base, disabled, and hover states
@@ -118,12 +134,19 @@ public readonly record struct AllyariaStyle
     ///     </item>
     /// </list>
     /// Each underlying call delegates to <see cref="AllyariaPalette.ToCssVars(string)" />,
-    /// <see cref="AllyariaTypography.ToCssVars(string)" />, and <see cref="AllyariaSpacing.ToCssVars(string)" /> which apply
-    /// their own <c>--</c> prefixing convention.
+    /// <see cref="AllyariaTypography.ToCssVars(string)" />, <see cref="AllyariaSpacing.ToCssVars(string)" />, and
+    /// <see cref="AllyariaBorders.ToCssVars(string)" /> which apply their own <c>--</c> prefixing convention.
     /// </returns>
     /// <remarks>
-    /// The final CSS variable names produced by the underlying palette, typography, and spacing methods include the leading
-    /// <c>--</c> and a trailing hyphen after the provided prefix (e.g., <c>--editor-*</c>).
+    ///     <para>
+    ///     The final CSS variable names produced by the underlying palette, typography, spacing, and border methods include
+    ///     the leading <c>--</c> and a trailing hyphen after the provided prefix (e.g., <c>--editor-*</c>).
+    ///     </para>
+    ///     <para>
+    ///     Spacing and border variables are emitted only for the base prefix because they are applied consistently across
+    ///     base, disabled, and hover states in this model. Palette and typography variables are emitted for all three
+    ///     prefixes.
+    ///     </para>
     /// </remarks>
     public string ToCssVars(string prefix = "")
     {
@@ -139,6 +162,7 @@ public readonly record struct AllyariaStyle
 
         return string.Concat(
             Spacing.ToCssVars(basePrefix),
+            Border.ToCssVars(basePrefix),
             Palette.ToCssVars(basePrefix),
             Typography.ToCssVars(basePrefix),
             PaletteDisabled.ToCssVars(disabledPrefix),

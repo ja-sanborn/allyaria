@@ -9,19 +9,18 @@ public sealed class AllyariaStyleTests
     public void Ctor_Should_Use_Fallbacks_When_Optional_Args_Are_Null()
     {
         // Arrange
-        var palette = new AllyariaPalette(); // real SUT dependency
-        var typography = new AllyariaTypography(); // real SUT dependency
-        var spacing = new AllyariaSpacing(); // real SUT dependency
+        var palette = new AllyariaPalette();
+        var typography = new AllyariaTypography();
+        var spacing = new AllyariaSpacing();
+        var borders = new AllyariaBorders();
 
         // Act
-        var sut = new AllyariaStyle(palette, typography, spacing);
+        var sut = new AllyariaStyle(palette, typography, spacing, borders);
 
         // Assert
         sut.Palette.Should().Be(palette);
         sut.Typography.Should().Be(typography);
         sut.Spacing.Should().Be(spacing);
-
-        // fallbacks derived from base inputs
         sut.PaletteHover.Should().Be(palette.ToHoverPalette());
         sut.PaletteDisabled.Should().Be(palette.ToDisabledPalette());
         sut.TypographyHover.Should().Be(typography);
@@ -35,8 +34,9 @@ public sealed class AllyariaStyleTests
         var palette = new AllyariaPalette();
         var typography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
+        var borders = new AllyariaBorders();
 
-        var overrideHoverPalette = palette.ToHoverPalette(); // just reuse a valid value instance
+        var overrideHoverPalette = palette.ToHoverPalette();
         var overrideDisabledPalette = palette.ToDisabledPalette();
         var overrideHoverTypography = typography.Cascade(fontStyle: new AllyariaStringValue("italic"));
         var overrideDisabledTypography = typography.Cascade(fontWeight: new AllyariaStringValue("700"));
@@ -46,6 +46,7 @@ public sealed class AllyariaStyleTests
             palette,
             typography,
             spacing,
+            borders,
             overrideHoverPalette,
             overrideHoverTypography,
             overrideDisabledPalette,
@@ -63,10 +64,11 @@ public sealed class AllyariaStyleTests
     public void ToCss_Should_Concatenate_Palette_Typography_And_Spacing_In_Order()
     {
         // Arrange
-        var palette = new AllyariaPalette(); // non-empty ToCss()
-        var typography = new AllyariaTypography(); // empty ToCss() by default
-        var spacing = new AllyariaSpacing(); // empty ToCss() by default
-        var sut = new AllyariaStyle(palette, typography, spacing);
+        var palette = new AllyariaPalette();
+        var typography = new AllyariaTypography();
+        var spacing = new AllyariaSpacing();
+        var borders = new AllyariaBorders();
+        var sut = new AllyariaStyle(palette, typography, spacing, borders);
 
         // Act
         var actual = sut.ToCss();
@@ -83,11 +85,12 @@ public sealed class AllyariaStyleTests
         var basePalette = new AllyariaPalette();
         var baseTypography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
+        var borders = new AllyariaBorders();
 
         var disabledPalette = basePalette.ToDisabledPalette();
-        var disabledTypography = baseTypography; // ctor default uses base typography when disabled arg is null
+        var disabledTypography = baseTypography;
 
-        var sut = new AllyariaStyle(basePalette, baseTypography, spacing);
+        var sut = new AllyariaStyle(basePalette, baseTypography, spacing, borders);
 
         // Act
         var actual = sut.ToCssDisabled();
@@ -104,11 +107,10 @@ public sealed class AllyariaStyleTests
         var basePalette = new AllyariaPalette();
         var baseTypography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
-
+        var borders = new AllyariaBorders();
         var hoverPalette = basePalette.ToHoverPalette();
-        var hoverTypography = baseTypography; // ctor default uses base typography when hover arg is null
-
-        var sut = new AllyariaStyle(basePalette, baseTypography, spacing);
+        var hoverTypography = baseTypography;
+        var sut = new AllyariaStyle(basePalette, baseTypography, spacing, borders);
 
         // Act
         var actual = sut.ToCssHover();
@@ -128,7 +130,8 @@ public sealed class AllyariaStyleTests
         var palette = new AllyariaPalette();
         var typography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
-        var sut = new AllyariaStyle(palette, typography, spacing);
+        var borders = new AllyariaBorders();
+        var sut = new AllyariaStyle(palette, typography, spacing, borders);
         var paletteDisabled = palette.ToDisabledPalette();
         var paletteHover = palette.ToHoverPalette();
 
@@ -138,6 +141,7 @@ public sealed class AllyariaStyleTests
         // Assert
         var expected = string.Concat(
             spacing.ToCssVars(normalizedBase),
+            borders.ToCssVars(normalizedBase),
             palette.ToCssVars(normalizedBase),
             typography.ToCssVars(normalizedBase),
             paletteDisabled.ToCssVars(normalizedBase + "-disabled"),
@@ -150,9 +154,9 @@ public sealed class AllyariaStyleTests
     }
 
     [Theory]
-    [InlineData("", "aa")] // empty -> default
-    [InlineData("   ", "aa")] // whitespace -> default
-    [InlineData("--", "aa")] // dashes -> default after normalization/trim
+    [InlineData("", "aa")]
+    [InlineData("   ", "aa")]
+    [InlineData("--", "aa")]
     public void ToCssVars_Should_Use_DefaultPrefix_AA_When_Input_Normalizes_To_Empty(string given,
         string expectedBasePrefix)
     {
@@ -160,7 +164,8 @@ public sealed class AllyariaStyleTests
         var palette = new AllyariaPalette();
         var typography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
-        var sut = new AllyariaStyle(palette, typography, spacing);
+        var borders = new AllyariaBorders();
+        var sut = new AllyariaStyle(palette, typography, spacing, borders);
         var paletteDisabled = palette.ToDisabledPalette();
         var paletteHover = palette.ToHoverPalette();
 
@@ -168,12 +173,9 @@ public sealed class AllyariaStyleTests
         var actual = sut.ToCssVars(given);
 
         // Assert
-        // AllyariaStyle.ToCssVars builds three groups:
-        //   base (expectedBasePrefix), disabled (expectedBasePrefix + "-disabled"), and hover (expectedBasePrefix + "-hover"),
-        // in this exact concatenation order: Spacing, Palette, Typography (base), then Disabled(Palette, Typography),
-        // then Hover(Palette, Typography).
         var expected = string.Concat(
             spacing.ToCssVars(expectedBasePrefix),
+            borders.ToCssVars(expectedBasePrefix),
             palette.ToCssVars(expectedBasePrefix),
             typography.ToCssVars(expectedBasePrefix),
             paletteDisabled.ToCssVars(expectedBasePrefix + "-disabled"),
@@ -192,7 +194,7 @@ public sealed class AllyariaStyleTests
         var basePalette = new AllyariaPalette();
         var baseTypography = new AllyariaTypography();
         var spacing = new AllyariaSpacing();
-
+        var borders = new AllyariaBorders();
         var disabledPalette = basePalette.ToDisabledPalette();
         var hoverPalette = basePalette.ToHoverPalette();
         var disabledTypography = baseTypography.Cascade(fontWeight: new AllyariaStringValue("600"));
@@ -202,6 +204,7 @@ public sealed class AllyariaStyleTests
             basePalette,
             baseTypography,
             spacing,
+            borders,
             hoverPalette,
             hoverTypography,
             disabledPalette,
@@ -216,6 +219,7 @@ public sealed class AllyariaStyleTests
         // Assert
         var expected = string.Concat(
             spacing.ToCssVars("theme-x"),
+            borders.ToCssVars("theme-x"),
             basePalette.ToCssVars("theme-x"),
             baseTypography.ToCssVars("theme-x"),
             disabledPalette.ToCssVars("theme-x-disabled"),

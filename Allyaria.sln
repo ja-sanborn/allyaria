@@ -62,6 +62,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theming", "Theming", "{96DF
 		docs\references\Theming\Allyaria.Theming.Constants.Styles.md = docs\references\Theming\Allyaria.Theming.Constants.Styles.md
 		docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md = docs\references\Theming\Allyaria.Theming.Helpers.ColorHelper.md
 		docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md = docs\references\Theming\Allyaria.Theming.Primitives.ContrastResult.md
+		docs\references\Theming\Allyaria.Theming.Styles.AllyariaBorders.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaBorders.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaPalette.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaSpacing.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaSpacing.md
 		docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md = docs\references\Theming\Allyaria.Theming.Styles.AllyariaStyle.md

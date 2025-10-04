@@ -29,6 +29,8 @@ CSS.
 
 | Name                                                                                                              | Returns           | Description                                                                                                   |
 |-------------------------------------------------------------------------------------------------------------------|-------------------|---------------------------------------------------------------------------------------------------------------|
+| `FromSingle(margin, padding)`                                                                                     | `AllyariaSpacing` | Creates spacing where all margins share the same value and all paddings share the same value.                 |
+| `FromSymmetric(marginHorizontal, marginVertical, paddingHorizontal, paddingVertical)`                             | `AllyariaSpacing` | Creates spacing with symmetric horizontal and vertical margins and paddings.                                  |
 | `Cascade(marginTop, marginRight, marginBottom, marginLeft, paddingTop, paddingRight, paddingBottom, paddingLeft)` | `AllyariaSpacing` | Returns a new spacing definition with specified overrides, retaining existing values where not provided.      |
 | `ToCss()`                                                                                                         | `string`          | Builds inline CSS declarations (e.g., `margin-top:8px;padding-right:12px;`). Only non-null sides are emitted. |
 | `ToCssVars(prefix = "")`                                                                                          | `string`          | Builds CSS custom property declarations. Prefix normalized to kebab-case; defaults to `--aa-` if omitted.     |
@@ -96,4 +98,4 @@ public class SpacingDemo
 }
 ```
 
-> *Rev Date: 2025-10-01*
+> *Rev Date: 2025-10-03*

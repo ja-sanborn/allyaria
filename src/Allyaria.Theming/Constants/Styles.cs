@@ -16,6 +16,13 @@ namespace Allyaria.Theming.Constants;
 public static class Styles
 {
     /// <summary>
+    /// Gets the default border set used by style presets. This returns a uniform, per-side border configuration with a
+    /// <see cref="AllyariaStringValue" /> of <c>solid</c> for the style, a width at <c>0px</c>, and a corner radius at
+    /// <c>4px</c>.
+    /// </summary>
+    public static AllyariaBorders DefaultBorders => AllyariaBorders.FromSingle(Sizing.Size0, "solid", Sizing.Size1);
+
+    /// <summary>
     /// Gets the default palette used by style presets. Uses a light surface (<c>Grey50</c>) with dark foreground text (
     /// <c>Grey900</c>).
     /// </summary>
@@ -25,40 +32,40 @@ public static class Styles
     /// Gets the default spacing used by style presets. Applies <c>8px</c> margins and <c>16px</c> paddings, consistent with
     /// the Material Design 8dp grid.
     /// </summary>
-    public static AllyariaSpacing DefaultSpacing
-        => new(
-            Sizing.Size2, Sizing.Size2, Sizing.Size2, Sizing.Size2,
-            Sizing.Size3, Sizing.Size3, Sizing.Size3, Sizing.Size3
-        );
+    public static AllyariaSpacing DefaultSpacing => AllyariaSpacing.FromSingle(Sizing.Size2, Sizing.Size3);
 
     /// <summary>
     /// Gets a default WCAG-compliant dark style preset. Uses a dark surface (<c>Grey900</c>) with light foreground text (
-    /// <c>Grey50</c> ), paired with default typography and spacing.
+    /// <c>Grey50</c> ), paired with default typography, spacing, and borders.
     /// </summary>
-    public static AllyariaStyle DefaultThemeDark { get; } = new(
+    public static AllyariaStyle DefaultStyleDark { get; } = new(
         DefaultPalette.Cascade(Colors.Grey900, Colors.Grey50),
         DefaultTypography,
-        DefaultSpacing
+        DefaultSpacing,
+        DefaultBorders
     );
 
     /// <summary>
     /// Gets a default high-contrast grayscale style preset. Uses a white surface with black text for maximum legibility,
-    /// paired with default typography and spacing. Useful for accessibility contexts requiring strong visual contrast.
+    /// paired with default typography, spacing, and borders. Useful for accessibility contexts requiring strong visual
+    /// contrast.
     /// </summary>
-    public static AllyariaStyle DefaultThemeHighContrast { get; } = new(
+    public static AllyariaStyle DefaultStyleHighContrast { get; } = new(
         DefaultPalette.Cascade(Colors.White, Colors.Black),
         DefaultTypography,
-        DefaultSpacing
+        DefaultSpacing,
+        DefaultBorders
     );
 
     /// <summary>
     /// Gets a default WCAG-compliant light style preset. Uses a light surface (<c>Grey50</c>) with dark foreground text (
-    /// <c>Grey900</c>), paired with default typography and spacing.
+    /// <c>Grey900</c>), paired with default typography, spacing, and borders.
     /// </summary>
-    public static AllyariaStyle DefaultThemeLight { get; } = new(
+    public static AllyariaStyle DefaultStyleLight { get; } = new(
         DefaultPalette,
         DefaultTypography,
-        DefaultSpacing
+        DefaultSpacing,
+        DefaultBorders
     );
 
     /// <summary>

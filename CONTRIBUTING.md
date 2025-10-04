@@ -1,13 +1,13 @@
 # Contributing to Allyaria Editor
 
-> *Version 1: 2025-09-18*
+> *Version 1: 2025-10-03*
 
 Thank you for your interest in contributing to **Allyaria Editor**!  
 We welcome bug reports, feature requests, documentation improvements, and code contributions.
 
 > By contributing to Allyaria Editor, you agree to abide by the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
-## 📖 Coding Standards
+## Coding Standards
 
 All contributions must follow the project’s coding standards.  
 These are documented in the [`docs/standards`](./docs/standards) directory:
@@ -23,7 +23,7 @@ These are documented in the [`docs/standards`](./docs/standards) directory:
 
 Please review these before submitting a pull request. PRs that do not follow the standards may be asked to update.
 
-## 🛠️ How to Contribute
+## How to Contribute
 
 1. **Fork the repository** and create your branch from `main`.
     - Branch names should be descriptive, e.g. `feature/dialog-component`, `fix/scroll-lock`.
@@ -42,13 +42,13 @@ Please review these before submitting a pull request. PRs that do not follow the
     - Reference related issues if applicable.
     - Mention any deviations from standards and justify them.
 
-## 🐞 Reporting Issues
+## Reporting Issues
 
 - Use the [GitHub Issues](https://github.com/ja-sanborn/allyaria-editor/issues) tab.
 - Include steps to reproduce, expected vs. actual behavior, and environment details.
 - For security-related issues, **do not** open a public issue. Please see [`SECURITY.md`](./SECURITY.md).
 
-## 📚 Additional Notes
+## Additional Notes
 
 - **Accessibility (a11y)** is a **non-negotiable requirement** for all components.
 - **Localization**: All user-facing strings must be localizable.

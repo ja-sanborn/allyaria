@@ -1,4 +1,4 @@
-﻿using Allyaria.Theming.Styles;
+using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 
@@ -85,6 +85,50 @@ public sealed class AllyariaSpacingTests
         sut.PaddingRight.Should().NotBeNull();
         sut.PaddingBottom.Should().NotBeNull();
         sut.PaddingLeft.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void FromSingle_Should_Set_All_Sides_When_Given_Margin_And_Padding()
+    {
+        // Arrange
+        var margin = new AllyariaNumberValue("10px");
+        var padding = new AllyariaNumberValue("1rem");
+
+        // Act
+        var sut = AllyariaSpacing.FromSingle(margin, padding);
+
+        // Assert
+        sut.MarginTop!.ToCss("margin-top").Should().Be("margin-top:10px;");
+        sut.MarginRight!.ToCss("margin-right").Should().Be("margin-right:10px;");
+        sut.MarginBottom!.ToCss("margin-bottom").Should().Be("margin-bottom:10px;");
+        sut.MarginLeft!.ToCss("margin-left").Should().Be("margin-left:10px;");
+        sut.PaddingTop!.ToCss("padding-top").Should().Be("padding-top:1rem;");
+        sut.PaddingRight!.ToCss("padding-right").Should().Be("padding-right:1rem;");
+        sut.PaddingBottom!.ToCss("padding-bottom").Should().Be("padding-bottom:1rem;");
+        sut.PaddingLeft!.ToCss("padding-left").Should().Be("padding-left:1rem;");
+    }
+
+    [Fact]
+    public void FromSymmetric_Should_Assign_Vertical_And_Horizontal_Correctly()
+    {
+        // Arrange
+        var marginHorizontal = new AllyariaNumberValue("4px");
+        var marginVertical = new AllyariaNumberValue("8px");
+        var paddingHorizontal = new AllyariaNumberValue("2%");
+        var paddingVertical = new AllyariaNumberValue("3%");
+
+        // Act
+        var sut = AllyariaSpacing.FromSymmetric(marginHorizontal, marginVertical, paddingHorizontal, paddingVertical);
+
+        // Assert
+        sut.MarginTop!.ToCss("margin-top").Should().Be("margin-top:8px;");
+        sut.MarginRight!.ToCss("margin-right").Should().Be("margin-right:4px;");
+        sut.MarginBottom!.ToCss("margin-bottom").Should().Be("margin-bottom:8px;");
+        sut.MarginLeft!.ToCss("margin-left").Should().Be("margin-left:4px;");
+        sut.PaddingTop!.ToCss("padding-top").Should().Be("padding-top:3%;");
+        sut.PaddingRight!.ToCss("padding-right").Should().Be("padding-right:2%;");
+        sut.PaddingBottom!.ToCss("padding-bottom").Should().Be("padding-bottom:3%;");
+        sut.PaddingLeft!.ToCss("padding-left").Should().Be("padding-left:2%;");
     }
 
     [Fact]
