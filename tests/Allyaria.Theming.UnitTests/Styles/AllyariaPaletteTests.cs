@@ -6,9 +6,6 @@ namespace Allyaria.Theming.UnitTests.Styles;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AllyariaPaletteTests
 {
-    private static double Blend(double start, double target, double t)
-        => start + (target - start) * Math.Clamp(t, 0.0, 1.0);
-
     [Fact]
     public void Cascade_Should_ApplyOverrides_TrimImage_And_EmptyOnWhitespace()
     {

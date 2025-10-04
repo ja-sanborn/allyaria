@@ -236,7 +236,7 @@ public sealed class AllyariaImageValueTests
         // Assert
         ok.Should().BeTrue();
         parsed.Should().NotBeNull();
-        string normalized = parsed!;
+        string normalized = parsed;
         normalized.Should().Be(@"url(""bar/baz.svg"")");
     }
 }
