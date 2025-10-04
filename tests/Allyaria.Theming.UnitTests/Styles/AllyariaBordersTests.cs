@@ -144,20 +144,20 @@ public sealed class AllyariaBordersTests
         var sut = new AllyariaBorders();
 
         // Assert
-        sut.TopWidth.Should().Be(StyleDefault.BorderWidth);
-        sut.RightWidth.Should().Be(StyleDefault.BorderWidth);
-        sut.BottomWidth.Should().Be(StyleDefault.BorderWidth);
-        sut.LeftWidth.Should().Be(StyleDefault.BorderWidth);
+        sut.TopWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.RightWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.BottomWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.LeftWidth.Should().Be(StyleDefaults.BorderWidth);
 
-        sut.TopStyle.Should().Be(StyleDefault.BorderStyle);
-        sut.RightStyle.Should().Be(StyleDefault.BorderStyle);
-        sut.BottomStyle.Should().Be(StyleDefault.BorderStyle);
-        sut.LeftStyle.Should().Be(StyleDefault.BorderStyle);
+        sut.TopStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.RightStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.BottomStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.LeftStyle.Should().Be(StyleDefaults.BorderStyle);
 
-        sut.TopLeftRadius.Should().Be(StyleDefault.BorderRadius);
-        sut.TopRightRadius.Should().Be(StyleDefault.BorderRadius);
-        sut.BottomRightRadius.Should().Be(StyleDefault.BorderRadius);
-        sut.BottomLeftRadius.Should().Be(StyleDefault.BorderRadius);
+        sut.TopLeftRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.TopRightRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.BottomRightRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.BottomLeftRadius.Should().Be(StyleDefaults.BorderRadius);
     }
 
     [Fact]

@@ -54,17 +54,17 @@ public sealed class AllyariaTypographyTests
         var sut = new AllyariaTypography();
 
         // Assert
-        sut.FontFamily.Should().Be(StyleDefault.FontFamily);
-        sut.FontSize.Should().Be(StyleDefault.FontSize);
-        sut.FontStyle.Should().Be(StyleDefault.FontStyle);
-        sut.FontWeight.Should().Be(StyleDefault.FontWeight);
-        sut.LetterSpacing.Should().Be(StyleDefault.LetterSpacing);
-        sut.LineHeight.Should().Be(StyleDefault.LineHeight);
-        sut.TextAlign.Should().Be(StyleDefault.TextAlign);
-        sut.TextDecorationLine.Should().Be(StyleDefault.TextDecorationLine);
-        sut.TextDecorationStyle.Should().Be(StyleDefault.TextDecorationStyle);
-        sut.TextTransform.Should().Be(StyleDefault.TextTransform);
-        sut.VerticalAlign.Should().Be(StyleDefault.VerticalAlign);
+        sut.FontFamily.Should().Be(StyleDefaults.FontFamily);
+        sut.FontSize.Should().Be(StyleDefaults.FontSize);
+        sut.FontStyle.Should().Be(StyleDefaults.FontStyle);
+        sut.FontWeight.Should().Be(StyleDefaults.FontWeight);
+        sut.LetterSpacing.Should().Be(StyleDefaults.LetterSpacing);
+        sut.LineHeight.Should().Be(StyleDefaults.LineHeight);
+        sut.TextAlign.Should().Be(StyleDefaults.TextAlign);
+        sut.TextDecorationLine.Should().Be(StyleDefaults.TextDecorationLine);
+        sut.TextDecorationStyle.Should().Be(StyleDefaults.TextDecorationStyle);
+        sut.TextTransform.Should().Be(StyleDefaults.TextTransform);
+        sut.VerticalAlign.Should().Be(StyleDefaults.VerticalAlign);
     }
 
     private static AllyariaNumberValue N(string v) => new(v);

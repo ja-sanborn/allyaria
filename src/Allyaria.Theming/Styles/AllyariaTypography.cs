@@ -7,20 +7,20 @@ namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a strongly typed set of typography tokens (font family, size, weight, spacing, alignment, and decoration)
-/// for the Allyaria theming system. Values are immutable after initialization and default to <see cref="StyleDefault" />
+/// for the Allyaria theming system. Values are immutable after initialization and default to <see cref="StyleDefaults" />
 /// when not explicitly provided.
 /// </summary>
 public readonly record struct AllyariaTypography
 {
     /// <summary>
-    /// Initializes a new <see cref="AllyariaTypography" /> using the <see cref="StyleDefault" /> values for all members.
+    /// Initializes a new <see cref="AllyariaTypography" /> using the <see cref="StyleDefaults" /> values for all members.
     /// </summary>
     public AllyariaTypography()
         : this(null) { }
 
     /// <summary>
     /// Initializes a new <see cref="AllyariaTypography" /> with optional values. Any parameter left as <see langword="null" />
-    /// falls back to <see cref="StyleDefault" /> for that member.
+    /// falls back to <see cref="StyleDefaults" /> for that member.
     /// </summary>
     /// <param name="fontFamily">Optional font family token.</param>
     /// <param name="fontSize">Optional font size token.</param>
@@ -45,17 +45,17 @@ public readonly record struct AllyariaTypography
         AllyariaStringValue? textTransform = null,
         AllyariaStringValue? verticalAlign = null)
     {
-        FontFamily = fontFamily ?? StyleDefault.FontFamily;
-        FontSize = fontSize ?? StyleDefault.FontSize;
-        FontStyle = fontStyle ?? StyleDefault.FontStyle;
-        FontWeight = fontWeight ?? StyleDefault.FontWeight;
-        LetterSpacing = letterSpacing ?? StyleDefault.LetterSpacing;
-        LineHeight = lineHeight ?? StyleDefault.LineHeight;
-        TextAlign = textAlign ?? StyleDefault.TextAlign;
-        TextDecorationLine = textDecorationLine ?? StyleDefault.TextDecorationLine;
-        TextDecorationStyle = textDecorationStyle ?? StyleDefault.TextDecorationStyle;
-        TextTransform = textTransform ?? StyleDefault.TextTransform;
-        VerticalAlign = verticalAlign ?? StyleDefault.VerticalAlign;
+        FontFamily = fontFamily ?? StyleDefaults.FontFamily;
+        FontSize = fontSize ?? StyleDefaults.FontSize;
+        FontStyle = fontStyle ?? StyleDefaults.FontStyle;
+        FontWeight = fontWeight ?? StyleDefaults.FontWeight;
+        LetterSpacing = letterSpacing ?? StyleDefaults.LetterSpacing;
+        LineHeight = lineHeight ?? StyleDefaults.LineHeight;
+        TextAlign = textAlign ?? StyleDefaults.TextAlign;
+        TextDecorationLine = textDecorationLine ?? StyleDefaults.TextDecorationLine;
+        TextDecorationStyle = textDecorationStyle ?? StyleDefaults.TextDecorationStyle;
+        TextTransform = textTransform ?? StyleDefaults.TextTransform;
+        VerticalAlign = verticalAlign ?? StyleDefaults.VerticalAlign;
     }
 
     /// <summary>Gets or initializes the font family (e.g., <c>Inter, "Segoe UI", sans-serif</c>).</summary>

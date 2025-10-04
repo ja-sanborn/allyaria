@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Allyaria.Theming.Styles;
 
 /// <summary>
@@ -109,66 +107,4 @@ public readonly record struct AllyariaStyle
     /// </returns>
     public string ToCssHover()
         => string.Concat(PaletteHover.ToCss(), TypographyHover.ToCss(), Spacing.ToCss(), Border.ToCss());
-
-    /// <summary>
-    /// Builds CSS custom property (variable) declarations representing this style for the base, disabled, and hover states
-    /// using a normalized variable prefix.
-    /// </summary>
-    /// <param name="prefix">
-    /// Optional namespace for the CSS variables (e.g., <c>"editor"</c>). The value is normalized by trimming
-    /// whitespace/dashes, converting to lowercase, and collapsing whitespace/dashes to a single dash. If the normalized value
-    /// is empty, the default prefix <c>aa</c> is used. The disabled and hover prefixes are formed by appending
-    /// <c>-disabled</c> and <c>-hover</c> respectively.
-    /// </param>
-    /// <returns>
-    /// A concatenated CSS string of custom property declarations for:
-    /// <list type="bullet">
-    ///     <item>
-    ///         <description>Base variables (using the base prefix).</description>
-    ///     </item>
-    ///     <item>
-    ///         <description>Disabled variables (using <c>{prefix}-disabled</c>).</description>
-    ///     </item>
-    ///     <item>
-    ///         <description>Hover variables (using <c>{prefix}-hover</c>).</description>
-    ///     </item>
-    /// </list>
-    /// Each underlying call delegates to <see cref="AllyariaPalette.ToCssVars(string)" />,
-    /// <see cref="AllyariaTypography.ToCssVars(string)" />, <see cref="AllyariaSpacing.ToCssVars(string)" />, and
-    /// <see cref="AllyariaBorders.ToCssVars(string)" /> which apply their own <c>--</c> prefixing convention.
-    /// </returns>
-    /// <remarks>
-    ///     <para>
-    ///     The final CSS variable names produced by the underlying palette, typography, spacing, and border methods include
-    ///     the leading <c>--</c> and a trailing hyphen after the provided prefix (e.g., <c>--editor-*</c>).
-    ///     </para>
-    ///     <para>
-    ///     Spacing and border variables are emitted only for the base prefix because they are applied consistently across
-    ///     base, disabled, and hover states in this model. Palette and typography variables are emitted for all three
-    ///     prefixes.
-    ///     </para>
-    /// </remarks>
-    public string ToCssVars(string prefix = "")
-    {
-        var basePrefix = Regex.Replace(prefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
-
-        if (string.IsNullOrWhiteSpace(basePrefix))
-        {
-            basePrefix = "aa";
-        }
-
-        var disabledPrefix = $"{basePrefix}-disabled";
-        var hoverPrefix = $"{basePrefix}-hover";
-
-        return string.Concat(
-            Spacing.ToCssVars(basePrefix),
-            Border.ToCssVars(basePrefix),
-            Palette.ToCssVars(basePrefix),
-            Typography.ToCssVars(basePrefix),
-            PaletteDisabled.ToCssVars(disabledPrefix),
-            TypographyDisabled.ToCssVars(disabledPrefix),
-            PaletteHover.ToCssVars(hoverPrefix),
-            TypographyHover.ToCssVars(hoverPrefix)
-        );
-    }
 }

@@ -20,7 +20,7 @@ public readonly record struct AllyariaBorders
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AllyariaBorders" /> struct, setting all widths, styles, and radii to
-    /// <see cref="StyleDefault" /> values.
+    /// <see cref="StyleDefaults" /> values.
     /// </summary>
     /// <remarks>
     /// This constructor exists so that <c>new AllyariaBorders()</c> will apply the theme’s default border width, style, and
@@ -31,7 +31,7 @@ public readonly record struct AllyariaBorders
 
     /// <summary>
     /// Initializes a new <see cref="AllyariaBorders" /> with optional per-side widths/styles and per-corner radii. Any
-    /// parameter left as <see langword="null" /> falls back to <see cref="StyleDefault" /> for that member.
+    /// parameter left as <see langword="null" /> falls back to <see cref="StyleDefaults" /> for that member.
     /// </summary>
     /// <param name="topWidth">Optional <c>border-top-width</c>.</param>
     /// <param name="rightWidth">Optional <c>border-right-width</c>.</param>
@@ -58,18 +58,18 @@ public readonly record struct AllyariaBorders
         AllyariaNumberValue? bottomRightRadius = null,
         AllyariaNumberValue? bottomLeftRadius = null)
     {
-        TopWidth = topWidth ?? StyleDefault.BorderWidth;
-        RightWidth = rightWidth ?? StyleDefault.BorderWidth;
-        BottomWidth = bottomWidth ?? StyleDefault.BorderWidth;
-        LeftWidth = leftWidth ?? StyleDefault.BorderWidth;
-        TopStyle = topStyle ?? StyleDefault.BorderStyle;
-        RightStyle = rightStyle ?? StyleDefault.BorderStyle;
-        BottomStyle = bottomStyle ?? StyleDefault.BorderStyle;
-        LeftStyle = leftStyle ?? StyleDefault.BorderStyle;
-        TopLeftRadius = topLeftRadius ?? StyleDefault.BorderRadius;
-        TopRightRadius = topRightRadius ?? StyleDefault.BorderRadius;
-        BottomRightRadius = bottomRightRadius ?? StyleDefault.BorderRadius;
-        BottomLeftRadius = bottomLeftRadius ?? StyleDefault.BorderRadius;
+        TopWidth = topWidth ?? StyleDefaults.BorderWidth;
+        RightWidth = rightWidth ?? StyleDefaults.BorderWidth;
+        BottomWidth = bottomWidth ?? StyleDefaults.BorderWidth;
+        LeftWidth = leftWidth ?? StyleDefaults.BorderWidth;
+        TopStyle = topStyle ?? StyleDefaults.BorderStyle;
+        RightStyle = rightStyle ?? StyleDefaults.BorderStyle;
+        BottomStyle = bottomStyle ?? StyleDefaults.BorderStyle;
+        LeftStyle = leftStyle ?? StyleDefaults.BorderStyle;
+        TopLeftRadius = topLeftRadius ?? StyleDefaults.BorderRadius;
+        TopRightRadius = topRightRadius ?? StyleDefaults.BorderRadius;
+        BottomRightRadius = bottomRightRadius ?? StyleDefaults.BorderRadius;
+        BottomLeftRadius = bottomLeftRadius ?? StyleDefaults.BorderRadius;
     }
 
     /// <summary>Gets or initializes the <c>border-bottom-left-radius</c>.</summary>
