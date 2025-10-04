@@ -134,21 +134,20 @@ public readonly record struct AllyariaPalette
     public string ToCss(string? varPrefix = "")
     {
         var builder = new StringBuilder();
-        var prefix = varPrefix ?? string.Empty;
 
-        builder.ToCss(ForegroundColor, "color", prefix);
-        builder.ToCss(BackgroundColor, "background-color", prefix);
-        builder.ToCss(BorderColor, "border-color", prefix);
+        builder.ToCss(ForegroundColor, "color", varPrefix);
+        builder.ToCss(BackgroundColor, "background-color", varPrefix);
+        builder.ToCss(BorderColor, "border-color", varPrefix);
 
         if (!string.IsNullOrWhiteSpace(BackgroundImage))
         {
-            builder.ToCss(new AllyariaImageValue(BackgroundImage, BackgroundColor), "background-image", prefix);
+            builder.ToCss(new AllyariaImageValue(BackgroundImage, BackgroundColor), "background-image", varPrefix);
 
             if (BackgroundImageStretch)
             {
-                builder.ToCss(new AllyariaStringValue("center"), "background-position", prefix);
-                builder.ToCss(new AllyariaStringValue("no-repeat"), "background-repeat", prefix);
-                builder.ToCss(new AllyariaStringValue("cover"), "background-size", prefix);
+                builder.ToCss(new AllyariaStringValue("center"), "background-position", varPrefix);
+                builder.ToCss(new AllyariaStringValue("no-repeat"), "background-repeat", varPrefix);
+                builder.ToCss(new AllyariaStringValue("cover"), "background-size", varPrefix);
             }
         }
 

@@ -1,12 +1,10 @@
-﻿using Allyaria.Theming.Styles;
-using Allyaria.Theming.Values;
+﻿using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 
 /// <summary>
-/// Provides strongly typed constants representing standard CSS border styles for use with the <see cref="AllyariaTheme" />
-/// system.
+/// Provides strongly typed constants representing standard CSS border styles.
 /// </summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class BorderStyle

@@ -80,9 +80,10 @@ public sealed class StyleHelperTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ToCss_Should_UsePropertyNameDirectly_When_VarPrefixIsNullOrWhitespace(string varPrefix)
+    public void ToCss_Should_UsePropertyNameDirectly_When_VarPrefixIsNullOrWhitespace(string? varPrefix)
     {
         // Arrange
         var builder = new StringBuilder();

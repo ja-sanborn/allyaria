@@ -143,7 +143,7 @@ public readonly record struct AllyariaSpacing
     /// <returns>
     /// A <see cref="string" /> containing CSS declarations for all margin and padding sides, each terminated with a semicolon.
     /// </returns>
-    public string ToCss(string varPrefix = "")
+    public string ToCss(string? varPrefix = "")
     {
         var builder = new StringBuilder();
         builder.ToCss(MarginTop, "margin-top", varPrefix);

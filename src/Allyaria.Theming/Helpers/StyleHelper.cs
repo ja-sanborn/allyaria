@@ -15,14 +15,14 @@ internal static class StyleHelper
     /// The prefix used when generating a CSS variable name. Results in a property of the form
     /// <c>--{varPrefix}-var-{propertyName}</c>. Hyphens and whitespace are normalized.
     /// </param>
-    public static void ToCss(this StringBuilder builder, ValueBase value, string propertyName, string varPrefix)
+    public static void ToCss(this StringBuilder builder, ValueBase value, string propertyName, string? varPrefix)
     {
         if (string.IsNullOrWhiteSpace(propertyName) || string.IsNullOrWhiteSpace(value.Value))
         {
             return;
         }
 
-        var prefix = Regex.Replace(varPrefix, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
+        var prefix = Regex.Replace(varPrefix ?? string.Empty, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 
         var prefixedProperty = string.IsNullOrWhiteSpace(prefix)
             ? propertyName

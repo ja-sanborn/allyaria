@@ -220,7 +220,7 @@ public readonly record struct AllyariaBorders
     /// A CSS string containing zero or more declarations (each ending as produced by
     /// <see cref="StyleHelper.ToCss(StringBuilder, Allyaria.Theming.Contracts.ValueBase, string, string)" />).
     /// </returns>
-    public string ToCss(string varPrefix = "")
+    public string ToCss(string? varPrefix = "")
     {
         var builder = new StringBuilder();
         builder.ToCss(TopWidth, "border-top-width", varPrefix);
