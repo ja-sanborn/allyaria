@@ -1,3 +1,4 @@
+using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Styles;
@@ -6,148 +7,166 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AllyariaBordersTests
 {
     [Fact]
-    public void Cascade_Should_Apply_Only_Specified_Overrides_Leaving_Others_Intact()
+    public void Cascade_Should_ApplyOnlyProvidedOverrides_When_PartialOverridesProvided()
     {
         // Arrange
-        AllyariaNumberValue width = "1px";
-        AllyariaStringValue style = "solid";
-        AllyariaNumberValue radius = ".25rem";
-
-        var baseBorders = AllyariaBorders.FromSingle(width, style, radius);
-
-        // Explicit overrides
-        AllyariaNumberValue newTopWidth = "4px";
-        AllyariaStringValue newLeftStyle = "dashed";
-        AllyariaNumberValue newBottomRightRadius = "1rem";
+        var original = new AllyariaBorders(
+            new AllyariaNumberValue("1px"),
+            new AllyariaNumberValue("1px"),
+            new AllyariaNumberValue("1px"),
+            new AllyariaNumberValue("1px"),
+            BorderStyles.Solid,
+            BorderStyles.Solid,
+            BorderStyles.Solid,
+            BorderStyles.Solid,
+            new AllyariaNumberValue("2px"),
+            new AllyariaNumberValue("2px"),
+            new AllyariaNumberValue("2px"),
+            new AllyariaNumberValue("2px")
+        );
 
         // Act
-        var sut = baseBorders.Cascade(
-            newTopWidth,
-            leftStyle: newLeftStyle,
-            bottomRightRadius: newBottomRightRadius
+        var sut = original.Cascade(
+            new AllyariaNumberValue("10px"),
+            leftStyle: BorderStyles.Dashed,
+            bottomLeftRadius: new AllyariaNumberValue("12px")
         );
 
         // Assert
-        sut.TopWidth.Should().Be(newTopWidth);
-        sut.LeftStyle.Should().Be(newLeftStyle);
-        sut.BottomRightRadius.Should().Be(newBottomRightRadius);
+        sut.TopWidth.Should().Be(new AllyariaNumberValue("10px"));
+        sut.RightWidth.Should().Be(original.RightWidth);
+        sut.BottomWidth.Should().Be(original.BottomWidth);
+        sut.LeftWidth.Should().Be(original.LeftWidth);
 
-        sut.RightWidth.Should().Be(width);
-        sut.BottomWidth.Should().Be(width);
-        sut.LeftWidth.Should().Be(width);
+        sut.TopStyle.Should().Be(original.TopStyle);
+        sut.RightStyle.Should().Be(original.RightStyle);
+        sut.BottomStyle.Should().Be(original.BottomStyle);
+        sut.LeftStyle.Should().Be(BorderStyles.Dashed);
 
-        sut.TopStyle.Should().Be(style);
-        sut.RightStyle.Should().Be(style);
-        sut.BottomStyle.Should().Be(style);
-
-        sut.TopLeftRadius.Should().Be(radius);
-        sut.TopRightRadius.Should().Be(radius);
-        sut.BottomLeftRadius.Should().Be(radius);
+        sut.TopLeftRadius.Should().Be(original.TopLeftRadius);
+        sut.TopRightRadius.Should().Be(original.TopRightRadius);
+        sut.BottomRightRadius.Should().Be(original.BottomRightRadius);
+        sut.BottomLeftRadius.Should().Be(new AllyariaNumberValue("12px"));
     }
 
     [Fact]
-    public void Cascade_Should_Preserve_Existing_Values_When_Overrides_Are_Null()
+    public void Cascade_Should_PreserveExistingValues_When_NoOverridesProvided()
     {
         // Arrange
-        AllyariaNumberValue width = "1px";
-        AllyariaStringValue style = "solid";
-        AllyariaNumberValue radius = ".25rem";
-
-        var baseBorders = AllyariaBorders.FromSingle(width, style, radius);
+        var original = new AllyariaBorders(
+            new AllyariaNumberValue("1px"),
+            new AllyariaNumberValue("2px"),
+            new AllyariaNumberValue("3px"),
+            new AllyariaNumberValue("4px"),
+            BorderStyles.Solid,
+            BorderStyles.Dashed,
+            BorderStyles.Dotted,
+            BorderStyles.None,
+            new AllyariaNumberValue("1px"),
+            new AllyariaNumberValue("2px"),
+            new AllyariaNumberValue("3px"),
+            new AllyariaNumberValue("4px")
+        );
 
         // Act
-        var sut = baseBorders.Cascade(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
+        var sut = original.Cascade();
+
+        // Assert
+        sut.Should().Be(original);
+    }
+
+    [Fact]
+    public void Cascade_Should_ReturnNewInstance_When_OverridesApplied()
+    {
+        // Arrange
+        var original = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
+        var overrideTopStyle = BorderStyles.Dashed;
+
+        // Act
+        var result = original.Cascade(topStyle: overrideTopStyle);
+
+        // Assert
+        result.Should().NotBe(original);
+        result.TopStyle.Should().Be(overrideTopStyle);
+
+        // unchanged samples
+        result.RightStyle.Should().Be(original.RightStyle);
+        result.BottomLeftRadius.Should().Be(original.BottomLeftRadius);
+    }
+
+    [Fact]
+    public void Ctor_Should_ApplyOverrides_When_ValuesProvided()
+    {
+        // Arrange
+        var wTop = new AllyariaNumberValue("3px");
+        var wRight = new AllyariaNumberValue("2px");
+        var wBottom = new AllyariaNumberValue("1px");
+        var wLeft = new AllyariaNumberValue("0.5rem");
+
+        var sTop = new AllyariaStringValue("dashed");
+        var sRight = BorderStyles.Dotted;
+        var sBottom = BorderStyles.Double;
+        var sLeft = BorderStyles.None;
+
+        var rTl = new AllyariaNumberValue("4px");
+        var rTr = new AllyariaNumberValue("6px");
+        var rBr = new AllyariaNumberValue("8px");
+        var rBl = new AllyariaNumberValue("10px");
+
+        // Act
+        var sut = new AllyariaBorders(
+            wTop, wRight, wBottom, wLeft,
+            sTop, sRight, sBottom, sLeft,
+            rTl, rTr, rBr, rBl
         );
 
         // Assert
-        sut.Should().Be(baseBorders);
+        sut.TopWidth.Should().Be(wTop);
+        sut.RightWidth.Should().Be(wRight);
+        sut.BottomWidth.Should().Be(wBottom);
+        sut.LeftWidth.Should().Be(wLeft);
+
+        sut.TopStyle.Should().Be(sTop);
+        sut.RightStyle.Should().Be(sRight);
+        sut.BottomStyle.Should().Be(sBottom);
+        sut.LeftStyle.Should().Be(sLeft);
+
+        sut.TopLeftRadius.Should().Be(rTl);
+        sut.TopRightRadius.Should().Be(rTr);
+        sut.BottomRightRadius.Should().Be(rBr);
+        sut.BottomLeftRadius.Should().Be(rBl);
     }
 
     [Fact]
-    public void Ctor_Should_Leave_All_Members_Null_When_No_Args_Are_Passed()
+    public void Ctor_Should_UseDefaults_When_AllParametersAreNull()
     {
         // Arrange & Act
         var sut = new AllyariaBorders();
 
         // Assert
-        sut.TopWidth.Should().BeNull();
-        sut.RightWidth.Should().BeNull();
-        sut.BottomWidth.Should().BeNull();
-        sut.LeftWidth.Should().BeNull();
+        sut.TopWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.RightWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.BottomWidth.Should().Be(StyleDefaults.BorderWidth);
+        sut.LeftWidth.Should().Be(StyleDefaults.BorderWidth);
 
-        sut.TopStyle.Should().BeNull();
-        sut.RightStyle.Should().BeNull();
-        sut.BottomStyle.Should().BeNull();
-        sut.LeftStyle.Should().BeNull();
+        sut.TopStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.RightStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.BottomStyle.Should().Be(StyleDefaults.BorderStyle);
+        sut.LeftStyle.Should().Be(StyleDefaults.BorderStyle);
 
-        sut.TopLeftRadius.Should().BeNull();
-        sut.TopRightRadius.Should().BeNull();
-        sut.BottomRightRadius.Should().BeNull();
-        sut.BottomLeftRadius.Should().BeNull();
+        sut.TopLeftRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.TopRightRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.BottomRightRadius.Should().Be(StyleDefaults.BorderRadius);
+        sut.BottomLeftRadius.Should().Be(StyleDefaults.BorderRadius);
     }
 
     [Fact]
-    public void Ctor_Should_Set_All_Members_When_All_Are_Provided()
+    public void FromSingle_Should_CreateUniformBorders_When_SameInputsProvided()
     {
         // Arrange
-        AllyariaNumberValue topW = "1px";
-        AllyariaNumberValue rightW = "2px";
-        AllyariaNumberValue bottomW = "3px";
-        AllyariaNumberValue leftW = "4px";
-
-        AllyariaStringValue topS = "solid";
-        AllyariaStringValue rightS = "dashed";
-        AllyariaStringValue bottomS = "dotted";
-        AllyariaStringValue leftS = "double";
-
-        AllyariaNumberValue tl = ".125rem";
-        AllyariaNumberValue tr = ".25rem";
-        AllyariaNumberValue br = ".5rem";
-        AllyariaNumberValue bl = "1rem";
-
-        // Act
-        var sut = new AllyariaBorders(
-            topW, rightW, bottomW, leftW,
-            topS, rightS, bottomS, leftS,
-            tl, tr, br, bl
-        );
-
-        // Assert
-        sut.TopWidth.Should().Be(topW);
-        sut.RightWidth.Should().Be(rightW);
-        sut.BottomWidth.Should().Be(bottomW);
-        sut.LeftWidth.Should().Be(leftW);
-
-        sut.TopStyle.Should().Be(topS);
-        sut.RightStyle.Should().Be(rightS);
-        sut.BottomStyle.Should().Be(bottomS);
-        sut.LeftStyle.Should().Be(leftS);
-
-        sut.TopLeftRadius.Should().Be(tl);
-        sut.TopRightRadius.Should().Be(tr);
-        sut.BottomRightRadius.Should().Be(br);
-        sut.BottomLeftRadius.Should().Be(bl);
-    }
-
-    [Fact]
-    public void FromSingle_Should_Apply_Same_Width_Style_And_Radius_To_All_Sides_And_Corners()
-    {
-        // Arrange
-        AllyariaNumberValue width = "1px";
-        AllyariaStringValue style = "solid";
-        AllyariaNumberValue radius = ".25rem";
+        var width = Sizing.Thin;
+        var style = BorderStyles.Dotted;
+        var radius = Sizing.Size3;
 
         // Act
         var sut = AllyariaBorders.FromSingle(width, style, radius);
@@ -167,180 +186,89 @@ public sealed class AllyariaBordersTests
         sut.TopRightRadius.Should().Be(radius);
         sut.BottomRightRadius.Should().Be(radius);
         sut.BottomLeftRadius.Should().Be(radius);
-
-        var css = sut.ToCss();
-        css.Should().Contain("border-top-width");
-        css.Should().Contain("border-right-width");
-        css.Should().Contain("border-bottom-width");
-        css.Should().Contain("border-left-width");
-        css.Should().Contain("border-top-style");
-        css.Should().Contain("border-right-style");
-        css.Should().Contain("border-bottom-style");
-        css.Should().Contain("border-left-style");
-        css.Should().Contain("border-top-left-radius");
-        css.Should().Contain("border-top-right-radius");
-        css.Should().Contain("border-bottom-right-radius");
-        css.Should().Contain("border-bottom-left-radius");
     }
 
     [Fact]
-    public void FromSymmetric_Should_Map_Vertical_And_Horizontal_Sides_Correctly_And_Set_Radii_Pairs()
+    public void FromSymmetric_Should_AssignHorizontalVerticalAndCornerPairs_Correctly()
     {
         // Arrange
-        AllyariaNumberValue widthH = "2px";
-        AllyariaNumberValue widthV = "1px";
-        AllyariaStringValue styleH = "dashed";
-        AllyariaStringValue styleV = "solid";
-        AllyariaNumberValue radiusTop = ".5rem";
-        AllyariaNumberValue radiusBottom = "1rem";
+        var wH = new AllyariaNumberValue("5px");
+        var wV = new AllyariaNumberValue("7px");
+        var sH = BorderStyles.Double;
+        var sV = BorderStyles.Groove;
+        var rTop = new AllyariaNumberValue("3px");
+        var rBottom = new AllyariaNumberValue("9px");
 
         // Act
-        var sut = AllyariaBorders.FromSymmetric(widthH, widthV, styleH, styleV, radiusTop, radiusBottom);
+        var sut = AllyariaBorders.FromSymmetric(wH, wV, sH, sV, rTop, rBottom);
 
         // Assert
-        sut.TopWidth.Should().Be(widthV);
-        sut.BottomWidth.Should().Be(widthV);
-        sut.RightWidth.Should().Be(widthH);
-        sut.LeftWidth.Should().Be(widthH);
-
-        sut.TopStyle.Should().Be(styleV);
-        sut.BottomStyle.Should().Be(styleV);
-        sut.RightStyle.Should().Be(styleH);
-        sut.LeftStyle.Should().Be(styleH);
-
-        sut.TopLeftRadius.Should().Be(radiusTop);
-        sut.TopRightRadius.Should().Be(radiusTop);
-        sut.BottomRightRadius.Should().Be(radiusBottom);
-        sut.BottomLeftRadius.Should().Be(radiusBottom);
+        sut.LeftWidth.Should().Be(wH);
+        sut.RightWidth.Should().Be(wH);
+        sut.TopWidth.Should().Be(wV);
+        sut.BottomWidth.Should().Be(wV);
+        sut.LeftStyle.Should().Be(sH);
+        sut.RightStyle.Should().Be(sH);
+        sut.TopStyle.Should().Be(sV);
+        sut.BottomStyle.Should().Be(sV);
+        sut.TopLeftRadius.Should().Be(rTop);
+        sut.TopRightRadius.Should().Be(rTop);
+        sut.BottomLeftRadius.Should().Be(rBottom);
+        sut.BottomRightRadius.Should().Be(rBottom);
     }
 
     [Fact]
-    public void Immutability_Should_Be_Preserved_When_Using_WithExpression()
+    public void ToCss_Should_ApplyNormalizedVariablePrefix_When_PrefixProvided()
     {
         // Arrange
-        var original = AllyariaBorders.FromSingle("1px", "solid", ".25rem");
+        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
+        var rawPrefix = "  My  --Cool__Prefix  ";
 
         // Act
-        var modified = original with
-        {
-            TopWidth = "4px"
-        };
+        var css = sut.ToCss(rawPrefix);
 
         // Assert
-        original.TopWidth!.Value.Should().Be("1px");
-        modified.TopWidth!.Value.Should().Be("4px");
+        var p = "--my-cool__prefix-var-";
+
+        var expected = $"{p}border-top-width:1px;" +
+            $"{p}border-right-width:1px;" +
+            $"{p}border-bottom-width:1px;" +
+            $"{p}border-left-width:1px;" +
+            $"{p}border-top-style:solid;" +
+            $"{p}border-right-style:solid;" +
+            $"{p}border-bottom-style:solid;" +
+            $"{p}border-left-style:solid;" +
+            $"{p}border-top-left-radius:8px;" +
+            $"{p}border-top-right-radius:8px;" +
+            $"{p}border-bottom-left-radius:8px;" +
+            $"{p}border-bottom-right-radius:8px;";
+
+        css.Should().Be(expected);
     }
 
     [Fact]
-    public void Record_Value_Equality_Should_Consider_All_Properties()
+    public void ToCss_Should_EmitAllDeclarations_InCorrectOrder_When_NoPrefix()
     {
         // Arrange
-        var a = new AllyariaBorders("1px", leftStyle: "solid", topLeftRadius: ".25rem");
-        var b = new AllyariaBorders("1px", leftStyle: "solid", topLeftRadius: ".25rem");
-
-        var c = b with
-        {
-            TopRightRadius = ".5rem"
-        };
-
-        // Act & Assert
-        a.Should().Be(b);
-        a.Should().NotBe(c);
-    }
-
-    [Fact]
-    public void ToCss_Should_Emit_Declarations_For_Only_NonNull_Members_In_Defined_Order()
-    {
-        // Arrange
-        AllyariaNumberValue topW = "1px";
-        AllyariaStringValue bottomS = "dotted";
-        AllyariaNumberValue tr = ".5rem";
-
-        var sut = new AllyariaBorders(
-            topW,
-            bottomStyle: bottomS,
-            topRightRadius: tr
-        );
+        var sut = AllyariaBorders.FromSingle(Sizing.Thin, BorderStyles.Solid, Sizing.Size2);
 
         // Act
         var css = sut.ToCss();
 
         // Assert
-        css.Should().Contain("border-top-width");
-        css.Should().Contain("border-bottom-style");
-        css.Should().Contain("border-top-right-radius");
+        var expected = "border-top-width:1px;" +
+            "border-right-width:1px;" +
+            "border-bottom-width:1px;" +
+            "border-left-width:1px;" +
+            "border-top-style:solid;" +
+            "border-right-style:solid;" +
+            "border-bottom-style:solid;" +
+            "border-left-style:solid;" +
+            "border-top-left-radius:8px;" +
+            "border-top-right-radius:8px;" +
+            "border-bottom-left-radius:8px;" +
+            "border-bottom-right-radius:8px;";
 
-        css.Should().NotContain("border-right-width");
-        css.Should().NotContain("border-left-width");
-        css.Should().NotContain("border-top-style");
-        css.Should().NotContain("border-right-style");
-        css.Should().NotContain("border-left-style");
-        css.Should().NotContain("border-top-left-radius");
-        css.Should().NotContain("border-bottom-right-radius");
-        css.Should().NotContain("border-bottom-left-radius");
-
-        var idxTopW = css.IndexOf("border-top-width", StringComparison.Ordinal);
-        var idxBottomS = css.IndexOf("border-bottom-style", StringComparison.Ordinal);
-        var idxTopRightR = css.IndexOf("border-top-right-radius", StringComparison.Ordinal);
-
-        (idxTopW < idxBottomS && idxBottomS < idxTopRightR).Should().BeTrue();
-    }
-
-    [Fact]
-    public void ToCss_Should_Return_Empty_String_When_All_Members_Are_Null()
-    {
-        // Arrange
-        var sut = new AllyariaBorders();
-
-        // Act
-        var css = sut.ToCss();
-
-        // Assert
-        css.Should().BeEmpty();
-    }
-
-    [Theory]
-    [InlineData("", "--aa-")]
-    [InlineData("   ", "--aa-")]
-    [InlineData("Editor", "--editor-")]
-    [InlineData("Editor  Theme", "--editor-theme-")]
-    [InlineData("--Editor--Theme--", "--editor-theme-")]
-    [InlineData("  editor---THEME  ", "--editor-theme-")]
-    public void ToCssVars_Should_Normalize_Prefix_And_Emit_Variables(string inputPrefix, string expectedPrefix)
-    {
-        // Arrange
-        AllyariaNumberValue topW = "2px";
-        AllyariaStringValue leftS = "dashed";
-        AllyariaNumberValue bl = "1rem";
-
-        var sut = new AllyariaBorders(
-            topW,
-            leftStyle: leftS,
-            bottomLeftRadius: bl
-        );
-
-        // Act
-        var vars = sut.ToCssVars(inputPrefix);
-
-        // Assert
-        vars.Should().Contain($"{expectedPrefix}border-top-width");
-        vars.Should().Contain($"{expectedPrefix}border-left-style");
-        vars.Should().Contain($"{expectedPrefix}border-bottom-left-radius");
-        vars.Should().NotContain("  ");
-        vars.Should().NotContain("--Editor");
-        vars.Should().NotContain("THEME");
-    }
-
-    [Fact]
-    public void ToCssVars_Should_Return_Empty_String_When_All_Members_Are_Null()
-    {
-        // Arrange
-        var sut = new AllyariaBorders();
-
-        // Act
-        var vars = sut.ToCssVars("any");
-
-        // Assert
-        vars.Should().BeEmpty();
+        css.Should().Be(expected);
     }
 }
