@@ -148,9 +148,9 @@ public class AllyariaStyleVariantTests
                 .Trim('-')
                 .ToLowerInvariant();
 
-            css.Should().Contain(expectedPart + "-var-font-")
-                .And.Contain(expectedPart + "-var-margin-")
-                .And.Contain(expectedPart + "-var-padding-");
+            css.Should().Contain(expectedPart + "-font-")
+                .And.Contain(expectedPart + "-margin-")
+                .And.Contain(expectedPart + "-padding-");
         }
     }
 }

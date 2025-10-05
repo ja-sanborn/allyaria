@@ -173,7 +173,7 @@ public sealed class AllyariaTypographyTests
         var css = sut.ToCss(varPrefix);
 
         // Assert
-        var expectedPrefix = "--my-theme-token-var-";
+        var expectedPrefix = "--my-theme-token-";
 
         css.Should().Be(
             $"{expectedPrefix}font-family:Inter;" +

@@ -13,7 +13,7 @@ internal static class StyleHelper
     /// <param name="propertyName">The CSS property name to apply (e.g., "color").</param>
     /// <param name="varPrefix">
     /// The prefix used when generating a CSS variable name. Results in a property of the form
-    /// <c>--{varPrefix}-var-{propertyName}</c>. Hyphens and whitespace are normalized.
+    /// <c>--{varPrefix}-{propertyName}</c>. Hyphens and whitespace are normalized.
     /// </param>
     public static void ToCss(this StringBuilder builder, ValueBase value, string propertyName, string? varPrefix)
     {
@@ -26,7 +26,7 @@ internal static class StyleHelper
 
         var prefixedProperty = string.IsNullOrWhiteSpace(prefix)
             ? propertyName
-            : $"--{prefix}-var-{propertyName}";
+            : $"--{prefix}-{propertyName}";
 
         builder.Append(value.ToCss(prefixedProperty));
     }

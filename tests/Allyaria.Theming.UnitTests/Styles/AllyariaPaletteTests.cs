@@ -218,8 +218,8 @@ public sealed class AllyariaPaletteTests
     [Theory]
     [InlineData(null, "color:")]
     [InlineData("", "color:")]
-    [InlineData("AppTheme", "--apptheme-var-color:")]
-    [InlineData("  app-- theme  ", "--app-theme-var-color:")]
+    [InlineData("AppTheme", "--apptheme-color:")]
+    [InlineData("  app-- theme  ", "--app-theme-color:")]
     public void ToCss_Should_RespectVarPrefix_When_PrefixProvided(string? prefix, string expectedPropertyPrefix)
     {
         // Arrange

@@ -229,14 +229,14 @@ public sealed class AllyariaSpacingTests
         var css = sut.ToCss("  Theme  --Primary  ");
 
         // Assert
-        var expected = "--theme-primary-var-margin-top:10px;" +
-            "--theme-primary-var-margin-right:20px;" +
-            "--theme-primary-var-margin-bottom:30px;" +
-            "--theme-primary-var-margin-left:40px;" +
-            "--theme-primary-var-padding-top:50px;" +
-            "--theme-primary-var-padding-right:60px;" +
-            "--theme-primary-var-padding-bottom:70px;" +
-            "--theme-primary-var-padding-left:80px;";
+        var expected = "--theme-primary-margin-top:10px;" +
+            "--theme-primary-margin-right:20px;" +
+            "--theme-primary-margin-bottom:30px;" +
+            "--theme-primary-margin-left:40px;" +
+            "--theme-primary-padding-top:50px;" +
+            "--theme-primary-padding-right:60px;" +
+            "--theme-primary-padding-bottom:70px;" +
+            "--theme-primary-padding-left:80px;";
 
         css.Should().Be(expected);
     }

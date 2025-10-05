@@ -228,20 +228,20 @@ public sealed class AllyariaBordersTests
         var css = sut.ToCss(rawPrefix);
 
         // Assert
-        var p = "--my-cool__prefix-var-";
+        var prefix = "--my-cool__prefix-";
 
-        var expected = $"{p}border-top-width:1px;" +
-            $"{p}border-right-width:1px;" +
-            $"{p}border-bottom-width:1px;" +
-            $"{p}border-left-width:1px;" +
-            $"{p}border-top-style:solid;" +
-            $"{p}border-right-style:solid;" +
-            $"{p}border-bottom-style:solid;" +
-            $"{p}border-left-style:solid;" +
-            $"{p}border-top-left-radius:8px;" +
-            $"{p}border-top-right-radius:8px;" +
-            $"{p}border-bottom-left-radius:8px;" +
-            $"{p}border-bottom-right-radius:8px;";
+        var expected = $"{prefix}border-top-width:1px;" +
+            $"{prefix}border-right-width:1px;" +
+            $"{prefix}border-bottom-width:1px;" +
+            $"{prefix}border-left-width:1px;" +
+            $"{prefix}border-top-style:solid;" +
+            $"{prefix}border-right-style:solid;" +
+            $"{prefix}border-bottom-style:solid;" +
+            $"{prefix}border-left-style:solid;" +
+            $"{prefix}border-top-left-radius:8px;" +
+            $"{prefix}border-top-right-radius:8px;" +
+            $"{prefix}border-bottom-left-radius:8px;" +
+            $"{prefix}border-bottom-right-radius:8px;";
 
         css.Should().Be(expected);
     }

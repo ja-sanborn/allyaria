@@ -14,7 +14,7 @@ public sealed class StyleHelperTests
         var value = new AllyariaStringValue("some-theme-value");
         var propertyName = "color";
         var varPrefix = "  My--Theme   Name  ";
-        var expectedPrefixedProperty = "--my-theme-name-var-color";
+        var expectedPrefixedProperty = "--my-theme-name-color";
         var expectedCss = $"{expectedPrefixedProperty}:{value.Value};";
 
         // Act
@@ -25,10 +25,10 @@ public sealed class StyleHelperTests
     }
 
     [Theory]
-    [InlineData("----Fancy----", "--fancy-var")]
-    [InlineData("- - Fancy - -", "--fancy-var")]
-    [InlineData("A  B   C", "--a-b-c-var")]
-    [InlineData("Title-Case Prefix", "--title-case-prefix-var")]
+    [InlineData("----Fancy----", "--fancy")]
+    [InlineData("- - Fancy - -", "--fancy")]
+    [InlineData("A  B   C", "--a-b-c")]
+    [InlineData("Title-Case Prefix", "--title-case-prefix")]
     public void ToCss_Should_BuildCssVariableName_With_LowercasedHyphenNormalizedPrefix(string varPrefix,
         string expectedPrefixPortion)
     {
