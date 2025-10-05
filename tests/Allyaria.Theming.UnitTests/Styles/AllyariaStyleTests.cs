@@ -31,6 +31,37 @@ public sealed class AllyariaStyleTests
     }
 
     [Fact]
+    public void Cascade_Should_PreserveNonPaletteConfig_AcrossMultipleCascades_When_Chained()
+    {
+        // Arrange
+        var sut = new AllyariaStyle(MakeVariant(30, 60, 90));
+
+        var originalPressedTypography = sut.Pressed.Typography;
+        var originalPressedSpacing = sut.Pressed.Spacing;
+        var originalPressedBorder = sut.Pressed.Border;
+
+        var firstDefault = MakeVariant(180, 100, 40);
+        var secondDefault = MakeVariant(10, 220, 140);
+
+        // Act
+        var afterFirst = sut.Cascade(firstDefault);
+        var afterSecond = afterFirst.Cascade(secondDefault);
+
+        // Assert
+        // Default should reflect the last cascade
+        afterSecond.Default.Should().Be(secondDefault);
+
+        // Non-palette members preserved across cascades
+        afterSecond.Pressed.Typography.Should().Be(originalPressedTypography);
+        afterSecond.Pressed.Spacing.Should().Be(originalPressedSpacing);
+        afterSecond.Pressed.Border.Should().Be(originalPressedBorder);
+
+        // Palettes should have changed between each cascade (Pressed as representative)
+        afterFirst.Pressed.Palette.Should().NotBe(sut.Pressed.Palette);
+        afterSecond.Pressed.Palette.Should().NotBe(afterFirst.Pressed.Palette);
+    }
+
+    [Fact]
     public void Cascade_Should_ReplaceDefault_And_UpdateOnlyPalettes_When_NewDefaultProvided()
     {
         // Arrange
@@ -71,6 +102,62 @@ public sealed class AllyariaStyleTests
         // And should not equal the new default palette for non-default variants
         cascaded.Hovered.Palette.Should().NotBe(cascaded.Default.Palette);
         cascaded.Low.Palette.Should().NotBe(cascaded.Default.Palette);
+    }
+
+    [Fact]
+    public void Cascade_Should_UpdatePalettes_For_AllVariants_When_NewDefaultProvided()
+    {
+        // Arrange
+        var sut = new AllyariaStyle(MakeVariant(12, 34, 56));
+
+        var originalPalettes = new[]
+        {
+            sut.Disabled.Palette,
+            sut.Hovered.Palette,
+            sut.Focused.Palette,
+            sut.Pressed.Palette,
+            sut.Dragged.Palette,
+            sut.Lowest.Palette,
+            sut.Low.Palette,
+            sut.High.Palette,
+            sut.Highest.Palette
+        };
+
+        var newDefault = MakeVariant(200, 180, 160);
+
+        // Act
+        var cascaded = sut.Cascade(newDefault);
+
+        // Assert
+        var updatedPalettes = new[]
+        {
+            cascaded.Disabled.Palette,
+            cascaded.Hovered.Palette,
+            cascaded.Focused.Palette,
+            cascaded.Pressed.Palette,
+            cascaded.Dragged.Palette,
+            cascaded.Lowest.Palette,
+            cascaded.Low.Palette,
+            cascaded.High.Palette,
+            cascaded.Highest.Palette
+        };
+
+        // all non-default variant palettes should change after cascading
+        updatedPalettes.Should().HaveCount(originalPalettes.Length)
+            .And.SatisfyRespectively(
+                p0 => p0.Should().NotBe(originalPalettes[0]),
+                p1 => p1.Should().NotBe(originalPalettes[1]),
+                p2 => p2.Should().NotBe(originalPalettes[2]),
+                p3 => p3.Should().NotBe(originalPalettes[3]),
+                p4 => p4.Should().NotBe(originalPalettes[4]),
+                p5 => p5.Should().NotBe(originalPalettes[5]),
+                p6 => p6.Should().NotBe(originalPalettes[6]),
+                p7 => p7.Should().NotBe(originalPalettes[7]),
+                p8 => p8.Should().NotBe(originalPalettes[8])
+            );
+
+        // default palette specifically updates to the new one
+        cascaded.Default.Palette.Should().Be(newDefault.Palette);
     }
 
     [Fact]

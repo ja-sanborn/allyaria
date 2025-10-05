@@ -88,17 +88,36 @@ public readonly record struct AllyariaStyle
     /// of the variants (typography, spacing, borders) remain unchanged.
     /// </remarks>
     public AllyariaStyle Cascade(AllyariaStyleVariant defaultStyle)
+    {
+        var newStyle = this with
+        {
+            Default = defaultStyle
+        };
+
+        return Cascade(newStyle.Default.Palette);
+    }
+
+    /// <summary>
+    /// Updates this style by cascading a new base <paramref name="defaultPalette" /> to all variants, changing only their
+    /// palettes and preserving non-palette configuration (typography, spacing, borders).
+    /// </summary>
+    /// <param name="defaultPalette">The palette from which all variant palettes are derived.</param>
+    /// <returns>
+    /// A new <see cref="AllyariaStyle" /> with updated palettes across all variants using the supplied
+    /// <paramref name="defaultPalette" /> as the derivation source.
+    /// </returns>
+    public AllyariaStyle Cascade(AllyariaPalette defaultPalette)
         => this with
         {
-            Default = defaultStyle,
-            Disabled = Disabled.Cascade(ColorHelper.DeriveDisabled(defaultStyle.Palette)),
-            Hovered = Hovered.Cascade(ColorHelper.DeriveHovered(defaultStyle.Palette)),
-            Focused = Focused.Cascade(ColorHelper.DeriveFocused(defaultStyle.Palette)),
-            Pressed = Pressed.Cascade(ColorHelper.DerivePressed(defaultStyle.Palette)),
-            Dragged = Dragged.Cascade(ColorHelper.DeriveDragged(defaultStyle.Palette)),
-            Lowest = Lowest.Cascade(ColorHelper.DeriveLowest(defaultStyle.Palette)),
-            Low = Low.Cascade(ColorHelper.DeriveLow(defaultStyle.Palette)),
-            High = High.Cascade(ColorHelper.DeriveHigh(defaultStyle.Palette)),
-            Highest = Highest.Cascade(ColorHelper.DeriveHighest(defaultStyle.Palette))
+            Default = Default.Cascade(defaultPalette),
+            Disabled = Disabled.Cascade(ColorHelper.DeriveDisabled(defaultPalette)),
+            Hovered = Hovered.Cascade(ColorHelper.DeriveHovered(defaultPalette)),
+            Focused = Focused.Cascade(ColorHelper.DeriveFocused(defaultPalette)),
+            Pressed = Pressed.Cascade(ColorHelper.DerivePressed(defaultPalette)),
+            Dragged = Dragged.Cascade(ColorHelper.DeriveDragged(defaultPalette)),
+            Lowest = Lowest.Cascade(ColorHelper.DeriveLowest(defaultPalette)),
+            Low = Low.Cascade(ColorHelper.DeriveLow(defaultPalette)),
+            High = High.Cascade(ColorHelper.DeriveHigh(defaultPalette)),
+            Highest = Highest.Cascade(ColorHelper.DeriveHighest(defaultPalette))
         };
 }
