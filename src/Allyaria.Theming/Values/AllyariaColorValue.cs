@@ -291,7 +291,7 @@ public sealed class AllyariaColorValue : ValueBase
         ["deeporangea400"] = Colors.DeeporangeA400,
         ["deeporangea700"] = Colors.DeeporangeA700,
 
-        // Brown (no accents in Material 2 palette)
+        // Brown (no accents in Material 2 paletteVariant)
         ["brown50"] = Colors.Brown50,
         ["brown100"] = Colors.Brown100,
         ["brown200"] = Colors.Brown200,

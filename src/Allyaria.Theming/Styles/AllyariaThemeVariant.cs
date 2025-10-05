@@ -28,14 +28,14 @@ public readonly record struct AllyariaThemeVariant
         Light = light ?? new AllyariaStyle();
 
         Dark = dark ?? Light.Cascade(
-            Light.Default.Palette.Cascade(
+            Light.Default.PaletteVariant.Cascade(
                 StyleDefaults.BackgroundColorDark,
                 StyleDefaults.ForegroundColorDark
             )
         );
 
         HighContrast = highContrast ?? Light.Cascade(
-            Light.Default.Palette.Cascade(
+            Light.Default.PaletteVariant.Cascade(
                 StyleDefaults.BackgroundColorHighContrast,
                 StyleDefaults.ForegroundColorHighContrast
             )

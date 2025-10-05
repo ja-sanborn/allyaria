@@ -26,8 +26,8 @@ public sealed class AllyariaStyleTests
         sut.Default.Should().NotBe(newDefault);
 
         // Variant palettes changed only in the cascaded copy
-        sut.Disabled.Palette.Should().Be(snapshot.Disabled.Palette);
-        cascaded.Disabled.Palette.Should().NotBe(snapshot.Disabled.Palette);
+        sut.Disabled.PaletteVariant.Should().Be(snapshot.Disabled.PaletteVariant);
+        cascaded.Disabled.PaletteVariant.Should().NotBe(snapshot.Disabled.PaletteVariant);
     }
 
     [Fact]
@@ -51,14 +51,14 @@ public sealed class AllyariaStyleTests
         // Default should reflect the last cascade
         afterSecond.Default.Should().Be(secondDefault);
 
-        // Non-palette members preserved across cascades
+        // Non-paletteVariant members preserved across cascades
         afterSecond.Pressed.Typography.Should().Be(originalPressedTypography);
         afterSecond.Pressed.Spacing.Should().Be(originalPressedSpacing);
         afterSecond.Pressed.Border.Should().Be(originalPressedBorder);
 
         // Palettes should have changed between each cascade (Pressed as representative)
-        afterFirst.Pressed.Palette.Should().NotBe(sut.Pressed.Palette);
-        afterSecond.Pressed.Palette.Should().NotBe(afterFirst.Pressed.Palette);
+        afterFirst.Pressed.PaletteVariant.Should().NotBe(sut.Pressed.PaletteVariant);
+        afterSecond.Pressed.PaletteVariant.Should().NotBe(afterFirst.Pressed.PaletteVariant);
     }
 
     [Fact]
@@ -70,12 +70,12 @@ public sealed class AllyariaStyleTests
         var originalHoveredTypography = original.Hovered.Typography;
         var originalHoveredSpacing = original.Hovered.Spacing;
         var originalHoveredBorder = original.Hovered.Border;
-        var originalHoveredPalette = original.Hovered.Palette;
+        var originalHoveredPalette = original.Hovered.PaletteVariant;
 
         var originalLowTypography = original.Low.Typography;
         var originalLowSpacing = original.Low.Spacing;
         var originalLowBorder = original.Low.Border;
-        var originalLowPalette = original.Low.Palette;
+        var originalLowPalette = original.Low.PaletteVariant;
 
         var newDefault = MakeVariant(200, 150, 100);
 
@@ -86,7 +86,7 @@ public sealed class AllyariaStyleTests
         // Default replaced
         cascaded.Default.Should().Be(newDefault);
 
-        // Non-palette parts preserved for existing variants
+        // Non-paletteVariant parts preserved for existing variants
         cascaded.Hovered.Typography.Should().Be(originalHoveredTypography);
         cascaded.Hovered.Spacing.Should().Be(originalHoveredSpacing);
         cascaded.Hovered.Border.Should().Be(originalHoveredBorder);
@@ -96,12 +96,12 @@ public sealed class AllyariaStyleTests
         cascaded.Low.Border.Should().Be(originalLowBorder);
 
         // Palettes updated (derived from the new default) — should differ from pre-cascade palettes
-        cascaded.Hovered.Palette.Should().NotBe(originalHoveredPalette);
-        cascaded.Low.Palette.Should().NotBe(originalLowPalette);
+        cascaded.Hovered.PaletteVariant.Should().NotBe(originalHoveredPalette);
+        cascaded.Low.PaletteVariant.Should().NotBe(originalLowPalette);
 
-        // And should not equal the new default palette for non-default variants
-        cascaded.Hovered.Palette.Should().NotBe(cascaded.Default.Palette);
-        cascaded.Low.Palette.Should().NotBe(cascaded.Default.Palette);
+        // And should not equal the new default paletteVariant for non-default variants
+        cascaded.Hovered.PaletteVariant.Should().NotBe(cascaded.Default.PaletteVariant);
+        cascaded.Low.PaletteVariant.Should().NotBe(cascaded.Default.PaletteVariant);
     }
 
     [Fact]
@@ -112,15 +112,15 @@ public sealed class AllyariaStyleTests
 
         var originalPalettes = new[]
         {
-            sut.Disabled.Palette,
-            sut.Hovered.Palette,
-            sut.Focused.Palette,
-            sut.Pressed.Palette,
-            sut.Dragged.Palette,
-            sut.Lowest.Palette,
-            sut.Low.Palette,
-            sut.High.Palette,
-            sut.Highest.Palette
+            sut.Disabled.PaletteVariant,
+            sut.Hovered.PaletteVariant,
+            sut.Focused.PaletteVariant,
+            sut.Pressed.PaletteVariant,
+            sut.Dragged.PaletteVariant,
+            sut.Lowest.PaletteVariant,
+            sut.Low.PaletteVariant,
+            sut.High.PaletteVariant,
+            sut.Highest.PaletteVariant
         };
 
         var newDefault = MakeVariant(200, 180, 160);
@@ -131,15 +131,15 @@ public sealed class AllyariaStyleTests
         // Assert
         var updatedPalettes = new[]
         {
-            cascaded.Disabled.Palette,
-            cascaded.Hovered.Palette,
-            cascaded.Focused.Palette,
-            cascaded.Pressed.Palette,
-            cascaded.Dragged.Palette,
-            cascaded.Lowest.Palette,
-            cascaded.Low.Palette,
-            cascaded.High.Palette,
-            cascaded.Highest.Palette
+            cascaded.Disabled.PaletteVariant,
+            cascaded.Hovered.PaletteVariant,
+            cascaded.Focused.PaletteVariant,
+            cascaded.Pressed.PaletteVariant,
+            cascaded.Dragged.PaletteVariant,
+            cascaded.Lowest.PaletteVariant,
+            cascaded.Low.PaletteVariant,
+            cascaded.High.PaletteVariant,
+            cascaded.Highest.PaletteVariant
         };
 
         // all non-default variant palettes should change after cascading
@@ -156,8 +156,8 @@ public sealed class AllyariaStyleTests
                 p8 => p8.Should().NotBe(originalPalettes[8])
             );
 
-        // default palette specifically updates to the new one
-        cascaded.Default.Palette.Should().Be(newDefault.Palette);
+        // default paletteVariant specifically updates to the new one
+        cascaded.Default.PaletteVariant.Should().Be(newDefault.PaletteVariant);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public sealed class AllyariaStyleTests
         var sut = new AllyariaStyle();
 
         // Assert
-        // Variants share non-palette configuration with Default
+        // Variants share non-paletteVariant configuration with Default
         sut.Disabled.Typography.Should().Be(sut.Default.Typography);
         sut.Hovered.Typography.Should().Be(sut.Default.Typography);
         sut.Focused.Typography.Should().Be(sut.Default.Typography);
@@ -199,15 +199,15 @@ public sealed class AllyariaStyleTests
         sut.Highest.Border.Should().Be(sut.Default.Border);
 
         // Palettes for non-default variants should be derived (i.e., different from Default).
-        sut.Disabled.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Hovered.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Focused.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Pressed.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Dragged.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Lowest.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Low.Palette.Should().NotBe(sut.Default.Palette);
-        sut.High.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Highest.Palette.Should().NotBe(sut.Default.Palette);
+        sut.Disabled.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Hovered.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Focused.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Pressed.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Dragged.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Lowest.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Low.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.High.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Highest.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
     }
 
     [Fact]
@@ -223,8 +223,8 @@ public sealed class AllyariaStyleTests
         // Base
         sut.Default.Should().Be(baseVariant);
 
-        // The derived variants should preserve non-palette components (Typography/Spacing/Border config object)
-        // because AllyariaStyleVariant.Cascade only overrides the palette when deriving.
+        // The derived variants should preserve non-paletteVariant components (Typography/Spacing/Border config object)
+        // because AllyariaStyleVariant.Cascade only overrides the paletteVariant when deriving.
         sut.Disabled.Typography.Should().Be(sut.Default.Typography);
         sut.Hovered.Typography.Should().Be(sut.Default.Typography);
         sut.Focused.Typography.Should().Be(sut.Default.Typography);
@@ -256,30 +256,23 @@ public sealed class AllyariaStyleTests
         sut.Highest.Border.Should().Be(sut.Default.Border);
 
         // Palettes should generally differ from the base (they are derived).
-        sut.Disabled.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Hovered.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Focused.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Pressed.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Dragged.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Lowest.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Low.Palette.Should().NotBe(sut.Default.Palette);
-        sut.High.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Highest.Palette.Should().NotBe(sut.Default.Palette);
+        sut.Disabled.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Hovered.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Focused.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Pressed.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Dragged.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Lowest.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Low.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.High.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
+        sut.Highest.PaletteVariant.Should().NotBe(sut.Default.PaletteVariant);
     }
 
     private static AllyariaStyleVariant MakeVariant(byte r, byte g, byte b)
     {
-        var bg = AllyariaColorValue.FromRgba(r, g, b);
-        var fg = AllyariaColorValue.FromRgba((byte)(255 - r), (byte)(255 - g), (byte)(255 - b));
+        var background = AllyariaColorValue.FromRgba(r, g, b);
+        var foreground = AllyariaColorValue.FromRgba((byte)(255 - r), (byte)(255 - g), (byte)(255 - b));
         var border = AllyariaColorValue.FromRgba(r, g, b);
-
-        var palette = new AllyariaPalette(
-            bg,
-            fg,
-            border,
-            null,
-            false
-        );
+        var palette = new AllyariaPaletteVariant(background, foreground, border);
 
         return new AllyariaStyleVariant(palette);
     }

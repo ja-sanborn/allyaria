@@ -49,7 +49,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(210, 40, 90);
         var fg0 = AllyariaColorValue.FromHsva(210, 20, 20);
         var border0 = AllyariaColorValue.FromHsva(210, 40, 85);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
 
         const double desat = 60.0;
         const double towardMidT = 0.15;
@@ -85,7 +85,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
         var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
         var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Expected via same quantization path
@@ -110,7 +110,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
         var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
         var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Compute expected via same conversion logic as helper to avoid rounding mismatches
@@ -135,7 +135,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
         var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
         var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Expected via same quantization path
@@ -160,7 +160,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
         var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
         var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
@@ -185,7 +185,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
         var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
         var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
@@ -210,7 +210,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
         var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
         var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Expected via same quantization path
@@ -233,7 +233,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
         var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
         var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
@@ -258,7 +258,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
         var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
         var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Expected via same quantization path
@@ -345,7 +345,7 @@ public sealed class ColorHelperTests
         var bg0 = AllyariaColorValue.FromHsva(30, 20, 80);
         var fg0 = AllyariaColorValue.FromHsva(30, 10, 15);
         var border0 = AllyariaColorValue.FromHsva(30, 20, 78);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var basePalette = new AllyariaPaletteVariant(bg0, fg0, border0);
 
         // Expected values computed via the same HSVA→RGBA quantization path to avoid rounding drift.
         var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - bgDelta);
