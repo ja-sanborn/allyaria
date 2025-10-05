@@ -28,7 +28,6 @@ namespace Allyaria.Theming.Styles;
 /// Callers may override any subset of variants explicitly; unspecified variants are derived from <see cref="Default" />.
 /// This aligns with Allyaria's strong, C#-driven theming model and avoids relying on global CSS overrides.
 /// </remarks>
-/// <seealso cref="AllyariaTheme" />
 public readonly record struct AllyariaStyle
 {
     /// <summary>
@@ -100,11 +99,21 @@ public readonly record struct AllyariaStyle
     /// <summary>Gets the Pressed/Active state variant.</summary>
     public AllyariaStyleVariant Pressed { get; init; }
 
-    /// <summary>
-    /// Creates a new <see cref="AllyariaStyle" /> by selectively overriding any subset of variants. Unspecified parameters
-    /// retain the current instance’s values.
-    /// </summary>
-    /// <param name="defaultStyle">Optional new base variant; if <c>null</c>, keeps <see cref="Default" />.</param>
+    /// <summary>Creates a new <see cref="AllyariaStyle" /> by selectively overriding any subset of variants.</summary>
+    /// <param name="defaultStyle">
+    /// Optional new base variant.
+    /// <list type="bullet">
+    ///     <item>
+    ///     If <c>defaultStyle</c> is provided (non-null), the returned style uses it as the new <see cref="Default" />. Any
+    ///     <c>null</c> state/tonal parameters are then <b>re-derived</b> from this new base using <see cref="ColorHelper" />
+    ///     heuristics (mirrors constructor behavior).
+    ///     </item>
+    ///     <item>
+    ///     If <c>defaultStyle</c> is <c>null</c>, the current instance’s <see cref="Default" /> is kept and any <c>null</c>
+    ///     parameters keep their existing values (legacy behavior).
+    ///     </item>
+    /// </list>
+    /// </param>
     /// <param name="disabledStyle">Optional override for <see cref="Disabled" />.</param>
     /// <param name="hoveredStyle">Optional override for <see cref="Hovered" />.</param>
     /// <param name="focusedStyle">Optional override for <see cref="Focused" />.</param>
@@ -114,7 +123,10 @@ public readonly record struct AllyariaStyle
     /// <param name="lowStyle">Optional override for <see cref="Low" />.</param>
     /// <param name="highStyle">Optional override for <see cref="High" />.</param>
     /// <param name="highestStyle">Optional override for <see cref="Highest" />.</param>
-    /// <returns>A new <see cref="AllyariaStyle" /> with the provided overrides applied.</returns>
+    /// <returns>
+    /// A new <see cref="AllyariaStyle" /> with overrides applied and, when <paramref name="defaultStyle" /> is provided, null
+    /// variants re-derived from the new base.
+    /// </returns>
     public AllyariaStyle Cascade(AllyariaStyleVariant? defaultStyle = null,
         AllyariaStyleVariant? disabledStyle = null,
         AllyariaStyleVariant? hoveredStyle = null,
@@ -125,17 +137,39 @@ public readonly record struct AllyariaStyle
         AllyariaStyleVariant? lowStyle = null,
         AllyariaStyleVariant? highStyle = null,
         AllyariaStyleVariant? highestStyle = null)
-        => this with
+    {
+        if (defaultStyle is null)
         {
-            Default = defaultStyle ?? Default,
-            Disabled = disabledStyle ?? Disabled,
-            Hovered = hoveredStyle ?? Hovered,
-            Focused = focusedStyle ?? Focused,
-            Pressed = pressedStyle ?? Pressed,
-            Dragged = draggedStyle ?? Dragged,
-            Lowest = lowestStyle ?? Lowest,
-            Low = lowStyle ?? Low,
-            High = highStyle ?? High,
-            Highest = highestStyle ?? Highest
+            return this with
+            {
+                Default = defaultStyle ?? Default,
+                Disabled = disabledStyle ?? Disabled,
+                Hovered = hoveredStyle ?? Hovered,
+                Focused = focusedStyle ?? Focused,
+                Pressed = pressedStyle ?? Pressed,
+                Dragged = draggedStyle ?? Dragged,
+                Lowest = lowestStyle ?? Lowest,
+                Low = lowStyle ?? Low,
+                High = highStyle ?? High,
+                Highest = highestStyle ?? Highest
+            };
+        }
+
+        var newDefault = defaultStyle.Value;
+        var newPalette = newDefault.Palette;
+
+        return this with
+        {
+            Default = newDefault,
+            Disabled = disabledStyle ?? newDefault.Cascade(ColorHelper.DeriveDisabled(newPalette)),
+            Hovered = hoveredStyle ?? newDefault.Cascade(ColorHelper.DeriveHovered(newPalette)),
+            Focused = focusedStyle ?? newDefault.Cascade(ColorHelper.DeriveFocused(newPalette)),
+            Pressed = pressedStyle ?? newDefault.Cascade(ColorHelper.DerivePressed(newPalette)),
+            Dragged = draggedStyle ?? newDefault.Cascade(ColorHelper.DeriveDragged(newPalette)),
+            Lowest = lowestStyle ?? newDefault.Cascade(ColorHelper.DeriveLowest(newPalette)),
+            Low = lowStyle ?? newDefault.Cascade(ColorHelper.DeriveLow(newPalette)),
+            High = highStyle ?? newDefault.Cascade(ColorHelper.DeriveHigh(newPalette)),
+            Highest = highestStyle ?? newDefault.Cascade(ColorHelper.DeriveHighest(newPalette))
         };
+    }
 }
