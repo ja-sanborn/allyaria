@@ -5,7 +5,7 @@ using Allyaria.Theming.Styles;
 namespace Allyaria.Theming.UnitTests.Styles;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class AllyariaPaletteVariantTests
+public sealed class AllyariaPaletteStateTests
 {
     [Fact]
     public void Cascade_Should_OverrideOnlyProvidedMembers_And_RecontrastForeground_When_BackgroundChanges()
@@ -15,7 +15,7 @@ public sealed class AllyariaPaletteVariantTests
         var initialForeground = Colors.Black;
         var initialBorder = Colors.Grey700;
 
-        var sut = new AllyariaPaletteVariant(initialBackground, initialForeground, initialBorder);
+        var sut = new AllyariaPaletteState(initialBackground, initialForeground, initialBorder);
 
         var newBackground = Colors.Lightblue100; // still light, but different value
 
@@ -35,7 +35,7 @@ public sealed class AllyariaPaletteVariantTests
     public void Cascade_Should_RespectExplicitOverrides_For_AllMembers()
     {
         // Arrange
-        var sut = new AllyariaPaletteVariant(Colors.Black, Colors.White, Colors.Red500);
+        var sut = new AllyariaPaletteState(Colors.Black, Colors.White, Colors.Red500);
 
         var bg = Colors.Blue200;
         var fg = Colors.Yellow800; // may be adjusted later, but start with explicit request
@@ -64,7 +64,7 @@ public sealed class AllyariaPaletteVariantTests
         ColorHelper.ContrastRatio(lowContrastForeground, background).Should().BeLessThan(4.5);
 
         // Act
-        var sut = new AllyariaPaletteVariant(background, lowContrastForeground, Colors.White);
+        var sut = new AllyariaPaletteState(background, lowContrastForeground, Colors.White);
 
         // Assert
         sut.BackgroundColor.Should().Be(background);
@@ -80,7 +80,7 @@ public sealed class AllyariaPaletteVariantTests
         var foreground = Colors.White; // #FFFFFFFF
 
         // Act
-        var sut = new AllyariaPaletteVariant(background, foreground);
+        var sut = new AllyariaPaletteState(background, foreground);
 
         // Assert
         sut.BackgroundColor.Should().Be(background);
@@ -102,7 +102,7 @@ public sealed class AllyariaPaletteVariantTests
         ColorHelper.ContrastRatio(requestedForeground, background).Should().BeLessThan(4.5);
 
         // Act
-        var sut = new AllyariaPaletteVariant(background, requestedForeground);
+        var sut = new AllyariaPaletteState(background, requestedForeground);
 
         // Assert
         ColorHelper.ContrastRatio(sut.ForegroundColor, sut.BackgroundColor).Should().BeGreaterThanOrEqualTo(4.5);
@@ -116,7 +116,7 @@ public sealed class AllyariaPaletteVariantTests
         var fg = Colors.White; // #FFFFFFFF
         var bd = Colors.Red500; // #F44336FF
 
-        var sut = new AllyariaPaletteVariant(bg, fg, bd);
+        var sut = new AllyariaPaletteState(bg, fg, bd);
 
         // Act
         var css = sut.ToCss(); // default varPrefix = ""

@@ -12,7 +12,7 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="AllyariaStringValue" /> (e.g., <c>solid</c>, <c>dashed</c>, <c>none</c>).
 /// </summary>
 /// <remarks>
-/// This type intentionally omits border color; colors come from the paletteVariant/theme layer. Values are emitted to CSS
+/// This type intentionally omits border color; colors come from the palette/theme layer. Values are emitted to CSS
 /// only when their underlying representation is non-empty (see
 /// <see cref="StyleHelper.ToCss(StringBuilder, Allyaria.Theming.Contracts.ValueBase, string, string)" />).
 /// </remarks>

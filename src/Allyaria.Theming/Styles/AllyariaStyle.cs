@@ -8,9 +8,9 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="Pressed" />, <see cref="High" />).
 /// </summary>
 /// <remarks>
-/// All variants are immutable and designed to be derived from the <see cref="Default" /> paletteVariant. The
-/// <see cref="Cascade(AllyariaStyleVariant)" /> method updates only the <em>paletteVariant</em> of each existing variant
-/// to match a new default paletteVariant while preserving each variant's other configuration (typography, spacing,
+/// All variants are immutable and designed to be derived from the <see cref="Default" /> paletteState. The
+/// <see cref="Cascade(AllyariaStyleVariant)" /> method updates only the <em>paletteState</em> of each existing variant
+/// to match a new default palette while preserving each variant's other configuration (typography, spacing,
 /// borders).
 /// </remarks>
 public readonly record struct AllyariaStyle
@@ -33,15 +33,15 @@ public readonly record struct AllyariaStyle
     public AllyariaStyle(AllyariaStyleVariant? defaultStyle = null)
     {
         Default = defaultStyle ?? new AllyariaStyleVariant();
-        Disabled = Default.Cascade(ColorHelper.DeriveDisabled(Default.PaletteVariant));
-        Hovered = Default.Cascade(ColorHelper.DeriveHovered(Default.PaletteVariant));
-        Focused = Default.Cascade(ColorHelper.DeriveFocused(Default.PaletteVariant));
-        Pressed = Default.Cascade(ColorHelper.DerivePressed(Default.PaletteVariant));
-        Dragged = Default.Cascade(ColorHelper.DeriveDragged(Default.PaletteVariant));
-        Lowest = Default.Cascade(ColorHelper.DeriveLowest(Default.PaletteVariant));
-        Low = Default.Cascade(ColorHelper.DeriveLow(Default.PaletteVariant));
-        High = Default.Cascade(ColorHelper.DeriveHigh(Default.PaletteVariant));
-        Highest = Default.Cascade(ColorHelper.DeriveHighest(Default.PaletteVariant));
+        Disabled = Default.Cascade(ColorHelper.DeriveDisabled(Default.Palette));
+        Hovered = Default.Cascade(ColorHelper.DeriveHovered(Default.Palette));
+        Focused = Default.Cascade(ColorHelper.DeriveFocused(Default.Palette));
+        Pressed = Default.Cascade(ColorHelper.DerivePressed(Default.Palette));
+        Dragged = Default.Cascade(ColorHelper.DeriveDragged(Default.Palette));
+        Lowest = Default.Cascade(ColorHelper.DeriveLowest(Default.Palette));
+        Low = Default.Cascade(ColorHelper.DeriveLow(Default.Palette));
+        High = Default.Cascade(ColorHelper.DeriveHigh(Default.Palette));
+        Highest = Default.Cascade(ColorHelper.DeriveHighest(Default.Palette));
     }
 
     /// <summary>Gets the base/default visual variant from which other variants are derived.</summary>
@@ -77,15 +77,15 @@ public readonly record struct AllyariaStyle
     /// <summary>
     /// Produces a new <see cref="AllyariaStyle" /> whose <see cref="Default" /> variant is replaced with
     /// <paramref name="defaultStyle" />, and whose other variants are updated by changing <em>only their palettes</em> to
-    /// palettes derived from <paramref name="defaultStyle" />'s paletteVariant.
+    /// palettes derived from <paramref name="defaultStyle" />'s palette.
     /// </summary>
-    /// <param name="defaultStyle">The new default style variant to use as the basis for paletteVariant derivation.</param>
+    /// <param name="defaultStyle">The new default style variant to use as the basis for palette derivation.</param>
     /// <returns>
     /// A new <see cref="AllyariaStyle" /> where each non-default variant maintains its typography, spacing, and borders, but
-    /// adopts a paletteVariant derived from <paramref name="defaultStyle" /> consistent with its role.
+    /// adopts a palette derived from <paramref name="defaultStyle" /> consistent with its role.
     /// </returns>
     /// <remarks>
-    /// This method intentionally modifies only the <see cref="AllyariaStyleVariant.PaletteVariant" /> on each variant. Other
+    /// This method intentionally modifies only the <see cref="AllyariaStyleVariant.Palette" /> on each variant. Other
     /// aspects of the variants (typography, spacing, borders) remain unchanged.
     /// </remarks>
     public AllyariaStyle Cascade(AllyariaStyleVariant defaultStyle)
@@ -95,30 +95,30 @@ public readonly record struct AllyariaStyle
             Default = defaultStyle
         };
 
-        return Cascade(newStyle.Default.PaletteVariant);
+        return Cascade(newStyle.Default.Palette);
     }
 
     /// <summary>
-    /// Updates this style by cascading a new base <paramref name="defaultPaletteVariant" /> to all variants, changing only
-    /// their palettes and preserving non-paletteVariant configuration (typography, spacing, borders).
+    /// Updates this style by cascading a new base <paramref name="defaultPalette" /> to all variants, changing only
+    /// their palettes and preserving non-palette configuration (typography, spacing, borders).
     /// </summary>
-    /// <param name="defaultPaletteVariant">The paletteVariant from which all variant palettes are derived.</param>
+    /// <param name="defaultPalette">The palette from which all variant palettes are derived.</param>
     /// <returns>
     /// A new <see cref="AllyariaStyle" /> with updated palettes across all variants using the supplied
-    /// <paramref name="defaultPaletteVariant" /> as the derivation source.
+    /// <paramref name="defaultPalette" /> as the derivation source.
     /// </returns>
-    public AllyariaStyle Cascade(AllyariaPaletteVariant defaultPaletteVariant)
+    public AllyariaStyle Cascade(AllyariaPalette defaultPalette)
         => this with
         {
-            Default = Default.Cascade(defaultPaletteVariant),
-            Disabled = Disabled.Cascade(ColorHelper.DeriveDisabled(defaultPaletteVariant)),
-            Hovered = Hovered.Cascade(ColorHelper.DeriveHovered(defaultPaletteVariant)),
-            Focused = Focused.Cascade(ColorHelper.DeriveFocused(defaultPaletteVariant)),
-            Pressed = Pressed.Cascade(ColorHelper.DerivePressed(defaultPaletteVariant)),
-            Dragged = Dragged.Cascade(ColorHelper.DeriveDragged(defaultPaletteVariant)),
-            Lowest = Lowest.Cascade(ColorHelper.DeriveLowest(defaultPaletteVariant)),
-            Low = Low.Cascade(ColorHelper.DeriveLow(defaultPaletteVariant)),
-            High = High.Cascade(ColorHelper.DeriveHigh(defaultPaletteVariant)),
-            Highest = Highest.Cascade(ColorHelper.DeriveHighest(defaultPaletteVariant))
+            Default = Default.Cascade(defaultPalette),
+            Disabled = Disabled.Cascade(ColorHelper.DeriveDisabled(defaultPalette)),
+            Hovered = Hovered.Cascade(ColorHelper.DeriveHovered(defaultPalette)),
+            Focused = Focused.Cascade(ColorHelper.DeriveFocused(defaultPalette)),
+            Pressed = Pressed.Cascade(ColorHelper.DerivePressed(defaultPalette)),
+            Dragged = Dragged.Cascade(ColorHelper.DeriveDragged(defaultPalette)),
+            Lowest = Lowest.Cascade(ColorHelper.DeriveLowest(defaultPalette)),
+            Low = Low.Cascade(ColorHelper.DeriveLow(defaultPalette)),
+            High = High.Cascade(ColorHelper.DeriveHigh(defaultPalette)),
+            Highest = Highest.Cascade(ColorHelper.DeriveHighest(defaultPalette))
         };
 }

@@ -16,7 +16,7 @@ public class AllyariaStyleVariantTests
         var cascaded = original.Cascade();
 
         // Assert
-        cascaded.PaletteVariant.Should().Be(original.PaletteVariant);
+        cascaded.Palette.Should().Be(original.Palette);
         cascaded.Typography.Should().Be(original.Typography);
         cascaded.Spacing.Should().Be(original.Spacing);
         cascaded.Border.Should().Be(original.Border);
@@ -27,7 +27,7 @@ public class AllyariaStyleVariantTests
     {
         // Arrange
         var original = new AllyariaStyleVariant();
-        var newPalette = new AllyariaPaletteVariant();
+        var newPalette = new AllyariaPalette();
         var newTypography = new AllyariaTypography();
         var newSpacing = new AllyariaSpacing();
         var newBorders = new AllyariaBorders();
@@ -41,7 +41,7 @@ public class AllyariaStyleVariantTests
         );
 
         // Assert
-        cascaded.PaletteVariant.Should().Be(newPalette);
+        cascaded.Palette.Should().Be(newPalette);
         cascaded.Typography.Should().Be(newTypography);
         cascaded.Spacing.Should().Be(newSpacing);
         cascaded.Border.Should().Be(newBorders);
@@ -56,7 +56,7 @@ public class AllyariaStyleVariantTests
         var style = new AllyariaStyleVariant();
 
         // Assert
-        style.PaletteVariant.Should().NotBeNull();
+        style.Palette.Should().NotBeNull();
         style.Typography.Should().NotBeNull();
         style.Spacing.Should().NotBeNull();
         style.Border.Should().NotBeNull();
@@ -66,7 +66,7 @@ public class AllyariaStyleVariantTests
     public void Ctor_WithNulls_Initializes_All_Default_Subcomponents()
     {
         // Arrange
-        AllyariaPaletteVariant? palette = null;
+        AllyariaPalette? palette = null;
         AllyariaTypography? typography = null;
         AllyariaSpacing? spacing = null;
         AllyariaBorders? borders = null;
@@ -75,7 +75,7 @@ public class AllyariaStyleVariantTests
         var style = new AllyariaStyleVariant(palette, typography, spacing, borders);
 
         // Assert
-        style.PaletteVariant.Should().NotBeNull();
+        style.Palette.Should().NotBeNull();
         style.Typography.Should().NotBeNull();
         style.Spacing.Should().NotBeNull();
         style.Border.Should().NotBeNull();
@@ -85,7 +85,7 @@ public class AllyariaStyleVariantTests
     public void Ctor_WithOverrides_Uses_Provided_Subcomponents()
     {
         // Arrange
-        var customPalette = new AllyariaPaletteVariant();
+        var customPalette = new AllyariaPalette();
         var customTypography = new AllyariaTypography();
         var customSpacing = new AllyariaSpacing();
         var customBorders = new AllyariaBorders();
@@ -94,7 +94,7 @@ public class AllyariaStyleVariantTests
         var style = new AllyariaStyleVariant(customPalette, customTypography, customSpacing, customBorders);
 
         // Assert
-        style.PaletteVariant.Should().Be(customPalette);
+        style.Palette.Should().Be(customPalette);
         style.Typography.Should().Be(customTypography);
         style.Spacing.Should().Be(customSpacing);
         style.Border.Should().Be(customBorders);
