@@ -7,94 +7,79 @@ namespace Allyaria.Theming.UnitTests.Helpers;
 public sealed class StyleHelperTests
 {
     [Fact]
-    public void ToCss_Should_AppendCssFromValue_When_AllInputsValid_And_PrefixIsNormalized()
+    public void ToCss_Should_AppendMultipleDeclarations_When_CalledMultipleTimes()
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("some-theme-value");
-        var propertyName = "color";
-        var varPrefix = "  My--Theme   Name  ";
-        var expectedPrefixedProperty = "--my-theme-name-color";
-        var expectedCss = $"{expectedPrefixedProperty}:{value.Value};";
+        var red = new AllyariaStringValue("red");
+        var blue = new AllyariaStringValue("blue");
 
         // Act
-        builder.ToCss(value, propertyName, varPrefix);
+        builder.ToCss(red, "color", "theme");
+        builder.ToCss(blue, "border-color", "theme");
 
         // Assert
-        builder.ToString().Should().Be(expectedCss);
+        builder.ToString().Should().Be("--theme-color:red;--theme-border-color:blue;");
     }
 
-    [Theory]
-    [InlineData("----Fancy----", "--fancy")]
-    [InlineData("- - Fancy - -", "--fancy")]
-    [InlineData("A  B   C", "--a-b-c")]
-    [InlineData("Title-Case Prefix", "--title-case-prefix")]
-    public void ToCss_Should_BuildCssVariableName_With_LowercasedHyphenNormalizedPrefix(string varPrefix,
-        string expectedPrefixPortion)
+    [Fact]
+    public void ToCss_Should_AppendPropertyWithNormalizedPrefix_When_VarPrefixIsProvided()
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("ok");
-        var propertyName = "border";
-        var expectedPrefixedProperty = $"{expectedPrefixPortion}-{propertyName}";
-        var expectedCss = $"{expectedPrefixedProperty}:{value.Value};";
+        var value = new AllyariaStringValue("#fff");
 
         // Act
-        builder.ToCss(value, propertyName, varPrefix);
+        builder.ToCss(value, "background", "Main Theme");
 
         // Assert
-        builder.ToString().Should().Be(expectedCss);
+        builder.ToString().Should().Be("--main-theme-background:#fff;");
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void ToCss_Should_DoNothing_When_PropertyNameIsNullOrWhitespace(string? propertyName)
+    [Fact]
+    public void ToCss_Should_AppendPropertyWithoutPrefix_When_VarPrefixIsNullOrWhitespace()
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("exists");
+        var value = new AllyariaStringValue("blue");
 
         // Act
-        builder.ToCss(value, propertyName!, "prefix");
+        builder.ToCss(value, "color", null);
+
+        // Assert
+        builder.ToString().Should().Be("color:blue;");
+    }
+
+    [Fact]
+    public void ToCss_Should_DoNothing_When_PropertyNameIsNullOrWhitespace()
+    {
+        // Arrange
+        var builder = new StringBuilder();
+        var value = new AllyariaStringValue("red");
+
+        // Act
+        builder.ToCss(value, null!, "theme");
+        builder.ToCss(value, " ", "theme");
 
         // Assert
         builder.ToString().Should().BeEmpty();
     }
 
-    [Fact]
-    public void ToCss_Should_ThrowNullReferenceException_When_BuilderIsNull_And_InputsValid()
-    {
-        // Arrange
-        StringBuilder? builder = null;
-        var value = new AllyariaStringValue("present");
-        var propertyName = "color";
-        var varPrefix = "the-prefix";
-
-        // Act
-        var act = () => builder!.ToCss(value, propertyName, varPrefix);
-
-        // Assert
-        act.Should().Throw<NullReferenceException>();
-    }
-
     [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void ToCss_Should_UsePropertyNameDirectly_When_VarPrefixIsNullOrWhitespace(string? varPrefix)
+    [InlineData(null, "")]
+    [InlineData("", "")]
+    [InlineData("   ", "")]
+    [InlineData("MyPrefix", "myprefix")]
+    [InlineData("My Prefix", "my-prefix")]
+    [InlineData("My--Prefix", "my-prefix")]
+    [InlineData("--Double--Dash--", "double-dash")]
+    [InlineData("  Mixed- SPACES  ", "mixed-spaces")]
+    public void ToPrefix_Should_ReturnNormalizedPrefix_When_InputHasVariousFormats(string? input, string expected)
     {
-        // Arrange
-        var builder = new StringBuilder();
-        var value = new AllyariaStringValue("red");
-        var propertyName = "background";
-        var expectedCss = $"{propertyName}:{value.Value};";
-
         // Act
-        builder.ToCss(value, propertyName, varPrefix!);
+        var result = input.ToPrefix();
 
         // Assert
-        builder.ToString().Should().Be(expectedCss);
+        result.Should().Be(expected);
     }
 }

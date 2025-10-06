@@ -4,15 +4,15 @@ using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Helpers;
 
-/// <summary>Provides helper extensions for building CSS style declarations from theme values.</summary>
+/// <summary>Provides helper extensions for constructing CSS style declarations from Allyaria theme values.</summary>
 internal static class StyleHelper
 {
-    /// <summary>Appends a CSS declaration for the given property and value to a <see cref="StringBuilder" />.</summary>
+    /// <summary>Appends a CSS declaration for the specified property and value to a <see cref="StringBuilder" />.</summary>
     /// <param name="builder">The <see cref="StringBuilder" /> used to collect CSS declarations.</param>
     /// <param name="value">The theming value containing the CSS representation.</param>
-    /// <param name="propertyName">The CSS property name to apply (e.g., "color").</param>
+    /// <param name="propertyName">The CSS property name to apply (for example, <c>"color"</c>).</param>
     /// <param name="varPrefix">
-    /// The prefix used when generating a CSS variable name. Results in a property of the form
+    /// The prefix used when generating a CSS variable name. The resulting variable takes the form
     /// <c>--{varPrefix}-{propertyName}</c>. Hyphens and whitespace are normalized.
     /// </param>
     public static void ToCss(this StringBuilder builder, ValueBase value, string propertyName, string? varPrefix)
@@ -22,7 +22,7 @@ internal static class StyleHelper
             return;
         }
 
-        var prefix = Regex.Replace(varPrefix ?? string.Empty, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
+        var prefix = varPrefix.ToPrefix();
 
         var prefixedProperty = string.IsNullOrWhiteSpace(prefix)
             ? propertyName
@@ -30,4 +30,13 @@ internal static class StyleHelper
 
         builder.Append(value.ToCss(prefixedProperty));
     }
+
+    /// <summary>Converts a prefix string into a normalized, lowercase CSS variable prefix.</summary>
+    /// <param name="prefix">The prefix to normalize. May be <see langword="null" /> or empty.</param>
+    /// <returns>
+    /// A normalized, lowercase prefix suitable for use in CSS variable names. If the input is <see langword="null" /> or
+    /// whitespace, an empty string is returned.
+    /// </returns>
+    public static string ToPrefix(this string? prefix)
+        => Regex.Replace(prefix ?? string.Empty, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 }
