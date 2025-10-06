@@ -1,279 +1,156 @@
 ﻿using Allyaria.Theming.Styles;
+using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class AllyariaStyleTests
+public class AllyariaStyleTests
 {
     [Fact]
-    public void Cascade_Should_NotMutateOriginalStyle_When_Invoked()
+    public void Cascade_WithNoArgs_Returns_Identical_InstanceValues()
     {
         // Arrange
-        var sut = new AllyariaStyle(MakeVariant(10, 20, 30));
-        var snapshot = sut; // record struct copy captures current state
-
-        var newDefault = MakeVariant(128, 64, 32);
+        var original = new AllyariaStyle();
 
         // Act
-        var cascaded = sut.Cascade(newDefault);
+        var cascaded = original.Cascade();
 
         // Assert
-        // Original remains exactly as it was (value equality for record struct)
-        sut.Should().Be(snapshot);
-
-        // Ensure some concrete difference exists between original and cascaded to validate non-mutation
-        cascaded.Default.Should().Be(newDefault);
-        sut.Default.Should().NotBe(newDefault);
-
-        // Variant palettes changed only in the cascaded copy
-        sut.Disabled.Palette.Should().Be(snapshot.Disabled.Palette);
-        cascaded.Disabled.Palette.Should().NotBe(snapshot.Disabled.Palette);
+        cascaded.Palette.Should().Be(original.Palette);
+        cascaded.Typography.Should().Be(original.Typography);
+        cascaded.Spacing.Should().Be(original.Spacing);
+        cascaded.Border.Should().Be(original.Border);
     }
 
     [Fact]
-    public void Cascade_Should_PreserveNonPaletteConfig_AcrossMultipleCascades_When_Chained()
+    public void Cascade_WithOverrides_Replaces_Only_Provided_Subcomponents()
     {
         // Arrange
-        var sut = new AllyariaStyle(MakeVariant(30, 60, 90));
-
-        var originalPressedTypography = sut.Pressed.Typography;
-        var originalPressedSpacing = sut.Pressed.Spacing;
-        var originalPressedBorder = sut.Pressed.Border;
-
-        var firstDefault = MakeVariant(180, 100, 40);
-        var secondDefault = MakeVariant(10, 220, 140);
+        var original = new AllyariaStyle();
+        var newPalette = new AllyariaPalette();
+        var newTypography = new AllyariaTypography();
+        var newSpacing = new AllyariaSpacing();
+        var newBorders = new AllyariaBorders();
 
         // Act
-        var afterFirst = sut.Cascade(firstDefault);
-        var afterSecond = afterFirst.Cascade(secondDefault);
+        var cascaded = original.Cascade(
+            newPalette,
+            newTypography,
+            newSpacing,
+            newBorders
+        );
 
         // Assert
-        // Default should reflect the last cascade
-        afterSecond.Default.Should().Be(secondDefault);
-
-        // Non-paletteState members preserved across cascades
-        afterSecond.Pressed.Typography.Should().Be(originalPressedTypography);
-        afterSecond.Pressed.Spacing.Should().Be(originalPressedSpacing);
-        afterSecond.Pressed.Border.Should().Be(originalPressedBorder);
-
-        // Palettes should have changed between each cascade (Pressed as representative)
-        afterFirst.Pressed.Palette.Should().NotBe(sut.Pressed.Palette);
-        afterSecond.Pressed.Palette.Should().NotBe(afterFirst.Pressed.Palette);
+        cascaded.Palette.Should().Be(newPalette);
+        cascaded.Typography.Should().Be(newTypography);
+        cascaded.Spacing.Should().Be(newSpacing);
+        cascaded.Border.Should().Be(newBorders);
     }
 
     [Fact]
-    public void Cascade_Should_ReplaceDefault_And_UpdateOnlyPalettes_When_NewDefaultProvided()
+    public void Ctor_Default_Initializes_All_Default_Subcomponents()
     {
         // Arrange
-        var original = new AllyariaStyle(MakeVariant(5, 25, 55));
-
-        var originalHoveredTypography = original.Hovered.Typography;
-        var originalHoveredSpacing = original.Hovered.Spacing;
-        var originalHoveredBorder = original.Hovered.Border;
-        var originalHoveredPalette = original.Hovered.Palette;
-
-        var originalLowTypography = original.Low.Typography;
-        var originalLowSpacing = original.Low.Spacing;
-        var originalLowBorder = original.Low.Border;
-        var originalLowPalette = original.Low.Palette;
-
-        var newDefault = MakeVariant(200, 150, 100);
 
         // Act
-        var cascaded = original.Cascade(newDefault);
+        var style = new AllyariaStyle();
 
         // Assert
-        // Default replaced
-        cascaded.Default.Should().Be(newDefault);
-
-        // Non-paletteState parts preserved for existing variants
-        cascaded.Hovered.Typography.Should().Be(originalHoveredTypography);
-        cascaded.Hovered.Spacing.Should().Be(originalHoveredSpacing);
-        cascaded.Hovered.Border.Should().Be(originalHoveredBorder);
-
-        cascaded.Low.Typography.Should().Be(originalLowTypography);
-        cascaded.Low.Spacing.Should().Be(originalLowSpacing);
-        cascaded.Low.Border.Should().Be(originalLowBorder);
-
-        // Palettes updated (derived from the new default) — should differ from pre-cascade palettes
-        cascaded.Hovered.Palette.Should().NotBe(originalHoveredPalette);
-        cascaded.Low.Palette.Should().NotBe(originalLowPalette);
-
-        // And should not equal the new default paletteState for non-default variants
-        cascaded.Hovered.Palette.Should().NotBe(cascaded.Default.Palette);
-        cascaded.Low.Palette.Should().NotBe(cascaded.Default.Palette);
+        style.Palette.Should().NotBeNull();
+        style.Typography.Should().NotBeNull();
+        style.Spacing.Should().NotBeNull();
+        style.Border.Should().NotBeNull();
     }
 
     [Fact]
-    public void Cascade_Should_UpdatePalettes_For_AllVariants_When_NewDefaultProvided()
+    public void Ctor_WithNulls_Initializes_All_Default_Subcomponents()
     {
         // Arrange
-        var sut = new AllyariaStyle(MakeVariant(12, 34, 56));
+        AllyariaPalette? palette = null;
+        AllyariaTypography? typography = null;
+        AllyariaSpacing? spacing = null;
+        AllyariaBorders? borders = null;
 
-        var originalPalettes = new[]
+        // Act
+        var style = new AllyariaStyle(palette, typography, spacing, borders);
+
+        // Assert
+        style.Palette.Should().NotBeNull();
+        style.Typography.Should().NotBeNull();
+        style.Spacing.Should().NotBeNull();
+        style.Border.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Ctor_WithOverrides_Uses_Provided_Subcomponents()
+    {
+        // Arrange
+        var customPalette = new AllyariaPalette();
+        var customTypography = new AllyariaTypography();
+        var customSpacing = new AllyariaSpacing();
+        var customBorders = new AllyariaBorders();
+
+        // Act
+        var style = new AllyariaStyle(customPalette, customTypography, customSpacing, customBorders);
+
+        // Assert
+        style.Palette.Should().Be(customPalette);
+        style.Typography.Should().Be(customTypography);
+        style.Spacing.Should().Be(customSpacing);
+        style.Border.Should().Be(customBorders);
+    }
+
+    [Fact]
+    public void ToCss_WithEmptyPrefix_Concatenates_All_Subcomponents_Css()
+    {
+        // Arrange
+        var style = new AllyariaStyle();
+
+        // Act
+        var css = style.ToCss();
+
+        // Assert
+        css.Should().NotBeNull();
+        css.Should().NotBeEmpty();
+
+        css.Should().Contain("font-")
+            .And.Contain("margin-")
+            .And.Contain("padding-");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData("Ui-Theme")]
+    [InlineData("ui theme")]
+    public void ToCss_WithPrefix_Normalizes_And_Propagates_To_Subcomponents(string? prefix)
+    {
+        // Arrange
+        var style = new AllyariaStyle();
+
+        // Act
+        var css = style.ToCss(prefix);
+
+        // Assert
+        css.Should().NotBeNullOrEmpty();
+
+        var normalized = (prefix ?? string.Empty).Trim();
+
+        if (string.IsNullOrWhiteSpace(normalized))
         {
-            sut.Disabled.Palette,
-            sut.Hovered.Palette,
-            sut.Focused.Palette,
-            sut.Pressed.Palette,
-            sut.Dragged.Palette,
-            sut.Lowest.Palette,
-            sut.Low.Palette,
-            sut.High.Palette,
-            sut.Highest.Palette
-        };
-
-        var newDefault = MakeVariant(200, 180, 160);
-
-        // Act
-        var cascaded = sut.Cascade(newDefault);
-
-        // Assert
-        var updatedPalettes = new[]
+            css.Should().NotContain("--");
+        }
+        else
         {
-            cascaded.Disabled.Palette,
-            cascaded.Hovered.Palette,
-            cascaded.Focused.Palette,
-            cascaded.Pressed.Palette,
-            cascaded.Dragged.Palette,
-            cascaded.Lowest.Palette,
-            cascaded.Low.Palette,
-            cascaded.High.Palette,
-            cascaded.Highest.Palette
-        };
+            var expectedPart = "--" + Regex
+                .Replace(normalized, @"[\s-]+", "-")
+                .Trim('-')
+                .ToLowerInvariant();
 
-        // all non-default variant palettes should change after cascading
-        updatedPalettes.Should().HaveCount(originalPalettes.Length)
-            .And.SatisfyRespectively(
-                p0 => p0.Should().NotBe(originalPalettes[0]),
-                p1 => p1.Should().NotBe(originalPalettes[1]),
-                p2 => p2.Should().NotBe(originalPalettes[2]),
-                p3 => p3.Should().NotBe(originalPalettes[3]),
-                p4 => p4.Should().NotBe(originalPalettes[4]),
-                p5 => p5.Should().NotBe(originalPalettes[5]),
-                p6 => p6.Should().NotBe(originalPalettes[6]),
-                p7 => p7.Should().NotBe(originalPalettes[7]),
-                p8 => p8.Should().NotBe(originalPalettes[8])
-            );
-
-        // default paletteState specifically updates to the new one
-        cascaded.Default.Palette.Should().Be(newDefault.Palette);
-    }
-
-    [Fact]
-    public void Ctor_Should_CreateVariants_FromDefault_When_Parameterless()
-    {
-        // Arrange & Act
-        var sut = new AllyariaStyle();
-
-        // Assert
-        // Variants share non-paletteState configuration with Default
-        sut.Disabled.Typography.Should().Be(sut.Default.Typography);
-        sut.Hovered.Typography.Should().Be(sut.Default.Typography);
-        sut.Focused.Typography.Should().Be(sut.Default.Typography);
-        sut.Pressed.Typography.Should().Be(sut.Default.Typography);
-        sut.Dragged.Typography.Should().Be(sut.Default.Typography);
-        sut.Lowest.Typography.Should().Be(sut.Default.Typography);
-        sut.Low.Typography.Should().Be(sut.Default.Typography);
-        sut.High.Typography.Should().Be(sut.Default.Typography);
-        sut.Highest.Typography.Should().Be(sut.Default.Typography);
-
-        sut.Disabled.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Hovered.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Focused.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Pressed.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Dragged.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Lowest.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Low.Spacing.Should().Be(sut.Default.Spacing);
-        sut.High.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Highest.Spacing.Should().Be(sut.Default.Spacing);
-
-        sut.Disabled.Border.Should().Be(sut.Default.Border);
-        sut.Hovered.Border.Should().Be(sut.Default.Border);
-        sut.Focused.Border.Should().Be(sut.Default.Border);
-        sut.Pressed.Border.Should().Be(sut.Default.Border);
-        sut.Dragged.Border.Should().Be(sut.Default.Border);
-        sut.Lowest.Border.Should().Be(sut.Default.Border);
-        sut.Low.Border.Should().Be(sut.Default.Border);
-        sut.High.Border.Should().Be(sut.Default.Border);
-        sut.Highest.Border.Should().Be(sut.Default.Border);
-
-        // Palettes for non-default variants should be derived (i.e., different from Default).
-        sut.Disabled.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Hovered.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Focused.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Pressed.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Dragged.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Lowest.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Low.Palette.Should().NotBe(sut.Default.Palette);
-        sut.High.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Highest.Palette.Should().NotBe(sut.Default.Palette);
-    }
-
-    [Fact]
-    public void Ctor_Should_UsePassedDefault_And_DeriveOtherVariants_When_OthersAreNull()
-    {
-        // Arrange
-        var baseVariant = MakeVariant(10, 20, 30);
-
-        // Act
-        var sut = new AllyariaStyle(baseVariant);
-
-        // Assert
-        // Base
-        sut.Default.Should().Be(baseVariant);
-
-        // The derived variants should preserve non-paletteState components (Typography/Spacing/Border config object)
-        // because AllyariaStyleVariant.Cascade only overrides the paletteState when deriving.
-        sut.Disabled.Typography.Should().Be(sut.Default.Typography);
-        sut.Hovered.Typography.Should().Be(sut.Default.Typography);
-        sut.Focused.Typography.Should().Be(sut.Default.Typography);
-        sut.Pressed.Typography.Should().Be(sut.Default.Typography);
-        sut.Dragged.Typography.Should().Be(sut.Default.Typography);
-        sut.Lowest.Typography.Should().Be(sut.Default.Typography);
-        sut.Low.Typography.Should().Be(sut.Default.Typography);
-        sut.High.Typography.Should().Be(sut.Default.Typography);
-        sut.Highest.Typography.Should().Be(sut.Default.Typography);
-
-        sut.Disabled.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Hovered.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Focused.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Pressed.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Dragged.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Lowest.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Low.Spacing.Should().Be(sut.Default.Spacing);
-        sut.High.Spacing.Should().Be(sut.Default.Spacing);
-        sut.Highest.Spacing.Should().Be(sut.Default.Spacing);
-
-        sut.Disabled.Border.Should().Be(sut.Default.Border);
-        sut.Hovered.Border.Should().Be(sut.Default.Border);
-        sut.Focused.Border.Should().Be(sut.Default.Border);
-        sut.Pressed.Border.Should().Be(sut.Default.Border);
-        sut.Dragged.Border.Should().Be(sut.Default.Border);
-        sut.Lowest.Border.Should().Be(sut.Default.Border);
-        sut.Low.Border.Should().Be(sut.Default.Border);
-        sut.High.Border.Should().Be(sut.Default.Border);
-        sut.Highest.Border.Should().Be(sut.Default.Border);
-
-        // Palettes should generally differ from the base (they are derived).
-        sut.Disabled.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Hovered.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Focused.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Pressed.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Dragged.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Lowest.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Low.Palette.Should().NotBe(sut.Default.Palette);
-        sut.High.Palette.Should().NotBe(sut.Default.Palette);
-        sut.Highest.Palette.Should().NotBe(sut.Default.Palette);
-    }
-
-    private static AllyariaStyleVariant MakeVariant(byte r, byte g, byte b)
-    {
-        var background = AllyariaColorValue.FromRgba(r, g, b);
-        var foreground = AllyariaColorValue.FromRgba((byte)(255 - r), (byte)(255 - g), (byte)(255 - b));
-        var border = AllyariaColorValue.FromRgba(r, g, b);
-        var palette = new AllyariaPalette(background, foreground, border);
-
-        return new AllyariaStyleVariant(palette);
+            css.Should().Contain(expectedPart + "-font-")
+                .And.Contain(expectedPart + "-margin-")
+                .And.Contain(expectedPart + "-padding-");
+        }
     }
 }

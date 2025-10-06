@@ -136,7 +136,7 @@ public readonly record struct AllyariaTypography
     /// <summary>Builds a CSS declaration block from the current typography values.</summary>
     /// <param name="varPrefix">
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
-    /// <c>--{varPrefix}-var-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
+    /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by

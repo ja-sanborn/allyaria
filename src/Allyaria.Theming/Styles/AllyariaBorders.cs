@@ -12,8 +12,8 @@ namespace Allyaria.Theming.Styles;
 /// <see cref="AllyariaStringValue" /> (e.g., <c>solid</c>, <c>dashed</c>, <c>none</c>).
 /// </summary>
 /// <remarks>
-/// This type intentionally omits border color; colors come from the palette/theme layer. Values are emitted to CSS
-/// only when their underlying representation is non-empty (see
+/// This type intentionally omits border color; colors come from the palette/theme layer. Values are emitted to CSS only
+/// when their underlying representation is non-empty (see
 /// <see cref="StyleHelper.ToCss(StringBuilder, Allyaria.Theming.Contracts.ValueBase, string, string)" />).
 /// </remarks>
 public readonly record struct AllyariaBorders
@@ -214,7 +214,7 @@ public readonly record struct AllyariaBorders
     /// <summary>Builds CSS declarations for all non-empty border members.</summary>
     /// <param name="varPrefix">
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
-    /// <c>--{varPrefix}-var-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
+    /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by

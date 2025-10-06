@@ -1,4 +1,4 @@
-namespace Allyaria.Abstractions.Enumerations;
+namespace Allyaria.Theming.Enumerations;
 
 /// <summary>
 /// Specifies the various interactive and visual states a UI component may occupy within the Allyaria framework. These

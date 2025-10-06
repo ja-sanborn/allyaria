@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Allyaria.Abstractions.Enumerations;
+namespace Allyaria.Theming.Enumerations;
 
 /// <summary>Defines units of length measurement for styling and layout.</summary>
 public enum LengthUnits

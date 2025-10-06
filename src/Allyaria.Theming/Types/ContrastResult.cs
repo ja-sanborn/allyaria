@@ -1,7 +1,7 @@
 using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Allyaria.Theming.Primitives;
+namespace Allyaria.Theming.Types;
 
 /// <summary>
 /// Immutable result that describes the outcome of a contrast resolution operation, including the chosen foreground color,

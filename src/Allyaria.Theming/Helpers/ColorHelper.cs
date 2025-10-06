@@ -1,6 +1,6 @@
 using Allyaria.Theming.Constants;
-using Allyaria.Theming.Primitives;
 using Allyaria.Theming.Styles;
+using Allyaria.Theming.Types;
 using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.Helpers;
@@ -102,8 +102,8 @@ internal static class ColorHelper
     }
 
     /// <summary>
-    /// Derives a dragged state palette (for drag-and-drop affordances) with the strongest delta among pointer states,
-    /// keeping foreground contrast above <paramref name="minContrast" />.
+    /// Derives a dragged state palette (for drag-and-drop affordances) with the strongest delta among pointer states, keeping
+    /// foreground contrast above <paramref name="minContrast" />.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="backgroundDeltaV">Background value (V) delta.</param>
@@ -117,8 +117,8 @@ internal static class ColorHelper
         => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
 
     /// <summary>
-    /// Derives a focused state palette with stronger nudge than hover to increase perceptibility while maintaining
-    /// minimum foreground contrast.
+    /// Derives a focused state palette with stronger nudge than hover to increase perceptibility while maintaining minimum
+    /// foreground contrast.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="backgroundDeltaV">Background value (V) delta.</param>
@@ -132,8 +132,7 @@ internal static class ColorHelper
         => NudgeState(palette, backgroundDeltaV, borderDeltaV, minContrast);
 
     /// <summary>
-    /// Derives a higher elevation palette (high) by nudging background/border and re-ensuring minimum foreground
-    /// contrast.
+    /// Derives a higher elevation palette (high) by nudging background/border and re-ensuring minimum foreground contrast.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
@@ -142,8 +141,8 @@ internal static class ColorHelper
         => NudgeElevation(palette, delta, false);
 
     /// <summary>
-    /// Derives a higher-tier elevation palette (highest) by nudging background/border in the opposite direction of the
-    /// lower tiers relative to theme brightness.
+    /// Derives a higher-tier elevation palette (highest) by nudging background/border in the opposite direction of the lower
+    /// tiers relative to theme brightness.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
@@ -152,8 +151,8 @@ internal static class ColorHelper
         => NudgeElevation(palette, delta, false);
 
     /// <summary>
-    /// Derives a hovered state palette by nudging background/border contrast while preserving hue and ensuring
-    /// foreground contrast is at least <paramref name="minContrast" />.
+    /// Derives a hovered state palette by nudging background/border contrast while preserving hue and ensuring foreground
+    /// contrast is at least <paramref name="minContrast" />.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="backgroundDeltaV">Magnitude of background value (V) change in percent.</param>
@@ -176,8 +175,8 @@ internal static class ColorHelper
         => NudgeElevation(palette, delta, true);
 
     /// <summary>
-    /// Derives a lower-tier elevation palette (lowest) by nudging background toward the appropriate darker/lighter
-    /// direction for the current theme brightness.
+    /// Derives a lower-tier elevation palette (lowest) by nudging background toward the appropriate darker/lighter direction
+    /// for the current theme brightness.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
@@ -186,8 +185,8 @@ internal static class ColorHelper
         => NudgeElevation(palette, delta, true);
 
     /// <summary>
-    /// Derives a pressed (active) state palette with a stronger delta to convey interaction depth while maintaining
-    /// minimum foreground contrast.
+    /// Derives a pressed (active) state palette with a stronger delta to convey interaction depth while maintaining minimum
+    /// foreground contrast.
     /// </summary>
     /// <param name="palette">Base palette.</param>
     /// <param name="backgroundDeltaV">Background value (V) delta.</param>

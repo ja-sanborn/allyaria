@@ -1,5 +1,5 @@
-using Allyaria.Abstractions.Enumerations;
 using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Enumerations;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
