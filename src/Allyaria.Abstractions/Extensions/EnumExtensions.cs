@@ -31,10 +31,10 @@ public static class EnumExtensions
     /// Fallback humanization is performed via <see cref="StringExtensions.FromPascalCase(string?)" />. The result is cached
     /// per (enum type, raw name) pair.
     /// </remarks>
-    /// <exception cref="AllyariaArgumentException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
+    /// <exception cref="AryArgumentException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
     public static string GetDescription(this Enum value)
     {
-        AllyariaArgumentException.ThrowIfNull(value, nameof(value));
+        AryArgumentException.ThrowIfNull(value, nameof(value));
 
         var type = value.GetType();
         var name = value.ToString(); // May be "A" or "A, B" for [Flags].

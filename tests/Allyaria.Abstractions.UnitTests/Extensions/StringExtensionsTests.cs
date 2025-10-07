@@ -62,7 +62,7 @@ public sealed class StringExtensionsTests
         var act = input.FromCamelCase;
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>()
+        act.Should().Throw<AryArgumentException>()
             .WithMessage("*must be a camelCase identifier*");
     }
 
@@ -101,7 +101,7 @@ public sealed class StringExtensionsTests
         var act = input.FromKebabCase;
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>()
+        act.Should().Throw<AryArgumentException>()
             .WithMessage("*must be a kebab-case identifier*");
     }
 
@@ -140,7 +140,7 @@ public sealed class StringExtensionsTests
         var act = input.FromPascalCase;
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>();
+        act.Should().Throw<AryArgumentException>();
     }
 
     [Theory]
@@ -187,7 +187,7 @@ public sealed class StringExtensionsTests
         var act = input.FromPrefixedCase;
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>()
+        act.Should().Throw<AryArgumentException>()
             .WithMessage(expectedMessage + "*");
     }
 
@@ -226,7 +226,7 @@ public sealed class StringExtensionsTests
         var act = input.FromSnakeCase;
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>()
+        act.Should().Throw<AryArgumentException>()
             .WithMessage("*ust be a snake_case identifier*");
     }
 

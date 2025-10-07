@@ -11,8 +11,8 @@ public sealed class StyleHelperTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var red = new AllyariaStringValue("red");
-        var blue = new AllyariaStringValue("blue");
+        var red = new AryStringValue("red");
+        var blue = new AryStringValue("blue");
 
         // Act
         builder.ToCss(red, "color", "theme");
@@ -27,7 +27,7 @@ public sealed class StyleHelperTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("#fff");
+        var value = new AryStringValue("#fff");
 
         // Act
         builder.ToCss(value, "background", "Main Theme");
@@ -41,7 +41,7 @@ public sealed class StyleHelperTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("blue");
+        var value = new AryStringValue("blue");
 
         // Act
         builder.ToCss(value, "color", null);
@@ -55,7 +55,7 @@ public sealed class StyleHelperTests
     {
         // Arrange
         var builder = new StringBuilder();
-        var value = new AllyariaStringValue("red");
+        var value = new AryStringValue("red");
 
         // Act
         builder.ToCss(value, null!, "theme");

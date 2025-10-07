@@ -17,8 +17,8 @@ namespace Allyaria.Theming.Types;
 /// </param>
 [ExcludeFromCodeCoverage(Justification = "This is a simple readonly record struct with no logic.")]
 internal readonly record struct ContrastResult(
-    AllyariaColorValue ForegroundColor,
-    AllyariaColorValue BackgroundColor,
+    AryColorValue ForegroundColor,
+    AryColorValue BackgroundColor,
     double ContrastRatio,
     bool MeetsMinimum
 );

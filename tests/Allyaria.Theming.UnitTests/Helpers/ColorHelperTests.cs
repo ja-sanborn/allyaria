@@ -14,8 +14,8 @@ public sealed class ColorHelperTests
     public void ContrastRatio_Should_Be_21_For_BlackOnWhite_And_Symmetric()
     {
         // Arrange
-        var black = AllyariaColorValue.FromRgba(0, 0, 0);
-        var white = AllyariaColorValue.FromRgba(255, 255, 255);
+        var black = AryColorValue.FromRgba(0, 0, 0);
+        var white = AryColorValue.FromRgba(255, 255, 255);
 
         // Act
         var r1 = ColorHelper.ContrastRatio(black, white);
@@ -30,9 +30,9 @@ public sealed class ColorHelperTests
     public void ContrastRatio_Should_Increase_When_Foreground_Darkens_On_LightBackground()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(210, 10, 95); // very light, slightly cool
-        var lightFg = AllyariaColorValue.FromHsva(210, 10, 80);
-        var darkerFg = AllyariaColorValue.FromHsva(210, 10, 30);
+        var bg = AryColorValue.FromHsva(210, 10, 95); // very light, slightly cool
+        var lightFg = AryColorValue.FromHsva(210, 10, 80);
+        var darkerFg = AryColorValue.FromHsva(210, 10, 30);
 
         // Act
         var rLight = ColorHelper.ContrastRatio(lightFg, bg);
@@ -46,21 +46,21 @@ public sealed class ColorHelperTests
     public void DeriveDisabled_Should_Desaturate_And_Blend_Value_Toward_Mid_And_Keep_Readability()
     {
         // Arrange
-        var bg0 = AllyariaColorValue.FromHsva(210, 40, 90);
-        var fg0 = AllyariaColorValue.FromHsva(210, 20, 20);
-        var border0 = AllyariaColorValue.FromHsva(210, 40, 85);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(210, 40, 90);
+        var fg0 = AryColorValue.FromHsva(210, 20, 20);
+        var border0 = AryColorValue.FromHsva(210, 40, 85);
+        var basePalette = new AryPalette(bg0, fg0, border0);
 
         const double desat = 60.0;
         const double towardMidT = 0.15;
 
-        var expectedBg = AllyariaColorValue.FromHsva(
+        var expectedBg = AryColorValue.FromHsva(
             bg0.H,
             bg0.S - desat,
             bg0.V + (50.0 - bg0.V) * towardMidT
         );
 
-        var expectedBorder = AllyariaColorValue.FromHsva(
+        var expectedBorder = AryColorValue.FromHsva(
             border0.H,
             border0.S - desat,
             border0.V + (50.0 - border0.V) * towardMidT
@@ -82,15 +82,15 @@ public sealed class ColorHelperTests
     public void DeriveHigh_Should_Darken_On_DarkTheme_And_ReEnsure_Contrast()
     {
         // Arrange (dark theme)
-        var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
-        var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
-        var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(20, 15, 30);
+        var fg0 = AryColorValue.FromHsva(20, 15, 85);
+        var border0 = AryColorValue.FromHsva(20, 15, 32);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Expected via same quantization path
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
         var high = ColorHelper.DeriveHigh(basePalette, delta);
@@ -107,15 +107,15 @@ public sealed class ColorHelperTests
     public void DeriveHigh_Should_Lighten_On_LightTheme_And_ReEnsure_Contrast()
     {
         // Arrange (light theme)
-        var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
-        var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
-        var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(20, 15, 85);
+        var fg0 = AryColorValue.FromHsva(20, 15, 15);
+        var border0 = AryColorValue.FromHsva(20, 15, 83);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Compute expected via same conversion logic as helper to avoid rounding mismatches
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
         var high = ColorHelper.DeriveHigh(basePalette, delta);
@@ -132,15 +132,15 @@ public sealed class ColorHelperTests
     public void DeriveHighest_Should_DarkenMore_On_DarkTheme()
     {
         // Arrange (dark theme)
-        var bg0 = AllyariaColorValue.FromHsva(20, 15, 30);
-        var fg0 = AllyariaColorValue.FromHsva(20, 15, 85);
-        var border0 = AllyariaColorValue.FromHsva(20, 15, 32);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(20, 15, 30);
+        var fg0 = AryColorValue.FromHsva(20, 15, 85);
+        var border0 = AryColorValue.FromHsva(20, 15, 32);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Expected via same quantization path
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta); // darker on dark
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
         var highest = ColorHelper.DeriveHighest(basePalette, delta);
@@ -157,15 +157,15 @@ public sealed class ColorHelperTests
     public void DeriveHighest_Should_LightenMore_On_LightTheme()
     {
         // Arrange
-        var bg0 = AllyariaColorValue.FromHsva(20, 15, 85);
-        var fg0 = AllyariaColorValue.FromHsva(20, 15, 15);
-        var border0 = AllyariaColorValue.FromHsva(20, 15, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(20, 15, 85);
+        var fg0 = AryColorValue.FromHsva(20, 15, 15);
+        var border0 = AryColorValue.FromHsva(20, 15, 83);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta);
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
         var highest = ColorHelper.DeriveHighest(basePalette, delta);
@@ -182,15 +182,15 @@ public sealed class ColorHelperTests
     public void DeriveLow_Should_Darken_On_LightTheme_And_ReEnsure_Contrast()
     {
         // Arrange (light theme)
-        var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
-        var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
-        var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(200, 10, 85);
+        var fg0 = AryColorValue.FromHsva(200, 10, 15);
+        var border0 = AryColorValue.FromHsva(200, 10, 83);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
         var low = ColorHelper.DeriveLow(basePalette, delta);
@@ -207,15 +207,15 @@ public sealed class ColorHelperTests
     public void DeriveLow_Should_Lighten_On_DarkTheme_And_ReEnsure_Contrast()
     {
         // Arrange (dark theme)
-        var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
-        var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
-        var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(200, 10, 30);
+        var fg0 = AryColorValue.FromHsva(200, 10, 85);
+        var border0 = AryColorValue.FromHsva(200, 10, 28);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 8.0;
 
         // Expected via same quantization path
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
         var low = ColorHelper.DeriveLow(basePalette, delta);
@@ -230,15 +230,15 @@ public sealed class ColorHelperTests
     public void DeriveLowest_Should_DarkenMore_On_LightTheme()
     {
         // Arrange
-        var bg0 = AllyariaColorValue.FromHsva(200, 10, 85);
-        var fg0 = AllyariaColorValue.FromHsva(200, 10, 15);
-        var border0 = AllyariaColorValue.FromHsva(200, 10, 83);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(200, 10, 85);
+        var fg0 = AryColorValue.FromHsva(200, 10, 15);
+        var border0 = AryColorValue.FromHsva(200, 10, 83);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Compute expected via the same HSVA->RGBA quantization path to avoid rounding drift.
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V - delta);
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V - (delta + 2.0));
 
         // Act
         var lowest = ColorHelper.DeriveLowest(basePalette, delta);
@@ -255,15 +255,15 @@ public sealed class ColorHelperTests
     public void DeriveLowest_Should_LightenMore_On_DarkTheme()
     {
         // Arrange (dark theme)
-        var bg0 = AllyariaColorValue.FromHsva(200, 10, 30);
-        var fg0 = AllyariaColorValue.FromHsva(200, 10, 85);
-        var border0 = AllyariaColorValue.FromHsva(200, 10, 28);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(200, 10, 30);
+        var fg0 = AryColorValue.FromHsva(200, 10, 85);
+        var border0 = AryColorValue.FromHsva(200, 10, 28);
+        var basePalette = new AryPalette(bg0, fg0, border0);
         const double delta = 12.0;
 
         // Expected via same quantization path
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V + delta); // lighter on dark
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V + (delta + 2.0));
 
         // Act
         var lowest = ColorHelper.DeriveLowest(basePalette, delta);
@@ -281,8 +281,8 @@ public sealed class ColorHelperTests
     {
         // Arrange
         // Start with a light gray foreground on white background -> low contrast.
-        var bg = AllyariaColorValue.FromRgba(255, 255, 255);
-        var start = AllyariaColorValue.FromHsva(0, 0, 80); // light gray (S=0 keeps hue rail behavior clear)
+        var bg = AryColorValue.FromRgba(255, 255, 255);
+        var start = AryColorValue.FromHsva(0, 0, 80); // light gray (S=0 keeps hue rail behavior clear)
 
         // Act
         var result = ColorHelper.EnsureMinimumContrast(start, bg, 4.5);
@@ -301,8 +301,8 @@ public sealed class ColorHelperTests
     public void EnsureMinimumContrast_Should_Return_BestApproach_When_Target_Unreachable()
     {
         // Arrange
-        var bg = AllyariaColorValue.FromHsva(120, 100, 50); // saturated mid green
-        var start = AllyariaColorValue.FromHsva(120, 100, 50); // identical → initial ratio is 1
+        var bg = AryColorValue.FromHsva(120, 100, 50); // saturated mid green
+        var start = AryColorValue.FromHsva(120, 100, 50); // identical → initial ratio is 1
         var absurdTarget = 100.0; // impossible
 
         // Act
@@ -320,8 +320,8 @@ public sealed class ColorHelperTests
     public void EnsureMinimumContrast_Should_Return_SameColor_When_Already_Meets_Min()
     {
         // Arrange
-        var fg = AllyariaColorValue.FromRgba(0, 0, 0);
-        var bg = AllyariaColorValue.FromRgba(255, 255, 255);
+        var fg = AryColorValue.FromRgba(0, 0, 0);
+        var bg = AryColorValue.FromRgba(255, 255, 255);
 
         // Act
         var result = ColorHelper.EnsureMinimumContrast(fg, bg, 4.5);
@@ -342,14 +342,14 @@ public sealed class ColorHelperTests
         double minC)
     {
         // Arrange (light theme: V >= 50 → direction = -1)
-        var bg0 = AllyariaColorValue.FromHsva(30, 20, 80);
-        var fg0 = AllyariaColorValue.FromHsva(30, 10, 15);
-        var border0 = AllyariaColorValue.FromHsva(30, 20, 78);
-        var basePalette = new AllyariaPalette(bg0, fg0, border0);
+        var bg0 = AryColorValue.FromHsva(30, 20, 80);
+        var fg0 = AryColorValue.FromHsva(30, 10, 15);
+        var border0 = AryColorValue.FromHsva(30, 20, 78);
+        var basePalette = new AryPalette(bg0, fg0, border0);
 
         // Expected values computed via the same HSVA→RGBA quantization path to avoid rounding drift.
-        var expectedBg = AllyariaColorValue.FromHsva(bg0.H, bg0.S, bg0.V - bgDelta);
-        var expectedBorder = AllyariaColorValue.FromHsva(border0.H, border0.S, border0.V - borderDelta);
+        var expectedBg = AryColorValue.FromHsva(bg0.H, bg0.S, bg0.V - bgDelta);
+        var expectedBorder = AryColorValue.FromHsva(border0.H, border0.S, border0.V - borderDelta);
 
         // Act
         var hovered = ColorHelper.DeriveHovered(basePalette, bgDelta, borderDelta, minC);
@@ -387,7 +387,7 @@ public sealed class ColorHelperTests
     public void RelativeLuminance_Should_BeOne_For_White()
     {
         // Arrange
-        var white = AllyariaColorValue.FromRgba(255, 255, 255);
+        var white = AryColorValue.FromRgba(255, 255, 255);
 
         // Act
         var luminance = ColorHelper.RelativeLuminance(white);
@@ -400,7 +400,7 @@ public sealed class ColorHelperTests
     public void RelativeLuminance_Should_BeZero_For_Black()
     {
         // Arrange
-        var black = AllyariaColorValue.FromRgba(0, 0, 0);
+        var black = AryColorValue.FromRgba(0, 0, 0);
 
         // Act
         var luminance = ColorHelper.RelativeLuminance(black);
@@ -416,7 +416,7 @@ public sealed class ColorHelperTests
     public void RelativeLuminance_Should_Match_WCAG_Primaries(byte r, byte g, byte b, double expected)
     {
         // Arrange
-        var color = AllyariaColorValue.FromRgba(r, g, b);
+        var color = AryColorValue.FromRgba(r, g, b);
 
         // Act
         var luminance = ColorHelper.RelativeLuminance(color);
@@ -429,8 +429,8 @@ public sealed class ColorHelperTests
     public void SearchTowardPole_Should_Find_MinimumContrast_Mix_When_ValueRail_Fails()
     {
         // Arrange
-        var background = AllyariaColorValue.FromHsva(240, 100, 10); // very dark blue
-        var start = AllyariaColorValue.FromHsva(240, 100, 50); // saturated blue mid value
+        var background = AryColorValue.FromHsva(240, 100, 10); // very dark blue
+        var start = AryColorValue.FromHsva(240, 100, 50); // saturated blue mid value
 
         const double minimum = 10.0; // deliberately high to force the hue-rail attempts to fail
 

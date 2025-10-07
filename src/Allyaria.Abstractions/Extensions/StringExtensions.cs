@@ -74,7 +74,7 @@ public static class StringExtensions
         => new($"[{Regex.Escape(replaceChar.ToString())}]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     /// <summary>Converts a camelCase identifier into a human-readable string with spaces.</summary>
-    /// <exception cref="AllyariaArgumentException">Thrown when the trimmed input is not a valid camelCase identifier.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the trimmed input is not a valid camelCase identifier.</exception>
     public static string FromCamelCase(this string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -86,7 +86,7 @@ public static class StringExtensions
 
         if (!CamelCaseIdentifierRegex.IsMatch(text))
         {
-            throw new AllyariaArgumentException(
+            throw new AryArgumentException(
                 "must be a camelCase identifier (start with a lowercase letter; letters and digits only)",
                 nameof(value),
                 value
@@ -97,7 +97,7 @@ public static class StringExtensions
     }
 
     /// <summary>Converts a kebab-case identifier into a human-readable string with spaces.</summary>
-    /// <exception cref="AllyariaArgumentException">Thrown when the trimmed input is not a valid kebab-case identifier.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the trimmed input is not a valid kebab-case identifier.</exception>
     public static string FromKebabCase(this string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -109,7 +109,7 @@ public static class StringExtensions
 
         if (!KebabCaseIdentifierRegex.IsMatch(text))
         {
-            throw new AllyariaArgumentException(
+            throw new AryArgumentException(
                 "must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)",
                 nameof(value),
                 value
@@ -121,7 +121,7 @@ public static class StringExtensions
     }
 
     /// <summary>Converts a PascalCase identifier into a human-readable string with spaces.</summary>
-    /// <exception cref="AllyariaArgumentException">Thrown when the trimmed input is not a valid PascalCase identifier.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the trimmed input is not a valid PascalCase identifier.</exception>
     public static string FromPascalCase(this string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -133,7 +133,7 @@ public static class StringExtensions
 
         if (!PascalCaseIdentifierRegex.IsMatch(text))
         {
-            throw new AllyariaArgumentException(
+            throw new AryArgumentException(
                 "must be a PascalCase identifier (start with an uppercase letter; letters and digits only)",
                 nameof(value),
                 value
@@ -147,7 +147,7 @@ public static class StringExtensions
     /// Attempts to detect the naming convention of an identifier that may include an optional leading prefix (<c>_</c> or
     /// one/more <c>-</c>) and converts it into a human-readable string.
     /// </summary>
-    /// <exception cref="AllyariaArgumentException">
+    /// <exception cref="AryArgumentException">
     /// Thrown when the trimmed input cannot be classified as PascalCase, camelCase, snake_case, or kebab-case.
     /// </exception>
     public static string FromPrefixedCase(this string? value)
@@ -162,7 +162,7 @@ public static class StringExtensions
 
         if (core.Length == 0)
         {
-            throw new AllyariaArgumentException(
+            throw new AryArgumentException(
                 "Input cannot be reduced to a valid identifier.",
                 nameof(value),
                 value
@@ -189,7 +189,7 @@ public static class StringExtensions
             return FromKebabCase(core);
         }
 
-        throw new AllyariaArgumentException(
+        throw new AryArgumentException(
             "Input must be PascalCase, camelCase, snake_case, or kebab-case (with optional leading '_' or '-').",
             nameof(value),
             value
@@ -197,7 +197,7 @@ public static class StringExtensions
     }
 
     /// <summary>Converts a snake_case identifier into a human-readable string with spaces.</summary>
-    /// <exception cref="AllyariaArgumentException">Thrown when the trimmed input is not a valid snake_case identifier.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the trimmed input is not a valid snake_case identifier.</exception>
     public static string FromSnakeCase(this string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -209,7 +209,7 @@ public static class StringExtensions
 
         if (!SnakeCaseIdentifierRegex.IsMatch(text))
         {
-            throw new AllyariaArgumentException(
+            throw new AryArgumentException(
                 "must be a snake_case identifier (start with a letter; letters, digits, and underscores only)",
                 nameof(value),
                 value

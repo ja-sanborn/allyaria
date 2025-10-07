@@ -145,8 +145,8 @@ public sealed class EnumExtensionsTests
         };
 
         // Assert
-        act.Should().Throw<AllyariaArgumentException>()
-            .And.Should().BeOfType<AllyariaArgumentException>();
+        act.Should().Throw<AryArgumentException>()
+            .And.Should().BeOfType<AryArgumentException>();
     }
 
     [Fact]

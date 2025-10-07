@@ -7,14 +7,14 @@ namespace Allyaria.Theming.Constants;
 public static class TextTransform
 {
     /// <summary>Represents capitalizing the first letter of each word.</summary>
-    public static readonly AllyariaStringValue Capitalize = new("capitalize");
+    public static readonly AryStringValue Capitalize = new("capitalize");
 
     /// <summary>Represents transforming all characters to lowercase.</summary>
-    public static readonly AllyariaStringValue Lowercase = new("lowercase");
+    public static readonly AryStringValue Lowercase = new("lowercase");
 
     /// <summary>Represents no text transformation.</summary>
-    public static readonly AllyariaStringValue None = new("none");
+    public static readonly AryStringValue None = new("none");
 
     /// <summary>Represents transforming all characters to uppercase.</summary>
-    public static readonly AllyariaStringValue Uppercase = new("uppercase");
+    public static readonly AryStringValue Uppercase = new("uppercase");
 }

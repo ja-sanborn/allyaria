@@ -8,7 +8,7 @@ namespace Allyaria.Theming.Contracts;
 ///     <para>
 ///     All ordering and equality semantics are based on the underlying <see cref="Value" /> string using
 ///     <see cref="StringComparison.Ordinal" />. Instances of different concrete types are not comparable and will cause an
-///     <see cref="AllyariaArgumentException" /> when compared.
+///     <see cref="AryArgumentException" /> when compared.
 ///     </para>
 /// </remarks>
 public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
@@ -33,10 +33,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// greater than zero if <paramref name="left" /> is greater than <paramref name="right" />. If exactly one operand is
     /// <c>null</c>, the <c>null</c> operand is considered less.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">
-    /// Thrown when both operands are non-<c>null</c> but their runtime types
-    /// differ.
-    /// </exception>
+    /// <exception cref="AryArgumentException">Thrown when both operands are non-<c>null</c> but their runtime types differ.</exception>
     public static int Compare(ValueBase? left, ValueBase? right)
     {
         if (left is null && right is null)
@@ -56,7 +53,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
 
         if (left.GetType() != right.GetType())
         {
-            throw new AllyariaArgumentException("Cannot compare values of different types.");
+            throw new AryArgumentException("Cannot compare values of different types.");
         }
 
         return string.Compare(left.Value, right.Value, StringComparison.Ordinal);
@@ -71,7 +68,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// zero if this instance is greater than <paramref name="other" />. A non-<c>null</c> instance is considered greater than
     /// <c>null</c>.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">
+    /// <exception cref="AryArgumentException">
     /// Thrown when <paramref name="other" /> is non-<c>null</c> and its runtime type differs from this instance.
     /// </exception>
     public int CompareTo(ValueBase? other)
@@ -88,7 +85,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
 
         if (GetType() != other.GetType())
         {
-            throw new AllyariaArgumentException("Cannot compare values of different types.");
+            throw new AryArgumentException("Cannot compare values of different types.");
         }
 
         return string.Compare(Value, other.Value, StringComparison.Ordinal);
@@ -144,18 +141,18 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <summary>Validates and normalizes a raw string input for use in theming value objects.</summary>
     /// <param name="value">The input string to validate. Must not be <c>null</c>, empty, or whitespace-only.</param>
     /// <returns>A trimmed version of <paramref name="value" />.</returns>
-    /// <exception cref="AllyariaArgumentException">
+    /// <exception cref="AryArgumentException">
     /// Thrown when <paramref name="value" /> is <c>null</c>, empty, whitespace-only, or contains any Unicode control
     /// characters.
     /// </exception>
     protected static string ValidateInput(string value)
     {
-        AllyariaArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        AryArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
         var trimmed = value.Trim();
 
         return trimmed.Any(static c => char.IsControl(c))
-            ? throw new AllyariaArgumentException("Value contains control characters.", nameof(value), value)
+            ? throw new AryArgumentException("Value contains control characters.", nameof(value), value)
             : trimmed;
     }
 
@@ -173,7 +170,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>
     /// <c>true</c> if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">Thrown when the runtime types of the operands differ.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the runtime types of the operands differ.</exception>
     public static bool operator >(ValueBase left, ValueBase right) => left.CompareTo(right) > 0;
 
     /// <summary>Determines whether one instance is greater than or equal to another (operator).</summary>
@@ -182,7 +179,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>
     /// <c>true</c> if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">Thrown when the runtime types of the operands differ.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the runtime types of the operands differ.</exception>
     public static bool operator >=(ValueBase left, ValueBase right) => left.CompareTo(right) >= 0;
 
     /// <summary>Determines whether two instances are not equal (operator).</summary>
@@ -197,7 +194,7 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>
     /// <c>true</c> if <paramref name="left" /> is less than <paramref name="right" />; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">Thrown when the runtime types of the operands differ.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the runtime types of the operands differ.</exception>
     public static bool operator <(ValueBase left, ValueBase right) => left.CompareTo(right) < 0;
 
     /// <summary>Determines whether one instance is less than or equal to another (operator).</summary>
@@ -206,6 +203,6 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <returns>
     /// <c>true</c> if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="AllyariaArgumentException">Thrown when the runtime types of the operands differ.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the runtime types of the operands differ.</exception>
     public static bool operator <=(ValueBase left, ValueBase right) => left.CompareTo(right) <= 0;
 }

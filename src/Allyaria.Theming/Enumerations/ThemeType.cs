@@ -3,7 +3,7 @@
 /// <summary>Defines the available theme types supported by Allyaria.</summary>
 /// <remarks>
 /// The <see cref="ThemeType" /> enumeration represents the visual appearance options that can be applied at runtime
-/// through <c>AllyariaTheme</c>. The <see cref="System" /> option adapts to the user's operating system preference.
+/// through <c>AryTheme</c>. The <see cref="System" /> option adapts to the user's operating system preference.
 /// </remarks>
 public enum ThemeType
 {

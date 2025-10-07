@@ -7,11 +7,11 @@ namespace Allyaria.Theming.Constants;
 public static class FontStyle
 {
     /// <summary>Represents italic font style.</summary>
-    public static readonly AllyariaStringValue Italic = new("italic");
+    public static readonly AryStringValue Italic = new("italic");
 
     /// <summary>Represents normal font style.</summary>
-    public static readonly AllyariaStringValue Normal = new("normal");
+    public static readonly AryStringValue Normal = new("normal");
 
     /// <summary>Represents oblique font style.</summary>
-    public static readonly AllyariaStringValue Oblique = new("oblique");
+    public static readonly AryStringValue Oblique = new("oblique");
 }

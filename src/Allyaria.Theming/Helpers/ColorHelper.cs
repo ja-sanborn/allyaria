@@ -33,7 +33,7 @@ internal static class ColorHelper
     /// <param name="foreground">Foreground color (opaque).</param>
     /// <param name="background">Background color (opaque).</param>
     /// <returns><c>+1</c> if brightening increases contrast more; otherwise <c>-1</c>.</returns>
-    private static int ChooseValueDirection(AllyariaColorValue foreground, AllyariaColorValue background)
+    private static int ChooseValueDirection(AryColorValue foreground, AryColorValue background)
     {
         const double step = 2.0; // percent V
 
@@ -41,8 +41,8 @@ internal static class ColorHelper
         var s = foreground.S;
         var v = foreground.V;
 
-        var up = AllyariaColorValue.FromHsva(h, s, v + step);
-        var dn = AllyariaColorValue.FromHsva(h, s, v - step);
+        var up = AryColorValue.FromHsva(h, s, v + step);
+        var dn = AryColorValue.FromHsva(h, s, v - step);
 
         var rUp = ContrastRatio(up, background);
         var rDn = ContrastRatio(dn, background);
@@ -58,7 +58,7 @@ internal static class ColorHelper
     /// <returns>
     /// The contrast ratio defined as <c>(Lighter + 0.05) / (Darker + 0.05)</c>, where <c>L</c> is WCAG relative luminance.
     /// </returns>
-    public static double ContrastRatio(AllyariaColorValue foreground, AllyariaColorValue background)
+    public static double ContrastRatio(AryColorValue foreground, AryColorValue background)
     {
         var lf = RelativeLuminance(foreground);
         var lb = RelativeLuminance(background);
@@ -78,18 +78,18 @@ internal static class ColorHelper
     /// <param name="valueBlendTowardMid">Blend factor toward V=50% mid-tone.</param>
     /// <param name="minContrast">Minimum contrast ratio for disabled text.</param>
     /// <returns>A derived palette suitable for disabled state.</returns>
-    public static AllyariaPalette DeriveDisabled(AllyariaPalette palette,
+    public static AryPalette DeriveDisabled(AryPalette palette,
         double desaturateBy = 60.0,
         double valueBlendTowardMid = 0.15,
         double minContrast = 3.0)
     {
-        var background = AllyariaColorValue.FromHsva(
+        var background = AryColorValue.FromHsva(
             palette.BackgroundColor.H,
             palette.BackgroundColor.S - desaturateBy,
             Blend(palette.BackgroundColor.V, 50.0, valueBlendTowardMid)
         );
 
-        var border = AllyariaColorValue.FromHsva(
+        var border = AryColorValue.FromHsva(
             palette.BorderColor.H,
             palette.BorderColor.S - desaturateBy,
             Blend(palette.BorderColor.V, 50.0, valueBlendTowardMid)
@@ -109,7 +109,7 @@ internal static class ColorHelper
     /// <param name="borderDeltaV">Border value (V) delta.</param>
     /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
     /// <returns>A derived palette suitable for the dragged state.</returns>
-    public static AllyariaPalette DeriveDragged(AllyariaPalette palette,
+    public static AryPalette DeriveDragged(AryPalette palette,
         double backgroundDeltaV = 16.0,
         double borderDeltaV = 18.0,
         double minContrast = 4.5)
@@ -124,7 +124,7 @@ internal static class ColorHelper
     /// <param name="borderDeltaV">Border value (V) delta.</param>
     /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
     /// <returns>A derived palette suitable for the focused state.</returns>
-    public static AllyariaPalette DeriveFocused(AllyariaPalette palette,
+    public static AryPalette DeriveFocused(AryPalette palette,
         double backgroundDeltaV = 8.0,
         double borderDeltaV = 10.0,
         double minContrast = 4.5)
@@ -136,7 +136,7 @@ internal static class ColorHelper
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
     /// <returns>The derived high elevation palette.</returns>
-    public static AllyariaPalette DeriveHigh(AllyariaPalette palette, double delta = 8.0)
+    public static AryPalette DeriveHigh(AryPalette palette, double delta = 8.0)
         => NudgeElevation(palette, delta, false);
 
     /// <summary>
@@ -146,7 +146,7 @@ internal static class ColorHelper
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
     /// <returns>The derived highest elevation palette.</returns>
-    public static AllyariaPalette DeriveHighest(AllyariaPalette palette, double delta = 12.0)
+    public static AryPalette DeriveHighest(AryPalette palette, double delta = 12.0)
         => NudgeElevation(palette, delta, false);
 
     /// <summary>
@@ -158,7 +158,7 @@ internal static class ColorHelper
     /// <param name="borderDeltaV">Magnitude of border value (V) change in percent.</param>
     /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
     /// <returns>A derived palette suitable for the hovered state.</returns>
-    public static AllyariaPalette DeriveHovered(AllyariaPalette palette,
+    public static AryPalette DeriveHovered(AryPalette palette,
         double backgroundDeltaV = 6.0,
         double borderDeltaV = 8.0,
         double minContrast = 4.5)
@@ -170,8 +170,7 @@ internal static class ColorHelper
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
     /// <returns>The derived low elevation palette.</returns>
-    public static AllyariaPalette DeriveLow(AllyariaPalette palette, double delta = 8.0)
-        => NudgeElevation(palette, delta, true);
+    public static AryPalette DeriveLow(AryPalette palette, double delta = 8.0) => NudgeElevation(palette, delta, true);
 
     /// <summary>
     /// Derives a lower-tier elevation palette (lowest) by nudging background toward the appropriate darker/lighter direction
@@ -180,7 +179,7 @@ internal static class ColorHelper
     /// <param name="palette">Base palette.</param>
     /// <param name="delta">Magnitude of value (V) change.</param>
     /// <returns>The derived lowest elevation palette.</returns>
-    public static AllyariaPalette DeriveLowest(AllyariaPalette palette, double delta = 12.0)
+    public static AryPalette DeriveLowest(AryPalette palette, double delta = 12.0)
         => NudgeElevation(palette, delta, true);
 
     /// <summary>
@@ -192,7 +191,7 @@ internal static class ColorHelper
     /// <param name="borderDeltaV">Border value (V) delta.</param>
     /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
     /// <returns>A derived palette suitable for the pressed state.</returns>
-    public static AllyariaPalette DerivePressed(AllyariaPalette palette,
+    public static AryPalette DerivePressed(AryPalette palette,
         double backgroundDeltaV = 12.0,
         double borderDeltaV = 14.0,
         double minContrast = 4.5)
@@ -211,8 +210,8 @@ internal static class ColorHelper
     /// A <see cref="ContrastResult" /> containing the resolved color, background, achieved ratio, and a flag indicating
     /// whether the minimum was met.
     /// </returns>
-    public static ContrastResult EnsureMinimumContrast(AllyariaColorValue foreground,
-        AllyariaColorValue background,
+    public static ContrastResult EnsureMinimumContrast(AryColorValue foreground,
+        AryColorValue background,
         double minimumRatio = 3.0)
     {
         // Early accept
@@ -223,7 +222,7 @@ internal static class ColorHelper
             return new ContrastResult(foreground, background, startRatio, true);
         }
 
-        // Reuse AllyariaColorValue’s HSV API to avoid duplicating conversions.
+        // Reuse AryColorValue’s HSV API to avoid duplicating conversions.
         var h = foreground.H; // degrees
         var s = foreground.S; // percent
         var v = foreground.V; // percent
@@ -293,14 +292,14 @@ internal static class ColorHelper
     /// <param name="end">End color.</param>
     /// <param name="t">Interpolation factor clamped to <c>[0, 1]</c>.</param>
     /// <returns>The interpolated color.</returns>
-    private static AllyariaColorValue LerpSrgb(AllyariaColorValue start, AllyariaColorValue end, double t)
+    private static AryColorValue LerpSrgb(AryColorValue start, AryColorValue end, double t)
     {
         t = Math.Clamp(t, 0.0, 1.0);
 
         static byte Lerp(byte a, byte b, double tt)
             => (byte)Math.Clamp((int)Math.Round(a + (b - a) * tt, MidpointRounding.AwayFromZero), 0, 255);
 
-        return AllyariaColorValue.FromRgba(
+        return AryColorValue.FromRgba(
             Lerp(start.R, end.R, t),
             Lerp(start.G, end.G, t),
             Lerp(start.B, end.B, t)
@@ -318,7 +317,7 @@ internal static class ColorHelper
     /// higher tier.
     /// </param>
     /// <returns>The derived elevation palette.</returns>
-    private static AllyariaPalette NudgeElevation(AllyariaPalette palette,
+    private static AryPalette NudgeElevation(AryPalette palette,
         double delta,
         bool lowerTier)
     {
@@ -332,13 +331,13 @@ internal static class ColorHelper
             (false, false) => -1 // darker on dark
         };
 
-        var background = AllyariaColorValue.FromHsva(
+        var background = AryColorValue.FromHsva(
             palette.BackgroundColor.H,
             palette.BackgroundColor.S,
             palette.BackgroundColor.V + sign * delta
         );
 
-        var border = AllyariaColorValue.FromHsva(
+        var border = AryColorValue.FromHsva(
             palette.BorderColor.H,
             palette.BorderColor.S,
             palette.BorderColor.V + sign * (delta + 2.0)
@@ -358,7 +357,7 @@ internal static class ColorHelper
     /// <param name="borderDelta">Magnitude of border value (V) change.</param>
     /// <param name="minContrast">Minimum required foreground contrast ratio.</param>
     /// <returns>The derived state palette.</returns>
-    private static AllyariaPalette NudgeState(AllyariaPalette palette,
+    private static AryPalette NudgeState(AryPalette palette,
         double backgroundDelta,
         double borderDelta,
         double minContrast)
@@ -367,13 +366,13 @@ internal static class ColorHelper
             ? -1.0
             : 1.0; // lighten dark; darken light
 
-        var background = AllyariaColorValue.FromHsva(
+        var background = AryColorValue.FromHsva(
             palette.BackgroundColor.H,
             palette.BackgroundColor.S,
             palette.BackgroundColor.V + direction * backgroundDelta
         );
 
-        var border = AllyariaColorValue.FromHsva(
+        var border = AryColorValue.FromHsva(
             palette.BorderColor.H,
             palette.BorderColor.S,
             palette.BorderColor.V + direction * borderDelta
@@ -387,7 +386,7 @@ internal static class ColorHelper
     /// <summary>Computes WCAG relative luminance from an opaque sRGB color.</summary>
     /// <param name="color">Opaque sRGB color.</param>
     /// <returns>Relative luminance in <c>[0, 1]</c>.</returns>
-    public static double RelativeLuminance(AllyariaColorValue color)
+    public static double RelativeLuminance(AryColorValue color)
     {
         var rl = SrgbToLinear(color.R);
         var gl = SrgbToLinear(color.G);
@@ -405,9 +404,9 @@ internal static class ColorHelper
     /// <param name="background">Background color (opaque).</param>
     /// <param name="minimumRatio">Target contrast ratio.</param>
     /// <returns>The resolution result for this pole.</returns>
-    private static ContrastResult SearchTowardPole(AllyariaColorValue start,
-        AllyariaColorValue pole,
-        AllyariaColorValue background,
+    private static ContrastResult SearchTowardPole(AryColorValue start,
+        AryColorValue pole,
+        AryColorValue background,
         double minimumRatio)
     {
         var lo = 0.0;
@@ -464,7 +463,7 @@ internal static class ColorHelper
         double s,
         double vStart,
         int direction,
-        AllyariaColorValue background,
+        AryColorValue background,
         double minimumRatio)
     {
         double lo, hi;
@@ -483,12 +482,12 @@ internal static class ColorHelper
         const int iters = 18;
         double? found = null;
         var bestRatio = -1.0;
-        var bestColor = AllyariaColorValue.FromHsva(h, s, vStart);
+        var bestColor = AryColorValue.FromHsva(h, s, vStart);
 
         for (var i = 0; i < iters; i++)
         {
             var mid = 0.5 * (lo + hi);
-            var candidate = AllyariaColorValue.FromHsva(h, s, mid);
+            var candidate = AryColorValue.FromHsva(h, s, mid);
             var ratio = ContrastRatio(candidate, background);
 
             if (ratio > bestRatio)
@@ -510,7 +509,7 @@ internal static class ColorHelper
 
         if (found.HasValue)
         {
-            var final = AllyariaColorValue.FromHsva(h, s, hi);
+            var final = AryColorValue.FromHsva(h, s, hi);
             var r = ContrastRatio(final, background);
 
             return new ContrastResult(final, background, r, true);
