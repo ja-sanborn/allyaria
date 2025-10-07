@@ -1,8 +1,9 @@
-﻿using Allyaria.Theming.Values;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed text transform constants for Allyaria theming.</summary>
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class TextTransform
 {
     /// <summary>Represents capitalizing the first letter of each word.</summary>

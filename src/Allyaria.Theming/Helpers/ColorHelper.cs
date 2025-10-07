@@ -1,7 +1,6 @@
 using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
 using Allyaria.Theming.Types;
-using Allyaria.Theming.Values;
 
 namespace Allyaria.Theming.Helpers;
 

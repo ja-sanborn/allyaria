@@ -1,4 +1,3 @@
-using Allyaria.Theming.Values;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Types;

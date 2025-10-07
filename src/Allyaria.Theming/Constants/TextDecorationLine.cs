@@ -1,8 +1,9 @@
-﻿using Allyaria.Theming.Values;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed text decoration line constants for Allyaria theming.</summary>
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class TextDecorationLine
 {
     /// <summary>Represents a line-through text decoration.</summary>
