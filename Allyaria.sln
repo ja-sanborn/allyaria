@@ -100,6 +100,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstractions", "Abstraction
 		docs\references\Abstractions\Allyaria.Abstractions.Extensions.GenericExtensions.md = docs\references\Abstractions\Allyaria.Abstractions.Extensions.GenericExtensions.md
 		docs\references\Abstractions\Allyaria.Abstractions.Extensions.StringExtensions.md = docs\references\Abstractions\Allyaria.Abstractions.Extensions.StringExtensions.md
 		docs\references\Abstractions\Allyaria.Abstractions.Extensions.EnumExtensions.md = docs\references\Abstractions\Allyaria.Abstractions.Extensions.EnumExtensions.md
+		docs\references\Abstractions\Allyaria.Abstractions.Enumerations.LabelPosition.md = docs\references\Abstractions\Allyaria.Abstractions.Enumerations.LabelPosition.md
 	EndProjectSection
 EndProject
 Global

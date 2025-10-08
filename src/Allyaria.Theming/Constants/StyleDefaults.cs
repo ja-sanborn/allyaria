@@ -1,3 +1,4 @@
+using Allyaria.Theming.Styles;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
@@ -70,6 +71,12 @@ public static class StyleDefaults
 
     /// <summary>Default text transform.</summary>
     public static readonly AryStringValue TextTransform = Constants.TextTransform.None;
+
+    /// <summary>
+    /// Default theme instance composed of standard Allyaria borders, spacing, palette variants, and typography. Used as the
+    /// baseline theme for components unless explicitly overridden.
+    /// </summary>
+    public static readonly AryTheme Theme = new();
 
     /// <summary>Default vertical alignment.</summary>
     public static readonly AryStringValue VerticalAlign = Constants.VerticalAlign.Baseline;
