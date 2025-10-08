@@ -1,2 +1,145 @@
-﻿body {
+﻿.ary-surface {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    color: var(--ary-surface-default-color);
+    background-color: var(--ary-surface-default-background-color);
+    border-color: var(--ary-surface-default-border-color);
+    border-top-width: var(--ary-surface-default-border-top-width);
+    border-right-width: var(--ary-surface-default-border-right-width);
+    border-bottom-width: var(--ary-surface-default-border-bottom-width);
+    border-left-width: var(--ary-surface-default-border-left-width);
+    border-top-style: var(--ary-surface-default-border-top-style);
+    border-right-style: var(--ary-surface-default-border-right-style);
+    border-bottom-style: var(--ary-surface-default-border-bottom-style);
+    border-left-style: var(--ary-surface-default-border-left-style);
+    border-top-left-radius: var(--ary-surface-default-border-top-left-radius);
+    border-top-right-radius: var(--ary-surface-default-border-top-right-radius);
+    border-bottom-right-radius: var(--ary-surface-default-border-bottom-right-radius);
+    border-bottom-left-radius: var(--ary-surface-default-border-bottom-left-radius);
+    font-family: var(--ary-surface-default-font-family);
+    font-size: var(--ary-surface-default-font-size);
+    font-style: var(--ary-surface-default-font-style);
+    font-weight: var(--ary-surface-default-font-weight);
+    letter-spacing: var(--ary-surface-default-letter-spacing);
+    line-height: var(--ary-surface-default-line-height);
+    text-align: var(--ary-surface-default-text-align);
+    text-decoration-line: var(--ary-surface-default-text-decoration-line);
+    text-decoration-style: var(--ary-surface-default-text-decoration-style);
+    text-transform: var(--ary-surface-default-text-transform);
+    vertical-align: var(--ary-surface-default-vertical-align);
+    margin-top: var(--ary-surface-default-margin-top);
+    margin-right: var(--ary-surface-default-margin-right);
+    margin-bottom: var(--ary-surface-default-margin-bottom);
+    margin-left: var(--ary-surface-default-margin-left);
+    padding-top: var(--ary-surface-default-padding-top);
+    padding-right: var(--ary-surface-default-padding-right);
+    padding-bottom: var(--ary-surface-default-padding-bottom);
+    padding-left: var(--ary-surface-default-padding-left);
+    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+    --ary-surface-label-gap: 4px;
+}
+
+.ary-surface__content {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+}
+
+.ary-surface__label {
+    position: absolute;
+    inset-inline-start: var(--ary-surface-padding-inline-start, var(--ary-surface-default-padding-left));
+    inset-inline-end: auto;
+    inset-block-start: calc(var(--ary-surface-default-padding-top, 0px) + var(--ary-surface-label-gap));
+    pointer-events: none;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-inline: 4px;
+    border-radius: var(--ary-surface-default-border-top-left-radius, 4px);
+    z-index: 1;
+    transform-origin: left center;
+    transform: translateY(0);
+    transition: transform 160ms ease, font-size 160ms ease, color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+    opacity: 1;
+    white-space: nowrap;
+}
+
+.ary-surface--rtl .ary-surface__label,
+.ary-surface__label--rtl {
+    inset-inline-start: auto;
+    inset-inline-end: var(--ary-surface-padding-inline-end, var(--ary-surface-default-padding-right));
+    transform-origin: right center;
+}
+
+.ary-surface__label--above,
+.ary-surface__label--below {
+    max-inline-size: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ary-surface--label-floating .ary-surface__label,
+.ary-surface__label--floating {
+    transform: translateY(calc(-100% - var(--ary-surface-label-gap)));
+}
+
+.ary-surface--label-below .ary-surface__label,
+.ary-surface__label--below {
+    transform: translateY(calc(100% + var(--ary-surface-label-gap)));
+}
+
+.ary-surface--label-hidden .ary-surface__label,
+.ary-surface__label--hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.ary-surface:not([data-state="disabled"]):hover,
+.ary-surface[data-state="hovered"] {
+    color: var(--ary-surface-hovered-color, var(--ary-surface-default-color));
+    background-color: var(--ary-surface-hovered-background-color, var(--ary-surface-default-background-color));
+    border-color: var(--ary-surface-hovered-border-color, var(--ary-surface-default-border-color));
+}
+
+.ary-surface:not([data-state="disabled"]):focus-within,
+.ary-surface[data-state="focused"] {
+    color: var(--ary-surface-focused-color, var(--ary-surface-hovered-color, var(--ary-surface-default-color)));
+    background-color: var(--ary-surface-focused-background-color, var(--ary-surface-hovered-background-color, var(--ary-surface-default-background-color)));
+    border-color: var(--ary-surface-focused-border-color, var(--ary-surface-hovered-border-color, var(--ary-surface-default-border-color)));
+}
+
+.ary-surface:not([data-state="disabled"]):active,
+.ary-surface[data-state="pressed"] {
+    color: var(--ary-surface-pressed-color, var(--ary-surface-focused-color, var(--ary-surface-default-color)));
+    background-color: var(--ary-surface-pressed-background-color, var(--ary-surface-focused-background-color, var(--ary-surface-default-background-color)));
+    border-color: var(--ary-surface-pressed-border-color, var(--ary-surface-focused-border-color, var(--ary-surface-default-border-color)));
+}
+
+.ary-surface[data-state="dragged"] {
+    color: var(--ary-surface-dragged-color, var(--ary-surface-default-color));
+    background-color: var(--ary-surface-dragged-background-color, var(--ary-surface-default-background-color));
+    border-color: var(--ary-surface-dragged-border-color, var(--ary-surface-default-border-color));
+    cursor: grabbing;
+}
+
+.ary-surface[data-state="disabled"],
+.ary-surface[data-state="disabled"]:hover,
+.ary-surface[data-state="disabled"]:focus-within {
+    color: var(--ary-surface-disabled-color, var(--ary-surface-default-color));
+    background-color: var(--ary-surface-disabled-background-color, var(--ary-surface-default-background-color));
+    border-color: var(--ary-surface-disabled-border-color, var(--ary-surface-default-border-color));
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.ary-surface--has-value .ary-surface__label {
+    pointer-events: none;
+}
+
+.ary-surface--label-inline .ary-surface__label,
+.ary-surface__label--inline {
+    transform: translateY(0);
 }
