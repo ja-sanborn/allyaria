@@ -45,6 +45,56 @@ public sealed class AryColorValue : ValueBase
     /// <exception cref="AryArgumentException">Thrown when parsing fails.</exception>
     public static AryColorValue Parse(string value) => new(value);
 
+    /// <summary>
+    /// Returns a new <see cref="AryColorValue" /> representing a desaturated version of this color to be used for disabled UI
+    /// states.
+    /// </summary>
+    /// <returns>A new <see cref="AryColorValue" /> instance with reduced saturation.</returns>
+    public AryColorValue ToDisabled() => new(Color.Desaturate(0.6));
+
+    /// <summary>
+    /// Returns a new <see cref="AryColorValue" /> representing a brightened version of this color to be used for dragged UI
+    /// states.
+    /// </summary>
+    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
+    public AryColorValue ToDragged() => new(Color.ShiftLightness(0.18));
+
+    /// <summary>Gets a new <see cref="AryColorValue" /> representing a slightly elevated color (Elevation 1).</summary>
+    public AryColorValue ToElevation1() => new(Color.ShiftLightness(0.04));
+
+    /// <summary>Gets a new <see cref="AryColorValue" /> representing a moderately elevated color (Elevation 2).</summary>
+    public AryColorValue ToElevation2() => new(Color.ShiftLightness(0.08));
+
+    /// <summary>Gets a new <see cref="AryColorValue" /> representing a higher elevated color (Elevation 3).</summary>
+    public AryColorValue ToElevation3() => new(Color.ShiftLightness(0.12));
+
+    /// <summary>Gets a new <see cref="AryColorValue" /> representing a strongly elevated color (Elevation 4).</summary>
+    public AryColorValue ToElevation4() => new(Color.ShiftLightness(0.16));
+
+    /// <summary>Gets a new <see cref="AryColorValue" /> representing the highest elevated color (Elevation 5).</summary>
+    public AryColorValue ToElevation5() => new(Color.ShiftLightness(0.20));
+
+    /// <summary>
+    /// Returns a new <see cref="AryColorValue" /> representing a moderately lighter version of this color to be used for
+    /// focused UI states.
+    /// </summary>
+    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
+    public AryColorValue ToFocused() => new(Color.ShiftLightness(0.1));
+
+    /// <summary>
+    /// Returns a new <see cref="AryColorValue" /> representing a slightly lighter version of this color to be used for hovered
+    /// UI states.
+    /// </summary>
+    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
+    public AryColorValue ToHovered() => new(Color.ShiftLightness(0.06));
+
+    /// <summary>
+    /// Returns a new <see cref="AryColorValue" /> representing a noticeably lighter version of this color to be used for
+    /// pressed UI states.
+    /// </summary>
+    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
+    public AryColorValue ToPressed() => new(Color.ShiftLightness(0.14));
+
     /// <summary>Attempts to parse a color string into an <see cref="AryColorValue" />.</summary>
     /// <param name="value">The color value to parse.</param>
     /// <param name="result">When this method returns, contains the parsed color if successful; otherwise <c>null</c>.</param>

@@ -311,7 +311,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// evenly lit result.
     /// </param>
     /// <returns>A new <see cref="HexColor" /> instance representing the desaturated color.</returns>
-    public HexColor Desaturate(double desaturateBy = 0.60, double valueBlendTowardMid = 0.15)
+    public HexColor Desaturate(double desaturateBy = 0.5, double valueBlendTowardMid = 0.15)
         => FromHsva(
             H, Math.Clamp(S - Math.Clamp(desaturateBy, 0.0, 1.0), 0.0, 1.0),
             BlendValue(0.5, Math.Clamp(valueBlendTowardMid, 0.0, 1.0)), A.ToNormalized()
