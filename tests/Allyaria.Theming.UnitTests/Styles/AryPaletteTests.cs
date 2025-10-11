@@ -1,5 +1,4 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Helpers;
+﻿using Allyaria.Abstractions.Constants;
 using Allyaria.Theming.Styles;
 
 namespace Allyaria.Theming.UnitTests.Styles;

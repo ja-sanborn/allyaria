@@ -23,4 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Allyaria.Theming\Allyaria.Theming.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Layout\ArySurface.razor"/>
+    </ItemGroup>
 </Project>
