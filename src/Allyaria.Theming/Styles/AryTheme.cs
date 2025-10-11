@@ -9,14 +9,14 @@ namespace Allyaria.Theming.Styles;
 /// <remarks>
 /// The theme is composed of immutable sub-structures and supports non-destructive updates via
 /// <see
-///     cref="Cascade(AryBorders?, ArySpacing?, AryPalette?, AryPalette?, AryPalette?, AryTypo?)" />
+///     cref="Cascade(AryBorders?, ArySpacing?, AryPalette?, AryPalette?, AryPalette?, AryTypography?)" />
 /// . Use <see cref="ToStyle(ThemeType, ComponentType, ComponentElevation, ComponentState)" /> to resolve a concrete
 /// <see cref="AryStyle" /> for a specific theme type, component type, elevation, and state; then call
 /// <see cref="AryStyle.ToCss(string?)" /> to produce CSS.
 /// </remarks>
 /// <seealso cref="AryStyle" />
 /// <seealso cref="AryPaletteVariant" />
-/// <seealso cref="AryTypoComponent" />
+/// <seealso cref="AryTypographyArea" />
 public readonly record struct AryTheme
 {
     /// <summary>
@@ -40,7 +40,7 @@ public readonly record struct AryTheme
         AryPalette? paletteLight = null,
         AryPalette? paletteDark = null,
         AryPalette? paletteHighContrast = null,
-        AryTypo? typoSurface = null)
+        AryTypography? typoSurface = null)
     {
         Borders = borders ?? new AryBorders();
         Spacing = spacing ?? new ArySpacing();
@@ -51,7 +51,7 @@ public readonly record struct AryTheme
             paletteHighContrast
         );
 
-        Typo = new AryTypoComponent(typoSurface);
+        Typo = new AryTypographyArea(typoSurface);
     }
 
     /// <summary>Gets the border configuration applied by the theme.</summary>
@@ -64,7 +64,7 @@ public readonly record struct AryTheme
     internal ArySpacing Spacing { get; init; }
 
     /// <summary>Gets the typography component mapping used by the theme.</summary>
-    internal AryTypoComponent Typo { get; init; }
+    internal AryTypographyArea Typo { get; init; }
 
     /// <summary>
     /// Returns a new <see cref="AryTheme" /> with optional component overrides applied. Any argument left
@@ -88,7 +88,7 @@ public readonly record struct AryTheme
         AryPalette? paletteLight = null,
         AryPalette? paletteDark = null,
         AryPalette? paletteHighContrast = null,
-        AryTypo? typoSurface = null)
+        AryTypography? typoSurface = null)
         => this with
         {
             Borders = borders ?? Borders,

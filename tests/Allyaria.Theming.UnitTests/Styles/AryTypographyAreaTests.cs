@@ -4,15 +4,15 @@ using Allyaria.Theming.Styles;
 namespace Allyaria.Theming.UnitTests.Styles;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class AryTypoComponentTests
+public sealed class AryTypographyAreaTests
 {
     [Fact]
     public void Cascade_Should_ReturnNewInstanceWithOverride_When_SurfaceTypographyProvided()
     {
         // Arrange
-        var original = new AryTypo();
-        var overrideTypography = new AryTypo(); // distinct instance/value
-        var sut = new AryTypoComponent(original);
+        var original = new AryTypography();
+        var overrideTypography = new AryTypography(); // distinct instance/value
+        var sut = new AryTypographyArea(original);
 
         // Act
         var result = sut.Cascade(overrideTypography);
@@ -26,8 +26,8 @@ public sealed class AryTypoComponentTests
     public void Cascade_Should_ReturnSameValue_When_SurfaceTypographyIsNull()
     {
         // Arrange
-        var original = new AryTypo();
-        var sut = new AryTypoComponent(original);
+        var original = new AryTypography();
+        var sut = new AryTypographyArea(original);
 
         // Act
         var result = sut.Cascade();
@@ -44,20 +44,20 @@ public sealed class AryTypoComponentTests
         // (nothing to arrange)
 
         // Act
-        var sut = new AryTypoComponent(null);
+        var sut = new AryTypographyArea(null);
 
         // Assert
-        sut.Surface.Should().BeEquivalentTo(new AryTypo());
+        sut.Surface.Should().BeEquivalentTo(new AryTypography());
     }
 
     [Fact]
     public void Ctor_Should_UseProvidedTypography_When_SurfaceTypographyIsProvided()
     {
         // Arrange
-        var provided = new AryTypo();
+        var provided = new AryTypography();
 
         // Act
-        var sut = new AryTypoComponent(provided);
+        var sut = new AryTypographyArea(provided);
 
         // Assert
         sut.Surface.Should().BeEquivalentTo(provided);
@@ -67,7 +67,7 @@ public sealed class AryTypoComponentTests
     public void Surface_Should_BeNonNull_AfterConstruction()
     {
         // Arrange & Act
-        var sut = new AryTypoComponent();
+        var sut = new AryTypographyArea();
 
         // Assert
         sut.Surface.Should().NotBeNull();
@@ -80,8 +80,8 @@ public sealed class AryTypoComponentTests
     public void ToTypography_Should_ReturnSurface_For_AnyComponentType(int rawType)
     {
         // Arrange
-        var expected = new AryTypo();
-        var sut = new AryTypoComponent(expected);
+        var expected = new AryTypography();
+        var sut = new AryTypographyArea(expected);
         var componentType = (ComponentType)rawType;
 
         // Act

@@ -15,12 +15,12 @@ public readonly record struct AryStyle
     /// <param name="spacing">The spacing component, or <c>null</c> to use defaults.</param>
     /// <param name="border">The border component, or <c>null</c> to use defaults.</param>
     public AryStyle(AryPalette? palette = null,
-        AryTypo? typography = null,
+        AryTypography? typography = null,
         ArySpacing? spacing = null,
         AryBorders? border = null)
     {
         Palette = palette ?? new AryPalette();
-        Typo = typography ?? new AryTypo();
+        Typography = typography ?? new AryTypography();
         Spacing = spacing ?? new ArySpacing();
         Border = border ?? new AryBorders();
     }
@@ -35,7 +35,7 @@ public readonly record struct AryStyle
     public ArySpacing Spacing { get; init; }
 
     /// <summary>Gets the typography configuration defining font styles and text behavior.</summary>
-    public AryTypo Typo { get; init; }
+    public AryTypography Typography { get; init; }
 
     /// <summary>Returns a new <see cref="AryStyle" /> with optionally overridden components.</summary>
     /// <param name="palette">An optional replacement palette.</param>
@@ -44,13 +44,13 @@ public readonly record struct AryStyle
     /// <param name="border">An optional replacement border configuration.</param>
     /// <returns>A new <see cref="AryStyle" /> instance with provided overrides applied.</returns>
     public AryStyle Cascade(AryPalette? palette = null,
-        AryTypo? typography = null,
+        AryTypography? typography = null,
         ArySpacing? spacing = null,
         AryBorders? border = null)
         => this with
         {
             Palette = palette ?? Palette,
-            Typo = typography ?? Typo,
+            Typography = typography ?? Typography,
             Spacing = spacing ?? Spacing,
             Border = border ?? Border
         };
@@ -61,7 +61,7 @@ public readonly record struct AryStyle
     public string ToCss(string? varPrefix = "")
         => string.Concat(
             Palette.ToCss(varPrefix),
-            Typo.ToCss(varPrefix),
+            Typography.ToCss(varPrefix),
             Spacing.ToCss(varPrefix),
             Border.ToCss(varPrefix)
         );

@@ -1,5 +1,4 @@
 ﻿using Allyaria.Theming.Enumerations;
-using Allyaria.Theming.Helpers;
 
 namespace Allyaria.Theming.Styles;
 

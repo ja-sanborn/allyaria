@@ -9,17 +9,17 @@ namespace Allyaria.Theming.Styles;
 /// for the Allyaria theming system. Values are immutable after initialization and default to <see cref="StyleDefaults" />
 /// when not explicitly provided.
 /// </summary>
-public readonly record struct AryTypo
+public readonly record struct AryTypography
 {
     /// <summary>
-    /// Initializes a new <see cref="AryTypo" /> using the <see cref="StyleDefaults" /> values for all members.
+    /// Initializes a new <see cref="AryTypography" /> using the <see cref="StyleDefaults" /> values for all members.
     /// </summary>
-    public AryTypo()
+    public AryTypography()
         : this(null) { }
 
     /// <summary>
-    /// Initializes a new <see cref="AryTypo" /> with optional values. Any parameter left as <see langword="null" /> falls back
-    /// to <see cref="StyleDefaults" /> for that member.
+    /// Initializes a new <see cref="AryTypography" /> with optional values. Any parameter left as <see langword="null" />
+    /// falls back to <see cref="StyleDefaults" /> for that member.
     /// </summary>
     /// <param name="fontFamily">Optional font family token.</param>
     /// <param name="fontSize">Optional font size token.</param>
@@ -32,7 +32,7 @@ public readonly record struct AryTypo
     /// <param name="textDecorationStyle">Optional text decoration style token.</param>
     /// <param name="textTransform">Optional text transform token.</param>
     /// <param name="verticalAlign">Optional vertical align token.</param>
-    public AryTypo(AryStringValue? fontFamily = null,
+    public AryTypography(AryStringValue? fontFamily = null,
         AryNumberValue? fontSize = null,
         AryStringValue? fontStyle = null,
         AryStringValue? fontWeight = null,
@@ -91,7 +91,7 @@ public readonly record struct AryTypo
     public AryStringValue VerticalAlign { get; init; }
 
     /// <summary>
-    /// Creates a new <see cref="AryTypo" /> by non-destructively applying the provided overrides. Any parameter left
+    /// Creates a new <see cref="AryTypography" /> by non-destructively applying the provided overrides. Any parameter left
     /// <see langword="null" /> retains the current value.
     /// </summary>
     /// <param name="fontFamily">Optional override for <see cref="FontFamily" />.</param>
@@ -105,8 +105,8 @@ public readonly record struct AryTypo
     /// <param name="textDecorationStyle">Optional override for <see cref="TextDecorationStyle" />.</param>
     /// <param name="textTransform">Optional override for <see cref="TextTransform" />.</param>
     /// <param name="verticalAlign">Optional override for <see cref="VerticalAlign" />.</param>
-    /// <returns>A new <see cref="AryTypo" /> instance with combined values.</returns>
-    public AryTypo Cascade(AryStringValue? fontFamily = null,
+    /// <returns>A new <see cref="AryTypography" /> instance with combined values.</returns>
+    public AryTypography Cascade(AryStringValue? fontFamily = null,
         AryNumberValue? fontSize = null,
         AryStringValue? fontStyle = null,
         AryStringValue? fontWeight = null,

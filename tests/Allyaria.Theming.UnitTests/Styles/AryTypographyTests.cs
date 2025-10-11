@@ -4,13 +4,13 @@ using Allyaria.Theming.Styles;
 namespace Allyaria.Theming.UnitTests.Styles;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class AryTypoTests
+public sealed class AryTypographyTests
 {
     [Fact]
     public void Cascade_Should_ReturnNewInstanceWithOverrides_When_PartialOverridesProvided()
     {
         // Arrange
-        var baseTypography = new AryTypo(
+        var baseTypography = new AryTypography(
             S("Inter, 'Segoe UI', sans-serif"),
             N("16px"),
             S("normal"),
@@ -51,7 +51,7 @@ public sealed class AryTypoTests
     public void Constructor_Should_UseDefaultValues_When_UsingParameterlessCtor()
     {
         // Arrange + Act
-        var sut = new AryTypo();
+        var sut = new AryTypography();
 
         // Assert
         sut.FontFamily.Should().Be(StyleDefaults.FontFamily);
@@ -73,7 +73,7 @@ public sealed class AryTypoTests
     public void RecordEquality_Should_TreatInstancesAsEqual_When_AllMembersMatch()
     {
         // Arrange
-        var a = new AryTypo(
+        var a = new AryTypography(
             S("Inter"),
             N("16px"),
             S("normal"),
@@ -87,7 +87,7 @@ public sealed class AryTypoTests
             S("baseline")
         );
 
-        var b = new AryTypo(
+        var b = new AryTypography(
             S("Inter"),
             N("16px"),
             S("normal"),
@@ -116,7 +116,7 @@ public sealed class AryTypoTests
     public void ToCss_Should_EmitAllProperties_When_AllValuesProvided()
     {
         // Arrange
-        var sut = new AryTypo(
+        var sut = new AryTypography(
             S("Inter,'Segoe UI',sans-serif"),
             N("16px"),
             S("italic"),
@@ -153,7 +153,7 @@ public sealed class AryTypoTests
     public void ToCss_Should_PrefixVariablesAndNormalizePrefix_When_VarPrefixProvided()
     {
         // Arrange
-        var sut = new AryTypo(
+        var sut = new AryTypography(
             S("Inter"),
             N("14px"),
             S("normal"),
@@ -194,7 +194,7 @@ public sealed class AryTypoTests
     public void WithExpression_Should_ProduceNewInstance_When_ChangingSingleProperty()
     {
         // Arrange
-        var original = new AryTypo(
+        var original = new AryTypography(
             S("Inter"),
             N("16px"),
             S("normal"),

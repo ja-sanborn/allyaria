@@ -17,7 +17,7 @@ public class AryStyleTests
 
         // Assert
         cascaded.Palette.Should().Be(original.Palette);
-        cascaded.Typo.Should().Be(original.Typo);
+        cascaded.Typography.Should().Be(original.Typography);
         cascaded.Spacing.Should().Be(original.Spacing);
         cascaded.Border.Should().Be(original.Border);
     }
@@ -28,7 +28,7 @@ public class AryStyleTests
         // Arrange
         var original = new AryStyle();
         var newPalette = new AryPalette();
-        var newTypography = new AryTypo();
+        var newTypography = new AryTypography();
         var newSpacing = new ArySpacing();
         var newBorders = new AryBorders();
 
@@ -42,7 +42,7 @@ public class AryStyleTests
 
         // Assert
         cascaded.Palette.Should().Be(newPalette);
-        cascaded.Typo.Should().Be(newTypography);
+        cascaded.Typography.Should().Be(newTypography);
         cascaded.Spacing.Should().Be(newSpacing);
         cascaded.Border.Should().Be(newBorders);
     }
@@ -57,7 +57,7 @@ public class AryStyleTests
 
         // Assert
         style.Palette.Should().NotBeNull();
-        style.Typo.Should().NotBeNull();
+        style.Typography.Should().NotBeNull();
         style.Spacing.Should().NotBeNull();
         style.Border.Should().NotBeNull();
     }
@@ -67,7 +67,7 @@ public class AryStyleTests
     {
         // Arrange
         AryPalette? palette = null;
-        AryTypo? typography = null;
+        AryTypography? typography = null;
         ArySpacing? spacing = null;
         AryBorders? borders = null;
 
@@ -76,7 +76,7 @@ public class AryStyleTests
 
         // Assert
         style.Palette.Should().NotBeNull();
-        style.Typo.Should().NotBeNull();
+        style.Typography.Should().NotBeNull();
         style.Spacing.Should().NotBeNull();
         style.Border.Should().NotBeNull();
     }
@@ -86,7 +86,7 @@ public class AryStyleTests
     {
         // Arrange
         var customPalette = new AryPalette();
-        var customTypography = new AryTypo();
+        var customTypography = new AryTypography();
         var customSpacing = new ArySpacing();
         var customBorders = new AryBorders();
 
@@ -95,7 +95,7 @@ public class AryStyleTests
 
         // Assert
         style.Palette.Should().Be(customPalette);
-        style.Typo.Should().Be(customTypography);
+        style.Typography.Should().Be(customTypography);
         style.Spacing.Should().Be(customSpacing);
         style.Border.Should().Be(customBorders);
     }
