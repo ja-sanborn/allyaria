@@ -105,7 +105,25 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <c>true</c> if both instances are the same reference or both are non-<c>null</c>, of the same runtime type, and their
     /// <see cref="Value" /> strings are ordinal-equal; otherwise, <c>false</c>.
     /// </returns>
-    public bool Equals(ValueBase? other) => Compare(this, other) is 0;
+    public bool Equals(ValueBase? other)
+    {
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (GetType() != other.GetType())
+        {
+            return false;
+        }
+
+        return string.Equals(Value, other.Value, StringComparison.Ordinal);
+    }
 
     /// <summary>Determines whether two <see cref="ValueBase" /> instances are equal.</summary>
     /// <param name="left">The left-hand instance; may be <c>null</c>.</param>
@@ -114,7 +132,8 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// <c>true</c> if both are <c>null</c> or both are non-<c>null</c> and equal per <see cref="Equals(ValueBase?)" />;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public static bool Equals(ValueBase? left, ValueBase? right) => left?.Equals(right) is true;
+    public static bool Equals(ValueBase? left, ValueBase? right)
+        => (left is null && right is null) || (left is not null && left.Equals(right));
 
     /// <summary>Returns a hash code for this instance based on its <see cref="Value" /> using ordinal semantics.</summary>
     /// <returns>An ordinal hash code for <see cref="Value" />.</returns>

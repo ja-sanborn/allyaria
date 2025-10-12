@@ -359,8 +359,8 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         }
 
         // 3) Mix toward white/black using gamma-correct (linear-light) blending; pick a solution that meets the ratio with the smallest color delta.
-        var towardWhite = SearchTowardPole(new HexColor(255, 255, 255, A), background, minimumRatio);
-        var towardBlack = SearchTowardPole(new HexColor(0, 0, 0, A), background, minimumRatio);
+        var towardBlack = SearchTowardPole(Colors.Black.SetAlpha(A.Value), background, minimumRatio);
+        var towardWhite = SearchTowardPole(Colors.White.SetAlpha(A.Value), background, minimumRatio);
 
         if (towardWhite.IsMinimumMet && towardBlack.IsMinimumMet)
         {

@@ -31,7 +31,9 @@ public sealed class AryColorValue : ValueBase
     /// This overload directly assigns the provided <paramref name="color" /> to <see cref="Color" />. Use the string-based
     /// constructor when you need to parse Material or CSS color names.
     /// </remarks>
-    public AryColorValue(HexColor color) => Color = color;
+    public AryColorValue(HexColor color)
+        : base(string.Empty)
+        => Color = color;
 
     /// <summary>Gets the underlying strongly-typed color components.</summary>
     public HexColor Color { get; }
@@ -43,7 +45,7 @@ public sealed class AryColorValue : ValueBase
     /// <param name="value">The color value to parse.</param>
     /// <returns>The parsed <see cref="AryColorValue" />.</returns>
     /// <exception cref="AryArgumentException">Thrown when parsing fails.</exception>
-    public static AryColorValue Parse(string value) => new(value);
+    public static AryColorValue Parse(string value) => new(new HexColor(value));
 
     /// <summary>
     /// Computes the appropriate border color for the element based on its background context, meeting WCAG non-text contrast
@@ -160,7 +162,7 @@ public sealed class AryColorValue : ValueBase
     {
         try
         {
-            result = new AryColorValue(value);
+            result = new AryColorValue(new HexColor(value));
 
             return true;
         }
