@@ -3,35 +3,29 @@
 namespace Allyaria.Theming.Styles;
 
 /// <summary>
-/// Represents a set of <see cref="AryPalette" /> instances corresponding to the interactive visual states of a component
-/// (e.g., default, hovered, focused, pressed, disabled, dragged).
+/// Represents the set of computed <see cref="AryPalette" /> values mapped to common UI interaction states (Default,
+/// Disabled, Hovered, Focused, Pressed, Dragged) for a component.
 /// </summary>
 /// <remarks>
-/// Each state-specific palette is derived from the base <see cref="Default" /> palette using helper methods in
-/// <see cref="ColorHelper" /> to ensure consistent color transformations and accessibility contrast across UI states.
+/// The state palettes are derived from a single baseline <see cref="AryPalette" /> (the "Default") using extension methods
+/// such as <c>ToDisabled()</c>, <c>ToHovered()</c>, etc. This struct is immutable.
 /// </remarks>
 internal readonly record struct AryPaletteState
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AryPaletteState" /> struct using the specified base palette.
-    /// </summary>
-    /// <param name="palette">
-    /// The base <see cref="AryPalette" /> from which all state variants will be derived. If <see langword="null" />, a new
-    /// default palette is created using <see cref="AryPalette.AllyariaPalette()" />.
-    /// </param>
+    /// <summary>Initializes a new instance of the <see cref="AryPaletteState" /> struct from a baseline palette.</summary>
+    /// <param name="palette">The baseline (rest) <see cref="AryPalette" /> used to derive all state palettes.</param>
     /// <remarks>
-    /// The constructor automatically derives the <see cref="Disabled" />, <see cref="Hovered" />, <see cref="Focused" />,
-    /// <see cref="Pressed" />, and <see cref="Dragged" /> palettes using <see cref="ColorHelper" />’s state derivation
-    /// methods.
+    /// All derived states are computed from <paramref name="palette" />. This avoids reading uninitialized members and ensures
+    /// deterministic derivation across states.
     /// </remarks>
-    public AryPaletteState(AryPalette? palette)
+    public AryPaletteState(AryPalette palette)
     {
-        Default = palette ?? new AryPalette();
-        Disabled = ColorHelper.DeriveDisabled(Default);
-        Hovered = ColorHelper.DeriveHovered(Default);
-        Focused = ColorHelper.DeriveFocused(Default);
-        Pressed = ColorHelper.DerivePressed(Default);
-        Dragged = ColorHelper.DeriveDragged(Default);
+        Default = palette;
+        Disabled = Default.ToDisabled();
+        Hovered = Default.ToHovered();
+        Focused = Default.ToFocused();
+        Pressed = Default.ToPressed();
+        Dragged = Default.ToDragged();
     }
 
     /// <summary>Gets the default (rest) <see cref="AryPalette" /> for the component.</summary>

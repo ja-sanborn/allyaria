@@ -7,21 +7,6 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AryPaletteStateTests
 {
     [Fact]
-    public void Ctor_Should_CreateNonNullPalettes_When_PaletteIsNull()
-    {
-        // Arrange & Act
-        var sut = new AryPaletteState(null);
-
-        // Assert
-        sut.Default.Should().NotBeNull();
-        sut.Disabled.Should().NotBeNull();
-        sut.Hovered.Should().NotBeNull();
-        sut.Focused.Should().NotBeNull();
-        sut.Pressed.Should().NotBeNull();
-        sut.Dragged.Should().NotBeNull();
-    }
-
-    [Fact]
     public void Ctor_Should_SetDefaultToProvidedInstance_When_PaletteProvided()
     {
         // Arrange

@@ -12,8 +12,8 @@ internal readonly record struct AryTypographyArea
 {
     /// <summary>Initializes a new instance of the <see cref="AryTypographyArea" /> struct.</summary>
     /// <param name="surfaceTypography">
-    /// Optional surface typography. When <see langword="null" />, a new <see cref="AryTypography" /> is created using
-    /// <see cref="AryTypography.AllyariaTypography()" /> defaults.
+    /// Optional surface typography. When <see langword="null" />, a new <see cref="AryTypography" /> is created using default
+    /// values.
     /// </param>
     public AryTypographyArea(AryTypography? surfaceTypography = null)
         => Surface = surfaceTypography ?? new AryTypography();

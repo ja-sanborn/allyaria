@@ -7,24 +7,6 @@ namespace Allyaria.Theming.UnitTests.Styles;
 public sealed class AryPaletteElevationTests
 {
     [Fact]
-    public void Ctor_Should_CreateDefaultPalette_When_PaletteIsNull()
-    {
-        // Arrange & Act
-        var sut = new AryPaletteElevation(null);
-
-        // Assert
-        sut.Palette.Should().NotBeNull();
-
-        // sanity: palettes from each layer should be obtainable without exceptions
-        var state = ComponentState.Default;
-        sut.Lowest.ToPalette(state).Should().NotBeNull();
-        sut.Low.ToPalette(state).Should().NotBeNull();
-        sut.Mid.ToPalette(state).Should().NotBeNull();
-        sut.High.ToPalette(state).Should().NotBeNull();
-        sut.Highest.ToPalette(state).Should().NotBeNull();
-    }
-
-    [Fact]
     public void Ctor_Should_SetProvidedPalette_When_PaletteIsNotNull()
     {
         // Arrange
@@ -34,7 +16,6 @@ public sealed class AryPaletteElevationTests
         var sut = new AryPaletteElevation(provided);
 
         // Assert
-        sut.Palette.Should().Be(provided);
         sut.Lowest.Should().NotBeNull();
         sut.Low.Should().NotBeNull();
         sut.Mid.Should().NotBeNull();

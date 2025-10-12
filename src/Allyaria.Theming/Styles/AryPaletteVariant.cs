@@ -37,17 +37,9 @@ internal readonly record struct AryPaletteVariant
         AryPalette? paletteDark = null,
         AryPalette? paletteHighContrast = null)
     {
-        LightPalette = paletteLight ?? new AryPalette(
-            StyleDefaults.BackgroundColorLight, StyleDefaults.BackgroundColorDark
-        );
-
-        DarkPalette = paletteDark ?? new AryPalette(
-            StyleDefaults.BackgroundColorDark, StyleDefaults.ForegroundColorDark
-        );
-
-        HighContrastPalette = paletteHighContrast ?? new AryPalette(
-            StyleDefaults.BackgroundColorHighContrast, StyleDefaults.ForegroundColorHighContrast
-        );
+        LightPalette = paletteLight ?? StyleDefaults.PaletteLight;
+        DarkPalette = paletteDark ?? StyleDefaults.PaletteDark;
+        HighContrastPalette = paletteHighContrast ?? StyleDefaults.PaletteHighContrast;
 
         LightElevation = new AryPaletteElevation(LightPalette);
         DarkElevation = new AryPaletteElevation(DarkPalette);

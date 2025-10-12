@@ -41,6 +41,19 @@ public sealed class AryColorValue : ValueBase
     /// <summary>Gets the canonical string representation of the color in the form <c>#RRGGBBAA</c>.</summary>
     public override string Value => Color.ToString();
 
+    /// <summary>
+    /// Ensures this color meets a minimum WCAG contrast ratio against the specified background, returning an adjusted
+    /// foreground color when necessary.
+    /// </summary>
+    /// <param name="backgroundColor">The background color to contrast against.</param>
+    /// <returns>
+    /// An <see cref="AryColorValue" /> that meets or exceeds the default minimum non-text contrast ratio (3:1) versus
+    /// <paramref name="backgroundColor" />. If the current color already meets the requirement, the original color is returned
+    /// unchanged.
+    /// </returns>
+    public AryColorValue EnsureContrast(AryColorValue backgroundColor)
+        => new(Color.EnsureMinimumContrast(backgroundColor.Color, 4.5));
+
     /// <summary>Parses a color string into an <see cref="AryColorValue" />.</summary>
     /// <param name="value">The color value to parse.</param>
     /// <returns>The parsed <see cref="AryColorValue" />.</returns>
