@@ -57,12 +57,13 @@ public readonly record struct AryStyle
 
     /// <summary>Converts this style and all its components to a single CSS variable declaration string.</summary>
     /// <param name="varPrefix">An optional prefix applied to all generated CSS variable names.</param>
+    /// <param name="isFocus">Determines if this is a focus border or not.</param>
     /// <returns>A concatenated CSS string representing this style configuration.</returns>
-    public string ToCss(string? varPrefix = "")
+    public string ToCss(string? varPrefix = "", bool isFocus = false)
         => string.Concat(
             Palette.ToCss(varPrefix),
             Typography.ToCss(varPrefix),
             Spacing.ToCss(varPrefix),
-            Border.ToCss(varPrefix)
+            Border.ToCss(varPrefix, isFocus)
         );
 }

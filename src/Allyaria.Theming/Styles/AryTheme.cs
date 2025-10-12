@@ -55,16 +55,16 @@ public readonly record struct AryTheme
     }
 
     /// <summary>Gets the border configuration applied by the theme.</summary>
-    internal AryBorders Borders { get; init; }
+    public AryBorders Borders { get; init; }
 
     /// <summary>Gets the palette variant set (light/dark/high-contrast) used by the theme.</summary>
-    internal AryPaletteVariant Palette { get; init; }
+    public AryPaletteVariant Palette { get; init; }
 
     /// <summary>Gets the spacing configuration (margins and paddings) used by the theme.</summary>
-    internal ArySpacing Spacing { get; init; }
+    public ArySpacing Spacing { get; init; }
 
     /// <summary>Gets the typography component mapping used by the theme.</summary>
-    internal AryTypographyArea Typo { get; init; }
+    public AryTypographyArea Typo { get; init; }
 
     /// <summary>
     /// Returns a new <see cref="AryTheme" /> with optional component overrides applied. Any argument left
@@ -98,7 +98,8 @@ public readonly record struct AryTheme
         };
 
     /// <summary>
-    /// Produces a CSS string for the resolved style of a component based on theme type, component type, elevation, and state.
+    /// Produces a CSS string for the resolved style. When state is Focused, the emitted border uses the focus presentation
+    /// (thicker + dashed) while colors come from the focused palette for proper contrast.
     /// </summary>
     /// <param name="themeType">The active theme type (light, dark, or high-contrast).</param>
     /// <param name="componentType">The component requesting styles (e.g., content surface).</param>
@@ -114,7 +115,7 @@ public readonly record struct AryTheme
         ComponentElevation elevation = ComponentElevation.Mid,
         ComponentState state = ComponentState.Default,
         string? varPrefix = "")
-        => ToStyle(themeType, componentType, elevation, state).ToCss(varPrefix);
+        => ToStyle(themeType, componentType, elevation, state).ToCss(varPrefix, state is ComponentState.Focused);
 
     /// <summary>
     /// Resolves a concrete <see cref="AryStyle" /> for a specific theme type, component type, elevation, and state.

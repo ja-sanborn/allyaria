@@ -11,7 +11,7 @@ namespace Allyaria.Theming.Styles;
 /// This struct enables components to adapt automatically to system or user-selected theme types while maintaining
 /// consistent color relationships across different elevations and states.
 /// </remarks>
-internal readonly record struct AryPaletteVariant
+public readonly record struct AryPaletteVariant
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AryPaletteVariant" /> struct, defining base palettes for light, dark, and
@@ -47,22 +47,22 @@ internal readonly record struct AryPaletteVariant
     }
 
     /// <summary>Gets the elevation hierarchy for dark mode.</summary>
-    internal AryPaletteElevation DarkElevation { get; }
+    public AryPaletteElevation DarkElevation { get; }
 
     /// <summary>Gets the base dark mode palette.</summary>
-    internal AryPalette DarkPalette { get; }
+    public AryPalette DarkPalette { get; }
 
     /// <summary>Gets the elevation hierarchy for high-contrast mode.</summary>
-    internal AryPaletteElevation HighContrastElevation { get; }
+    public AryPaletteElevation HighContrastElevation { get; }
 
     /// <summary>Gets the base high-contrast mode palette.</summary>
-    internal AryPalette HighContrastPalette { get; }
+    public AryPalette HighContrastPalette { get; }
 
     /// <summary>Gets the elevation hierarchy for light mode.</summary>
-    internal AryPaletteElevation LightElevation { get; }
+    public AryPaletteElevation LightElevation { get; }
 
     /// <summary>Gets the base light mode palette.</summary>
-    internal AryPalette LightPalette { get; }
+    public AryPalette LightPalette { get; }
 
     /// <summary>
     /// Returns a new <see cref="AryPaletteVariant" /> with optional overrides for one or more theme palettes.
@@ -91,7 +91,7 @@ internal readonly record struct AryPaletteVariant
     /// <param name="elevation">The component’s elevation level within the UI hierarchy.</param>
     /// <param name="state">The component’s visual state (e.g., default, hovered, focused).</param>
     /// <returns>The <see cref="AryPalette" /> corresponding to the specified theme, elevation, and state.</returns>
-    internal AryPalette ToPalette(ThemeType themeType, ComponentElevation elevation, ComponentState state)
+    public AryPalette ToPalette(ThemeType themeType, ComponentElevation elevation, ComponentState state)
         => themeType switch
         {
             ThemeType.Dark => DarkElevation.ToPalette(elevation, state),

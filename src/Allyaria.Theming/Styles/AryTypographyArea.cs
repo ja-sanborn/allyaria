@@ -8,7 +8,7 @@ namespace Allyaria.Theming.Styles;
 /// with additional roles (e.g., heading, body, caption) as <see cref="ComponentType" /> evolves. The type is immutable
 /// (readonly record struct) and supports non-destructive updates via <see cref="Cascade(AryTypography?)" />.
 /// </remarks>
-internal readonly record struct AryTypographyArea
+public readonly record struct AryTypographyArea
 {
     /// <summary>Initializes a new instance of the <see cref="AryTypographyArea" /> struct.</summary>
     /// <param name="surfaceTypography">
@@ -19,7 +19,7 @@ internal readonly record struct AryTypographyArea
         => Surface = surfaceTypography ?? new AryTypography();
 
     /// <summary>Gets the typography applied to the component’s primary surface (e.g., general text content).</summary>
-    internal AryTypography Surface { get; init; }
+    public AryTypography Surface { get; init; }
 
     /// <summary>
     /// Returns a new <see cref="AryTypographyArea" /> with optional overrides applied. Any parameter left
@@ -39,7 +39,7 @@ internal readonly record struct AryTypographyArea
     /// The resolved <see cref="AryTypography" /> for the specified <paramref name="type" />. Currently returns
     /// <see cref="Surface" /> for all types.
     /// </returns>
-    internal AryTypography ToTypography(ComponentType type)
+    public AryTypography ToTypography(ComponentType type)
         => type switch
         {
             _ => Surface

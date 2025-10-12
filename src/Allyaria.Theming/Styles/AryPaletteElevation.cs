@@ -10,7 +10,7 @@ namespace Allyaria.Theming.Styles;
 /// Each elevation level encapsulates a complete set of component states (Default, Hovered, Focused, etc.) derived from the
 /// baseline <see cref="AryPalette" /> using elevation-specific transformations.
 /// </remarks>
-internal readonly record struct AryPaletteElevation
+public readonly record struct AryPaletteElevation
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AryPaletteElevation" /> struct using the provided base palette.
@@ -36,31 +36,31 @@ internal readonly record struct AryPaletteElevation
     /// Gets the <see cref="AryPaletteState" /> representing the “high” elevation layer, typically used for elements above
     /// primary surfaces (e.g., popovers, dropdowns).
     /// </summary>
-    internal AryPaletteState High { get; }
+    public AryPaletteState High { get; }
 
     /// <summary>
     /// Gets the <see cref="AryPaletteState" /> representing the “highest” elevation layer, used for topmost components such as
     /// dialogs or modals.
     /// </summary>
-    internal AryPaletteState Highest { get; }
+    public AryPaletteState Highest { get; }
 
     /// <summary>
     /// Gets the <see cref="AryPaletteState" /> representing the “low” elevation layer, typically used for slightly raised or
     /// inset elements.
     /// </summary>
-    internal AryPaletteState Low { get; }
+    public AryPaletteState Low { get; }
 
     /// <summary>
     /// Gets the <see cref="AryPaletteState" /> representing the “lowest” elevation layer, generally used for background or
     /// deeply recessed elements.
     /// </summary>
-    internal AryPaletteState Lowest { get; }
+    public AryPaletteState Lowest { get; }
 
     /// <summary>
     /// Gets the <see cref="AryPaletteState" /> representing the “mid” (neutral) elevation layer, commonly used for primary
     /// surfaces and content regions.
     /// </summary>
-    internal AryPaletteState Mid { get; }
+    public AryPaletteState Mid { get; }
 
     /// <summary>Returns the <see cref="AryPalette" /> corresponding to the specified elevation and component state.</summary>
     /// <param name="elevation">The desired elevation level for the component.</param>
@@ -69,7 +69,7 @@ internal readonly record struct AryPaletteElevation
     /// The <see cref="AryPalette" /> instance appropriate for the given elevation and state. Returns the <see cref="Mid" />
     /// layer’s palette if the elevation is unrecognized.
     /// </returns>
-    internal AryPalette ToPalette(ComponentElevation elevation, ComponentState state)
+    public AryPalette ToPalette(ComponentElevation elevation, ComponentState state)
         => elevation switch
         {
             ComponentElevation.Lowest => Lowest.ToPalette(state),

@@ -62,15 +62,15 @@ public static class StyleDefaults
     public static readonly AryNumberValue Padding = Sizing.Size3;
 
     /// <summary>Default dark palette.</summary>
-    public static readonly AryPalette PaletteDark = new(BackgroundColorDark, ForegroundColorDark);
+    public static readonly AryPalette PaletteDark = new(BackgroundColorDark, foregroundColor: ForegroundColorDark);
 
     /// <summary>Default high-contrast palette.</summary>
     public static readonly AryPalette PaletteHighContrast = new(
-        BackgroundColorHighContrast, ForegroundColorHighContrast, isHighContrast: true
+        BackgroundColorHighContrast, foregroundColor: ForegroundColorHighContrast, isHighContrast: true
     );
 
     /// <summary>Default light palette.</summary>
-    public static readonly AryPalette PaletteLight = new(BackgroundColorLight, ForegroundColorLight);
+    public static readonly AryPalette PaletteLight = new(BackgroundColorLight, foregroundColor: ForegroundColorLight);
 
     /// <summary>Default text alignment.</summary>
     public static readonly AryStringValue TextAlign = Constants.TextAlign.Left;

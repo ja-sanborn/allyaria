@@ -149,9 +149,13 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// the raw <see cref="Value" />.
     /// </returns>
     public string ToCss(string propertyName)
-        => string.IsNullOrWhiteSpace(propertyName)
-            ? Value
-            : $"{propertyName.ToLowerInvariant().Trim()}:{Value};";
+    {
+        var name = propertyName.StartsWith("--", StringComparison.Ordinal)
+            ? propertyName.Trim()
+            : propertyName.ToLowerInvariant().Trim();
+
+        return $"{name}:{Value};";
+    }
 
     /// <summary>Returns the string representation of this instance.</summary>
     /// <returns>The raw <see cref="Value" />.</returns>

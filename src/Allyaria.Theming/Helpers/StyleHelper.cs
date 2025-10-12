@@ -38,5 +38,5 @@ internal static class StyleHelper
     /// whitespace, an empty string is returned.
     /// </returns>
     public static string ToPrefix(this string? prefix)
-        => Regex.Replace(prefix ?? string.Empty, @"[\s-]+", "-").Trim('-').ToLowerInvariant();
+        => Regex.Replace((prefix ?? string.Empty).Replace('_', '-'), @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 }

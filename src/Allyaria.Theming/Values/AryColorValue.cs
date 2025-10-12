@@ -42,12 +42,12 @@ public sealed class AryColorValue : ValueBase
     public override string Value => Color.ToString();
 
     /// <summary>
-    /// Ensures this color meets a minimum WCAG contrast ratio against the specified background, returning an adjusted
-    /// foreground color when necessary.
+    /// Ensures this color meets a minimum WCAG contrast ratio against the specified background, currently enforcing 4.5:1 (AA
+    /// for normal text), returning an adjusted foreground color when necessary.
     /// </summary>
     /// <param name="backgroundColor">The background color to contrast against.</param>
     /// <returns>
-    /// An <see cref="AryColorValue" /> that meets or exceeds the default minimum non-text contrast ratio (3:1) versus
+    /// An <see cref="AryColorValue" /> that meets or exceeds the default minimum non-text contrast ratio (4.5:1) versus
     /// <paramref name="backgroundColor" />. If the current color already meets the requirement, the original color is returned
     /// unchanged.
     /// </returns>
@@ -125,14 +125,6 @@ public sealed class AryColorValue : ValueBase
         => highContrast
             ? this
             : new AryColorValue(Color.ShiftLightness(0.16));
-
-    /// <summary>
-    /// Returns the highest elevated version of this color (Elevation 5). In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    public AryColorValue ToElevation5(bool highContrast = false)
-        => highContrast
-            ? this
-            : new AryColorValue(Color.ShiftLightness(0.20));
 
     /// <summary>
     /// Returns a slightly lighter version of this color for focused UI states. In high-contrast mode, returns this color

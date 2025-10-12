@@ -214,7 +214,8 @@ public sealed class AryNumberValue : ValueBase
 
         if (abs is > 0 and < 0.0001 || abs >= 1e6)
         {
-            numCanonical = number.ToString("G17", CultureInfo.InvariantCulture);
+            // Avoid scientific notation; clamp to fixed-point with sufficient precision
+            numCanonical = number.ToString("0.################", CultureInfo.InvariantCulture);
         }
         else
         {

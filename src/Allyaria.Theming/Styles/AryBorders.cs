@@ -33,38 +33,38 @@ public readonly record struct AryBorders
     /// left as <see langword="null" /> falls back to <see cref="StyleDefaults" /> for that member.
     /// </summary>
     /// <param name="topWidth">Optional <c>border-top-width</c>.</param>
-    /// <param name="rightWidth">Optional <c>border-right-width</c>.</param>
+    /// <param name="endWidth">Optional <c>border-inline-end-width</c>.</param>
     /// <param name="bottomWidth">Optional <c>border-bottom-width</c>.</param>
-    /// <param name="leftWidth">Optional <c>border-left-width</c>.</param>
+    /// <param name="startWidth">Optional <c>border-inline-start-width</c>.</param>
     /// <param name="topStyle">Optional <c>border-top-style</c> (e.g., <c>solid</c>).</param>
-    /// <param name="rightStyle">Optional <c>border-right-style</c>.</param>
+    /// <param name="endStyle">Optional <c>border-inline-end-style</c>.</param>
     /// <param name="bottomStyle">Optional <c>border-bottom-style</c>.</param>
-    /// <param name="leftStyle">Optional <c>border-left-style</c>.</param>
+    /// <param name="startStyle">Optional <c>border-inline-start-style</c>.</param>
     /// <param name="topLeftRadius">Optional <c>border-top-left-radius</c>.</param>
     /// <param name="topRightRadius">Optional <c>border-top-right-radius</c>.</param>
     /// <param name="bottomRightRadius">Optional <c>border-bottom-right-radius</c>.</param>
     /// <param name="bottomLeftRadius">Optional <c>border-bottom-left-radius</c>.</param>
     public AryBorders(AryNumberValue? topWidth = null,
-        AryNumberValue? rightWidth = null,
+        AryNumberValue? endWidth = null,
         AryNumberValue? bottomWidth = null,
-        AryNumberValue? leftWidth = null,
+        AryNumberValue? startWidth = null,
         AryStringValue? topStyle = null,
-        AryStringValue? rightStyle = null,
+        AryStringValue? endStyle = null,
         AryStringValue? bottomStyle = null,
-        AryStringValue? leftStyle = null,
+        AryStringValue? startStyle = null,
         AryNumberValue? topLeftRadius = null,
         AryNumberValue? topRightRadius = null,
         AryNumberValue? bottomRightRadius = null,
         AryNumberValue? bottomLeftRadius = null)
     {
         TopWidth = topWidth ?? StyleDefaults.BorderWidth;
-        RightWidth = rightWidth ?? StyleDefaults.BorderWidth;
+        EndWidth = endWidth ?? StyleDefaults.BorderWidth;
         BottomWidth = bottomWidth ?? StyleDefaults.BorderWidth;
-        LeftWidth = leftWidth ?? StyleDefaults.BorderWidth;
+        StartWidth = startWidth ?? StyleDefaults.BorderWidth;
         TopStyle = topStyle ?? StyleDefaults.BorderStyle;
-        RightStyle = rightStyle ?? StyleDefaults.BorderStyle;
+        EndStyle = endStyle ?? StyleDefaults.BorderStyle;
         BottomStyle = bottomStyle ?? StyleDefaults.BorderStyle;
-        LeftStyle = leftStyle ?? StyleDefaults.BorderStyle;
+        StartStyle = startStyle ?? StyleDefaults.BorderStyle;
         TopLeftRadius = topLeftRadius ?? StyleDefaults.BorderRadius;
         TopRightRadius = topRightRadius ?? StyleDefaults.BorderRadius;
         BottomRightRadius = bottomRightRadius ?? StyleDefaults.BorderRadius;
@@ -83,17 +83,41 @@ public readonly record struct AryBorders
     /// <summary>Gets or initializes the <c>border-bottom-width</c>.</summary>
     public AryNumberValue BottomWidth { get; init; }
 
-    /// <summary>Gets or initializes the <c>border-left-style</c>.</summary>
-    public AryStringValue LeftStyle { get; init; }
+    /// <summary>Gets or initializes the <c>border-inline-end-style</c>.</summary>
+    public AryStringValue EndStyle { get; init; }
 
-    /// <summary>Gets or initializes the <c>border-left-width</c>.</summary>
-    public AryNumberValue LeftWidth { get; init; }
+    /// <summary>Gets or initializes the <c>border-inline-end-width</c>.</summary>
+    public AryNumberValue EndWidth { get; init; }
 
-    /// <summary>Gets or initializes the <c>border-right-style</c>.</summary>
-    public AryStringValue RightStyle { get; init; }
+    /// <summary>
+    /// Gets the focus border width based on the largest of all four border widths. If the largest width is less than 2, the
+    /// focus width is 2. Otherwise, the focus width is the largest width plus 2.
+    /// </summary>
+    public AryNumberValue FocusWidth
+    {
+        get
+        {
+            var largest = new[]
+            {
+                TopWidth.Number,
+                StartWidth.Number,
+                BottomWidth.Number,
+                EndWidth.Number
+            }.Max();
 
-    /// <summary>Gets or initializes the <c>border-right-width</c>.</summary>
-    public AryNumberValue RightWidth { get; init; }
+            var focus = largest < 2
+                ? 2
+                : largest + 2;
+
+            return new AryNumberValue($"{focus}px");
+        }
+    }
+
+    /// <summary>Gets or initializes the <c>border-inline-start-style</c>.</summary>
+    public AryStringValue StartStyle { get; init; }
+
+    /// <summary>Gets or initializes the <c>border-inline-start-width</c>.</summary>
+    public AryNumberValue StartWidth { get; init; }
 
     /// <summary>Gets or initializes the <c>border-top-left-radius</c>.</summary>
     public AryNumberValue TopLeftRadius { get; init; }
@@ -111,27 +135,27 @@ public readonly record struct AryBorders
     /// Returns a new borders definition by applying per-side/per-corner overrides. Each argument is optional; when
     /// <see langword="null" />, the current value is preserved.
     /// </summary>
-    /// <param name="topWidth">Optional override for <c>border-top-width</c>.</param>
-    /// <param name="rightWidth">Optional override for <c>border-right-width</c>.</param>
-    /// <param name="bottomWidth">Optional override for <c>border-bottom-width</c>.</param>
-    /// <param name="leftWidth">Optional override for <c>border-left-width</c>.</param>
-    /// <param name="topStyle">Optional override for <c>border-top-style</c>.</param>
-    /// <param name="rightStyle">Optional override for <c>border-right-style</c>.</param>
-    /// <param name="bottomStyle">Optional override for <c>border-bottom-style</c>.</param>
-    /// <param name="leftStyle">Optional override for <c>border-left-style</c>.</param>
-    /// <param name="topLeftRadius">Optional override for <c>border-top-left-radius</c>.</param>
-    /// <param name="topRightRadius">Optional override for <c>border-top-right-radius</c>.</param>
-    /// <param name="bottomRightRadius">Optional override for <c>border-bottom-right-radius</c>.</param>
-    /// <param name="bottomLeftRadius">Optional override for <c>border-bottom-left-radius</c>.</param>
+    /// <param name="topWidth">Optional <c>border-top-width</c>.</param>
+    /// <param name="endWidth">Optional <c>border-inline-end-width</c>.</param>
+    /// <param name="bottomWidth">Optional <c>border-bottom-width</c>.</param>
+    /// <param name="startWidth">Optional <c>border-inline-start-width</c>.</param>
+    /// <param name="topStyle">Optional <c>border-top-style</c> (e.g., <c>solid</c>).</param>
+    /// <param name="endStyle">Optional <c>border-inline-end-style</c>.</param>
+    /// <param name="bottomStyle">Optional <c>border-bottom-style</c>.</param>
+    /// <param name="startStyle">Optional <c>border-inline-start-style</c>.</param>
+    /// <param name="topLeftRadius">Optional <c>border-top-left-radius</c>.</param>
+    /// <param name="topRightRadius">Optional <c>border-top-right-radius</c>.</param>
+    /// <param name="bottomRightRadius">Optional <c>border-bottom-right-radius</c>.</param>
+    /// <param name="bottomLeftRadius">Optional <c>border-bottom-left-radius</c>.</param>
     /// <returns>A new <see cref="AryBorders" /> instance with overrides applied.</returns>
     public AryBorders Cascade(AryNumberValue? topWidth = null,
-        AryNumberValue? rightWidth = null,
+        AryNumberValue? endWidth = null,
         AryNumberValue? bottomWidth = null,
-        AryNumberValue? leftWidth = null,
+        AryNumberValue? startWidth = null,
         AryStringValue? topStyle = null,
-        AryStringValue? rightStyle = null,
+        AryStringValue? endStyle = null,
         AryStringValue? bottomStyle = null,
-        AryStringValue? leftStyle = null,
+        AryStringValue? startStyle = null,
         AryNumberValue? topLeftRadius = null,
         AryNumberValue? topRightRadius = null,
         AryNumberValue? bottomRightRadius = null,
@@ -139,13 +163,13 @@ public readonly record struct AryBorders
         => this with
         {
             TopWidth = topWidth ?? TopWidth,
-            RightWidth = rightWidth ?? RightWidth,
+            EndWidth = endWidth ?? EndWidth,
             BottomWidth = bottomWidth ?? BottomWidth,
-            LeftWidth = leftWidth ?? LeftWidth,
+            StartWidth = startWidth ?? StartWidth,
             TopStyle = topStyle ?? TopStyle,
-            RightStyle = rightStyle ?? RightStyle,
+            EndStyle = endStyle ?? EndStyle,
             BottomStyle = bottomStyle ?? BottomStyle,
-            LeftStyle = leftStyle ?? LeftStyle,
+            StartStyle = startStyle ?? StartStyle,
             TopLeftRadius = topLeftRadius ?? TopLeftRadius,
             TopRightRadius = topRightRadius ?? TopRightRadius,
             BottomRightRadius = bottomRightRadius ?? BottomRightRadius,
@@ -215,21 +239,55 @@ public readonly record struct AryBorders
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
     /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
+    /// <param name="isFocus">Determines if this is a focus border or not.</param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by
     /// <see cref="StyleHelper.ToCss(StringBuilder, Allyaria.Theming.Contracts.ValueBase, string, string)" />).
     /// </returns>
-    public string ToCss(string? varPrefix = "")
+    public string ToCss(string? varPrefix = "", bool isFocus = false)
     {
+        var topWidth = isFocus
+            ? FocusWidth
+            : TopWidth;
+
+        var endWidth = isFocus
+            ? FocusWidth
+            : EndWidth;
+
+        var bottomWidth = isFocus
+            ? FocusWidth
+            : BottomWidth;
+
+        var startWidth = isFocus
+            ? FocusWidth
+            : StartWidth;
+
+        var topStyle = isFocus
+            ? BorderStyle.Dashed
+            : TopStyle;
+
+        var endStyle = isFocus
+            ? BorderStyle.Dashed
+            : EndStyle;
+
+        var bottomStyle = isFocus
+            ? BorderStyle.Dashed
+            : BottomStyle;
+
+        var startStyle = isFocus
+            ? BorderStyle.Dashed
+            : StartStyle;
+
         var builder = new StringBuilder();
-        builder.ToCss(TopWidth, "border-top-width", varPrefix);
-        builder.ToCss(RightWidth, "border-right-width", varPrefix);
-        builder.ToCss(BottomWidth, "border-bottom-width", varPrefix);
-        builder.ToCss(LeftWidth, "border-left-width", varPrefix);
-        builder.ToCss(TopStyle, "border-top-style", varPrefix);
-        builder.ToCss(RightStyle, "border-right-style", varPrefix);
-        builder.ToCss(BottomStyle, "border-bottom-style", varPrefix);
-        builder.ToCss(LeftStyle, "border-left-style", varPrefix);
+
+        builder.ToCss(topWidth, "border-top-width", varPrefix);
+        builder.ToCss(endWidth, "border-inline-end-width", varPrefix);
+        builder.ToCss(bottomWidth, "border-bottom-width", varPrefix);
+        builder.ToCss(startWidth, "border-inline-start-width", varPrefix);
+        builder.ToCss(topStyle, "border-top-style", varPrefix);
+        builder.ToCss(endStyle, "border-inline-end-style", varPrefix);
+        builder.ToCss(bottomStyle, "border-bottom-style", varPrefix);
+        builder.ToCss(startStyle, "border-inline-start-style", varPrefix);
         builder.ToCss(TopLeftRadius, "border-top-left-radius", varPrefix);
         builder.ToCss(TopRightRadius, "border-top-right-radius", varPrefix);
         builder.ToCss(BottomLeftRadius, "border-bottom-left-radius", varPrefix);
