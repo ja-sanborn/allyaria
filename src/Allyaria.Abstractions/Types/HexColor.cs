@@ -453,6 +453,12 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>A hash code for the current object.</returns>
     public override int GetHashCode() => HashCode.Combine(R, G, B, A);
 
+    /// <summary>Picks a strong high-contrast stroke for a given surface: black for light surfaces, white for dark.</summary>
+    private static HexColor HighContrastStroke(HexColor surface)
+        => surface.IsLight()
+            ? Colors.Black
+            : Colors.White;
+
     /// <summary>Converts HSVA values to an equivalent <see cref="HexColor" />.</summary>
     /// <param name="hue">Hue in degrees (can wrap), nominally 0–360.</param>
     /// <param name="saturation">Saturation in the 0–1 range.</param>
@@ -862,6 +868,36 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     }
 
     /// <summary>
+    /// Computes the “least intrusive” passing score (lower is better) for a candidate border against its two adjacencies.
+    /// Returns <see cref="double.PositiveInfinity" /> when it does not pass against any side.
+    /// </summary>
+    /// <param name="passes">Whether the candidate passes against at least one adjacency.</param>
+    /// <param name="contrastA">Contrast versus adjacency A (e.g., component fill).</param>
+    /// <param name="contrastB">Contrast versus adjacency B (e.g., outer background).</param>
+    /// <param name="minContrast">The threshold that defines a “pass”.</param>
+    private static double PassingScore(bool passes, double contrastA, double contrastB, double minContrast)
+    {
+        if (!passes)
+        {
+            return double.PositiveInfinity;
+        }
+
+        var best = double.PositiveInfinity;
+
+        if (contrastA >= minContrast)
+        {
+            best = Math.Min(best, contrastA);
+        }
+
+        if (contrastB >= minContrast)
+        {
+            best = Math.Min(best, contrastB);
+        }
+
+        return best;
+    }
+
+    /// <summary>
     /// Converts the current RGB color components (<see cref="R" />, <see cref="G" />, <see cref="B" />) into their
     /// corresponding HSV (Hue, Saturation, Value) representation.
     /// </summary>
@@ -1117,6 +1153,104 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         var db = B.Value - color.B.Value;
 
         return dr * dr + dg * dg + db * db;
+    }
+
+    /// <summary>
+    /// Derives a component border color. If the component has its own fill (e.g., a button), pass it via
+    /// <paramref name="componentFill" />. If the component is transparent (no fill), leave <paramref name="componentFill" />
+    /// as <see langword="null" /> and this will behave as a divider on <paramref name="outerBackground" />. In high-contrast
+    /// mode, returns <c>this</c> (the component's content FG) for a strong outline.
+    /// </summary>
+    /// <param name="outerBackground">The surrounding/page surface under and around the component.</param>
+    /// <param name="componentFill">Optional component fill; when <see langword="null" />, treated as “no fill”.</param>
+    /// <param name="minContrast">Minimum required non-text contrast (default 3.0).</param>
+    /// <param name="highContrast">When true, returns a strong HC outline (this FG).</param>
+    /// <returns>A subtle border that passes against at least one adjacency and preserves text hierarchy.</returns>
+    public HexColor ToComponentBorderColor(HexColor outerBackground,
+        HexColor? componentFill = null,
+        double minContrast = 3.0,
+        bool highContrast = false)
+    {
+        if (highContrast)
+        {
+            return this;
+        }
+
+        if (!componentFill.HasValue)
+        {
+            return ToDividerBorderColor(outerBackground, minContrast, highContrast);
+        }
+
+        var fill = componentFill.Value;
+
+        // Candidate A: shade of the fill (contrast vs fill)
+        var fromFill = fill.EnsureMinimumContrast(fill, minContrast);
+        var aVsFill = fromFill.ContrastRatio(fill);
+        var aVsOuter = fromFill.ContrastRatio(outerBackground);
+        var aPasses = aVsFill >= minContrast || aVsOuter >= minContrast;
+
+        // Candidate B: shade of the outer background (contrast vs outer)
+        var fromOuter = outerBackground.EnsureMinimumContrast(outerBackground, minContrast);
+        var bVsFill = fromOuter.ContrastRatio(fill);
+        var bVsOuter = fromOuter.ContrastRatio(outerBackground);
+        var bPasses = bVsFill >= minContrast || bVsOuter >= minContrast;
+
+        var scoreA = PassingScore(aPasses, aVsFill, aVsOuter, minContrast);
+        var scoreB = PassingScore(bPasses, bVsFill, bVsOuter, minContrast);
+
+        var chosen = scoreA <= scoreB
+            ? fromFill
+            : fromOuter;
+
+        // Preserve hierarchy against the component fill (where label lives)
+        var fgVsFill = ContrastRatio(fill);
+        var chosenVsFill = chosen.ContrastRatio(fill);
+
+        if (chosenVsFill > fgVsFill)
+        {
+            chosen = chosen.ToLerpLinearPreserveAlpha(fill, 0.15);
+        }
+
+        // Optional: avoid border merging with FG at the edge
+        var fgVsBorder = ContrastRatio(chosen);
+
+        if (fgVsBorder < 1.5)
+        {
+            var edgePole = fill.IsLight()
+                ? Colors.Black
+                : Colors.White;
+
+            chosen = chosen.ToLerpLinearPreserveAlpha(edgePole, 0.10);
+        }
+
+        return chosen;
+    }
+
+    /// <summary>
+    /// Derives a divider/outline color for a single surface (e.g., a hairline on a card) that meets WCAG non-text contrast (≥
+    /// <paramref name="minContrast" />; default 3:1) against <paramref name="surface" />. In high-contrast mode, returns a
+    /// strong outline automatically.
+    /// </summary>
+    public HexColor ToDividerBorderColor(HexColor surface, double minContrast = 3.0, bool highContrast = false)
+    {
+        if (highContrast)
+        {
+            return HighContrastStroke(surface);
+        }
+
+        // Preserve hue: adjust only Value (V) to reach the target vs the *same surface*.
+        var stroke = surface.EnsureMinimumContrast(surface, minContrast);
+
+        // Keep divider quieter than this FG over the same surface
+        var fgVsSurface = ContrastRatio(surface);
+        var strokeVsSurface = stroke.ContrastRatio(surface);
+
+        if (strokeVsSurface > fgVsSurface)
+        {
+            stroke = stroke.ToLerpLinearPreserveAlpha(surface, 0.15);
+        }
+
+        return stroke;
     }
 
     /// <summary>

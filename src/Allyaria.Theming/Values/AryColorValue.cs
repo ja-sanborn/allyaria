@@ -46,54 +46,111 @@ public sealed class AryColorValue : ValueBase
     public static AryColorValue Parse(string value) => new(value);
 
     /// <summary>
-    /// Returns a new <see cref="AryColorValue" /> representing a desaturated version of this color to be used for disabled UI
-    /// states.
+    /// Computes the appropriate border color for the element based on its background context, meeting WCAG non-text contrast
+    /// (≥ 3:1) and preserving hue where possible.
+    /// </summary>
+    /// <param name="outerBackground">The surrounding background surface color.</param>
+    /// <param name="componentFill">
+    /// Optional fill color of the component; if <see langword="null" />, the border is treated as a divider on the background.
+    /// </param>
+    /// <param name="highContrast">
+    /// When <see langword="true" />, returns a strong high-contrast outline (black on light surfaces or white on dark).
+    /// </param>
+    /// <returns>The resolved <see cref="AryColorValue" /> representing the border color.</returns>
+    public AryColorValue ToBorder(AryColorValue outerBackground,
+        AryColorValue? componentFill = null,
+        bool highContrast = false)
+        => new(Color.ToComponentBorderColor(outerBackground.Color, componentFill?.Color, 3.0, highContrast));
+
+    /// <summary>
+    /// Returns a desaturated version of this color for disabled UI states. This effect is preserved even in high-contrast mode
+    /// so that disabled elements remain visibly distinct.
     /// </summary>
     /// <returns>A new <see cref="AryColorValue" /> instance with reduced saturation.</returns>
     public AryColorValue ToDisabled() => new(Color.Desaturate(0.6));
 
     /// <summary>
-    /// Returns a new <see cref="AryColorValue" /> representing a brightened version of this color to be used for dragged UI
-    /// states.
+    /// Returns a brightened version of this color for dragged UI states. In high-contrast mode, returns this color unchanged.
     /// </summary>
-    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
-    public AryColorValue ToDragged() => new(Color.ShiftLightness(0.18));
-
-    /// <summary>Gets a new <see cref="AryColorValue" /> representing a slightly elevated color (Elevation 1).</summary>
-    public AryColorValue ToElevation1() => new(Color.ShiftLightness(0.04));
-
-    /// <summary>Gets a new <see cref="AryColorValue" /> representing a moderately elevated color (Elevation 2).</summary>
-    public AryColorValue ToElevation2() => new(Color.ShiftLightness(0.08));
-
-    /// <summary>Gets a new <see cref="AryColorValue" /> representing a higher elevated color (Elevation 3).</summary>
-    public AryColorValue ToElevation3() => new(Color.ShiftLightness(0.12));
-
-    /// <summary>Gets a new <see cref="AryColorValue" /> representing a strongly elevated color (Elevation 4).</summary>
-    public AryColorValue ToElevation4() => new(Color.ShiftLightness(0.16));
-
-    /// <summary>Gets a new <see cref="AryColorValue" /> representing the highest elevated color (Elevation 5).</summary>
-    public AryColorValue ToElevation5() => new(Color.ShiftLightness(0.20));
+    /// <param name="highContrast">If true, bypasses brightening.</param>
+    /// <returns>A new <see cref="AryColorValue" /> for dragged state.</returns>
+    public AryColorValue ToDragged(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.18));
 
     /// <summary>
-    /// Returns a new <see cref="AryColorValue" /> representing a moderately lighter version of this color to be used for
-    /// focused UI states.
+    /// Returns a slightly elevated version of this color (Elevation 1). In high-contrast mode, returns this color unchanged.
     /// </summary>
-    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
-    public AryColorValue ToFocused() => new(Color.ShiftLightness(0.1));
+    public AryColorValue ToElevation1(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.04));
 
     /// <summary>
-    /// Returns a new <see cref="AryColorValue" /> representing a slightly lighter version of this color to be used for hovered
-    /// UI states.
+    /// Returns a moderately elevated version of this color (Elevation 2). In high-contrast mode, returns this color unchanged.
     /// </summary>
-    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
-    public AryColorValue ToHovered() => new(Color.ShiftLightness(0.06));
+    public AryColorValue ToElevation2(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.08));
 
     /// <summary>
-    /// Returns a new <see cref="AryColorValue" /> representing a noticeably lighter version of this color to be used for
-    /// pressed UI states.
+    /// Returns a higher elevated version of this color (Elevation 3). In high-contrast mode, returns this color unchanged.
     /// </summary>
-    /// <returns>A new <see cref="AryColorValue" /> instance with increased lightness.</returns>
-    public AryColorValue ToPressed() => new(Color.ShiftLightness(0.14));
+    public AryColorValue ToElevation3(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.12));
+
+    /// <summary>
+    /// Returns a strongly elevated version of this color (Elevation 4). In high-contrast mode, returns this color unchanged.
+    /// </summary>
+    public AryColorValue ToElevation4(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.16));
+
+    /// <summary>
+    /// Returns the highest elevated version of this color (Elevation 5). In high-contrast mode, returns this color unchanged.
+    /// </summary>
+    public AryColorValue ToElevation5(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.20));
+
+    /// <summary>
+    /// Returns a slightly lighter version of this color for focused UI states. In high-contrast mode, returns this color
+    /// unchanged.
+    /// </summary>
+    /// <param name="highContrast">If true, bypasses lightening.</param>
+    /// <returns>A new <see cref="AryColorValue" /> for focused state.</returns>
+    public AryColorValue ToFocused(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.1));
+
+    /// <summary>
+    /// Returns a slightly lighter version of this color for hovered UI states. In high-contrast mode, returns this color
+    /// unchanged.
+    /// </summary>
+    /// <param name="highContrast">If true, bypasses lightening.</param>
+    /// <returns>A new <see cref="AryColorValue" /> for hovered state.</returns>
+    public AryColorValue ToHovered(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.06));
+
+    /// <summary>
+    /// Returns a noticeably lighter version of this color for pressed UI states. In high-contrast mode, returns this color
+    /// unchanged.
+    /// </summary>
+    /// <param name="highContrast">If true, bypasses lightening.</param>
+    /// <returns>A new <see cref="AryColorValue" /> for pressed state.</returns>
+    public AryColorValue ToPressed(bool highContrast = false)
+        => highContrast
+            ? this
+            : new AryColorValue(Color.ShiftLightness(0.14));
 
     /// <summary>Attempts to parse a color string into an <see cref="AryColorValue" />.</summary>
     /// <param name="value">The color value to parse.</param>
