@@ -331,7 +331,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     {
         AryArgumentException.ThrowIfOutOfRange<double>(minimumRatio, 1.0, 21.0, nameof(minimumRatio));
 
-        // Early accept
         var startRatio = ContrastRatio(background);
 
         if (startRatio >= minimumRatio)
@@ -339,10 +338,9 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             return this;
         }
 
-        // Choose the V direction that locally increases contrast.
         var direction = ValueDirection(background);
 
-        // 1) Try along the hue rail in the better direction first.
+        // 1) Preferred value-rail attempt
         var first = SearchValueRail(direction, background, minimumRatio);
 
         if (first.IsMinimumMet)
@@ -350,58 +348,22 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             return first.ForegroundColor;
         }
 
-        // 2) Try the opposite direction on the hue rail.
-        var second = SearchValueRail(-direction, background, minimumRatio);
-
-        if (second.IsMinimumMet)
-        {
-            return second.ForegroundColor;
-        }
-
-        // 3) Mix toward white/black using gamma-correct (linear-light) blending; pick a solution that meets the ratio with the smallest color delta.
-        var towardBlack = SearchTowardPole(Colors.Black.SetAlpha(A.Value), background, minimumRatio);
+        // 2) Poles
         var towardWhite = SearchTowardPole(Colors.White.SetAlpha(A.Value), background, minimumRatio);
+        var towardBlack = SearchTowardPole(Colors.Black.SetAlpha(A.Value), background, minimumRatio);
 
-        if (towardWhite.IsMinimumMet && towardBlack.IsMinimumMet)
-        {
-            // Prefer minimal change from the original when both meet and are within a small ratio epsilon.
-            const double ratioEps = 0.01;
-            var ratioClose = Math.Abs(towardWhite.ContrastRatio - towardBlack.ContrastRatio) <= ratioEps;
-
-            if (ratioClose)
-            {
-                var distanceWhite = SrgbDistanceSquared(towardWhite.ForegroundColor);
-                var distanceBlack = SrgbDistanceSquared(towardBlack.ForegroundColor);
-
-                return distanceWhite <= distanceBlack
-                    ? towardWhite.ForegroundColor
-                    : towardBlack.ForegroundColor;
-            }
-
-            return towardWhite.ContrastRatio >= towardBlack.ContrastRatio
-                ? towardWhite.ForegroundColor
-                : towardBlack.ForegroundColor;
-        }
-
-        // 4) Guarantee path: mix toward white; prefer any that meets; otherwise best-approaching.
         if (towardWhite.IsMinimumMet)
         {
             return towardWhite.ForegroundColor;
         }
 
-        // 5) Guarantee path: mix toward black; prefer any that meets; otherwise best-approaching.
         if (towardBlack.IsMinimumMet)
         {
             return towardBlack.ForegroundColor;
         }
 
-        // 6) Still not met: return the best-approaching overall.
+        // 3) Best-effort fallback (no one met the target): pick highest contrast among ALL candidates tried
         var best = first;
-
-        if (second.ContrastRatio > best.ContrastRatio)
-        {
-            best = second;
-        }
 
         if (towardWhite.ContrastRatio > best.ContrastRatio)
         {
@@ -596,23 +558,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     {
         var trimmed = value.Trim();
 
-        if (trimmed.EndsWith('%'))
-        {
-            var p = double.Parse(trimmed.TrimEnd('%'), NumberStyles.Float, CultureInfo.InvariantCulture);
-
-            return HexByte.FromNormalized(Math.Clamp(p / 100.0, 0.0, 1.0));
-        }
-
-        if (!double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var alpha) ||
-            !double.IsFinite(alpha))
-        {
-            throw new AryArgumentException($"Invalid alpha value: {value}", nameof(value));
-        }
-
-        if (alpha is < 0 or > 1)
-        {
-            throw new AryArgumentException($"Alpha value must be between 0 and 1: {value}", nameof(value));
-        }
+        _ = double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var alpha);
 
         return HexByte.FromNormalized(alpha);
     }
@@ -714,9 +660,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
             case 8:
                 break;
-
-            default:
-                throw new AryArgumentException($"Unsupported hex color length: {value}", nameof(value));
         }
 
         var r = byte.Parse(hexValue[..2], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
@@ -800,10 +743,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ? trimmed.TrimEnd('%').Trim()
             : trimmed;
 
-        if (!double.TryParse(numericText, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
-        {
-            throw new AryArgumentException($"Invalid percentage value: {value}", nameof(value));
-        }
+        _ = double.TryParse(numericText, NumberStyles.Float, CultureInfo.InvariantCulture, out var number);
 
         var percent = hadPercent
             ? number
@@ -973,11 +913,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         {
             hue += 360.0;
         }
-
-        if (hue >= 360.0)
-        {
-            hue -= 360.0;
-        }
     }
 
     /// <summary>
@@ -1140,19 +1075,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             : 1.0;
 
         return FromHsva(H, S, Math.Clamp(V + delta * direction, 0.0, 1.0), A.ToNormalized());
-    }
-
-    /// <summary>
-    /// Computes the squared Euclidean distance between this color and another color in sRGB byte space using their red, green,
-    /// and blue components. This metric serves as a fast, non-perceptual measure of color difference.
-    /// </summary>
-    private double SrgbDistanceSquared(HexColor color)
-    {
-        var dr = R.Value - color.R.Value;
-        var dg = G.Value - color.G.Value;
-        var db = B.Value - color.B.Value;
-
-        return dr * dr + dg * dg + db * db;
     }
 
     /// <summary>
@@ -1385,19 +1307,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         var ratioUp = up.ContrastRatio(background);
         var ratioDown = down.ContrastRatio(background);
 
-        if (ratioUp > ratioDown)
-        {
-            return +1;
-        }
-
-        if (ratioDown > ratioUp)
-        {
-            return -1;
-        }
-
-        var brightenPreferred = ToRelativeLuminance() <= background.ToRelativeLuminance();
-
-        return brightenPreferred
+        return ratioUp > ratioDown
             ? +1
             : -1;
     }

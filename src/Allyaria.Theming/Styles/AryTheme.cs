@@ -12,7 +12,7 @@ namespace Allyaria.Theming.Styles;
 ///     cref="Cascade(AryBorders?, ArySpacing?, AryPalette?, AryPalette?, AryPalette?, AryTypography?)" />
 /// . Use <see cref="ToStyle(ThemeType, ComponentType, ComponentElevation, ComponentState)" /> to resolve a concrete
 /// <see cref="AryStyle" /> for a specific theme type, component type, elevation, and state; then call
-/// <see cref="AryStyle.ToCss(string?)" /> to produce CSS.
+/// <see cref="AryStyle.ToCss(string?, bool)" /> to produce CSS.
 /// </remarks>
 /// <seealso cref="AryStyle" />
 /// <seealso cref="AryPaletteVariant" />

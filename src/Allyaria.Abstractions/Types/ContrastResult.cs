@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Allyaria.Abstractions.Types;
 
 /// <summary>
@@ -12,9 +10,6 @@ namespace Allyaria.Abstractions.Types;
 /// <c>true</c> if the computed ratio meets or exceeds the required minimum; otherwise
 /// <c>false</c>.
 /// </param>
-[ExcludeFromCodeCoverage(
-    Justification = "Data-only result type; behavior is covered via higher-level contrast service tests."
-)]
 internal readonly record struct ContrastResult(
     HexColor ForegroundColor,
     double ContrastRatio,

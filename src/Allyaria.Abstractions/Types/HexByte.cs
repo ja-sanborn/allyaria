@@ -82,7 +82,7 @@ public readonly struct HexByte : IComparable<HexByte>, IEquatable<HexByte>
     {
         if (!double.IsFinite(value))
         {
-            throw new AryArgumentException(nameof(value), "Normalized value must be a finite number.");
+            throw new AryArgumentException("Normalized value must be a finite number.", nameof(value));
         }
 
         AryArgumentException.ThrowIfOutOfRange<double>(value, 0.0, 1.0, nameof(value));

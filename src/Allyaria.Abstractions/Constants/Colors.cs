@@ -1217,23 +1217,11 @@ public static class Colors
         var type = typeof(Colors);
         var builder = ImmutableDictionary.CreateBuilder<string, HexColor>(StringComparer.OrdinalIgnoreCase);
 
-        // Reflect all public static fields of type HexColor.
         foreach (var fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static))
         {
             if (fieldInfo.FieldType == typeof(HexColor))
             {
                 builder[fieldInfo.Name] = (HexColor)fieldInfo.GetValue(null)!;
-            }
-        }
-
-        // Reflect all public static parameterless properties of type HexColor.
-        foreach (var propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Static))
-        {
-            if (propertyInfo.PropertyType == typeof(HexColor) &&
-                propertyInfo.GetIndexParameters().Length is 0 &&
-                propertyInfo.GetValue(null) is HexColor value)
-            {
-                builder[propertyInfo.Name] = value;
             }
         }
 
