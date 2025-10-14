@@ -27,7 +27,7 @@ public sealed class ColorsLookupTests
         buildMethod.Should().NotBeNull("BuildDictionary must exist on Colors.");
 
         // Act
-        var result = (IReadOnlyDictionary<string, HexColor>)buildMethod!.Invoke(null, null)!;
+        var result = (IReadOnlyDictionary<string, HexColor>)buildMethod.Invoke(null, null)!;
 
         // Assert
         result.Count.Should().Be(expectedTotal);
