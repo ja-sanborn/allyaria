@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Allyaria.Theming.Constants;
+﻿namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed vertical alignment constants for Allyaria theming.</summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]

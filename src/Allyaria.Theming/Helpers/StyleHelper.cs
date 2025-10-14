@@ -1,6 +1,4 @@
 ﻿using Allyaria.Theming.Contracts;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Helpers;
 

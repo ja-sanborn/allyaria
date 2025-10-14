@@ -32,5 +32,9 @@
     </ItemGroup>
     <ItemGroup>
         <Using Include="System.Collections"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Globalization"/>
+        <Using Include="System.Text"/>
+        <Using Include="System.Text.RegularExpressions"/>
     </ItemGroup>
 </Project>

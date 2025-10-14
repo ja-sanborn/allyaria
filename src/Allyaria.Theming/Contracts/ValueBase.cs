@@ -148,11 +148,19 @@ public abstract class ValueBase : IComparable<ValueBase>, IEquatable<ValueBase>
     /// A CSS declaration in the form <c>"property:value;"</c> when <paramref name="propertyName" /> is provided; otherwise,
     /// the raw <see cref="Value" />.
     /// </returns>
+    /// <exception cref="AryArgumentException">
+    /// Thrown when <paramref name="propertyName" /> is <c>null</c>, empty, whitespace-only, or contains any Unicode control
+    /// characters.
+    /// </exception>
     public string ToCss(string propertyName)
     {
-        var name = propertyName.StartsWith("--", StringComparison.Ordinal)
-            ? propertyName.Trim()
-            : propertyName.ToLowerInvariant().Trim();
+        AryArgumentException.ThrowIfNullOrWhiteSpace(propertyName, nameof(propertyName));
+
+        var trimmed = propertyName.Trim();
+
+        var name = trimmed.StartsWith("--", StringComparison.Ordinal)
+            ? trimmed
+            : trimmed.ToLowerInvariant();
 
         return $"{name}:{Value};";
     }

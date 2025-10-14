@@ -1,5 +1,4 @@
 ﻿using Allyaria.Abstractions.Extensions;
-using System.Globalization;
 
 namespace Allyaria.Abstractions.UnitTests.Extensions;
 

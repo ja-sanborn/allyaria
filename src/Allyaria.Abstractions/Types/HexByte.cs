@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Allyaria.Abstractions.Types;
+﻿namespace Allyaria.Abstractions.Types;
 
 /// <summary>
 /// Represents a single 8-bit color channel value (0–255) used in RGBA color models. Provides parsing, formatting,

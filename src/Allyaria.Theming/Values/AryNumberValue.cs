@@ -1,9 +1,6 @@
+using Allyaria.Abstractions.Extensions;
 using Allyaria.Theming.Contracts;
 using Allyaria.Theming.Enumerations;
-using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Allyaria.Theming.Values;
 
@@ -21,7 +18,7 @@ namespace Allyaria.Theming.Values;
 ///     </item>
 ///     <item>
 ///         <description>
-///         Optional unit suffix matching <see cref="LengthUnits" /> <see cref="DescriptionAttribute" /> values
+///         Optional unit suffix matching <see cref="LengthUnits" /> Description values
 ///         (case-insensitive), including <c>%</c> for <see cref="LengthUnits.Percent" />.
 ///         </description>
 ///     </item>
@@ -56,7 +53,7 @@ public sealed class AryNumberValue : ValueBase
     );
 
     /// <summary>
-    /// Lookup of normalized unit tokens (via <see cref="DescriptionAttribute" /> on <see cref="LengthUnits" /> members) to
+    /// Lookup of normalized unit descriptions on <see cref="LengthUnits" /> members) to
     /// their enum values. Keys are compared case-insensitively.
     /// </summary>
     private static readonly Dictionary<string, LengthUnits> UnitByToken = BuildUnitMap();
@@ -91,42 +88,19 @@ public sealed class AryNumberValue : ValueBase
     {
         var dict = new Dictionary<string, LengthUnits>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (LengthUnits u in Enum.GetValues(typeof(LengthUnits)))
+        foreach (var unit in Enum.GetValues<LengthUnits>())
         {
-            var desc = GetUnitDescription(u);
+            var desc = unit.GetDescription();
 
             if (!string.IsNullOrWhiteSpace(desc))
             {
                 // Use lower-cased keys for robust lookup; preserve canonical casing in description.
                 var key = desc.ToLowerInvariant();
-                dict.TryAdd(key, u);
+                dict.TryAdd(key, unit);
             }
         }
 
         return dict;
-    }
-
-    /// <summary>
-    /// Retrieves the <see cref="DescriptionAttribute" /> text for a <see cref="LengthUnits" /> member (e.g., "px", "rem",
-    /// "%"). Returns the enum name when no description is present (should not occur with current definitions).
-    /// </summary>
-    /// <param name="unit">The unit value.</param>
-    /// <returns>The description text or enum name.</returns>
-    private static string GetUnitDescription(LengthUnits unit)
-    {
-        var mi = typeof(LengthUnits).GetMember(unit.ToString());
-
-        if (mi.Length > 0)
-        {
-            var attr = mi[0].GetCustomAttribute<DescriptionAttribute>(false);
-
-            if (attr is not null && !string.IsNullOrWhiteSpace(attr.Description))
-            {
-                return attr.Description;
-            }
-        }
-
-        return unit.ToString();
     }
 
     /// <summary>
@@ -233,18 +207,18 @@ public sealed class AryNumberValue : ValueBase
 
     /// <summary>
     /// Attempts to map a unit token (e.g., <c>"px"</c>, <c>"rem"</c>, <c>"%"</c>) to <see cref="LengthUnits" /> using
-    /// <see cref="DescriptionAttribute" /> values. Returns the canonical case for the unit (as defined on the enum).
+    /// description values. Returns the canonical case for the unit (as defined on the enum).
     /// </summary>
     /// <param name="token">The raw unit token.</param>
     /// <param name="unit">Outputs the matched unit.</param>
-    /// <param name="canonical">Outputs the canonical unit string (from <see cref="DescriptionAttribute" />).</param>
+    /// <param name="canonical">Outputs the canonical unit string from descriptions.</param>
     /// <returns><c>true</c> when mapping succeeds; otherwise <c>false</c>.</returns>
     private static bool TryMapUnit(string token, out LengthUnits unit, out string canonical)
     {
         if (UnitByToken.TryGetValue(token.Trim().ToLowerInvariant(), out var u))
         {
             unit = u;
-            canonical = GetUnitDescription(u);
+            canonical = u.GetDescription();
 
             return true;
         }

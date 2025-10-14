@@ -1,6 +1,5 @@
 using Allyaria.Abstractions.Constants;
 using Allyaria.Theming.Styles;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Allyaria.Theming.Constants;
 

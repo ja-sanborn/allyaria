@@ -1,5 +1,4 @@
 ﻿using Allyaria.Theming.Helpers;
-using System.Text;
 
 namespace Allyaria.Theming.UnitTests.Helpers;
 
