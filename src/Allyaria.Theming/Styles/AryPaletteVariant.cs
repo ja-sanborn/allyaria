@@ -17,6 +17,13 @@ public readonly record struct AryPaletteVariant
     /// Initializes a new instance of the <see cref="AryPaletteVariant" /> struct, defining base palettes for light, dark, and
     /// high-contrast modes.
     /// </summary>
+    public AryPaletteVariant()
+        : this(null) { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AryPaletteVariant" /> struct, defining base palettes for light, dark, and
+    /// high-contrast modes.
+    /// </summary>
     /// <param name="paletteLight">
     /// Optional custom light mode palette. If <see langword="null" />, defaults to
     /// <see cref="StyleDefaults.BackgroundColorLight" /> and <see cref="StyleDefaults.BackgroundColorDark" />.

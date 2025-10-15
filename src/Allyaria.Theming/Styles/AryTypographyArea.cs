@@ -10,6 +10,12 @@ namespace Allyaria.Theming.Styles;
 /// </remarks>
 public readonly record struct AryTypographyArea
 {
+    /// <summary>
+    ///     <summary>Initializes a new instance of the <see cref="AryTypographyArea" /> struct.</summary>
+    /// </summary>
+    public AryTypographyArea()
+        : this(null) { }
+
     /// <summary>Initializes a new instance of the <see cref="AryTypographyArea" /> struct.</summary>
     /// <param name="surfaceTypography">
     /// Optional surface typography. When <see langword="null" />, a new <see cref="AryTypography" /> is created using default
