@@ -7,8 +7,6 @@
 `Constructor(properties)`
 Description
 
-* Exceptions: {list or *None*}
-
 {repeat for each constructor}
 
 ## Properties
@@ -25,7 +23,7 @@ Description
 |-------|---------|-------------|
 | `...` | `...`   | ...         |
 
-*None*
+*None* (if no methods)
 
 ## Operators
 
@@ -33,7 +31,7 @@ Description
 |----------|---------|-------------|
 | `...`    | `...`   | ...         |
 
-*None*
+*None* (if no operators)
 
 ## Events
 
@@ -41,32 +39,20 @@ Description
 |-------|-------------|
 | `...` | ...         |
 
-*None*
+*None* (if no events)
 
 ## Exceptions
 
 {List any type-wide exception contracts.}
 
-*None*
+*None* (if no exceptions)
 
-## Behavior Notes
-
-{Any quirks, precedence, rules.}
-
-*None*
-
-## Examples
-
-### Minimal Example
+## Example
 
 ```csharp
 // code sample
 ```
 
-### Expanded Example
+---
 
-```csharp
-// more realistic usage
-```
-
-> *Rev Date: YYYY-MM-DD*
+*Revision Date: YYYY-MM-DD*
