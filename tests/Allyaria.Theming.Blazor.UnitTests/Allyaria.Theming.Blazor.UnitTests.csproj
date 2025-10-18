@@ -23,6 +23,6 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Allyaria.Components\Allyaria.Components.csproj"/>
+        <ProjectReference Include="..\..\src\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj"/>
     </ItemGroup>
 </Project>

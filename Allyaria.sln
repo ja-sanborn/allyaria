@@ -138,6 +138,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{42
 		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.Blazor", "src\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj", "{18856467-B99F-4B83-BD58-818D71F9D2F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.Blazor.UnitTests", "tests\Allyaria.Theming.Blazor.UnitTests\Allyaria.Theming.Blazor.UnitTests.csproj", "{4C84ECF0-510D-460B-9303-013881C04C17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,6 +172,14 @@ Global
 		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14AF5794-8C3F-4D06-B5C4-BA36BBCBCE34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18856467-B99F-4B83-BD58-818D71F9D2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18856467-B99F-4B83-BD58-818D71F9D2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18856467-B99F-4B83-BD58-818D71F9D2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18856467-B99F-4B83-BD58-818D71F9D2F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C84ECF0-510D-460B-9303-013881C04C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C84ECF0-510D-460B-9303-013881C04C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C84ECF0-510D-460B-9303-013881C04C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C84ECF0-510D-460B-9303-013881C04C17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +205,8 @@ Global
 		{AB2FC94C-985E-4658-A712-3BC2FE8E693C} = {96DF5FAE-0244-456C-B280-825769704835}
 		{B1D3B94B-87F1-44E6-B196-D4E56421B1DF} = {96DF5FAE-0244-456C-B280-825769704835}
 		{4286BABF-2EFD-4A3D-851E-E5C6339AD959} = {96DF5FAE-0244-456C-B280-825769704835}
+		{18856467-B99F-4B83-BD58-818D71F9D2F5} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
+		{4C84ECF0-510D-460B-9303-013881C04C17} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
