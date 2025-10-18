@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Contracts;
-
-namespace Allyaria.Theming.UnitTests.Values;
+﻿namespace Allyaria.Theming.UnitTests.Values;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AryStringValueTests

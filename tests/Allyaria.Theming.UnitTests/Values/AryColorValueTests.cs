@@ -1,7 +1,4 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Types;
-
-namespace Allyaria.Theming.UnitTests.Values;
+﻿namespace Allyaria.Theming.UnitTests.Values;
 
 // ReSharper disable RedundantArgumentDefaultValue
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

@@ -1,10 +1,6 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Enumerations;
-using Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.UnitTests.Styles;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-namespace Allyaria.Theming.UnitTests.Styles;
-
 public sealed class AryThemeTests
 {
     [Fact]

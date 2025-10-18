@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Types;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Allyaria.Theming.UnitTests.Constants;
 

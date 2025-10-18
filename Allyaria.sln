@@ -136,6 +136,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Types", "Types", "{AB2FC94C
 		docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md = docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{B1D3B94B-87F1-44E6-B196-D4E56421B1DF}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeProvider.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeProvider.md
+		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeTypeWatcher.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeTypeWatcher.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4286BABF-2EFD-4A3D-851E-E5C6339AD959}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md
+		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -190,6 +202,8 @@ Global
 		{E61CAF49-E3B5-4944-83DB-A7171BC5C5C9} = {96DF5FAE-0244-456C-B280-825769704835}
 		{C913B68F-DE96-4E15-B135-644D1EBC5D54} = {96DF5FAE-0244-456C-B280-825769704835}
 		{AB2FC94C-985E-4658-A712-3BC2FE8E693C} = {96DF5FAE-0244-456C-B280-825769704835}
+		{B1D3B94B-87F1-44E6-B196-D4E56421B1DF} = {96DF5FAE-0244-456C-B280-825769704835}
+		{4286BABF-2EFD-4A3D-851E-E5C6339AD959} = {96DF5FAE-0244-456C-B280-825769704835}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}

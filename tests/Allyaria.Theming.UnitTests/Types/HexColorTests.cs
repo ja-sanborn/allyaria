@@ -1,9 +1,4 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Types;
-
-// ReSharper disable RedundantArgumentDefaultValue
-
-namespace Allyaria.Theming.UnitTests.Types;
+﻿namespace Allyaria.Theming.UnitTests.Types;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class HexColorTests
@@ -252,7 +247,7 @@ public sealed class HexColorTests
         fg.ContrastRatio(bg).Should().BeApproximately(1.0, 1e-12);
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(bg, 3.0);
+        var resolved = fg.EnsureMinimumContrast(bg);
 
         // Assert
         // 1) It must change (can't meet 3:1 while identical to background)
@@ -288,7 +283,7 @@ public sealed class HexColorTests
         HexColor.FromHsva(240, 1.0, 1.0).ContrastRatio(bg).Should().BeLessThan(3.0);
 
         // Act
-        var resolved = sut.EnsureMinimumContrast(bg, 3.0);
+        var resolved = sut.EnsureMinimumContrast(bg);
 
         // Assert
         resolved.Should().NotBe(sut);
@@ -345,7 +340,7 @@ public sealed class HexColorTests
         var bg = Colors.White;
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(bg, 3.0);
+        var resolved = fg.EnsureMinimumContrast(bg);
 
         // Assert
         resolved.Should().BeEquivalentTo(fg);
@@ -386,8 +381,8 @@ public sealed class HexColorTests
         var overA = 7.0; // clamped
 
         // Act
-        var wrap0 = HexColor.FromHsva(overHue, 1, 1, 1);
-        var wrap300 = HexColor.FromHsva(negHue, 1, 1, 1);
+        var wrap0 = HexColor.FromHsva(overHue, 1, 1);
+        var wrap300 = HexColor.FromHsva(negHue, 1, 1);
         var clamped = HexColor.FromHsva(120, overS, negV, overA);
 
         // Assert
@@ -406,7 +401,7 @@ public sealed class HexColorTests
     public void HsvaToRgba_Should_Produce_Expected_Primaries_And_Secondaries(double hue, string expected)
     {
         // Arrange & Act
-        var sut = HexColor.FromHsva(hue, 1, 1, 1);
+        var sut = HexColor.FromHsva(hue, 1, 1);
 
         // Assert
         sut.ToString().Should().Be(expected);
@@ -567,7 +562,7 @@ public sealed class HexColorTests
         var expected = fg.ToLerpLinearPreserveAlpha(Colors.White, 0.10);
 
         // Act
-        var actual = fg.ToComponentBorderColor(outer, fill, minContrast, false);
+        var actual = fg.ToComponentBorderColor(outer, fill, minContrast);
 
         // Assert
         actual.Should().NotBe(fg);
@@ -588,13 +583,12 @@ public sealed class HexColorTests
         // Arrange
         var fg = Colors.Grey700;
         var outer = Colors.White;
-        const double minContrast = 3.0;
 
         // Act
-        var actual = fg.ToComponentBorderColor(outer, null, minContrast, false);
+        var actual = fg.ToComponentBorderColor(outer);
 
         // Assert
-        var expected = fg.ToDividerBorderColor(outer, minContrast, false);
+        var expected = fg.ToDividerBorderColor(outer);
         actual.ToString().Should().Be(expected.ToString()); // compare stable representation
     }
 
@@ -607,7 +601,7 @@ public sealed class HexColorTests
         var outer = Colors.White;
 
         // Act
-        var border = fg.ToComponentBorderColor(outer, fill, 3.0);
+        var border = fg.ToComponentBorderColor(outer, fill);
 
         // Assert
         // It should pass vs at least one side and keep hierarchy with fill (not stronger than FG over fill)
@@ -666,7 +660,7 @@ public sealed class HexColorTests
         var fg = Colors.Grey900; // strong FG
 
         // Act
-        var border = fg.ToDividerBorderColor(surface, 3.0);
+        var border = fg.ToDividerBorderColor(surface);
 
         // Assert
         var borderVsSurface = border.ContrastRatio(surface);
