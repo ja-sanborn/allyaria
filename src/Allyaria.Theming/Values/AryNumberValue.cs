@@ -18,8 +18,8 @@ namespace Allyaria.Theming.Values;
 ///     </item>
 ///     <item>
 ///         <description>
-///         Optional unit suffix matching <see cref="LengthUnits" /> Description values
-///         (case-insensitive), including <c>%</c> for <see cref="LengthUnits.Percent" />.
+///         Optional unit suffix matching <see cref="LengthUnits" /> Description values (case-insensitive), including
+///         <c>%</c> for <see cref="LengthUnits.Percent" />.
 ///         </description>
 ///     </item>
 ///     <item>
@@ -53,8 +53,8 @@ public sealed class AryNumberValue : ValueBase
     );
 
     /// <summary>
-    /// Lookup of normalized unit descriptions on <see cref="LengthUnits" /> members) to
-    /// their enum values. Keys are compared case-insensitively.
+    /// Lookup of normalized unit descriptions on <see cref="LengthUnits" /> members) to their enum values. Keys are compared
+    /// case-insensitively.
     /// </summary>
     private static readonly Dictionary<string, LengthUnits> UnitByToken = BuildUnitMap();
 

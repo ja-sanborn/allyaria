@@ -1,10 +1,9 @@
 ﻿# Allyaria.Abstractions.Constants.Colors
 
-`Colors` is a static library of strongly-typed `HexColor` constants and helper lookups.
-
-This type provides an alphabetized, consolidated set of named colors (CSS and Material variants) exposed as public
-`HexColor` constants (e.g., `Red`, `Blue500`, `TealA700`). It also includes fast, case-insensitive lookup methods (
-`Contains` and `TryGet`) backed by a lazily built, reflection-driven registry.
+`Colors` is a static library of strongly-typed `HexColor` constants and helper lookups. This type provides an
+alphabetized, consolidated set of named colors (CSS and Material variants) exposed as public `HexColor` constants (e.g.,
+`Red`, `Blue500`, `TealA700`). It also includes fast, case-insensitive lookup methods (`Contains` and `TryGet`) backed
+by a lazily built, reflection-driven registry.
 
 ## Constructors
 
@@ -343,4 +342,4 @@ if (Colors.Contains("Blue500") && Colors.TryGet("Blue500", out HexColor accent))
 
 ---
 
-*Revision Date: 2025-10-16*
+*Revision Date: 2025-10-17*
