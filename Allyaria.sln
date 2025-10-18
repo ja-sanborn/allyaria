@@ -56,34 +56,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "references", "references", "{87ECEB69-9E94-4136-B906-1322CA050981}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theming", "Theming", "{96DF5FAE-0244-456C-B280-825769704835}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Allyaria.Theming.Constants.Colors.md = docs\references\Theming\Allyaria.Theming.Constants.Colors.md
-		docs\references\Theming\Allyaria.Theming.Constants.Sizing.md = docs\references\Theming\Allyaria.Theming.Constants.Sizing.md
-		docs\references\Theming\Allyaria.Theming.Enumerations.ComponentElevation.md = docs\references\Theming\Allyaria.Theming.Enumerations.ComponentElevation.md
-		docs\references\Theming\Allyaria.Theming.Enumerations.ComponentState.md = docs\references\Theming\Allyaria.Theming.Enumerations.ComponentState.md
-		docs\references\Theming\Allyaria.Theming.Enumerations.ComponentType.md = docs\references\Theming\Allyaria.Theming.Enumerations.ComponentType.md
-		docs\references\Theming\Allyaria.Theming.Enumerations.LengthUnits.md = docs\references\Theming\Allyaria.Theming.Enumerations.LengthUnits.md
-		docs\references\Theming\Allyaria.Theming.Enumerations.ThemeType.md = docs\references\Theming\Allyaria.Theming.Enumerations.ThemeType.md
-		docs\references\Theming\Allyaria.Theming.Constants.BorderStyle.md = docs\references\Theming\Allyaria.Theming.Constants.BorderStyle.md
-		docs\references\Theming\Allyaria.Theming.Constants.FontStyle.md = docs\references\Theming\Allyaria.Theming.Constants.FontStyle.md
-		docs\references\Theming\Allyaria.Theming.Constants.FontWeight.md = docs\references\Theming\Allyaria.Theming.Constants.FontWeight.md
-		docs\references\Theming\Allyaria.Theming.Constants.TextAlign.md = docs\references\Theming\Allyaria.Theming.Constants.TextAlign.md
-		docs\references\Theming\Allyaria.Theming.Constants.TextDecorationLine.md = docs\references\Theming\Allyaria.Theming.Constants.TextDecorationLine.md
-		docs\references\Theming\Allyaria.Theming.Constants.TextDecorationStyle.md = docs\references\Theming\Allyaria.Theming.Constants.TextDecorationStyle.md
-		docs\references\Theming\Allyaria.Theming.Constants.TextTransform.md = docs\references\Theming\Allyaria.Theming.Constants.TextTransform.md
-		docs\references\Theming\Allyaria.Theming.Constants.VerticalAlign.md = docs\references\Theming\Allyaria.Theming.Constants.VerticalAlign.md
-		docs\references\Theming\Allyaria.Theming.Constants.StyleDefaults.md = docs\references\Theming\Allyaria.Theming.Constants.StyleDefaults.md
-		docs\references\Theming\Allyaria.Theming.Styles.AryBorders.md = docs\references\Theming\Allyaria.Theming.Styles.AryBorders.md
-		docs\references\Theming\Allyaria.Theming.Styles.AryPalette.md = docs\references\Theming\Allyaria.Theming.Styles.AryPalette.md
-		docs\references\Theming\Allyaria.Theming.Styles.ArySpacing.md = docs\references\Theming\Allyaria.Theming.Styles.ArySpacing.md
-		docs\references\Theming\Allyaria.Theming.Styles.AryTypo.md = docs\references\Theming\Allyaria.Theming.Styles.AryTypo.md
-		docs\references\Theming\Allyaria.Theming.Styles.AryStyle.md = docs\references\Theming\Allyaria.Theming.Styles.AryStyle.md
-		docs\references\Theming\Allyaria.Theming.Styles.AryTheme.md = docs\references\Theming\Allyaria.Theming.Styles.AryTheme.md
-		docs\references\Theming\Allyaria.Theming.Values.AryStringValue.md = docs\references\Theming\Allyaria.Theming.Values.AryStringValue.md
-		docs\references\Theming\Allyaria.Theming.Values.AryImageValue.md = docs\references\Theming\Allyaria.Theming.Values.AryImageValue.md
-		docs\references\Theming\Allyaria.Theming.Values.AryNumberValue.md = docs\references\Theming\Allyaria.Theming.Values.AryNumberValue.md
-		docs\references\Theming\Allyaria.Theming.Values.AryColorValue.md = docs\references\Theming\Allyaria.Theming.Values.AryColorValue.md
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Components", "src\Allyaria.Components\Allyaria.Components.csproj", "{DB19205F-2EC1-46FC-9E75-53470A927B98}"
 EndProject
@@ -118,6 +90,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Types", "Types", "{F970D167
 		docs\references\Abstractions\Types\Allyaria.Abstractions.Types.ContrastResult.md = docs\references\Abstractions\Types\Allyaria.Abstractions.Types.ContrastResult.md
 		docs\references\Abstractions\Types\Allyaria.Abstractions.Types.HexByte.md = docs\references\Abstractions\Types\Allyaria.Abstractions.Types.HexByte.md
 		docs\references\Abstractions\Types\Allyaria.Abstractions.Types.HexColor.md = docs\references\Abstractions\Types\Allyaria.Abstractions.Types.HexColor.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constants", "Constants", "{3AD6361E-E018-4F87-A678-597B8FF3258F}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.BorderStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.BorderStyle.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.FontStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.FontStyle.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.FontWeight.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.FontWeight.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextAlign.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextAlign.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationLine.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationLine.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationStyle.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextTransform.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextTransform.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md
 	EndProjectSection
 EndProject
 Global
@@ -170,6 +156,7 @@ Global
 		{62004155-929B-47BD-A1F7-93A3B084A526} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{46EEB09A-BADE-45D8-B05A-E2D0CFCA36A0} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{F970D167-CBC3-4240-9AF1-D682395A7A5D} = {1EA105EA-332E-4753-8920-E08F75E4810B}
+		{3AD6361E-E018-4F87-A678-597B8FF3258F} = {96DF5FAE-0244-456C-B280-825769704835}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
