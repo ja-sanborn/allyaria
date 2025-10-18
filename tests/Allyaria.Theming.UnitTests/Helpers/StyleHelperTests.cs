@@ -76,7 +76,7 @@ public sealed class StyleHelperTests
     public void ToPrefix_Should_ReturnNormalizedPrefix_When_InputHasVariousFormats(string? input, string expected)
     {
         // Act
-        var result = input.ToPrefix();
+        var result = input.ToCssPrefix();
 
         // Assert
         result.Should().Be(expected);

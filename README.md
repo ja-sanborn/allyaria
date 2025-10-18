@@ -33,7 +33,8 @@ For additional details on available types and interfaces, see the
 
 ## Theming Features
 
-The **Allyaria.Theming** project provides a consistent, accessibility-first way to style Blazor components. It is built on
+The **Allyaria.Theming** project provides a consistent, accessibility-first way to style Blazor components. It is built
+on
 strongly typed design tokens (colors, typography, spacing, borders, and imagery) that can be combined into full style
 bundles and safely cascaded. This enables developers to adopt predefined, WCAG-compliant defaults or extend them through
 lightweight composition.

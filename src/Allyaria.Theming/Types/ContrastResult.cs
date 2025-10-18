@@ -1,4 +1,4 @@
-namespace Allyaria.Abstractions.Types;
+namespace Allyaria.Theming.Types;
 
 /// <summary>
 /// Immutable result that describes the outcome of a contrast resolution operation, including the derived foreground color,

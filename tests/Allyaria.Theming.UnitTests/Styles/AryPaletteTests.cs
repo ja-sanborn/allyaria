@@ -1,7 +1,6 @@
-﻿using Allyaria.Abstractions.Constants;
-using Allyaria.Abstractions.Types;
-using Allyaria.Theming.Constants;
+﻿using Allyaria.Theming.Constants;
 using Allyaria.Theming.Styles;
+using Allyaria.Theming.Types;
 
 namespace Allyaria.Theming.UnitTests.Styles;
 

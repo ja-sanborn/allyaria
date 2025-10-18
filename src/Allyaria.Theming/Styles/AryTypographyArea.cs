@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Enumerations;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>Represents the typography configuration for a component within the Allyaria theming system.</summary>
 /// <remarks>

@@ -20,7 +20,7 @@ internal static class StyleHelper
             return;
         }
 
-        var prefix = varPrefix.ToPrefix();
+        var prefix = varPrefix.ToCssPrefix();
 
         var prefixedProperty = string.IsNullOrWhiteSpace(prefix)
             ? propertyName
@@ -35,6 +35,6 @@ internal static class StyleHelper
     /// A normalized, lowercase prefix suitable for use in CSS variable names. If the input is <see langword="null" /> or
     /// whitespace, an empty string is returned.
     /// </returns>
-    public static string ToPrefix(this string? prefix)
+    public static string ToCssPrefix(this string? prefix)
         => Regex.Replace((prefix ?? string.Empty).Replace('_', '-'), @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 }

@@ -1,6 +1,3 @@
-using Allyaria.Theming.Constants;
-using Allyaria.Theming.Helpers;
-
 namespace Allyaria.Theming.Styles;
 
 /// <summary>

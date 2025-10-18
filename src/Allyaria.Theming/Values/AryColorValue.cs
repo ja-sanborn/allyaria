@@ -1,5 +1,5 @@
-using Allyaria.Abstractions.Types;
 using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Types;
 
 namespace Allyaria.Theming.Values;
 

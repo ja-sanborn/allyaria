@@ -1,6 +1,6 @@
-﻿using Allyaria.Abstractions.Types;
+﻿using Allyaria.Theming.Types;
 
-namespace Allyaria.Abstractions.UnitTests.Types;
+namespace Allyaria.Theming.UnitTests.Types;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class HexByteTests

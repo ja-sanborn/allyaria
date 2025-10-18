@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Enumerations;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a hierarchy of <see cref="AryPaletteState" /> values corresponding to distinct elevation levels (Lowest →

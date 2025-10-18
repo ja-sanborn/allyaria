@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Enumerations;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents the set of computed <see cref="AryPalette" /> values mapped to common UI interaction states (Default,

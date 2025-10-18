@@ -1,8 +1,8 @@
-﻿using Allyaria.Abstractions.Constants;
-using Allyaria.Abstractions.Types;
+﻿using Allyaria.Theming.Constants;
+using Allyaria.Theming.Types;
 using System.Reflection;
 
-namespace Allyaria.Abstractions.UnitTests.Constants;
+namespace Allyaria.Theming.UnitTests.Constants;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class ColorsLookupTests

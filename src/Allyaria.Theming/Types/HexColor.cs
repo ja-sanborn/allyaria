@@ -1,6 +1,4 @@
-using Allyaria.Abstractions.Constants;
-
-namespace Allyaria.Abstractions.Types;
+namespace Allyaria.Theming.Types;
 
 /// <summary>Represents an immutable color value with red, green, blue, and alpha channels.</summary>
 /// <remarks>
@@ -23,9 +21,9 @@ namespace Allyaria.Abstractions.Types;
 ///         </item>
 ///         <item>
 ///             <description>
-///             <b>Named Colors</b> — case-insensitive lookup against the global
-///             <see cref="Allyaria.Abstractions.Constants.Colors" /> registry (e.g., <c>"Red500"</c>). The lookup uses the
-///             comparer configured in that registry (typically <see cref="StringComparer.InvariantCultureIgnoreCase" />).
+///             <b>Named Colors</b> — case-insensitive lookup against the global <see cref="Colors" /> registry (e.g.,
+///             <c>"Red500"</c>). The lookup uses the comparer configured in that registry (typically
+///             <see cref="StringComparer.InvariantCultureIgnoreCase" />).
 ///             </description>
 ///         </item>
 ///     </list>

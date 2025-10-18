@@ -1,5 +1,5 @@
-﻿using Allyaria.Abstractions.Constants;
-using Allyaria.Abstractions.Types;
+﻿using Allyaria.Theming.Constants;
+using Allyaria.Theming.Types;
 
 namespace Allyaria.Theming.UnitTests.Values;
 

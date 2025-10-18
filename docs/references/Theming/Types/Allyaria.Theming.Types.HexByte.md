@@ -1,4 +1,4 @@
-﻿# Allyaria.Abstractions.Types.HexByte
+﻿# Allyaria.Theming.Types.HexByte
 
 `HexByte` is a lightweight, immutable struct representing a single 8-bit color channel (0–255) used in RGBA color
 models. It supports parsing and formatting hexadecimal strings, comparison and equality operations, normalized

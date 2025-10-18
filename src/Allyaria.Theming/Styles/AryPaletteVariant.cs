@@ -1,7 +1,4 @@
-﻿using Allyaria.Theming.Constants;
-using Allyaria.Theming.Enumerations;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents a theming variant that contains separate <see cref="AryPalette" /> definitions for light, dark, and

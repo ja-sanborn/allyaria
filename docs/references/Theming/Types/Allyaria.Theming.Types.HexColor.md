@@ -1,4 +1,4 @@
-﻿# Allyaria.Abstractions.Types.HexColor
+﻿# Allyaria.Theming.Types.HexColor
 
 `HexColor` is an immutable color value type that represents an RGBA color with full parsing, conversion, interpolation,
 and contrast-analysis capabilities. It supports multiple color formats including hexadecimal, RGB(A), HSV(A), and named

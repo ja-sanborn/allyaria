@@ -1,4 +1,4 @@
-﻿# Allyaria.Abstractions.Types.ContrastResult
+﻿# Allyaria.Theming.Types.ContrastResult
 
 `ContrastResult` is an immutable value type (`record struct`) that represents the outcome of a color contrast resolution
 operation. It encapsulates the resolved foreground color, the calculated contrast ratio between foreground and

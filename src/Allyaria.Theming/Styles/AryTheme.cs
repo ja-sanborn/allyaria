@@ -1,6 +1,4 @@
-﻿using Allyaria.Theming.Enumerations;
-
-namespace Allyaria.Theming.Styles;
+﻿namespace Allyaria.Theming.Styles;
 
 /// <summary>
 /// Represents the root Allyaria theme object that composes borders, spacing, palette variants (light/dark/high-contrast),

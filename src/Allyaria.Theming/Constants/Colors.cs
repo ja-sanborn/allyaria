@@ -1,8 +1,8 @@
-using Allyaria.Abstractions.Types;
+using Allyaria.Theming.Types;
 using System.Collections.Immutable;
 using System.Reflection;
 
-namespace Allyaria.Abstractions.Constants;
+namespace Allyaria.Theming.Constants;
 
 /// <summary>
 /// Provides a consolidated, alphabetically sorted library of named colors (CSS and Material), exposed as strongly-typed

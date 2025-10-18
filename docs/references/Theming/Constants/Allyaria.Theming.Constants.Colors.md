@@ -1,4 +1,4 @@
-﻿# Allyaria.Abstractions.Constants.Colors
+﻿# Allyaria.Theming.Constants.Colors
 
 `Colors` is a static library of strongly-typed `HexColor` constants and helper lookups. This type provides an
 alphabetized, consolidated set of named colors (CSS and Material variants) exposed as public `HexColor` constants (e.g.,

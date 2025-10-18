@@ -1,6 +1,5 @@
 using Allyaria.Abstractions.Extensions;
 using Allyaria.Theming.Contracts;
-using Allyaria.Theming.Enumerations;
 
 namespace Allyaria.Theming.Values;
 
