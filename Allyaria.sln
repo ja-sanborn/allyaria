@@ -106,6 +106,40 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constants", "Constants", "{
 		docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enumerations", "Enumerations", "{5132C91C-658C-4165-A20B-F25DAC380A67}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentElevation.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentElevation.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{47D0D89F-0567-4D9C-BCCA-565D0AE32FEA}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.StyleHelper.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.StyleHelper.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styles", "Styles", "{E61CAF49-E3B5-4944-83DB-A7171BC5C5C9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryBorders.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryBorders.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPalette.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPalette.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteElevation.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteElevation.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteState.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteState.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteVariant.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryPaletteVariant.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.ArySpacing.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.ArySpacing.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTheme.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTheme.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTypography.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTypography.md
+		docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTypographyArea.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.AryTypographyArea.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Values", "Values", "{C913B68F-DE96-4E15-B135-644D1EBC5D54}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Values\Allyaria.Theming.Values.AryStringValue.md = docs\references\Theming\Values\Allyaria.Theming.Values.AryStringValue.md
+		docs\references\Theming\Values\Allyaria.Theming.Values.AryNumberValue.md = docs\references\Theming\Values\Allyaria.Theming.Values.AryNumberValue.md
+		docs\references\Theming\Values\Allyaria.Theming.Values.AryColorValue.md = docs\references\Theming\Values\Allyaria.Theming.Values.AryColorValue.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +191,10 @@ Global
 		{46EEB09A-BADE-45D8-B05A-E2D0CFCA36A0} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{F970D167-CBC3-4240-9AF1-D682395A7A5D} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{3AD6361E-E018-4F87-A678-597B8FF3258F} = {96DF5FAE-0244-456C-B280-825769704835}
+		{5132C91C-658C-4165-A20B-F25DAC380A67} = {96DF5FAE-0244-456C-B280-825769704835}
+		{47D0D89F-0567-4D9C-BCCA-565D0AE32FEA} = {96DF5FAE-0244-456C-B280-825769704835}
+		{E61CAF49-E3B5-4944-83DB-A7171BC5C5C9} = {96DF5FAE-0244-456C-B280-825769704835}
+		{C913B68F-DE96-4E15-B135-644D1EBC5D54} = {96DF5FAE-0244-456C-B280-825769704835}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
