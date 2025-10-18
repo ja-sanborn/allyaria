@@ -8,7 +8,7 @@
 /// The state palettes are derived from a single baseline <see cref="AryPalette" /> (the "Default") using extension methods
 /// such as <c>ToDisabled()</c>, <c>ToHovered()</c>, etc. This struct is immutable.
 /// </remarks>
-public readonly record struct AryPaletteState
+internal readonly record struct AryPaletteState
 {
     /// <summary>Initializes a new instance of the <see cref="AryPaletteState" /> struct from a baseline palette.</summary>
     /// <param name="palette">The baseline (rest) <see cref="AryPalette" /> used to derive all state palettes.</param>

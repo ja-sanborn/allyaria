@@ -6,7 +6,7 @@
 /// with additional roles (e.g., heading, body, caption) as <see cref="ComponentType" /> evolves. The type is immutable
 /// (readonly record struct) and supports non-destructive updates via <see cref="Cascade(AryTypography?)" />.
 /// </remarks>
-public readonly record struct AryTypographyArea
+internal readonly record struct AryTypographyArea
 {
     /// <summary>
     ///     <summary>Initializes a new instance of the <see cref="AryTypographyArea" /> struct.</summary>

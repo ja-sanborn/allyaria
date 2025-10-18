@@ -53,16 +53,16 @@ public readonly record struct AryTheme
     }
 
     /// <summary>Gets the border configuration applied by the theme.</summary>
-    public AryBorders Borders { get; init; }
+    internal AryBorders Borders { get; init; }
 
     /// <summary>Gets the palette variant set (light/dark/high-contrast) used by the theme.</summary>
-    public AryPaletteVariant Palette { get; init; }
+    internal AryPaletteVariant Palette { get; init; }
 
     /// <summary>Gets the spacing configuration (margins and paddings) used by the theme.</summary>
-    public ArySpacing Spacing { get; init; }
+    internal ArySpacing Spacing { get; init; }
 
     /// <summary>Gets the typography component mapping used by the theme.</summary>
-    public AryTypographyArea Typo { get; init; }
+    internal AryTypographyArea Typo { get; init; }
 
     /// <summary>
     /// Returns a new <see cref="AryTheme" /> with optional component overrides applied. Any argument left

@@ -8,7 +8,7 @@
 /// Each elevation level encapsulates a complete set of component states (Default, Hovered, Focused, etc.) derived from the
 /// baseline <see cref="AryPalette" /> using elevation-specific transformations.
 /// </remarks>
-public readonly record struct AryPaletteElevation
+internal readonly record struct AryPaletteElevation
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AryPaletteElevation" /> struct using the provided base palette.

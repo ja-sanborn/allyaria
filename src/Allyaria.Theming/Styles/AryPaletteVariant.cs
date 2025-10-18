@@ -8,7 +8,7 @@
 /// This struct enables components to adapt automatically to system or user-selected theme types while maintaining
 /// consistent color relationships across different elevations and states.
 /// </remarks>
-public readonly record struct AryPaletteVariant
+internal readonly record struct AryPaletteVariant
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AryPaletteVariant" /> struct, defining base palettes for light, dark, and

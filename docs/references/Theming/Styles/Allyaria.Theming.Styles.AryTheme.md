@@ -13,12 +13,7 @@ per-state styles in a consistent, immutable, and strongly typed way.
 
 ## Properties
 
-| Name      | Type                | Description                                                                        |
-|-----------|---------------------|------------------------------------------------------------------------------------|
-| `Borders` | `AryBorders`        | The border configuration applied by the theme.                                     |
-| `Palette` | `AryPaletteVariant` | The palette variant collection (light, dark, and high-contrast) used by the theme. |
-| `Spacing` | `ArySpacing`        | The spacing configuration (margins and paddings) used by the theme.                |
-| `Typo`    | `AryTypographyArea` | The typography configuration defining component font styles.                       |
+*None*
 
 ## Methods
 
