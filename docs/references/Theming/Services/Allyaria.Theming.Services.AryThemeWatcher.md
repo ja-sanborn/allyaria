@@ -1,6 +1,6 @@
-﻿# Allyaria.Theming.Services.ThemeTypeWatcher
+﻿# Allyaria.Theming.Services.AryThemeWatcher
 
-`ThemeTypeWatcher` is a lightweight, platform-agnostic implementation of `IThemeTypeWatcher` that provides programmatic
+`AryThemeWatcher` is a lightweight, platform-agnostic implementation of `IAryThemeWatcher` that provides programmatic
 control and observation of theme mode changes (e.g., Light, Dark, System). It is ideal for server-side, headless, and
 testing environments where platform or browser-based event subscriptions are unavailable. Unlike UI-integrated watchers,
 this implementation does not rely on JavaScript or system events; instead, it tracks a manually managed `ThemeType` and
@@ -8,8 +8,8 @@ raises notifications when updated.
 
 ## Constructors
 
-`ThemeTypeWatcher(ThemeType initial = ThemeType.System)` Initializes a new instance with an optional initial
-`ThemeType`. Defaults to `ThemeType.System`.
+`AryThemeWatcher(ThemeType initial = ThemeType.System)` Initializes a new instance with an optional initial `ThemeType`.
+Defaults to `ThemeType.System`.
 
 ## Properties
 
@@ -48,7 +48,7 @@ public class ThemeTypeWatcherExample
 {
     public async Task RunAsync()
     {
-        var watcher = new ThemeTypeWatcher();
+        var watcher = new AryThemeWatcher();
 
         watcher.Changed += (_, _) => 
             Console.WriteLine($"Theme changed to: {watcher.Current}");

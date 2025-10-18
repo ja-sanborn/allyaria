@@ -3,7 +3,7 @@
 namespace Allyaria.Theming.Services;
 
 /// <summary>
-/// Provides a generic, platform-agnostic implementation of <see cref="IThemeTypeWatcher" /> suitable for server-side,
+/// Provides a generic, platform-agnostic implementation of <see cref="IAryThemeWatcher" /> suitable for server-side,
 /// headless, and test environments. It does not subscribe to platform events but allows programmatic theme control via
 /// <see cref="SetCurrent" />.
 /// </summary>
@@ -11,7 +11,7 @@ namespace Allyaria.Theming.Services;
 /// This implementation is thread-safe and does not rely on any JavaScript or platform interop. It simply tracks and
 /// reports a manually managed <see cref="ThemeType" /> value.
 /// </remarks>
-public sealed class ThemeTypeWatcher : IThemeTypeWatcher
+public sealed class AryThemeWatcher : IAryThemeWatcher
 {
     /// <summary>Holds the current effective <see cref="ThemeType" /> value being tracked by this watcher.</summary>
     private ThemeType _current;
@@ -22,10 +22,10 @@ public sealed class ThemeTypeWatcher : IThemeTypeWatcher
     private int _started;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ThemeTypeWatcher" /> class with an optional initial theme type.
+    /// Initializes a new instance of the <see cref="AryThemeWatcher" /> class with an optional initial theme type.
     /// </summary>
     /// <param name="initial">The initial <see cref="ThemeType" /> value. Defaults to <see cref="ThemeType.System" />.</param>
-    public ThemeTypeWatcher(ThemeType initial = ThemeType.System) => _current = initial;
+    public AryThemeWatcher(ThemeType initial = ThemeType.System) => _current = initial;
 
     /// <summary>Occurs when the effective <see cref="ThemeType" /> changes.</summary>
     public event EventHandler? Changed;

@@ -1,6 +1,6 @@
-﻿# Allyaria.Theming.Interfaces.IThemeProvider
+﻿# Allyaria.Theming.Interfaces.IAryThemeProvider
 
-`IThemeProvider` is an interface that defines a contract for managing and applying theming data—palettes, typography,
+`IAryThemeProvider` is an interface that defines a contract for managing and applying theming data—palettes, typography,
 spacing, and borders—across components and for producing CSS or structured `AryStyle` representations under the active
 theme.
 
@@ -50,9 +50,9 @@ theme.
 ```csharp
 public class Usage
 {
-    private readonly IThemeProvider provider;
+    private readonly IAryThemeProvider provider;
 
-    public Usage(IThemeProvider provider)
+    public Usage(IAryThemeProvider provider)
     {
         this.provider = provider;
 

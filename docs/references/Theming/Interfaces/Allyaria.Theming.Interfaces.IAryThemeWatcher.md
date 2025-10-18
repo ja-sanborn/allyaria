@@ -1,6 +1,6 @@
-﻿# Allyaria.Theming.Interfaces.IThemeTypeWatcher
+﻿# Allyaria.Theming.Interfaces.IAryThemeWatcher
 
-`IThemeTypeWatcher` is an interface that provides a cross-platform contract for detecting and monitoring the effective
+`IAryThemeWatcher` is an interface that provides a cross-platform contract for detecting and monitoring the effective
 `ThemeType` (e.g., light, dark, system) without depending on JavaScript or Blazor. It is designed for use in
 applications that need to adapt UI styling dynamically based on system or user theme preferences. Implementations are
 expected to handle asynchronous operations gracefully, honor cancellation tokens, and avoid raising duplicate events for
@@ -44,9 +44,9 @@ unchanged theme values.
 ```csharp
 public class ThemeWatcherExample
 {
-    private readonly IThemeTypeWatcher watcher;
+    private readonly IAryThemeWatcher watcher;
 
-    public ThemeWatcherExample(IThemeTypeWatcher watcher)
+    public ThemeWatcherExample(IAryThemeWatcher watcher)
     {
         this.watcher = watcher;
         this.watcher.Changed += OnThemeChanged;

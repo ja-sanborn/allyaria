@@ -1,13 +1,13 @@
 ﻿namespace Allyaria.Theming.UnitTests.Services;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class ThemeTypeWatcherTests
+public sealed class AryThemeWatcherTests
 {
     [Fact]
     public void Ctor_Should_DefaultToSystem_When_NoInitialProvided()
     {
         // Arrange + Act
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
 
         // Assert
         sut.Current.Should().Be(ThemeType.System);
@@ -21,7 +21,7 @@ public sealed class ThemeTypeWatcherTests
     public void Ctor_Should_SetInitialCurrent_When_InitialProvided(ThemeType initial)
     {
         // Arrange + Act
-        var sut = new ThemeTypeWatcher(initial);
+        var sut = new AryThemeWatcher(initial);
 
         // Assert
         sut.Current.Should().Be(initial);
@@ -31,7 +31,7 @@ public sealed class ThemeTypeWatcherTests
     public void Current_Should_ReturnUpdatedValue_When_SetCurrentWasCalled()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
 
         // Act
         var changed = sut.SetCurrent(ThemeType.Dark);
@@ -45,7 +45,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task DetectAsync_Should_IgnoreCancellationToken_When_Cancelled()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher(ThemeType.HighContrast);
+        var sut = new AryThemeWatcher(ThemeType.HighContrast);
 
         // Act
         async Task<ThemeType> Act()
@@ -64,7 +64,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task DetectAsync_Should_ReturnCurrent_When_Called()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher(ThemeType.Light);
+        var sut = new AryThemeWatcher(ThemeType.Light);
 
         // Act
         var detected = await sut.DetectAsync();
@@ -77,7 +77,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task DisposeAsync_Should_NotThrow_When_Called()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
 
         // Act
         var act = async () => await sut.DisposeAsync();
@@ -91,7 +91,7 @@ public sealed class ThemeTypeWatcherTests
     {
         // Arrange
         var initial = ThemeType.Dark;
-        var sut = new ThemeTypeWatcher(initial);
+        var sut = new AryThemeWatcher(initial);
         var events = 0;
         sut.Changed += (_, _) => Interlocked.Increment(ref events);
 
@@ -112,7 +112,7 @@ public sealed class ThemeTypeWatcherTests
     public void SetCurrent_Should_NotifyAllSubscribersOnce_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
         var a = 0;
         var b = 0;
         sut.Changed += (_, _) => Interlocked.Increment(ref a);
@@ -131,7 +131,7 @@ public sealed class ThemeTypeWatcherTests
     public void SetCurrent_Should_ReturnFalseAndNotRaiseChanged_When_ValueUnchanged()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher(ThemeType.Light);
+        var sut = new AryThemeWatcher(ThemeType.Light);
         var calls = 0;
         sut.Changed += (_, _) => Interlocked.Increment(ref calls);
 
@@ -148,7 +148,7 @@ public sealed class ThemeTypeWatcherTests
     public void SetCurrent_Should_ReturnTrueAndRaiseChanged_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
         var calls = 0;
         object? senderObserved = null;
         EventArgs? argsObserved = null;
@@ -175,7 +175,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task StartAsync_And_StopAsync_Should_IgnoreCancellationToken()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
         CancellationToken token;
 
         using (var cts = new CancellationTokenSource())
@@ -197,7 +197,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task StartAsync_Should_NotThrow_And_NotAffectBehavior()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher();
+        var sut = new AryThemeWatcher();
 
         // Act
         var act = async () => await sut.StartAsync();
@@ -214,7 +214,7 @@ public sealed class ThemeTypeWatcherTests
     public async Task StopAsync_Should_NotThrow_And_NotAffectBehavior()
     {
         // Arrange
-        var sut = new ThemeTypeWatcher(ThemeType.Dark);
+        var sut = new AryThemeWatcher(ThemeType.Dark);
 
         // Act
         var act = async () => await sut.StopAsync();

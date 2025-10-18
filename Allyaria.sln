@@ -128,14 +128,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Types", "Types", "{AB2FC94C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{B1D3B94B-87F1-44E6-B196-D4E56421B1DF}"
 	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeProvider.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeProvider.md
-		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeTypeWatcher.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IThemeTypeWatcher.md
+		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IAryThemeProvider.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IAryThemeProvider.md
+		docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IAryThemeWatcher.md = docs\references\Theming\Interfaces\Allyaria.Theming.Interfaces.IAryThemeWatcher.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4286BABF-2EFD-4A3D-851E-E5C6339AD959}"
 	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md
-		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeTypeWatcher.md
+		docs\references\Theming\Services\Allyaria.Theming.Services.AryThemeProvider.md = docs\references\Theming\Services\Allyaria.Theming.Services.AryThemeProvider.md
+		docs\references\Theming\Services\Allyaria.Theming.Services.AryThemeWatcher.md = docs\references\Theming\Services\Allyaria.Theming.Services.AryThemeWatcher.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.Blazor", "src\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj", "{18856467-B99F-4B83-BD58-818D71F9D2F5}"

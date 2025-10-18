@@ -1,15 +1,15 @@
-﻿# Allyaria.Theming.Services.ThemeProvider
+﻿# Allyaria.Theming.Services.AryThemeProvider
 
-`ThemeProvider` is a concrete implementation of `IThemeProvider` that manages runtime theme configuration including
-color palettes, spacing, borders, and typography. It provides methods to retrieve styled CSS and `AryStyle`
+`AryThemeProvider` is a concrete implementation of `IAryThemeProvider` that manages runtime theme configuration
+including color palettes, spacing, borders, and typography. It provides methods to retrieve styled CSS and `AryStyle`
 representations and supports immutable updates to theme data while notifying consumers via the `ThemeChanged` event.
 This class is the core theming engine for Allyaria UI systems, allowing dynamic adjustments to theme settings while
 maintaining consistency and immutability.
 
 ## Constructors
 
-`ThemeProvider(AryTheme? theme = null, ThemeType themeType = ThemeType.System)` Initializes a new instance of
-`ThemeProvider` with an optional base theme and theme type. Defaults to `StyleDefaults.Theme` and `ThemeType.System`.
+`AryThemeProvider(AryTheme? theme = null, ThemeType themeType = ThemeType.System)` Initializes a new instance of
+`AryThemeProvider` with an optional base theme and theme type. Defaults to `StyleDefaults.Theme` and `ThemeType.System`.
 
 ## Properties
 

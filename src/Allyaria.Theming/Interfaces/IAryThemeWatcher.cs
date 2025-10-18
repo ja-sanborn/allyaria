@@ -8,14 +8,14 @@
 /// Implementations should honor <see cref="CancellationToken" /> parameters for all asynchronous operations, avoid
 /// throwing for expected conditions, and coalesce duplicate change notifications to reduce noise.
 /// </remarks>
-public interface IThemeTypeWatcher : IAsyncDisposable
+public interface IAryThemeWatcher : IAsyncDisposable
 {
     /// <summary>
     /// Occurs when the effective <see cref="ThemeType" /> changes. Implementations should avoid raising duplicate events for
     /// the same effective value by coalescing changes.
     /// </summary>
     /// <remarks>
-    /// The event sender should be the instance of <see cref="IThemeTypeWatcher" /> raising the event. No event arguments are
+    /// The event sender should be the instance of <see cref="IAryThemeWatcher" /> raising the event. No event arguments are
     /// provided; consumers should read the new value from <see cref="Current" />.
     /// </remarks>
     event EventHandler? Changed;

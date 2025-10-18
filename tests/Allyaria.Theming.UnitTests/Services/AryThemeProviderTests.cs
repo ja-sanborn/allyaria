@@ -1,7 +1,7 @@
 ﻿namespace Allyaria.Theming.UnitTests.Services;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class ThemeProviderTests
+public sealed class AryThemeProviderTests
 {
     [Fact]
     public void Ctor_Should_SetProvidedTheme_And_ThemeType_When_ExplicitValuesAreGiven()
@@ -11,7 +11,7 @@ public sealed class ThemeProviderTests
         var expectedType = ThemeType.Dark;
 
         // Act
-        var sut = new ThemeProvider(theme, expectedType);
+        var sut = new AryThemeProvider(theme, expectedType);
 
         // Assert
         sut.ThemeType.Should().Be(expectedType);
@@ -21,7 +21,7 @@ public sealed class ThemeProviderTests
     public void GetCss_Should_NotThrow_When_CalledWithTypicalParameters()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
 
         // Act
         var act = () => sut.GetCss(
@@ -39,7 +39,7 @@ public sealed class ThemeProviderTests
     public void GetStyle_Should_NotThrow_When_CalledWithTypicalParameters()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
 
         // Act
         var act = () => sut.GetStyle(
@@ -56,7 +56,7 @@ public sealed class ThemeProviderTests
     public void SetBorders_Should_ReturnFalse_And_NotRaiseEvent_When_BordersIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -72,7 +72,7 @@ public sealed class ThemeProviderTests
     public void SetDarkPalette_Should_RaiseThemeChanged_And_ReturnTrue_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -88,7 +88,7 @@ public sealed class ThemeProviderTests
     public void SetDarkPalette_Should_ReturnFalse_And_NotRaiseEvent_When_PaletteIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -104,7 +104,7 @@ public sealed class ThemeProviderTests
     public void SetHighContrastPalette_Should_RaiseThemeChanged_And_ReturnTrue_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -120,7 +120,7 @@ public sealed class ThemeProviderTests
     public void SetHighContrastPalette_Should_ReturnFalse_And_NotRaiseEvent_When_PaletteIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -136,7 +136,7 @@ public sealed class ThemeProviderTests
     public void SetLightPalette_Should_RaiseThemeChanged_And_ReturnTrue_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -152,7 +152,7 @@ public sealed class ThemeProviderTests
     public void SetLightPalette_Should_ReturnFalse_And_NotRaiseEvent_When_PaletteIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -168,7 +168,7 @@ public sealed class ThemeProviderTests
     public void SetSpacing_Should_RaiseThemeChanged_And_ReturnTrue_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -184,7 +184,7 @@ public sealed class ThemeProviderTests
     public void SetSpacing_Should_ReturnFalse_And_NotRaiseEvent_When_SpacingIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -200,7 +200,7 @@ public sealed class ThemeProviderTests
     public void SetSurfaceTypography_Should_RaiseThemeChanged_And_ReturnTrue_When_ValueChanges()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -216,7 +216,7 @@ public sealed class ThemeProviderTests
     public void SetSurfaceTypography_Should_ReturnFalse_And_NotRaiseEvent_When_TypographyIsNull()
     {
         // Arrange
-        var sut = new ThemeProvider();
+        var sut = new AryThemeProvider();
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -233,7 +233,7 @@ public sealed class ThemeProviderTests
     {
         // Arrange
         var theme = StyleDefaults.Theme;
-        var sut = new ThemeProvider(theme);
+        var sut = new AryThemeProvider(theme);
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -251,7 +251,7 @@ public sealed class ThemeProviderTests
         // Arrange
         var theme = StyleDefaults.Theme;
         var newTheme = StyleDefaults.Theme.Cascade(StyleDefaults.Theme.Borders.Cascade(new AryNumberValue("100px")));
-        var sut = new ThemeProvider(theme);
+        var sut = new AryThemeProvider(theme);
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -267,7 +267,7 @@ public sealed class ThemeProviderTests
     public void SetThemeType_Should_NotRaiseThemeChanged_When_ThemeTypeIsSame()
     {
         // Arrange
-        var sut = new ThemeProvider(themeType: ThemeType.System);
+        var sut = new AryThemeProvider(themeType: ThemeType.System);
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -284,7 +284,7 @@ public sealed class ThemeProviderTests
     public void SetThemeType_Should_RaiseThemeChanged_When_ThemeTypeChanges()
     {
         // Arrange
-        var sut = new ThemeProvider(themeType: ThemeType.Light);
+        var sut = new AryThemeProvider(themeType: ThemeType.Light);
         var raised = false;
         sut.ThemeChanged += (_, _) => raised = true;
 
@@ -301,7 +301,7 @@ public sealed class ThemeProviderTests
     public void ThemeType_Should_ReturnConstructorThemeType_When_NoChangesMade()
     {
         // Arrange
-        var sut = new ThemeProvider(themeType: ThemeType.Light);
+        var sut = new AryThemeProvider(themeType: ThemeType.Light);
 
         // Act
         var actual = sut.ThemeType;

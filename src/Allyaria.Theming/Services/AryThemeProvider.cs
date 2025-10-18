@@ -4,15 +4,15 @@ using Allyaria.Theming.Styles;
 namespace Allyaria.Theming.Services;
 
 /// <summary>
-/// Provides a concrete implementation of <see cref="IThemeProvider" /> that manages theme configuration, including color
-/// palettes, spacing, borders, and typography.
+/// Provides a concrete implementation of <see cref="IAryThemeProvider" /> that manages theme configuration, including
+/// color palettes, spacing, borders, and typography.
 /// </summary>
 /// <remarks>
 /// This implementation supports runtime updates to theme properties and notifies consumers through the
 /// <see cref="ThemeChanged" /> event when the active <see cref="ThemeType" /> or any theme parameter changes. All updates
 /// are performed immutably by cascading existing theme data to new instances.
 /// </remarks>
-public sealed class ThemeProvider : IThemeProvider
+public sealed class AryThemeProvider : IAryThemeProvider
 {
     /// <summary>Holds the current <see cref="AryTheme" /> instance that defines the active visual design system.</summary>
     /// <remarks>
@@ -30,10 +30,10 @@ public sealed class ThemeProvider : IThemeProvider
     /// </remarks>
     private ThemeType _themeType;
 
-    /// <summary>Initializes a new instance of the <see cref="ThemeProvider" /> class.</summary>
+    /// <summary>Initializes a new instance of the <see cref="AryThemeProvider" /> class.</summary>
     /// <param name="theme">The base theme configuration to apply. If <see langword="null" />, the default theme is used.</param>
     /// <param name="themeType">The initial <see cref="ThemeType" /> to apply. Defaults to <see cref="ThemeType.System" />.</param>
-    public ThemeProvider(AryTheme? theme = null, ThemeType themeType = ThemeType.System)
+    public AryThemeProvider(AryTheme? theme = null, ThemeType themeType = ThemeType.System)
         => (_theme, _themeType) = (theme ?? StyleDefaults.Theme, themeType);
 
     /// <summary>Occurs when the theme or <see cref="ThemeType" /> has changed.</summary>

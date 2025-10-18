@@ -11,7 +11,7 @@ namespace Allyaria.Theming.Interfaces;
 /// <see cref="AryTheme" /> or <see cref="ThemeType" /> change, and maintain internal immutability of shared style
 /// definitions to prevent cross-component side effects.
 /// </remarks>
-public interface IThemeProvider
+public interface IAryThemeProvider
 {
     /// <summary>Occurs when the active <see cref="ThemeType" /> changes.</summary>
     event EventHandler? ThemeChanged;
