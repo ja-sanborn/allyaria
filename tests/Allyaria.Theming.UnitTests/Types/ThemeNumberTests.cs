@@ -192,7 +192,7 @@ public sealed class ThemeNumberTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage("*theme cannot be null, empty or whitespace.*");
+            .WithMessage("*value cannot be null, empty or whitespace.*");
     }
 
     [Fact]
