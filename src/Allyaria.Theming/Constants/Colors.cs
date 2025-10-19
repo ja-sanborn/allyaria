@@ -1,4 +1,3 @@
-using Allyaria.Theming.Types;
 using System.Collections.Immutable;
 using System.Reflection;
 
@@ -1237,7 +1236,7 @@ public static class Colors
     /// <see langword="true" /> if a color with the given name is defined in the registry; otherwise, <see langword="false" />.
     /// </returns>
     /// <remarks>
-    /// This method performs a key lookup only and does not allocate or return the color value itself. It is useful for
+    /// This method performs a key lookup only and does not allocate or return the color theme itself. It is useful for
     /// validating user input or verifying palette token names efficiently.
     /// </remarks>
     public static bool Contains(string name) => AllColors.Value.ContainsKey(name);
@@ -1250,7 +1249,7 @@ public static class Colors
     /// The name of the color field or property (e.g., <c>"red500"</c> or <c>"aliceblue"</c>). Comparison is case-insensitive.
     /// </param>
     /// <param name="value">
-    /// When this method returns <see langword="true" />, contains the corresponding <see cref="HexColor" /> value; otherwise,
+    /// When this method returns <see langword="true" />, contains the corresponding <see cref="HexColor" /> theme; otherwise,
     /// <see langword="default" />.
     /// </param>
     /// <returns><see langword="true" /> if a matching color name was found; otherwise, <see langword="false" />.</returns>

@@ -1,21 +1,19 @@
-﻿using Allyaria.Theming.Contracts;
-
-namespace Allyaria.Theming.Helpers;
+﻿namespace Allyaria.Theming.Helpers;
 
 /// <summary>Provides helper extensions for constructing CSS style declarations from Allyaria theme values.</summary>
 internal static class StyleHelper
 {
-    /// <summary>Appends a CSS declaration for the specified property and value to a <see cref="StringBuilder" />.</summary>
+    /// <summary>Appends a CSS declaration for the specified property and theme to a <see cref="StringBuilder" />.</summary>
     /// <param name="builder">The <see cref="StringBuilder" /> used to collect CSS declarations.</param>
-    /// <param name="value">The theming value containing the CSS representation.</param>
+    /// <param name="theme">The theming theme containing the CSS representation.</param>
     /// <param name="propertyName">The CSS property name to apply (for example, <c>"color"</c>).</param>
     /// <param name="varPrefix">
     /// The prefix used when generating a CSS variable name. The resulting variable takes the form
     /// <c>--{varPrefix}-{propertyName}</c>. Hyphens and whitespace are normalized.
     /// </param>
-    public static void ToCss(this StringBuilder builder, ValueBase value, string propertyName, string? varPrefix)
+    public static void ToCss(this StringBuilder builder, ThemeBase theme, string propertyName, string? varPrefix)
     {
-        if (string.IsNullOrWhiteSpace(propertyName) || string.IsNullOrWhiteSpace(value.Value))
+        if (string.IsNullOrWhiteSpace(propertyName) || string.IsNullOrWhiteSpace(theme.Value))
         {
             return;
         }
@@ -26,7 +24,7 @@ internal static class StyleHelper
             ? propertyName
             : $"--{prefix}-{propertyName}";
 
-        builder.Append(value.ToCss(prefixedProperty));
+        builder.Append(theme.ToCss(prefixedProperty));
     }
 
     /// <summary>Converts a prefix string into a normalized, lowercase CSS variable prefix.</summary>

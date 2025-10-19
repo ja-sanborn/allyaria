@@ -1,8 +1,8 @@
 ﻿# Allyaria.Theming.Constants.TextTransform
 
 `TextTransform` is a static class providing strongly typed constants for CSS text transformation. This type offers
-reusable `AryStringValue` instances for common `text-transform` values, helping to maintain consistent typography
-behavior in Allyaria theming.
+reusable `ThemeString` instances for common `text-transform` values, helping to maintain consistent typography behavior
+in Allyaria theming.
 
 ## Constructors
 
@@ -10,12 +10,12 @@ behavior in Allyaria theming.
 
 ## Properties
 
-| Name         | Type             | Description                                            |
-|--------------|------------------|--------------------------------------------------------|
-| `Capitalize` | `AryStringValue` | Represents capitalizing the first letter of each word. |
-| `Lowercase`  | `AryStringValue` | Represents transforming all characters to lowercase.   |
-| `None`       | `AryStringValue` | Represents no text transformation.                     |
-| `Uppercase`  | `AryStringValue` | Represents transforming all characters to uppercase.   |
+| Name         | Type          | Description                                            |
+|--------------|---------------|--------------------------------------------------------|
+| `Capitalize` | `ThemeString` | Represents capitalizing the first letter of each word. |
+| `Lowercase`  | `ThemeString` | Represents transforming all characters to lowercase.   |
+| `None`       | `ThemeString` | Represents no text transformation.                     |
+| `Uppercase`  | `ThemeString` | Represents transforming all characters to uppercase.   |
 
 ## Methods
 
@@ -36,7 +36,7 @@ behavior in Allyaria theming.
 ## Example
 
 ```csharp
-AryStringValue transform = TextTransform.Uppercase; // apply uppercase text transformation
+ThemeString transform = TextTransform.Uppercase; // apply uppercase text transformation
 ```
 
 ---

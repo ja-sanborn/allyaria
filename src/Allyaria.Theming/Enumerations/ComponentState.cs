@@ -35,7 +35,7 @@ public enum ComponentState
     Pressed,
 
     /// <summary>
-    /// Indicates that the component is visible and interactive but does not allow modification of its value or contents.
+    /// Indicates that the component is visible and interactive but does not allow modification of its theme or contents.
     /// Typically used for static displays or locked fields.
     /// </summary>
     ReadOnly,

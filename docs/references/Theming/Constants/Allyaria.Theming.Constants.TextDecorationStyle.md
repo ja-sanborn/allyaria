@@ -1,7 +1,7 @@
 ﻿# Allyaria.Theming.Constants.TextDecorationStyle
 
 `TextDecorationStyle` is a static class providing strongly typed constants for CSS text decoration styles. This type
-defines reusable `AryStringValue` instances representing standard `text-decoration-style` values, ensuring clarity and
+defines reusable `ThemeString` instances representing standard `text-decoration-style` values, ensuring clarity and
 consistency in Allyaria theming.
 
 ## Constructors
@@ -10,13 +10,13 @@ consistency in Allyaria theming.
 
 ## Properties
 
-| Name     | Type             | Description                                     |
-|----------|------------------|-------------------------------------------------|
-| `Dashed` | `AryStringValue` | Represents a dashed text decoration style.      |
-| `Dotted` | `AryStringValue` | Represents a dotted text decoration style.      |
-| `Double` | `AryStringValue` | Represents a double-line text decoration style. |
-| `Solid`  | `AryStringValue` | Represents a solid text decoration style.       |
-| `Wavy`   | `AryStringValue` | Represents a wavy text decoration style.        |
+| Name     | Type          | Description                                     |
+|----------|---------------|-------------------------------------------------|
+| `Dashed` | `ThemeString` | Represents a dashed text decoration style.      |
+| `Dotted` | `ThemeString` | Represents a dotted text decoration style.      |
+| `Double` | `ThemeString` | Represents a double-line text decoration style. |
+| `Solid`  | `ThemeString` | Represents a solid text decoration style.       |
+| `Wavy`   | `ThemeString` | Represents a wavy text decoration style.        |
 
 ## Methods
 
@@ -37,7 +37,7 @@ consistency in Allyaria theming.
 ## Example
 
 ```csharp
-AryStringValue decorationStyle = TextDecorationStyle.Wavy; // apply a wavy text decoration
+ThemeString decorationStyle = TextDecorationStyle.Wavy; // apply a wavy text decoration
 ```
 
 ---

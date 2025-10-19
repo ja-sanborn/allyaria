@@ -6,4 +6,3 @@ global using Allyaria.Theming.Helpers;
 global using Allyaria.Theming.Services;
 global using Allyaria.Theming.Styles;
 global using Allyaria.Theming.Types;
-global using Allyaria.Theming.Values;

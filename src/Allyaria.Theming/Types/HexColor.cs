@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Types;
 
-/// <summary>Represents an immutable color value with red, green, blue, and alpha channels.</summary>
+/// <summary>Represents an immutable color theme with red, green, blue, and alpha channels.</summary>
 /// <remarks>
 ///     <para>
 ///     A <see cref="HexColor" /> can be constructed directly from component values (<see cref="HexByte" />) or parsed from
@@ -52,7 +52,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     );
 
     /// <summary>
-    /// Compiled regular expression that matches an <c>hsva(h, s%, v%, a)</c> color function containing hue, saturation, value,
+    /// Compiled regular expression that matches an <c>hsva(h, s%, v%, a)</c> color function containing hue, saturation, theme,
     /// and alpha components. Alpha values are validated against <see cref="AlphaPattern" />.
     /// </summary>
     private static readonly Regex HsvaPattern = new(
@@ -62,7 +62,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     );
 
     /// <summary>
-    /// Compiled regular expression that matches an <c>hsv(h, s%, v%)</c> color function containing hue, saturation, and value
+    /// Compiled regular expression that matches an <c>hsv(h, s%, v%)</c> color function containing hue, saturation, and theme
     /// components. The pattern supports optional signs and decimal fractions, but does <b>not</b> allow an alpha component
     /// (see <see cref="HsvaPattern" /> for that).
     /// </summary>
@@ -110,10 +110,10 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         : this(new HexByte(), new HexByte(), new HexByte(), new HexByte()) { }
 
     /// <summary>Initializes a new instance of the <see cref="HexColor" /> struct from individual channels.</summary>
-    /// <param name="red">The red channel value.</param>
-    /// <param name="green">The green channel value.</param>
-    /// <param name="blue">The blue channel value.</param>
-    /// <param name="alpha">The optional alpha channel value; if <see langword="null" />, defaults to 255 (opaque).</param>
+    /// <param name="red">The red channel theme.</param>
+    /// <param name="green">The green channel theme.</param>
+    /// <param name="blue">The blue channel theme.</param>
+    /// <param name="alpha">The optional alpha channel theme; if <see langword="null" />, defaults to 255 (opaque).</param>
     public HexColor(HexByte red, HexByte green, HexByte blue, HexByte? alpha = null)
     {
         R = red;
@@ -143,7 +143,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     ///     <item>
     ///         <description>
     ///         <b>Named colors</b>: a case-insensitive lookup against the global <c>Colors</c> registry (e.g., <c>"Red500"</c>
-    ///         ). This is attempted only if the value does not start with <c>"#"</c>, <c>"rgb"</c>, or <c>"hsv"</c>.
+    ///         ). This is attempted only if the theme does not start with <c>"#"</c>, <c>"rgb"</c>, or <c>"hsv"</c>.
     ///         </description>
     ///     </item>
     /// </list>
@@ -215,39 +215,39 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     public HexByte R { get; }
 
     /// <summary>
-    /// Gets the <b>Saturation</b> component of the color, normalized to the range <c>[0, 1]</c>. A value of <c>0</c> indicates
+    /// Gets the <b>Saturation</b> component of the color, normalized to the range <c>[0, 1]</c>. A theme of <c>0</c> indicates
     /// a fully desaturated color (gray), while <c>1</c> indicates full color intensity.
     /// </summary>
     public double S { get; }
 
     /// <summary>
-    /// Gets the <b>Value</b> (brightness) component of the color, normalized to the range <c>[0, 1]</c>. A value of <c>0</c>
+    /// Gets the <b>Value</b> (brightness) component of the color, normalized to the range <c>[0, 1]</c>. A theme of <c>0</c>
     /// represents black, and <c>1</c> represents the brightest possible version of the color.
     /// </summary>
     public double V { get; }
 
     /// <summary>
-    /// Linearly interpolates the current <see cref="V" /> (value/brightness) toward a specified target value by a given blend
+    /// Linearly interpolates the current <see cref="V" /> (theme/brightness) toward a specified target theme by a given blend
     /// factor within the closed interval <c>[0, 1]</c>.
     /// </summary>
-    /// <param name="target">The target brightness value to blend toward (0–1).</param>
+    /// <param name="target">The target brightness theme to blend toward (0–1).</param>
     /// <param name="factor">
-    /// The interpolation factor clamped to <c>[0, 1]</c>. A value of <c>0</c> returns the current <see cref="V" />; a value of
+    /// The interpolation factor clamped to <c>[0, 1]</c>. A theme of <c>0</c> returns the current <see cref="V" />; a theme of
     /// <c>1</c> returns the <paramref name="target" />.
     /// </param>
-    /// <returns>The interpolated scalar value resulting from the linear blend.</returns>
+    /// <returns>The interpolated scalar theme resulting from the linear blend.</returns>
     private double BlendValue(double target, double factor) => V + (target - V) * factor;
 
     /// <summary>Clamps a normalized channel (0–1) to a byte (0–255) using banker's rounding (ToEven).</summary>
-    /// <param name="value">The normalized value.</param>
-    /// <returns>The clamped 8-bit channel value.</returns>
+    /// <param name="value">The normalized theme.</param>
+    /// <returns>The clamped 8-bit channel theme.</returns>
     private static byte ClampToByte(double value)
         => (byte)Math.Clamp(Math.Round(value * 255.0, MidpointRounding.ToEven), 0, 255);
 
     /// <summary>Compares this instance with another <see cref="HexColor" /> to determine relative ordering.</summary>
     /// <param name="other">The other color to compare.</param>
     /// <returns>
-    /// A value less than zero if this instance precedes <paramref name="other" />; zero if equal; greater than zero if this
+    /// A theme less than zero if this instance precedes <paramref name="other" />; zero if equal; greater than zero if this
     /// instance follows <paramref name="other" />.
     /// </returns>
     public int CompareTo(HexColor other)
@@ -315,7 +315,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
     /// <summary>
     /// Resolves a foreground color that meets (or best-approaches) a minimum contrast ratio over the background by preserving
-    /// the foreground hue and saturation (HSV H/S) and adjusting only value (V). If that hue rail cannot reach the target
+    /// the foreground hue and saturation (HSV H/S) and adjusting only theme (V). If that hue rail cannot reach the target
     /// (even at V = 0 or 1), the method mixes toward black and white and returns the closest solution that meets—or
     /// best-approaches—the target.
     /// </summary>
@@ -336,7 +336,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
         var direction = ValueDirection(background);
 
-        // 1) Preferred value-rail attempt
+        // 1) Preferred theme-rail attempt
         var first = SearchValueRail(direction, background, minimumRatio);
 
         if (first.IsMinimumMet)
@@ -388,7 +388,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <summary>Creates a <see cref="HexColor" /> from HSVA component values.</summary>
     /// <param name="hue">The hue component in degrees (nominally 0–360; values are normalized).</param>
     /// <param name="saturation">The saturation component in the 0–1 range.</param>
-    /// <param name="value">The value (brightness) component in the 0–1 range.</param>
+    /// <param name="value">The theme (brightness) component in the 0–1 range.</param>
     /// <param name="alpha">The alpha component in the 0–1 range. Defaults to 1.0 (opaque).</param>
     /// <returns>A <see cref="HexColor" /> representing the specified HSVA.</returns>
     public static HexColor FromHsva(double hue, double saturation, double value, double alpha = 1.0)
@@ -489,7 +489,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <c>G' = 255 − G</c>, <c>B' = 255 − B</c>). The alpha channel is preserved.
     /// </summary>
     /// <remarks>
-    /// This matches the classic “negative image” operation performed in RGB space. The resulting hue/saturation/value may not
+    /// This matches the classic “negative image” operation performed in RGB space. The resulting hue/saturation/theme may not
     /// equal a simple 180° hue rotation; it is the exact per-channel inversion of the underlying RGB values.
     /// </remarks>
     /// <returns>A new <see cref="HexColor" /> representing the RGB-inverted (negative) color.</returns>
@@ -546,10 +546,10 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>A new <see cref="HexColor" />.</returns>
     public static HexColor Parse(string value) => new(value);
 
-    /// <summary>Parses an alpha value in the range 0–1 from a string into a <see cref="HexByte" />.</summary>
+    /// <summary>Parses an alpha theme in the range 0–1 from a string into a <see cref="HexByte" />.</summary>
     /// <param name="value">The alpha string to parse.</param>
     /// <returns>A <see cref="HexByte" /> corresponding to the parsed alpha.</returns>
-    /// <exception cref="AryArgumentException">Thrown when the value is invalid or out of range.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the theme is invalid or out of range.</exception>
     private static HexByte ParseAlpha(string value)
     {
         var trimmed = value.Trim();
@@ -559,20 +559,20 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         return HexByte.FromNormalized(alpha);
     }
 
-    /// <summary>Parses a decimal byte value (0–255) from a string into a <see cref="HexByte" />.</summary>
-    /// <param name="value">The string containing the byte value.</param>
+    /// <summary>Parses a decimal byte theme (0–255) from a string into a <see cref="HexByte" />.</summary>
+    /// <param name="value">The string containing the byte theme.</param>
     /// <returns>A <see cref="HexByte" /> representing the parsed byte.</returns>
-    /// <exception cref="AryArgumentException">Thrown when the value is not a valid byte.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the theme is not a valid byte.</exception>
     private static HexByte ParseByte(string value)
         => byte.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var byteValue)
             ? new HexByte(byteValue)
-            : throw new AryArgumentException($"Byte value is out of range: {value}", nameof(value));
+            : throw new AryArgumentException($"Byte theme is out of range: {value}", nameof(value));
 
     /// <summary>
-    /// Parses a single RGB channel value that may be expressed either as a byte (0–255) or as a percentage (0%–100%).
+    /// Parses a single RGB channel theme that may be expressed either as a byte (0–255) or as a percentage (0%–100%).
     /// </summary>
     /// <param name="value">
-    /// The channel text to parse. May include a trailing percent sign (e.g., "128", "50%"). Whitespace around the value is
+    /// The channel text to parse. May include a trailing percent sign (e.g., "128", "50%"). Whitespace around the theme is
     /// ignored.
     /// </param>
     /// <returns>A <see cref="HexByte" /> representing the normalized channel intensity from 0.0 to 1.0.</returns>
@@ -710,21 +710,21 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         alpha = color.A;
     }
 
-    /// <summary>Parses a hue value from a string.</summary>
-    /// <param name="value">The string containing the hue value.</param>
+    /// <summary>Parses a hue theme from a string.</summary>
+    /// <param name="value">The string containing the hue theme.</param>
     /// <returns>The parsed hue (not yet normalized).</returns>
-    /// <exception cref="AryArgumentException">Thrown when the hue value is invalid.</exception>
+    /// <exception cref="AryArgumentException">Thrown when the hue theme is invalid.</exception>
     private static double ParseHue(string value)
         => !double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var hue) ||
             !double.IsFinite(hue)
-                ? throw new AryArgumentException($"Invalid hue value: {value}", nameof(value))
+                ? throw new AryArgumentException($"Invalid hue theme: {value}", nameof(value))
                 : hue;
 
     /// <summary>
-    /// Parses a percentage or fraction string (e.g., <c>75%</c> or <c>0.75</c>) into a normalized value (0–1).
+    /// Parses a percentage or fraction string (e.g., <c>75%</c> or <c>0.75</c>) into a normalized theme (0–1).
     /// </summary>
     /// <param name="value">The percentage/fraction string to parse.</param>
-    /// <returns>The normalized value.</returns>
+    /// <returns>The normalized theme.</returns>
     /// <exception cref="AryArgumentException">Thrown when the percentage is invalid or out of 0–100 range.</exception>
     /// <remarks>
     /// Values with a '%' suffix are treated as percentages (0–100). Values without '%' are interpreted as normalized fractions
@@ -838,15 +838,15 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// corresponding HSV (Hue, Saturation, Value) representation.
     /// </summary>
     /// <param name="hue">
-    /// The resulting hue component, expressed in degrees within the range [0, 360). A value of <c>0</c> represents red,
+    /// The resulting hue component, expressed in degrees within the range [0, 360). A theme of <c>0</c> represents red,
     /// <c>120</c> represents green, and <c>240</c> represents blue.
     /// </param>
     /// <param name="saturation">
-    /// The resulting saturation component, a normalized value in the range [0, 1], where <c>0</c> indicates a shade of gray
+    /// The resulting saturation component, a normalized theme in the range [0, 1], where <c>0</c> indicates a shade of gray
     /// and <c>1</c> represents full color intensity.
     /// </param>
     /// <param name="value">
-    /// The resulting value (brightness) component, a normalized value in the range [0, 1], where <c>0</c> represents black and
+    /// The resulting theme (brightness) component, a normalized theme in the range [0, 1], where <c>0</c> represents black and
     /// <c>1</c> represents the brightest form of the color.
     /// </param>
     /// <remarks>
@@ -969,7 +969,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     }
 
     /// <summary>
-    /// Binary search along the HSV value rail (holding H and S constant) to find the minimum-change V that meets a required
+    /// Binary search along the HSV theme rail (holding H and S constant) to find the minimum-change V that meets a required
     /// contrast ratio; returns the best-approaching candidate when unreachable.
     /// </summary>
     /// <param name="direction"><c>+1</c> to brighten; <c>-1</c> to darken.</param>
@@ -1039,14 +1039,14 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
     /// <summary>
     /// Creates a new <see cref="HexColor" /> instance using the current red, green, and blue components, but with the
-    /// specified alpha (opacity) value.
+    /// specified alpha (opacity) theme.
     /// </summary>
     /// <param name="alpha">
     /// The new alpha component, expressed as a byte in the range <c>[0, 255]</c>, where <c>0</c> represents full transparency
     /// and <c>255</c> represents full opacity.
     /// </param>
     /// <returns>
-    /// A new <see cref="HexColor" /> that is identical in color to the current instance but with the provided alpha value
+    /// A new <see cref="HexColor" /> that is identical in color to the current instance but with the provided alpha theme
     /// applied.
     /// </returns>
     /// <remarks>
@@ -1056,7 +1056,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     public HexColor SetAlpha(byte alpha) => new(R, G, B, new HexByte(alpha));
 
     /// <summary>
-    /// Adjusts the perceived lightness of the color by shifting its value (<see cref="V" />) upward or downward depending on
+    /// Adjusts the perceived lightness of the color by shifting its theme (<see cref="V" />) upward or downward depending on
     /// whether the color is currently light or dark.
     /// </summary>
     /// <param name="delta">
@@ -1309,8 +1309,8 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     }
 
     /// <summary>Determines whether two <see cref="HexColor" /> values are equal.</summary>
-    /// <param name="left">The first value to compare.</param>
-    /// <param name="right">The second value to compare.</param>
+    /// <param name="left">The first theme to compare.</param>
+    /// <param name="right">The second theme to compare.</param>
     /// <returns><see langword="true" /> if the values are equal; otherwise, <see langword="false" />.</returns>
     public static bool operator ==(HexColor left, HexColor right) => left.Equals(right);
 
@@ -1335,13 +1335,13 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     public static implicit operator HexColor(string hex) => new(hex);
 
     /// <summary>Implicitly converts a <see cref="HexColor" /> to its string representation.</summary>
-    /// <param name="value">The color value.</param>
+    /// <param name="value">The color theme.</param>
     /// <returns>The string representation.</returns>
     public static implicit operator string(HexColor value) => value.ToString();
 
     /// <summary>Determines whether two <see cref="HexColor" /> values are not equal.</summary>
-    /// <param name="left">The first value to compare.</param>
-    /// <param name="right">The second value to compare.</param>
+    /// <param name="left">The first theme to compare.</param>
+    /// <param name="right">The second theme to compare.</param>
     /// <returns><see langword="true" /> if the values are not equal; otherwise, <see langword="false" />.</returns>
     public static bool operator !=(HexColor left, HexColor right) => !left.Equals(right);
 

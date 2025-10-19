@@ -5,11 +5,11 @@
 public static class FontStyle
 {
     /// <summary>Represents italic font style.</summary>
-    public static readonly AryStringValue Italic = new("italic");
+    public static readonly ThemeString Italic = new("italic");
 
     /// <summary>Represents normal font style.</summary>
-    public static readonly AryStringValue Normal = new("normal");
+    public static readonly ThemeString Normal = new("normal");
 
     /// <summary>Represents oblique font style.</summary>
-    public static readonly AryStringValue Oblique = new("oblique");
+    public static readonly ThemeString Oblique = new("oblique");
 }

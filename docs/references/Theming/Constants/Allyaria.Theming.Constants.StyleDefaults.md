@@ -11,35 +11,35 @@ instance.
 
 ## Properties
 
-| Name                          | Type             | Description                                                                  |
-|-------------------------------|------------------|------------------------------------------------------------------------------|
-| `BackgroundColorDark`         | `AryColorValue`  | Default background color for dark theme.                                     |
-| `BackgroundColorHighContrast` | `AryColorValue`  | Default background color for high-contrast theme.                            |
-| `BackgroundColorLight`        | `AryColorValue`  | Default background color for light theme.                                    |
-| `BorderRadius`                | `AryNumberValue` | Default border radius.                                                       |
-| `BorderStyle`                 | `AryStringValue` | Default border style.                                                        |
-| `BorderWidth`                 | `AryNumberValue` | Default border width.                                                        |
-| `FontFamily`                  | `AryStringValue` | Default font family.                                                         |
-| `FontSize`                    | `AryNumberValue` | Default font size.                                                           |
-| `FontStyle`                   | `AryStringValue` | Default font style.                                                          |
-| `FontWeight`                  | `AryStringValue` | Default font weight.                                                         |
-| `ForegroundColorDark`         | `AryColorValue`  | Default foreground color for dark theme.                                     |
-| `ForegroundColorHighContrast` | `AryColorValue`  | Default foreground color for high-contrast theme.                            |
-| `ForegroundColorLight`        | `AryColorValue`  | Default foreground color for light theme.                                    |
-| `LetterSpacing`               | `AryNumberValue` | Default letter spacing.                                                      |
-| `LineHeight`                  | `AryNumberValue` | Default line height.                                                         |
-| `Margin`                      | `AryNumberValue` | Default margin.                                                              |
-| `Padding`                     | `AryNumberValue` | Default padding.                                                             |
-| `PaletteDark`                 | `AryPalette`     | Default dark palette.                                                        |
-| `PaletteHighContrast`         | `AryPalette`     | Default high-contrast palette.                                               |
-| `PaletteLight`                | `AryPalette`     | Default light palette.                                                       |
-| `TextAlign`                   | `AryStringValue` | Default text alignment.                                                      |
-| `TextDecorationLine`          | `AryStringValue` | Default text decoration line.                                                |
-| `TextDecorationStyle`         | `AryStringValue` | Default text decoration style.                                               |
-| `TextTransform`               | `AryStringValue` | Default text transform.                                                      |
-| `Theme`                       | `AryTheme`       | Default theme instance combining borders, spacing, palettes, and typography. |
-| `Transparent`                 | `AryColorValue`  | Default transparent color.                                                   |
-| `VerticalAlign`               | `AryStringValue` | Default vertical alignment.                                                  |
+| Name                          | Type          | Description                                                                  |
+|-------------------------------|---------------|------------------------------------------------------------------------------|
+| `BackgroundColorDark`         | `ThemeColor`  | Default background color for dark theme.                                     |
+| `BackgroundColorHighContrast` | `ThemeColor`  | Default background color for high-contrast theme.                            |
+| `BackgroundColorLight`        | `ThemeColor`  | Default background color for light theme.                                    |
+| `BorderRadius`                | `ThemeNumber` | Default border radius.                                                       |
+| `BorderStyle`                 | `ThemeString` | Default border style.                                                        |
+| `BorderWidth`                 | `ThemeNumber` | Default border width.                                                        |
+| `FontFamily`                  | `ThemeString` | Default font family.                                                         |
+| `FontSize`                    | `ThemeNumber` | Default font size.                                                           |
+| `FontStyle`                   | `ThemeString` | Default font style.                                                          |
+| `FontWeight`                  | `ThemeString` | Default font weight.                                                         |
+| `ForegroundColorDark`         | `ThemeColor`  | Default foreground color for dark theme.                                     |
+| `ForegroundColorHighContrast` | `ThemeColor`  | Default foreground color for high-contrast theme.                            |
+| `ForegroundColorLight`        | `ThemeColor`  | Default foreground color for light theme.                                    |
+| `LetterSpacing`               | `ThemeNumber` | Default letter spacing.                                                      |
+| `LineHeight`                  | `ThemeNumber` | Default line height.                                                         |
+| `Margin`                      | `ThemeNumber` | Default margin.                                                              |
+| `Padding`                     | `ThemeNumber` | Default padding.                                                             |
+| `PaletteDark`                 | `Palette`     | Default dark palette.                                                        |
+| `PaletteHighContrast`         | `Palette`     | Default high-contrast palette.                                               |
+| `PaletteLight`                | `Palette`     | Default light palette.                                                       |
+| `TextAlign`                   | `ThemeString` | Default text alignment.                                                      |
+| `TextDecorationLine`          | `ThemeString` | Default text decoration line.                                                |
+| `TextDecorationStyle`         | `ThemeString` | Default text decoration style.                                               |
+| `TextTransform`               | `ThemeString` | Default text transform.                                                      |
+| `Theme`                       | `Theme`       | Default theme instance combining borders, spacing, palettes, and typography. |
+| `Transparent`                 | `ThemeColor`  | Default transparent color.                                                   |
+| `VerticalAlign`               | `ThemeString` | Default vertical alignment.                                                  |
 
 ## Methods
 
@@ -60,7 +60,7 @@ instance.
 ## Example
 
 ```csharp
-AryTheme defaultTheme = StyleDefaults.Theme; // get the global default Allyaria theme
+Theme defaultTheme = StyleDefaults.Theme; // get the global default Allyaria theme
 ```
 
 ---

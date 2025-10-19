@@ -1,7 +1,7 @@
 ﻿# Allyaria.Theming.Constants.FontStyle
 
 `FontStyle` is a static class of strongly typed constants representing standard CSS font style values. This type
-provides reusable `AryStringValue` instances for common CSS `font-style` values (e.g., `italic`, `normal`, `oblique`) to
+provides reusable `ThemeString` instances for common CSS `font-style` values (e.g., `italic`, `normal`, `oblique`) to
 improve consistency, readability, and reduce typos in Allyaria theming and style composition.
 
 ## Constructors
@@ -10,11 +10,11 @@ improve consistency, readability, and reduce typos in Allyaria theming and style
 
 ## Properties
 
-| Name      | Type             | Description                       |
-|-----------|------------------|-----------------------------------|
-| `Italic`  | `AryStringValue` | Represents an italic font style.  |
-| `Normal`  | `AryStringValue` | Represents a normal font style.   |
-| `Oblique` | `AryStringValue` | Represents an oblique font style. |
+| Name      | Type          | Description                       |
+|-----------|---------------|-----------------------------------|
+| `Italic`  | `ThemeString` | Represents an italic font style.  |
+| `Normal`  | `ThemeString` | Represents a normal font style.   |
+| `Oblique` | `ThemeString` | Represents an oblique font style. |
 
 ## Methods
 
@@ -35,7 +35,7 @@ improve consistency, readability, and reduce typos in Allyaria theming and style
 ## Example
 
 ```csharp
-AryStringValue style = FontStyle.Italic; // use a strongly-typed CSS font style
+ThemeString style = FontStyle.Italic; // use a strongly-typed CSS font style
 ```
 
 ---

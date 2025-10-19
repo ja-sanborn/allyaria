@@ -121,7 +121,7 @@ public sealed class HexByteTests
 
         // Assert
         actNaN.Should().Throw<AryArgumentException>()
-            .WithMessage("Normalized value must be a finite number.");
+            .WithMessage("Normalized theme must be a finite number.");
 
         actPosInf.Should().Throw<AryArgumentException>();
         actNegInf.Should().Throw<AryArgumentException>();

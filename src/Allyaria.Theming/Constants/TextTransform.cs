@@ -5,14 +5,14 @@
 public static class TextTransform
 {
     /// <summary>Represents capitalizing the first letter of each word.</summary>
-    public static readonly AryStringValue Capitalize = new("capitalize");
+    public static readonly ThemeString Capitalize = new("capitalize");
 
     /// <summary>Represents transforming all characters to lowercase.</summary>
-    public static readonly AryStringValue Lowercase = new("lowercase");
+    public static readonly ThemeString Lowercase = new("lowercase");
 
     /// <summary>Represents no text transformation.</summary>
-    public static readonly AryStringValue None = new("none");
+    public static readonly ThemeString None = new("none");
 
     /// <summary>Represents transforming all characters to uppercase.</summary>
-    public static readonly AryStringValue Uppercase = new("uppercase");
+    public static readonly ThemeString Uppercase = new("uppercase");
 }

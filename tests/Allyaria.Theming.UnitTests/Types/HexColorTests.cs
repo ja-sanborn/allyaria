@@ -105,9 +105,9 @@ public sealed class HexColorTests
     public void Ctor_String_Should_ParseHsv_WithFractional_SV()
     {
         // Arrange & Act
-        var sut = new HexColor("hsv(0,0.75,0.5)"); // 75% sat, 50% value
+        var sut = new HexColor("hsv(0,0.75,0.5)"); // 75% sat, 50% theme
 
-        // Assert (rough shape: red is dominant, value ~128)
+        // Assert (rough shape: red is dominant, theme ~128)
         sut.R.Value.Should().BeGreaterThan(100);
         sut.G.Value.Should().BeLessThan(128);
         sut.B.Value.Should().BeLessThan(128);
@@ -256,7 +256,7 @@ public sealed class HexColorTests
         // 2) It must actually meet the requested minimum
         resolved.ContrastRatio(bg).Should().BeGreaterThanOrEqualTo(3.0);
 
-        // 3) Preserve hue/saturation (value rail only) and alpha
+        // 3) Preserve hue/saturation (theme rail only) and alpha
         resolved.S.Should().BeApproximately(fg.S, 1e-12);
         resolved.H.Should().BeApproximately(fg.H, 1e-12);
         resolved.A.Should().BeEquivalentTo(fg.A);

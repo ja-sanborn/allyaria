@@ -5,32 +5,32 @@
 public static class BorderStyle
 {
     /// <summary>Represents a dashed border style.</summary>
-    public static readonly AryStringValue Dashed = new("dashed");
+    public static readonly ThemeString Dashed = new("dashed");
 
     /// <summary>Represents a dotted border style.</summary>
-    public static readonly AryStringValue Dotted = new("dotted");
+    public static readonly ThemeString Dotted = new("dotted");
 
     /// <summary>Represents a double line border style.</summary>
-    public static readonly AryStringValue Double = new("double");
+    public static readonly ThemeString Double = new("double");
 
     /// <summary>Represents a groove border style.</summary>
-    public static readonly AryStringValue Groove = new("groove");
+    public static readonly ThemeString Groove = new("groove");
 
     /// <summary>Represents a hidden border style.</summary>
-    public static readonly AryStringValue Hidden = new("hidden");
+    public static readonly ThemeString Hidden = new("hidden");
 
     /// <summary>Represents an inset border style.</summary>
-    public static readonly AryStringValue Inset = new("inset");
+    public static readonly ThemeString Inset = new("inset");
 
     /// <summary>Represents no border.</summary>
-    public static readonly AryStringValue None = new("none");
+    public static readonly ThemeString None = new("none");
 
     /// <summary>Represents an outset border style.</summary>
-    public static readonly AryStringValue Outset = new("outset");
+    public static readonly ThemeString Outset = new("outset");
 
     /// <summary>Represents a ridge border style.</summary>
-    public static readonly AryStringValue Ridge = new("ridge");
+    public static readonly ThemeString Ridge = new("ridge");
 
     /// <summary>Represents a solid border style.</summary>
-    public static readonly AryStringValue Solid = new("solid");
+    public static readonly ThemeString Solid = new("solid");
 }
