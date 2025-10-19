@@ -374,7 +374,7 @@ public sealed class BordersTests
         );
 
         // Act
-        var css = sut.ToCss(isFocus: true);
+        var css = sut.ToCss(isFocused: true);
 
         // Assert (all widths should be the computed FocusWidth)
         css.Should().Contain("border-top-width").And.Contain("5px");

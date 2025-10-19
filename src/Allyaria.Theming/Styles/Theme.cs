@@ -5,12 +5,9 @@
 /// and component typography. This struct serves as the primary entry point for computing per-component, per-state styles.
 /// </summary>
 /// <remarks>
-/// The theme is composed of immutable sub-structures and supports non-destructive updates via
-/// <see
-///     cref="Cascade(Styles.Borders?, Styles.Spacing?, Styles.Palette?, Styles.Palette?, Styles.Palette?, Typography?)" />
-/// . Use <see cref="ToStyle(ThemeType, ComponentType, ComponentElevation, ComponentState)" /> to resolve a concrete
-/// <see cref="Style" /> for a specific theme type, component type, elevation, and state; then call
-/// <see cref="Style.ToCss(string?, bool)" /> to produce CSS.
+/// The theme is composed of immutable sub-structures and supports non-destructive updates via Cascade. Use ToStyle to
+/// resolve a concrete <see cref="Style" /> for a specific theme type, component type, elevation, and state; then call
+/// ToCss to produce CSS.
 /// </remarks>
 /// <seealso cref="Style" />
 /// <seealso cref="PaletteVariant" />
@@ -96,6 +93,50 @@ public readonly record struct Theme
         };
 
     /// <summary>
+    /// Generates a de-duplicated, concatenated CSS declaration string for all combinations of <see cref="ComponentType" />,
+    /// <see cref="ComponentElevation" />, and <see cref="ComponentState" /> under the specified <paramref name="themeType" />.
+    /// </summary>
+    /// <param name="themeType">The overarching theme variant (e.g., System/Light/Dark/HighContrast).</param>
+    /// <returns>
+    /// A single string containing CSS declarations separated by <c>;</c>, with duplicates removed while preserving first-seen
+    /// order.
+    /// </returns>
+    /// <remarks>
+    /// This method iterates over each component/elevation/state combination and aggregates the CSS. Declarations are split by
+    /// semicolons, trimmed, de-duplicated using a seen-set, and rejoined. No trailing semicolon is appended to the final
+    /// output.
+    /// </remarks>
+    public string ToCss(ThemeType themeType)
+    {
+        var output = new HashSet<string>(StringComparer.Ordinal);
+        var componentItems = Enum.GetValues<ComponentType>();
+        var elevationItems = Enum.GetValues<ComponentElevation>();
+        var stateItems = Enum.GetValues<ComponentState>();
+
+        foreach (var component in componentItems)
+        {
+            foreach (var elevation in elevationItems)
+            {
+                foreach (var state in stateItems)
+                {
+                    var css = ToCss(themeType, component, elevation, state, StyleDefaults.VarPrefix);
+                    var parts = css.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                    foreach (var part in parts)
+                    {
+                        if (part.Length > 0)
+                        {
+                            _ = output.Add(part);
+                        }
+                    }
+                }
+            }
+        }
+
+        return string.Join(';', output);
+    }
+
+    /// <summary>
     /// Produces a CSS string for the resolved style. When state is Focused, the emitted border uses the focus presentation
     /// (thicker + dashed) while colors come from the focused palette for proper contrast.
     /// </summary>
@@ -113,7 +154,12 @@ public readonly record struct Theme
         ComponentElevation elevation = ComponentElevation.Mid,
         ComponentState state = ComponentState.Default,
         string? varPrefix = "")
-        => ToStyle(themeType, componentType, elevation, state).ToCss(varPrefix, state is ComponentState.Focused);
+    {
+        var style = ToStyle(themeType, componentType, elevation, state);
+        var prefix = varPrefix.ToCssPrefix();
+
+        return style.ToCss(prefix, componentType, elevation, state);
+    }
 
     /// <summary>
     /// Resolves a concrete <see cref="Style" /> for a specific theme type, component type, elevation, and state.

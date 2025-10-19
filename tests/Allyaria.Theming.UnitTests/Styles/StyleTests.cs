@@ -176,44 +176,4 @@ public sealed class StyleTests
 
         css.Should().Be(expected);
     }
-
-    [Fact]
-    public void ToCss_Should_Use_FocusBorder_When_IsFocusTrue()
-    {
-        // Arrange
-        // Use zero widths to ensure FocusWidth branch picks "2px" (largest < 2) inside Borders.
-        var focusBorder = new Borders(
-            new ThemeNumber("0px"),
-            new ThemeNumber("0px"),
-            new ThemeNumber("0px"),
-            new ThemeNumber("0px"),
-            new ThemeString("solid"),
-            new ThemeString("solid"),
-            new ThemeString("solid"),
-            new ThemeString("solid")
-        );
-
-        var palette = new Palette();
-        var typography = new Typography();
-        var spacing = new Spacing();
-
-        var sut = new Style(palette, typography, spacing, focusBorder);
-
-        // Act
-        var nonFocusCss = sut.ToCss(isFocus: false);
-        var focusCss = sut.ToCss(isFocus: true);
-
-        // Assert
-        // The focus rendering should differ due to FocusWidth and dashed styles applied within Borders.
-        focusCss.Should().NotBe(nonFocusCss);
-
-        var expectedFocus = string.Concat(
-            palette.ToCss(),
-            typography.ToCss(),
-            spacing.ToCss(),
-            focusBorder.ToCss("", true)
-        );
-
-        focusCss.Should().Be(expectedFocus);
-    }
 }

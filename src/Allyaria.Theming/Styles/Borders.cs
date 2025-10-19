@@ -235,42 +235,42 @@ public readonly record struct Borders
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
     /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
-    /// <param name="isFocus">Determines if this is a focus border or not.</param>
+    /// <param name="isFocused">Determines if this is a focus border or not.</param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by
     /// <see cref="StyleHelper.ToCss(StringBuilder, ThemeBase, string, string)" />).
     /// </returns>
-    public string ToCss(string? varPrefix = "", bool isFocus = false)
+    public string ToCss(string? varPrefix = "", bool isFocused = false)
     {
-        var topWidth = isFocus
+        var topWidth = isFocused
             ? FocusWidth
             : TopWidth;
 
-        var endWidth = isFocus
+        var endWidth = isFocused
             ? FocusWidth
             : EndWidth;
 
-        var bottomWidth = isFocus
+        var bottomWidth = isFocused
             ? FocusWidth
             : BottomWidth;
 
-        var startWidth = isFocus
+        var startWidth = isFocused
             ? FocusWidth
             : StartWidth;
 
-        var topStyle = isFocus
+        var topStyle = isFocused
             ? BorderStyle.Dashed
             : TopStyle;
 
-        var endStyle = isFocus
+        var endStyle = isFocused
             ? BorderStyle.Dashed
             : EndStyle;
 
-        var bottomStyle = isFocus
+        var bottomStyle = isFocused
             ? BorderStyle.Dashed
             : BottomStyle;
 
-        var startStyle = isFocus
+        var startStyle = isFocused
             ? BorderStyle.Dashed
             : StartStyle;
 

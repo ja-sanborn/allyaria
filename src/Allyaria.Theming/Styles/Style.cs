@@ -55,15 +55,43 @@ public readonly record struct Style
             Border = border ?? Border
         };
 
-    /// <summary>Converts this style and all its components to a single CSS variable declaration string.</summary>
+    /// <summary>Converts this style and all its subcomponents into a concatenated CSS variable declaration string.</summary>
     /// <param name="varPrefix">An optional prefix applied to all generated CSS variable names.</param>
-    /// <param name="isFocus">Determines if this is a focus border or not.</param>
-    /// <returns>A concatenated CSS string representing this style configuration.</returns>
-    public string ToCss(string? varPrefix = "", bool isFocus = false)
-        => string.Concat(
-            Palette.ToCss(varPrefix),
-            Typography.ToCss(varPrefix),
+    /// <param name="componentType">The logical component type (e.g., Surface, Text, Border) used for CSS scoping.</param>
+    /// <param name="elevation">The elevation level applied to the style (used for palette tiering).</param>
+    /// <param name="state">The visual state of the component (e.g., Default, Hovered, Focused).</param>
+    /// <returns>
+    /// A concatenated CSS string that represents the full style configuration for the given component, elevation, and state.
+    /// </returns>
+    /// <remarks>
+    /// This method combines multiple style subsystems—Palette, Typography, Spacing, and Border—into a single CSS string. When
+    /// <paramref name="varPrefix" /> is null or whitespace, subsystem CSS values are returned without prefixing.
+    /// </remarks>
+    public string ToCss(string? varPrefix = "",
+        ComponentType componentType = ComponentType.Surface,
+        ComponentElevation elevation = ComponentElevation.Mid,
+        ComponentState state = ComponentState.Default)
+    {
+        var prefix = varPrefix.ToCssPrefix();
+
+        if (string.IsNullOrWhiteSpace(prefix))
+        {
+            return string.Concat(
+                Palette.ToCss(),
+                Typography.ToCss(),
+                Spacing.ToCss(),
+                Border.ToCss()
+            );
+        }
+
+        var typoPrefix = $"{prefix}-{componentType}";
+        var palettePrefix = $"{prefix}-{elevation}-{state}";
+
+        return string.Concat(
+            Palette.ToCss(palettePrefix),
+            Typography.ToCss(typoPrefix),
             Spacing.ToCss(varPrefix),
-            Border.ToCss(varPrefix, isFocus)
+            Border.ToCss(varPrefix, state is ComponentState.Focused)
         );
+    }
 }

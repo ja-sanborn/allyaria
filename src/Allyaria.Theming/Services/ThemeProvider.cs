@@ -39,6 +39,10 @@ public sealed class ThemeProvider : IThemeProvider
     /// <summary>Gets the currently active <see cref="ThemeType" />.</summary>
     public ThemeType ThemeType => _themeType;
 
+    /// <summary>Retrieves a string of CSS var declarations representing the currently active theme.</summary>
+    /// <returns>A string containing CSS var declarations for the active theme.</returns>
+    public string GetCss() => _theme.ToCss(ThemeType);
+
     /// <summary>Retrieves a CSS string representing the current visual style for a specific component type.</summary>
     /// <param name="componentType">The component type to generate CSS for.</param>
     /// <param name="elevation">The elevation level to apply. Defaults to <see cref="ComponentElevation.Mid" />.</param>

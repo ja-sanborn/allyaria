@@ -149,24 +149,6 @@ public sealed class ThemeTests
     }
 
     [Fact]
-    public void ToCss_Should_Match_ToStyle_ToCss_Output_For_FocusedState()
-    {
-        // Arrange
-        var sut = new Theme();
-        var themeType = ThemeType.HighContrast;
-        var elevation = ComponentElevation.Mid;
-        var component = (ComponentType)0;
-        var varPrefix = "pref";
-
-        // Act
-        var cssViaTheme = sut.ToCss(themeType, component, elevation, ComponentState.Focused, varPrefix);
-        var cssViaStyle = sut.ToStyle(themeType, component, elevation, ComponentState.Focused).ToCss(varPrefix, true);
-
-        // Assert
-        cssViaTheme.Should().Be(cssViaStyle);
-    }
-
-    [Fact]
     public void ToCss_Should_Respect_DefaultElevationAndState_When_ParametersOmitted()
     {
         // Arrange

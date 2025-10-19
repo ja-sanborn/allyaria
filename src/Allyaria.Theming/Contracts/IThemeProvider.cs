@@ -17,6 +17,10 @@ public interface IThemeProvider
     /// <summary>Gets the currently active <see cref="ThemeType" />.</summary>
     ThemeType ThemeType { get; }
 
+    /// <summary>Retrieves a string of CSS var declarations representing the currently active theme.</summary>
+    /// <returns>A string containing CSS var declarations for the active theme.</returns>
+    string GetCss();
+
     /// <summary>Retrieves the resolved CSS string for a component based on its type, elevation, and state.</summary>
     /// <param name="componentType">The type of the component for which CSS should be retrieved.</param>
     /// <param name="elevation">The component's visual elevation level. Defaults to <see cref="ComponentElevation.Mid" />.</param>

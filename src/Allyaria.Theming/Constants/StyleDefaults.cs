@@ -11,6 +11,9 @@ namespace Allyaria.Theming.Constants;
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class StyleDefaults
 {
+    /// <summary>Default CSS var prefix.</summary>
+    public static readonly string VarPrefix = "ary";
+
     /// <summary>Default border style.</summary>
     public static readonly ThemeString BorderStyle = Constants.BorderStyle.Solid;
 

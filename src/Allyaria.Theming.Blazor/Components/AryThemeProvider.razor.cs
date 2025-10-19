@@ -33,6 +33,9 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     /// <summary>Tracks the previous persisted state to detect transitions in user persistence preferences.</summary>
     private bool _prevPersisted;
 
+    /// <summary>The list of CSS vars from the theme.</summary>
+    private string _varList = string.Empty;
+
     /// <summary>Gets or sets the render fragment representing the child content.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -123,6 +126,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         try
         {
             ThemeProvider.SetThemeType(systemType);
+            _varList = ThemeProvider.GetCss();
             _ = InvokeAsync(StateHasChanged);
         }
         finally
@@ -156,10 +160,8 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         ThemeProvider.ThemeChanged += OnThemeProviderChanged;
         ThemeWatcher.Changed += OnWatcherChanged;
 
-        // Import co-located JS module for detection and storage helpers.
         _module ??= await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./AryThemeProvider.razor.js");
 
-        // Apply persisted theme if available.
         if (Persistence.IsPersisted)
         {
             var persisted = await TryReadPersistedThemeAsync(_cts.Token).ConfigureAwait(false);
@@ -171,13 +173,15 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             }
         }
 
-        // Initialize system watcher if the provider is in system mode.
         if (ThemeProvider.ThemeType is ThemeType.System)
         {
             var detected = await ThemeWatcher.DetectAsync(_cts.Token).ConfigureAwait(false);
             EnsureProviderMatchesSystem(detected);
             await (ThemeWatcher as AryThemeWatcher)!.StartAsync(_host, _cts.Token).ConfigureAwait(false);
         }
+
+        _varList = ThemeProvider.GetCss();
+        StateHasChanged();
     }
 
     /// <summary>Handles persistence state changes by enabling/disabling local storage usage.</summary>
@@ -246,6 +250,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             else
             {
                 await (ThemeWatcher as AryThemeWatcher)!.StopAsync(_host, _cts.Token).ConfigureAwait(false);
+                _varList = ThemeProvider.GetCss();
                 StateHasChanged();
             }
         }
