@@ -10,7 +10,7 @@ public sealed class ThemeWatcherTests
         var sut = new ThemeWatcher();
 
         // Assert
-        sut.Current.Should().Be(ThemeType.System);
+        sut.ThemeType.Should().Be(ThemeType.System);
     }
 
     [Theory]
@@ -24,7 +24,7 @@ public sealed class ThemeWatcherTests
         var sut = new ThemeWatcher(initial);
 
         // Assert
-        sut.Current.Should().Be(initial);
+        sut.ThemeType.Should().Be(initial);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class ThemeWatcherTests
 
         // Assert
         changed.Should().BeTrue();
-        sut.Current.Should().Be(ThemeType.Dark);
+        sut.ThemeType.Should().Be(ThemeType.Dark);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class ThemeWatcherTests
         // Assert
         events.Should().Be(0);
         tasks.Select(t => t.Result).Should().OnlyContain(b => b == false);
-        sut.Current.Should().Be(initial);
+        sut.ThemeType.Should().Be(initial);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public sealed class ThemeWatcherTests
 
         // Assert
         result.Should().BeFalse();
-        sut.Current.Should().Be(ThemeType.Light);
+        sut.ThemeType.Should().Be(ThemeType.Light);
         calls.Should().Be(0);
     }
 
@@ -165,7 +165,7 @@ public sealed class ThemeWatcherTests
 
         // Assert
         result.Should().BeTrue();
-        sut.Current.Should().Be(ThemeType.Dark);
+        sut.ThemeType.Should().Be(ThemeType.Dark);
         calls.Should().Be(1);
         senderObserved.Should().BeSameAs(sut);
         argsObserved.Should().Be(EventArgs.Empty);
@@ -207,7 +207,7 @@ public sealed class ThemeWatcherTests
 
         // And: basic behavior still works
         sut.SetCurrent(ThemeType.Light).Should().BeTrue();
-        sut.Current.Should().Be(ThemeType.Light);
+        sut.ThemeType.Should().Be(ThemeType.Light);
     }
 
     [Fact]
@@ -224,6 +224,6 @@ public sealed class ThemeWatcherTests
 
         // And: basic behavior still works
         sut.SetCurrent(ThemeType.System).Should().BeTrue();
-        sut.Current.Should().Be(ThemeType.System);
+        sut.ThemeType.Should().Be(ThemeType.System);
     }
 }

@@ -7,11 +7,13 @@
 /// </summary>
 /// <remarks>
 /// This implementation is thread-safe and does not rely on any JavaScript or platform interop. It simply tracks and
-/// reports a manually managed <see cref="ThemeType" /> theme.
+/// reports a manually managed <see cref="Enumerations.ThemeType" /> theme.
 /// </remarks>
 public sealed class ThemeWatcher : IThemeWatcher
 {
-    /// <summary>Holds the current effective <see cref="ThemeType" /> theme being tracked by this watcher.</summary>
+    /// <summary>
+    /// Holds the current effective <see cref="Enumerations.ThemeType" /> theme being tracked by this watcher.
+    /// </summary>
     private ThemeType _current;
 
     /// <summary>
@@ -22,20 +24,24 @@ public sealed class ThemeWatcher : IThemeWatcher
     /// <summary>
     /// Initializes a new instance of the <see cref="ThemeWatcher" /> class with an optional initial theme type.
     /// </summary>
-    /// <param name="initial">The initial <see cref="ThemeType" /> theme. Defaults to <see cref="ThemeType.System" />.</param>
+    /// <param name="initial">
+    /// The initial <see cref="Enumerations.ThemeType" /> theme. Defaults to <see cref="ThemeType.System" />.
+    /// </param>
     public ThemeWatcher(ThemeType initial = ThemeType.System) => _current = initial;
 
-    /// <summary>Occurs when the effective <see cref="ThemeType" /> changes.</summary>
+    /// <summary>Occurs when the effective <see cref="Enumerations.ThemeType" /> changes.</summary>
     public event EventHandler? Changed;
 
-    /// <summary>Gets the most recently observed <see cref="ThemeType" />.</summary>
-    public ThemeType Current => _current;
+    /// <summary>Gets the most recently observed <see cref="Enumerations.ThemeType" />.</summary>
+    public ThemeType ThemeType => _current;
 
-    /// <summary>Detects the current effective <see cref="ThemeType" /> once without subscribing for future changes.</summary>
+    /// <summary>
+    /// Detects the current effective <see cref="Enumerations.ThemeType" /> once without subscribing for future changes.
+    /// </summary>
     /// <param name="cancellationToken">A token used to cancel the asynchronous operation.</param>
     /// <returns>
-    /// A task that completes with the detected <see cref="ThemeType" />. This generic implementation simply returns the
-    /// current stored theme.
+    /// A task that completes with the detected <see cref="Enumerations.ThemeType" />. This generic implementation simply
+    /// returns the current stored theme.
     /// </returns>
     public Task<ThemeType> DetectAsync(CancellationToken cancellationToken = default) => Task.FromResult(_current);
 
@@ -47,16 +53,17 @@ public sealed class ThemeWatcher : IThemeWatcher
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     /// <summary>
-    /// Sets a new <see cref="ThemeType" /> theme programmatically and raises <see cref="Changed" /> if the theme changed.
+    /// Sets a new <see cref="Enumerations.ThemeType" /> theme programmatically and raises <see cref="Changed" /> if the theme
+    /// changed.
     /// </summary>
-    /// <param name="value">The new <see cref="ThemeType" /> to apply.</param>
+    /// <param name="value">The new <see cref="Enumerations.ThemeType" /> to apply.</param>
     /// <returns>
     /// <see langword="true" /> if the current theme was updated and <see cref="Changed" /> was raised; otherwise,
     /// <see langword="false" />.
     /// </returns>
     /// <remarks>
     /// Thread-safe and idempotent for identical values. Event subscribers should read the updated theme from
-    /// <see cref="Current" />.
+    /// <see cref="ThemeType" />.
     /// </remarks>
     public bool SetCurrent(ThemeType value)
     {
