@@ -9,7 +9,7 @@ public enum ThemeType
 {
     /// <summary>
     /// Automatically selects a theme based on the system or browser preferences. Falls back to <see cref="Dark" /> or
-    /// <see cref="Light" />, or <see cref="HighContrast" /> when forced colors are active.
+    /// <see cref="Light" />, or <see cref="HighContrastLight" /> when forced colors are active.
     /// </summary>
     System,
 
@@ -19,6 +19,9 @@ public enum ThemeType
     /// <summary>Represents a WCAG 2.2 AA–compliant dark theme preset.</summary>
     Dark,
 
-    /// <summary>Represents a high-contrast theme optimized for accessibility and forced-color modes.</summary>
-    HighContrast
+    /// <summary>Represents a light high-contrast theme optimized for accessibility and forced-color modes.</summary>
+    HighContrastLight,
+
+    /// <summary>Represents a dark high-contrast theme optimized for accessibility and forced-color modes.</summary>
+    HighContrastDark
 }

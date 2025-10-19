@@ -67,13 +67,13 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         var surface = ThemeProvider.GetStyle(ComponentType.Surface, ComponentElevation.Low);
         var output = new StringBuilder();
 
-        // Define the global variables
-        output.Append(ThemeProvider.GetCss());
-
         // Root resets and color scheme
         output.Append(":root");
         output.Append("{");
         output.Append("color-scheme:light dark;");
+
+        // Define the global variables
+        output.Append(ThemeProvider.GetCss());
         output.Append("}");
 
         // Html and Body global

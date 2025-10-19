@@ -12,8 +12,8 @@ public sealed class StyleHelperTests
         var blue = new ThemeString("blue");
 
         // Act
-        builder.ToCss(red, "color", "theme");
-        builder.ToCss(blue, "border-color", "theme");
+        builder.ToCss("color", red, "theme");
+        builder.ToCss("border-color", blue, "theme");
 
         // Assert
         builder.ToString().Should().Be("--theme-color:red;--theme-border-color:blue;");
@@ -27,7 +27,7 @@ public sealed class StyleHelperTests
         var value = new ThemeString("#fff");
 
         // Act
-        builder.ToCss(value, "background", "Main Theme");
+        builder.ToCss("background", value, "Main Theme");
 
         // Assert
         builder.ToString().Should().Be("--main-theme-background:#fff;");
@@ -41,7 +41,7 @@ public sealed class StyleHelperTests
         var value = new ThemeString("blue");
 
         // Act
-        builder.ToCss(value, "color", null);
+        builder.ToCss("color", value, null);
 
         // Assert
         builder.ToString().Should().Be("color:blue;");
@@ -55,8 +55,8 @@ public sealed class StyleHelperTests
         var value = new ThemeString("red");
 
         // Act
-        builder.ToCss(value, null!, "theme");
-        builder.ToCss(value, " ", "theme");
+        builder.ToCss(null!, value, "theme");
+        builder.ToCss(" ", value, "theme");
 
         // Assert
         builder.ToString().Should().BeEmpty();
@@ -74,7 +74,7 @@ public sealed class StyleHelperTests
     public void ToPrefix_Should_ReturnNormalizedPrefix_When_InputHasVariousFormats(string? input, string expected)
     {
         // Act
-        var result = input.ToCssPrefix();
+        var result = input.ToCssName();
 
         // Assert
         result.Should().Be(expected);

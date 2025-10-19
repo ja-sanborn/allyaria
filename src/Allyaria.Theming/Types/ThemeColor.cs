@@ -57,20 +57,15 @@ public sealed class ThemeColor : ThemeBase
     /// <exception cref="AryArgumentException">Thrown when parsing fails.</exception>
     public static ThemeColor Parse(string value) => new(new HexColor(value));
 
-    /// <summary>
-    /// Derives an accent variant of this theme color for use in component highlights or accent regions. When
-    /// <paramref name="highContrast" /> is <see langword="true" />, returns the original color unchanged to maintain
-    /// high-contrast accessibility. Otherwise, produces a perceptually lighter accent color by shifting the HSV Value upward
-    /// to increase brightness while preserving hue and saturation.
-    /// </summary>
-    /// <param name="highContrast">
-    /// If <see langword="true" />, bypasses accent adjustment and preserves the original color. If <see langword="false" />,
-    /// applies the accent transformation to produce a lighter, more vivid tone.
-    /// </param>
+    /// <summary>Derives an accent variant of this theme color for use in component highlights or accent regions.</summary>
+    /// <param name="highContrast">If true, bypasses brightening.</param>
     /// <returns>
     /// A new <see cref="ThemeColor" /> representing the accent color, or the original color if high-contrast mode is active.
     /// </returns>
-    public ThemeColor ToAccent(bool highContrast = false) => new(Color.ToComponentAccentColor(highContrast));
+    public ThemeColor ToAccent(bool highContrast = false)
+        => highContrast
+            ? this
+            : new ThemeColor(Color.ShiftLightness(0.6));
 
     /// <summary>
     /// Computes the appropriate border color for the element based on its background context, meeting WCAG non-text contrast
