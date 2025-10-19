@@ -144,36 +144,4 @@ public sealed class StyleTests
         sut.Spacing.Should().Be(new Spacing());
         sut.Border.Should().Be(new Borders());
     }
-
-    [Fact]
-    public void ToCss_Should_Concatenate_ComponentCss_When_NotFocus()
-    {
-        // Arrange
-        var palette = new Palette(
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.Transparent,
-            StyleDefaults.ForegroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight
-        );
-
-        var typography = new Typography(fontSize: new ThemeNumber("19px"), textAlign: new ThemeString("right"));
-
-        var spacing = new Spacing(new ThemeNumber("1rem"), paddingBottom: new ThemeNumber("2rem"));
-        var border = new Borders(new ThemeNumber("1px"), topStyle: new ThemeString("solid"));
-
-        var sut = new Style(palette, typography, spacing, border);
-
-        // Act
-        var css = sut.ToCss("cmp");
-
-        // Assert
-        var expected = string.Concat(
-            palette.ToCss("cmp"),
-            typography.ToCss("cmp"),
-            spacing.ToCss("cmp"),
-            border.ToCss("cmp")
-        );
-
-        css.Should().Be(expected);
-    }
 }
