@@ -21,6 +21,6 @@
         <InternalsVisibleTo Include="Allyaria.Components.UnitTests"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Allyaria.Theming\Allyaria.Theming.csproj"/>
+        <ProjectReference Include="..\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj"/>
     </ItemGroup>
 </Project>
