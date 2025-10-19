@@ -63,43 +63,43 @@ public static class StyleDefaults
     public static readonly ThemeNumber Padding = Sizing.Size3;
 
     /// <summary>Default background color for dark theme.</summary>
-    public static readonly ThemeColor BackgroundThemeColorDark = new(Colors.Grey900);
+    public static readonly ThemeColor BackgroundColorDark = new(Colors.BlueGrey900);
 
     /// <summary>Default background color for high-contrast theme.</summary>
-    public static readonly ThemeColor BackgroundThemeColorHighContrast = new(Colors.White);
+    public static readonly ThemeColor BackgroundColorHighContrast = new(Colors.White);
 
     /// <summary>Default background color for light theme.</summary>
-    public static readonly ThemeColor BackgroundThemeColorLight = new(Colors.Grey50);
+    public static readonly ThemeColor BackgroundColorLight = new(Colors.BlueGrey50);
 
     /// <summary>Default foreground color for dark theme.</summary>
-    public static readonly ThemeColor ForegroundThemeColorDark = new(Colors.Grey50);
+    public static readonly ThemeColor ForegroundColorDark = new(Colors.BlueGrey50);
 
     /// <summary>Default foreground color for high-contrast theme.</summary>
-    public static readonly ThemeColor ForegroundThemeColorHighContrast = new(Colors.Black);
+    public static readonly ThemeColor ForegroundColorHighContrast = new(Colors.Black);
 
     /// <summary>Default foreground color for light theme.</summary>
-    public static readonly ThemeColor ForegroundThemeColorLight = new(Colors.Grey900);
+    public static readonly ThemeColor ForegroundColorLight = new(Colors.BlueGrey900);
 
     /// <summary>Default transparent color.</summary>
     public static readonly ThemeColor Transparent = new(Colors.Transparent);
 
     /// <summary>Default dark palette.</summary>
     public static readonly Palette PaletteDark = new(
-        backgroundColor: BackgroundThemeColorDark,
-        foregroundColor: ForegroundThemeColorDark
+        backgroundColor: BackgroundColorDark,
+        foregroundColor: ForegroundColorDark
     );
 
     /// <summary>Default high-contrast palette.</summary>
     public static readonly Palette PaletteHighContrast = new(
-        backgroundColor: BackgroundThemeColorHighContrast,
-        foregroundColor: ForegroundThemeColorHighContrast,
+        backgroundColor: BackgroundColorHighContrast,
+        foregroundColor: ForegroundColorHighContrast,
         isHighContrast: true
     );
 
     /// <summary>Default light palette.</summary>
     public static readonly Palette PaletteLight = new(
-        backgroundColor: BackgroundThemeColorLight,
-        foregroundColor: ForegroundThemeColorLight
+        backgroundColor: BackgroundColorLight,
+        foregroundColor: ForegroundColorLight
     );
 
     /// <summary>

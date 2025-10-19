@@ -23,16 +23,15 @@ internal readonly record struct PaletteVariant
     /// </summary>
     /// <param name="paletteLight">
     /// Optional custom light mode palette. If <see langword="null" />, defaults to
-    /// <see cref="StyleDefaults.BackgroundThemeColorLight" /> and <see cref="StyleDefaults.BackgroundThemeColorDark" />.
+    /// <see cref="StyleDefaults.BackgroundColorLight" /> and <see cref="StyleDefaults.BackgroundColorDark" />.
     /// </param>
     /// <param name="paletteDark">
     /// Optional custom dark mode palette. If <see langword="null" />, defaults to
-    /// <see cref="StyleDefaults.BackgroundThemeColorDark" /> and <see cref="StyleDefaults.ForegroundThemeColorDark" />.
+    /// <see cref="StyleDefaults.BackgroundColorDark" /> and <see cref="StyleDefaults.ForegroundColorDark" />.
     /// </param>
     /// <param name="paletteHighContrast">
     /// Optional custom high-contrast palette. If <see langword="null" />, defaults to
-    /// <see cref="StyleDefaults.BackgroundThemeColorHighContrast" /> and
-    /// <see cref="StyleDefaults.ForegroundThemeColorHighContrast" />.
+    /// <see cref="StyleDefaults.BackgroundColorHighContrast" /> and <see cref="StyleDefaults.ForegroundColorHighContrast" />.
     /// </param>
     /// <remarks>
     /// Each palette initializes a corresponding <see cref="PaletteElevation" /> hierarchy to support consistent appearance

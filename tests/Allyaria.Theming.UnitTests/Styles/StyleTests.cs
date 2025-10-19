@@ -10,10 +10,10 @@ public sealed class StyleTests
         var original = new Style();
 
         var overridePalette = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            foregroundColor: StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            foregroundColor: StyleDefaults.ForegroundColorHighContrast,
             backgroundColor: StyleDefaults.Transparent,
-            borderColor: StyleDefaults.ForegroundThemeColorHighContrast,
+            borderColor: StyleDefaults.ForegroundColorHighContrast,
             isHighContrast: true
         );
 
@@ -72,10 +72,10 @@ public sealed class StyleTests
         // Arrange
         // Use clearly non-default values where possible to ensure they flow through.
         var customPalette = new Palette(
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorLight,
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.ForegroundColorDark,
+            StyleDefaults.ForegroundColorLight,
             true
         );
 

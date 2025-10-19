@@ -9,8 +9,8 @@ public sealed class PaletteStateTests
         // Arrange
         var baseline = new Palette(
             null,
-            StyleDefaults.PaletteLight.BackgroundThemeColor,
-            StyleDefaults.PaletteLight.ForegroundThemeColor
+            StyleDefaults.PaletteLight.BackgroundColor,
+            StyleDefaults.PaletteLight.ForegroundColor
         );
 
         // Act

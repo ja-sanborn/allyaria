@@ -15,11 +15,21 @@ internal readonly record struct TypographyArea
         : this(null) { }
 
     /// <summary>Initializes a new instance of the <see cref="TypographyArea" /> struct.</summary>
+    /// <param name="linkTypography">
+    /// Optional link typography. When <see langword="null" />, a new <see cref="Typography" /> is created using default
+    /// values.
+    /// </param>
     /// <param name="surfaceTypography">
     /// Optional surface typography. When <see langword="null" />, a new <see cref="Typography" /> is created using default
     /// values.
     /// </param>
-    public TypographyArea(Typography? surfaceTypography = null) => Surface = surfaceTypography ?? new Typography();
+    public TypographyArea(Typography? linkTypography = null, Typography? surfaceTypography = null)
+    {
+        Link = linkTypography ?? new Typography();
+        Surface = surfaceTypography ?? new Typography();
+    }
+
+    public Typography Link { get; init; }
 
     /// <summary>Gets the typography applied to the component’s primary surface (e.g., general text content).</summary>
     public Typography Surface { get; init; }
@@ -28,11 +38,13 @@ internal readonly record struct TypographyArea
     /// Returns a new <see cref="TypographyArea" /> with optional overrides applied. Any parameter left <see langword="null" />
     /// retains the current theme.
     /// </summary>
+    /// <param name="linkTypography">Optional override for <see cref="Link" />.</param>
     /// <param name="surfaceTypography">Optional override for <see cref="Surface" />.</param>
     /// <returns>A new <see cref="TypographyArea" /> with the specified overrides.</returns>
-    public TypographyArea Cascade(Typography? surfaceTypography = null)
+    public TypographyArea Cascade(Typography? linkTypography = null, Typography? surfaceTypography = null)
         => this with
         {
+            Link = linkTypography ?? Link,
             Surface = surfaceTypography ?? Surface
         };
 
@@ -45,6 +57,7 @@ internal readonly record struct TypographyArea
     public Typography ToTypography(ComponentType type)
         => type switch
         {
+            ComponentType.Link => Link,
             _ => Surface
         };
 }

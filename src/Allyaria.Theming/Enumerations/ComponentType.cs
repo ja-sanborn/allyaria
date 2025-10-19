@@ -4,8 +4,12 @@
 public enum ComponentType
 {
     /// <summary>
-    /// Represents a Material Design <c>Surface</c> component, providing the base layer for content. Surfaces define elevation,
-    /// background color, and tonal mapping within a theme.
+    /// Represents a Material Design <c>Link</c> component, providing a clickable text element.
+    /// </summary>
+    Link,
+
+    /// <summary>
+    /// Represents a Material Design <c>Surface</c> component, providing the base layer for content.
     /// </summary>
     Surface
 }

@@ -10,10 +10,10 @@ public sealed class PaletteVariantTests
         var original = new PaletteVariant();
 
         var customDark = new Palette(
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.ForegroundColorDark,
+            StyleDefaults.ForegroundColorDark
         );
 
         // Act
@@ -36,10 +36,10 @@ public sealed class PaletteVariantTests
         var original = new PaletteVariant();
 
         var customHigh = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
             true
         );
 
@@ -63,10 +63,10 @@ public sealed class PaletteVariantTests
         var original = new PaletteVariant();
 
         var customLight = new Palette(
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.ForegroundColorLight,
+            StyleDefaults.ForegroundColorLight
         );
 
         // Act
@@ -92,24 +92,24 @@ public sealed class PaletteVariantTests
         var original = new PaletteVariant();
 
         var customLight = new Palette(
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.ForegroundColorLight,
+            StyleDefaults.ForegroundColorLight
         );
 
         var customDark = new Palette(
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.ForegroundColorDark,
+            StyleDefaults.ForegroundColorDark
         );
 
         var customHigh = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
             true
         );
 
@@ -176,24 +176,24 @@ public sealed class PaletteVariantTests
         // Arrange
         // Use explicit distinct bases to ensure different elevation trees are actually used
         var light = new Palette(
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.BackgroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight,
-            StyleDefaults.ForegroundThemeColorLight
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.BackgroundColorLight,
+            StyleDefaults.ForegroundColorLight,
+            StyleDefaults.ForegroundColorLight
         );
 
         var dark = new Palette(
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.BackgroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark,
-            StyleDefaults.ForegroundThemeColorDark
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.BackgroundColorDark,
+            StyleDefaults.ForegroundColorDark,
+            StyleDefaults.ForegroundColorDark
         );
 
         var high = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
             true
         );
 

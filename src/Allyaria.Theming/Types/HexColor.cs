@@ -1074,6 +1074,24 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     }
 
     /// <summary>
+    /// Derives a component accent color from the current color instance. When <paramref name="highContrast" /> is
+    /// <see langword="true" />, the method returns the current color unchanged. Otherwise, it produces a lighter variant by
+    /// shifting the color’s brightness (HSV Value) upward by approximately 60%.
+    /// </summary>
+    /// <param name="highContrast">
+    /// If <see langword="true" />, disables accent adjustment and preserves the original color for high-contrast themes. If
+    /// <see langword="false" />, returns a perceptually lighter accent color derived from this instance.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="HexColor" /> representing the component accent color, or the original color when high contrast mode is
+    /// active.
+    /// </returns>
+    public HexColor ToComponentAccentColor(bool highContrast = false)
+        => highContrast
+            ? this
+            : ShiftLightness(0.60);
+
+    /// <summary>
     /// Derives a component border color. If the component has its own fill (e.g., a button), pass it via
     /// <paramref name="componentFill" />. If the component is transparent (no fill), leave <paramref name="componentFill" />
     /// as <see langword="null" /> and this will behave as a divider on <paramref name="outerBackground" />. In high-contrast

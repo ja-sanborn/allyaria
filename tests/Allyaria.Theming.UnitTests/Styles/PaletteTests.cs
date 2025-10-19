@@ -25,11 +25,11 @@ public sealed class PaletteTests
         );
 
         // Assert
-        var ratio = ((HexColor)next.ForegroundThemeColor).ContrastRatio((HexColor)next.BackgroundThemeColor);
+        var ratio = ((HexColor)next.ForegroundColor).ContrastRatio((HexColor)next.BackgroundColor);
         ratio.Should().BeGreaterThanOrEqualTo(4.5);
 
-        var expected = next.ForegroundThemeColor.ToBorder(newSurface, newBackground, next.IsHighContrast);
-        next.BorderThemeColor.Should().BeEquivalentTo(expected);
+        var expected = next.ForegroundColor.ToBorder(newSurface, newBackground, next.IsHighContrast);
+        next.BorderColor.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class PaletteTests
 
         // Assert
         next.IsHighContrast.Should().BeTrue();
-        next.BorderThemeColor.Should().BeEquivalentTo(explicitBorder);
+        next.BorderColor.Should().BeEquivalentTo(explicitBorder);
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public sealed class PaletteTests
         var next = sut.Cascade(backgroundColor: surface);
 
         // Assert
-        var expected = next.ForegroundThemeColor.ToBorder(next.SurfaceThemeColor, null, next.IsHighContrast);
-        next.BorderThemeColor.Should().BeEquivalentTo(expected);
+        var expected = next.ForegroundColor.ToBorder(next.SurfaceThemeColor, null, next.IsHighContrast);
+        next.BorderColor.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -80,15 +80,15 @@ public sealed class PaletteTests
 
         // Assert
         sut.IsHighContrast.Should().BeFalse();
-        sut.SurfaceThemeColor.Should().BeEquivalentTo(StyleDefaults.BackgroundThemeColorLight);
-        sut.BackgroundThemeColor.Should().BeEquivalentTo(StyleDefaults.Transparent);
+        sut.SurfaceThemeColor.Should().BeEquivalentTo(StyleDefaults.BackgroundColorLight);
+        sut.BackgroundColor.Should().BeEquivalentTo(StyleDefaults.Transparent);
 
-        var expectedBaseFg = StyleDefaults.ForegroundThemeColorLight;
-        var contrasted = expectedBaseFg.EnsureContrast(sut.BackgroundThemeColor);
-        sut.ForegroundThemeColor.Should().BeEquivalentTo(contrasted);
+        var expectedBaseFg = StyleDefaults.ForegroundColorLight;
+        var contrasted = expectedBaseFg.EnsureContrast(sut.BackgroundColor);
+        sut.ForegroundColor.Should().BeEquivalentTo(contrasted);
 
-        var expectedBorder = sut.ForegroundThemeColor.ToBorder(sut.SurfaceThemeColor);
-        sut.BorderThemeColor.Should().BeEquivalentTo(expectedBorder);
+        var expectedBorder = sut.ForegroundColor.ToBorder(sut.SurfaceThemeColor);
+        sut.BorderColor.Should().BeEquivalentTo(expectedBorder);
     }
 
     [Fact]
@@ -99,14 +99,14 @@ public sealed class PaletteTests
 
         // Assert
         sut.IsHighContrast.Should().BeTrue();
-        sut.SurfaceThemeColor.Should().BeEquivalentTo(StyleDefaults.BackgroundThemeColorHighContrast);
-        sut.BackgroundThemeColor.Should().BeEquivalentTo(StyleDefaults.Transparent);
+        sut.SurfaceThemeColor.Should().BeEquivalentTo(StyleDefaults.BackgroundColorHighContrast);
+        sut.BackgroundColor.Should().BeEquivalentTo(StyleDefaults.Transparent);
 
-        var expectedBaseFg = StyleDefaults.ForegroundThemeColorHighContrast;
-        var contrasted = expectedBaseFg.EnsureContrast(sut.BackgroundThemeColor);
-        sut.ForegroundThemeColor.Should().BeEquivalentTo(contrasted);
+        var expectedBaseFg = StyleDefaults.ForegroundColorHighContrast;
+        var contrasted = expectedBaseFg.EnsureContrast(sut.BackgroundColor);
+        sut.ForegroundColor.Should().BeEquivalentTo(contrasted);
 
-        sut.BorderThemeColor.Should().BeEquivalentTo(sut.ForegroundThemeColor);
+        sut.BorderColor.Should().BeEquivalentTo(sut.ForegroundColor);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public sealed class PaletteTests
         // Assert
         var expectedFg = foreground.EnsureContrast(background);
         var expectedBorder = expectedFg.ToBorder(surface, background);
-        sut.BorderThemeColor.Should().BeEquivalentTo(expectedBorder);
+        sut.BorderColor.Should().BeEquivalentTo(expectedBorder);
     }
 
     [Fact]
@@ -133,14 +133,14 @@ public sealed class PaletteTests
         var surface = new ThemeColor(Colors.Grey50);
         var background = new ThemeColor(Colors.Red500);
         var tooLowContrastFg = new ThemeColor(Colors.Red500);
-        var explicitBorder = new ThemeColor(Colors.Bluegrey700);
+        var explicitBorder = new ThemeColor(Colors.BlueGrey700);
 
         // Act
         var sut = new Palette(surface, background, tooLowContrastFg, explicitBorder);
 
         // Assert
-        sut.BorderThemeColor.Should().BeEquivalentTo(explicitBorder);
-        var ratio = ((HexColor)sut.ForegroundThemeColor).ContrastRatio((HexColor)sut.BackgroundThemeColor);
+        sut.BorderColor.Should().BeEquivalentTo(explicitBorder);
+        var ratio = ((HexColor)sut.ForegroundColor).ContrastRatio((HexColor)sut.BackgroundColor);
         ratio.Should().BeGreaterThanOrEqualTo(4.5);
     }
 
@@ -152,12 +152,12 @@ public sealed class PaletteTests
         var foreground = new ThemeColor(Colors.Grey900);
 
         var sutA = new Palette(surface, StyleDefaults.Transparent, foreground);
-        var expectedBorderA = sutA.ForegroundThemeColor.ToBorder(sutA.SurfaceThemeColor);
-        sutA.BorderThemeColor.Should().BeEquivalentTo(expectedBorderA);
+        var expectedBorderA = sutA.ForegroundColor.ToBorder(sutA.SurfaceThemeColor);
+        sutA.BorderColor.Should().BeEquivalentTo(expectedBorderA);
 
         var sutB = new Palette(surface, surface, foreground);
-        var expectedBorderB = sutB.ForegroundThemeColor.ToBorder(sutB.SurfaceThemeColor);
-        sutB.BorderThemeColor.Should().BeEquivalentTo(expectedBorderB);
+        var expectedBorderB = sutB.ForegroundColor.ToBorder(sutB.SurfaceThemeColor);
+        sutB.BorderColor.Should().BeEquivalentTo(expectedBorderB);
     }
 
     [Fact]
@@ -176,17 +176,17 @@ public sealed class PaletteTests
         var pressed = sut.ToPressed();
 
         // Assert
-        focused.ForegroundThemeColor.Should().NotBe(sut.ForegroundThemeColor);
-        hovered.ForegroundThemeColor.Should().NotBe(sut.ForegroundThemeColor);
-        pressed.ForegroundThemeColor.Should().NotBe(sut.ForegroundThemeColor);
+        focused.ForegroundColor.Should().NotBe(sut.ForegroundColor);
+        hovered.ForegroundColor.Should().NotBe(sut.ForegroundColor);
+        pressed.ForegroundColor.Should().NotBe(sut.ForegroundColor);
 
-        ((HexColor)focused.ForegroundThemeColor).ContrastRatio((HexColor)focused.BackgroundThemeColor).Should()
+        ((HexColor)focused.ForegroundColor).ContrastRatio((HexColor)focused.BackgroundColor).Should()
             .BeGreaterThanOrEqualTo(4.5);
 
-        ((HexColor)hovered.ForegroundThemeColor).ContrastRatio((HexColor)hovered.BackgroundThemeColor).Should()
+        ((HexColor)hovered.ForegroundColor).ContrastRatio((HexColor)hovered.BackgroundColor).Should()
             .BeGreaterThanOrEqualTo(4.5);
 
-        ((HexColor)pressed.ForegroundThemeColor).ContrastRatio((HexColor)pressed.BackgroundThemeColor).Should()
+        ((HexColor)pressed.ForegroundColor).ContrastRatio((HexColor)pressed.BackgroundColor).Should()
             .BeGreaterThanOrEqualTo(4.5);
     }
 
@@ -208,8 +208,8 @@ public sealed class PaletteTests
 
         // Assert
         var expectedBg = bg.Value;
-        var expectedFg = sut.ForegroundThemeColor.Value;
-        var expectedBorder = sut.BorderThemeColor.Value;
+        var expectedFg = sut.ForegroundColor.Value;
+        var expectedBorder = sut.BorderColor.Value;
 
         css.Should().Contain($"background-color:{expectedBg};")
             .And.Contain($"color:{expectedFg};")
@@ -232,9 +232,9 @@ public sealed class PaletteTests
 
         // Assert
         disabled.SurfaceThemeColor.Should().NotBe(sut.SurfaceThemeColor);
-        disabled.BackgroundThemeColor.Should().NotBe(sut.BackgroundThemeColor);
-        disabled.ForegroundThemeColor.Should().NotBe(sut.ForegroundThemeColor);
-        disabled.BorderThemeColor.Should().NotBe(sut.BorderThemeColor);
+        disabled.BackgroundColor.Should().NotBe(sut.BackgroundColor);
+        disabled.ForegroundColor.Should().NotBe(sut.ForegroundColor);
+        disabled.BorderColor.Should().NotBe(sut.BorderColor);
     }
 
     [Fact]
@@ -242,9 +242,9 @@ public sealed class PaletteTests
     {
         // Arrange
         var sut = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
             new ThemeColor(Colors.Red500),
-            StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
             isHighContrast: true
         );
 
@@ -253,9 +253,9 @@ public sealed class PaletteTests
 
         // Assert
         dragged.SurfaceThemeColor.Should().BeEquivalentTo(sut.SurfaceThemeColor);
-        dragged.BackgroundThemeColor.Should().BeEquivalentTo(sut.BackgroundThemeColor);
-        dragged.BorderThemeColor.Should().BeEquivalentTo(sut.BorderThemeColor);
-        dragged.ForegroundThemeColor.Should().BeEquivalentTo(sut.ForegroundThemeColor);
+        dragged.BackgroundColor.Should().BeEquivalentTo(sut.BackgroundColor);
+        dragged.BorderColor.Should().BeEquivalentTo(sut.BorderColor);
+        dragged.ForegroundColor.Should().BeEquivalentTo(sut.ForegroundColor);
     }
 
     [Fact]
@@ -263,9 +263,9 @@ public sealed class PaletteTests
     {
         // Arrange
         var sut = new Palette(
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.BackgroundThemeColorHighContrast,
-            StyleDefaults.ForegroundThemeColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.BackgroundColorHighContrast,
+            StyleDefaults.ForegroundColorHighContrast,
             isHighContrast: true
         );
 

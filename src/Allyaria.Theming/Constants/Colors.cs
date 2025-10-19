@@ -123,35 +123,35 @@ public static class Colors
     /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueA700" />: <c>#2962FFFF</c></summary>
     public static readonly HexColor BlueA700 = new("#2962FFFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey100" />: <c>#CFD8DCFF</c></summary>
-    public static readonly HexColor Bluegrey100 = new("#CFD8DCFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey100" />: <c>#CFD8DCFF</c></summary>
+    public static readonly HexColor BlueGrey100 = new("#CFD8DCFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey200" />: <c>#B0BEC5FF</c></summary>
-    public static readonly HexColor Bluegrey200 = new("#B0BEC5FF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey200" />: <c>#B0BEC5FF</c></summary>
+    public static readonly HexColor BlueGrey200 = new("#B0BEC5FF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey300" />: <c>#90A4AEFF</c></summary>
-    public static readonly HexColor Bluegrey300 = new("#90A4AEFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey300" />: <c>#90A4AEFF</c></summary>
+    public static readonly HexColor BlueGrey300 = new("#90A4AEFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey400" />: <c>#78909CFF</c></summary>
-    public static readonly HexColor Bluegrey400 = new("#78909CFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey400" />: <c>#78909CFF</c></summary>
+    public static readonly HexColor BlueGrey400 = new("#78909CFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey50" />: <c>#ECEFF1FF</c></summary>
-    public static readonly HexColor Bluegrey50 = new("#ECEFF1FF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey50" />: <c>#ECEFF1FF</c></summary>
+    public static readonly HexColor BlueGrey50 = new("#ECEFF1FF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey500" />: <c>#607D8BFF</c></summary>
-    public static readonly HexColor Bluegrey500 = new("#607D8BFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey500" />: <c>#607D8BFF</c></summary>
+    public static readonly HexColor BlueGrey500 = new("#607D8BFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey600" />: <c>#546E7AFF</c></summary>
-    public static readonly HexColor Bluegrey600 = new("#546E7AFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey600" />: <c>#546E7AFF</c></summary>
+    public static readonly HexColor BlueGrey600 = new("#546E7AFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey700" />: <c>#455A64FF</c></summary>
-    public static readonly HexColor Bluegrey700 = new("#455A64FF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey700" />: <c>#455A64FF</c></summary>
+    public static readonly HexColor BlueGrey700 = new("#455A64FF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey800" />: <c>#37474FFF</c></summary>
-    public static readonly HexColor Bluegrey800 = new("#37474FFF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey800" />: <c>#37474FFF</c></summary>
+    public static readonly HexColor BlueGrey800 = new("#37474FFF");
 
-    /// <summary>Represents the <see cref="HexColor" /> for <see cref="Bluegrey900" />: <c>#263238FF</c></summary>
-    public static readonly HexColor Bluegrey900 = new("#263238FF");
+    /// <summary>Represents the <see cref="HexColor" /> for <see cref="BlueGrey900" />: <c>#263238FF</c></summary>
+    public static readonly HexColor BlueGrey900 = new("#263238FF");
 
     /// <summary>Represents the <see cref="HexColor" /> for <see cref="Blueviolet" />: <c>#8A2BE2FF</c></summary>
     public static readonly HexColor Blueviolet = new("#8A2BE2FF");

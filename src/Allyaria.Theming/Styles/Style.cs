@@ -91,7 +91,7 @@ public readonly record struct Style
             Palette.ToCss(palettePrefix),
             Typography.ToCss(typoPrefix),
             Spacing.ToCss(varPrefix),
-            Border.ToCss(varPrefix, state is ComponentState.Focused)
+            Border.ToCss(varPrefix)
         );
     }
 }

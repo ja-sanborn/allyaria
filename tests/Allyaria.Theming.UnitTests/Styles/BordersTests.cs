@@ -142,84 +142,6 @@ public sealed class BordersTests
     }
 
     [Fact]
-    public void FocusWidth_Should_Be2px_When_LargestWidthLessThan2()
-    {
-        // Arrange
-        var sut = new Borders(
-            new ThemeNumber("1.25px"),
-            new ThemeNumber("1.5px"),
-            new ThemeNumber("0px"),
-            new ThemeNumber("1.99px")
-        );
-
-        // Act
-        var focus = sut.FocusWidth;
-
-        // Assert
-        focus.Value.Should().Be("2px");
-        focus.Number.Should().Be(2.0);
-    }
-
-    [Theory]
-    [InlineData("2px", "4px")]
-    [InlineData("5px", "7px")]
-    [InlineData("2", "4px")]
-    public void FocusWidth_Should_BeLargestPlus2px_When_LargestWidthAtLeast2(string largestInput, string expected)
-    {
-        // Arrange: put the largest on StartWidth, mix others smaller
-        var sut = new Borders(
-            new ThemeNumber("1px"),
-            new ThemeNumber("1.5px"),
-            new ThemeNumber("0px"),
-            new ThemeNumber(largestInput)
-        );
-
-        // Act
-        var focus = sut.FocusWidth;
-
-        // Assert
-        focus.Value.Should().Be(expected);
-    }
-
-    [Fact]
-    public void FocusWidth_Should_DisregardUnits_When_WidthsHaveDifferentUnits()
-    {
-        // Arrange: Numbers are 1 (rem), 50 (%), 3 (px), 2 (em) → largest=50 → focus=52px
-        var sut = new Borders(
-            new ThemeNumber("1rem"),
-            new ThemeNumber("50%"),
-            new ThemeNumber("3px"),
-            new ThemeNumber("2em")
-        );
-
-        // Act
-        var focus = sut.FocusWidth;
-
-        // Assert
-        focus.Value.Should().Be("52px");
-        focus.Number.Should().Be(52.0);
-    }
-
-    [Fact]
-    public void FocusWidth_Should_UseMaxAcrossAllSides_When_WidthsDiffer()
-    {
-        // Arrange
-        var sut = new Borders(
-            new ThemeNumber("3px"),
-            new ThemeNumber("1px"),
-            new ThemeNumber("4px"),
-            new ThemeNumber("2px")
-        );
-
-        // Act
-        var focus = sut.FocusWidth;
-
-        // Assert (largest = 4 → 6px)
-        focus.Value.Should().Be("6px");
-        focus.Number.Should().Be(6.0);
-    }
-
-    [Fact]
     public void FromSingle_Should_CreateUniformBorders_When_ValidInputs()
     {
         // Arrange
@@ -351,48 +273,6 @@ public sealed class BordersTests
         css.Should().Contain("border-inline-end-width").And.NotContain("--border-inline-end-width");
         css.Should().Contain("border-bottom-width").And.NotContain("--border-bottom-width");
         css.Should().Contain("border-inline-start-width").And.NotContain("--border-inline-start-width");
-    }
-
-    [Fact]
-    public void ToCss_Should_UseFocusWidthAndDashedStyle_When_IsFocusTrue()
-    {
-        // Arrange
-        // Largest width = 3px -> FocusWidth = 3 + 2 = 5px (see FocusWidth logic)
-        var sut = new Borders(
-            new ThemeNumber("1px"),
-            new ThemeNumber("3px"),
-            new ThemeNumber("2px"),
-            new ThemeNumber("0px"),
-            new ThemeString("solid"),
-            new ThemeString("double"),
-            new ThemeString("groove"),
-            new ThemeString("ridge"),
-            new ThemeNumber("2px"),
-            new ThemeNumber("3px"),
-            new ThemeNumber("4px"),
-            new ThemeNumber("5px")
-        );
-
-        // Act
-        var css = sut.ToCss(isFocused: true);
-
-        // Assert (all widths should be the computed FocusWidth)
-        css.Should().Contain("border-top-width").And.Contain("5px");
-        css.Should().Contain("border-inline-end-width").And.Contain("5px");
-        css.Should().Contain("border-bottom-width").And.Contain("5px");
-        css.Should().Contain("border-inline-start-width").And.Contain("5px");
-
-        // Assert (all styles should be dashed regardless of input)
-        css.Should().Contain("border-top-style").And.Contain("dashed");
-        css.Should().Contain("border-inline-end-style").And.Contain("dashed");
-        css.Should().Contain("border-bottom-style").And.Contain("dashed");
-        css.Should().Contain("border-inline-start-style").And.Contain("dashed");
-
-        // Radii are not affected by focus flag
-        css.Should().Contain("border-top-left-radius").And.Contain("2px");
-        css.Should().Contain("border-top-right-radius").And.Contain("3px");
-        css.Should().Contain("border-bottom-right-radius").And.Contain("4px");
-        css.Should().Contain("border-bottom-left-radius").And.Contain("5px");
     }
 
     [Fact]

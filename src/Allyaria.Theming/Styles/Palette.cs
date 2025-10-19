@@ -29,6 +29,9 @@ public readonly record struct Palette
     /// <param name="foregroundColor">
     /// Optional foreground (text) color. Defaults to Light or HighContrast preset, then adjusted for contrast.
     /// </param>
+    /// <param name="accentColor">
+    /// Optional accent color. If not provided, it is derived from foreground/background/fill and contrast rules.
+    /// </param>
     /// <param name="borderColor">
     /// Optional border color. If not provided, it is derived from foreground/background/fill and contrast rules.
     /// </param>
@@ -36,47 +39,52 @@ public readonly record struct Palette
     public Palette(ThemeColor? surfaceColor = null,
         ThemeColor? backgroundColor = null,
         ThemeColor? foregroundColor = null,
+        ThemeColor? accentColor = null,
         ThemeColor? borderColor = null,
         bool isHighContrast = false)
     {
         IsHighContrast = isHighContrast;
 
         SurfaceThemeColor = surfaceColor ?? (IsHighContrast
-            ? StyleDefaults.BackgroundThemeColorHighContrast
-            : StyleDefaults.BackgroundThemeColorLight);
+            ? StyleDefaults.BackgroundColorHighContrast
+            : StyleDefaults.BackgroundColorLight);
 
-        BackgroundThemeColor = backgroundColor ?? StyleDefaults.Transparent;
+        BackgroundColor = backgroundColor ?? StyleDefaults.Transparent;
 
-        ForegroundThemeColor = foregroundColor ?? (IsHighContrast
-            ? StyleDefaults.ForegroundThemeColorHighContrast
-            : StyleDefaults.ForegroundThemeColorLight);
+        ForegroundColor = foregroundColor ?? (IsHighContrast
+            ? StyleDefaults.ForegroundColorHighContrast
+            : StyleDefaults.ForegroundColorLight);
 
-        ForegroundThemeColor = ForegroundThemeColor.EnsureContrast(BackgroundThemeColor);
+        ForegroundColor = ForegroundColor.EnsureContrast(BackgroundColor);
+        AccentColor = accentColor ?? ForegroundColor.ToAccent(IsHighContrast);
 
-        var fillForBorder = backgroundColor is null || BackgroundThemeColor == StyleDefaults.Transparent ||
-            BackgroundThemeColor == SurfaceThemeColor
+        var fillForBorder = backgroundColor is null || BackgroundColor == StyleDefaults.Transparent ||
+            BackgroundColor == SurfaceThemeColor
                 ? null
-                : BackgroundThemeColor;
+                : BackgroundColor;
 
-        BorderThemeColor = borderColor ?? ForegroundThemeColor.ToBorder(
-            SurfaceThemeColor, fillForBorder, IsHighContrast
-        );
+        BorderColor = borderColor ?? ForegroundColor.ToBorder(SurfaceThemeColor, fillForBorder, IsHighContrast);
     }
+
+    /// <summary>
+    /// Gets or initializes the accent color of the palette calculated from the <see cref="ForegroundColor" />.
+    /// </summary>
+    public ThemeColor AccentColor { get; init; }
 
     /// <summary>
     /// Gets or initializes the background fill color of the palette. Transparent fill is treated as absent for border
     /// derivation.
     /// </summary>
-    public ThemeColor BackgroundThemeColor { get; init; }
+    public ThemeColor BackgroundColor { get; init; }
 
     /// <summary>Gets or initializes the border color of the palette.</summary>
-    public ThemeColor BorderThemeColor { get; init; }
+    public ThemeColor BorderColor { get; init; }
 
     /// <summary>
     /// Gets or initializes the foreground (text) color of the palette. This theme is contrast-adjusted against
-    /// <see cref="BackgroundThemeColor" /> during construction/cascade.
+    /// <see cref="BackgroundColor" /> during construction/cascade.
     /// </summary>
-    public ThemeColor ForegroundThemeColor { get; init; }
+    public ThemeColor ForegroundColor { get; init; }
 
     /// <summary>Gets or initializes a theme indicating whether high-contrast rules are active.</summary>
     public bool IsHighContrast { get; init; }
@@ -91,6 +99,7 @@ public readonly record struct Palette
     /// <param name="surfaceColor">Optional surface color override.</param>
     /// <param name="backgroundColor">Optional background fill override.</param>
     /// <param name="foregroundColor">Optional foreground override (will be contrast-adjusted against the resulting fill).</param>
+    /// <param name="accentColor">Optional explicit accent override; if not provided, the accent is derived.</param>
     /// <param name="borderColor">Optional explicit border override; if not provided, the border is derived.</param>
     /// <param name="isHighContrast">Optional high-contrast override.</param>
     /// <returns>
@@ -100,17 +109,21 @@ public readonly record struct Palette
     public Palette Cascade(ThemeColor? surfaceColor = null,
         ThemeColor? backgroundColor = null,
         ThemeColor? foregroundColor = null,
+        ThemeColor? accentColor = null,
         ThemeColor? borderColor = null,
         bool? isHighContrast = null)
     {
         // Compute the next-base values first.
         var nextSurface = surfaceColor ?? SurfaceThemeColor;
-        var nextBackground = backgroundColor ?? BackgroundThemeColor;
+        var nextBackground = backgroundColor ?? BackgroundColor;
         var nextIsHighContrast = isHighContrast ?? IsHighContrast;
 
         // Enforce readable contrast for the prospective foreground against the prospective fill.
-        var baseForeground = foregroundColor ?? ForegroundThemeColor;
+        var baseForeground = foregroundColor ?? ForegroundColor;
         var contrastedForeground = baseForeground.EnsureContrast(nextBackground);
+
+        // Derive the accent color if not explicitly supplied.
+        var nextAccent = accentColor ?? contrastedForeground.ToAccent(nextIsHighContrast);
 
         // Normalize the fill for border derivation.
         var fillForBorder = nextBackground == StyleDefaults.Transparent || nextBackground == nextSurface
@@ -126,9 +139,10 @@ public readonly record struct Palette
         return this with
         {
             SurfaceThemeColor = nextSurface,
-            BackgroundThemeColor = nextBackground,
-            ForegroundThemeColor = contrastedForeground,
-            BorderThemeColor = derivedBorder,
+            BackgroundColor = nextBackground,
+            ForegroundColor = contrastedForeground,
+            AccentColor = nextAccent,
+            BorderColor = derivedBorder,
             IsHighContrast = nextIsHighContrast
         };
     }
@@ -138,6 +152,7 @@ public readonly record struct Palette
     /// Optional prefix used when generating CSS custom properties. If provided, each property name is emitted as
     /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix may be normalized by the underlying helper.
     /// </param>
+    /// <param name="includeBackground">Include the background color in the CSS output.</param>
     /// <returns>
     /// A string containing CSS color declarations for <c>background-color</c>, <c>color</c>, and <c>border-color</c>.
     /// </returns>
@@ -145,13 +160,18 @@ public readonly record struct Palette
     /// Output relies on <see cref="StringBuilder" /> extension helpers to emit inline declarations and optional custom
     /// properties.
     /// </remarks>
-    public string ToCss(string? varPrefix = "")
+    public string ToCss(string? varPrefix = "", bool includeBackground = true)
     {
         var builder = new StringBuilder();
 
-        builder.ToCss(BackgroundThemeColor, "background-color", varPrefix);
-        builder.ToCss(ForegroundThemeColor, "color", varPrefix);
-        builder.ToCss(BorderThemeColor, "border-color", varPrefix);
+        if (includeBackground)
+        {
+            builder.ToCss(BackgroundColor, "background-color", varPrefix);
+        }
+
+        builder.ToCss(ForegroundColor, "color", varPrefix);
+        builder.ToCss(BorderColor, "border-color", varPrefix);
+        builder.ToCss(AccentColor, "accent-color", varPrefix);
 
         return builder.ToString();
     }
@@ -161,9 +181,10 @@ public readonly record struct Palette
     public Palette ToDisabled()
         => Cascade(
             SurfaceThemeColor.ToDisabled(),
-            BackgroundThemeColor.ToDisabled(),
-            ForegroundThemeColor.ToDisabled(),
-            BorderThemeColor.ToDisabled()
+            BackgroundColor.ToDisabled(),
+            ForegroundColor.ToDisabled(),
+            AccentColor.ToDisabled(),
+            BorderColor.ToDisabled()
         );
 
     /// <summary>Returns a brightened version of this palette for dragged UI states.</summary>
@@ -171,9 +192,10 @@ public readonly record struct Palette
     public Palette ToDragged()
         => Cascade(
             SurfaceThemeColor.ToDragged(IsHighContrast),
-            BackgroundThemeColor.ToDragged(IsHighContrast),
-            ForegroundThemeColor.ToDragged(),
-            BorderThemeColor.ToDragged(IsHighContrast)
+            BackgroundColor.ToDragged(IsHighContrast),
+            ForegroundColor.ToDragged(),
+            AccentColor.ToDragged(),
+            BorderColor.ToDragged(IsHighContrast)
         );
 
     /// <summary>Returns a slightly elevated version of this palette (Elevation 1).</summary>
@@ -181,9 +203,10 @@ public readonly record struct Palette
     public Palette ToElevation1()
         => Cascade(
             SurfaceThemeColor.ToElevation1(IsHighContrast),
-            BackgroundThemeColor.ToElevation1(IsHighContrast),
-            ForegroundThemeColor,
-            BorderThemeColor.ToElevation1(IsHighContrast)
+            BackgroundColor.ToElevation1(IsHighContrast),
+            ForegroundColor,
+            AccentColor,
+            BorderColor.ToElevation1(IsHighContrast)
         );
 
     /// <summary>Returns a moderately elevated version of this palette (Elevation 2).</summary>
@@ -191,9 +214,10 @@ public readonly record struct Palette
     public Palette ToElevation2()
         => Cascade(
             SurfaceThemeColor.ToElevation2(IsHighContrast),
-            BackgroundThemeColor.ToElevation2(IsHighContrast),
-            ForegroundThemeColor,
-            BorderThemeColor.ToElevation2(IsHighContrast)
+            BackgroundColor.ToElevation2(IsHighContrast),
+            ForegroundColor,
+            AccentColor,
+            BorderColor.ToElevation2(IsHighContrast)
         );
 
     /// <summary>Returns a higher elevated version of this palette (Elevation 3).</summary>
@@ -201,9 +225,10 @@ public readonly record struct Palette
     public Palette ToElevation3()
         => Cascade(
             SurfaceThemeColor.ToElevation3(IsHighContrast),
-            BackgroundThemeColor.ToElevation3(IsHighContrast),
-            ForegroundThemeColor,
-            BorderThemeColor.ToElevation3(IsHighContrast)
+            BackgroundColor.ToElevation3(IsHighContrast),
+            ForegroundColor,
+            AccentColor,
+            BorderColor.ToElevation3(IsHighContrast)
         );
 
     /// <summary>Returns a strongly elevated version of this palette (Elevation 4).</summary>
@@ -211,9 +236,10 @@ public readonly record struct Palette
     public Palette ToElevation4()
         => Cascade(
             SurfaceThemeColor.ToElevation4(IsHighContrast),
-            BackgroundThemeColor.ToElevation4(IsHighContrast),
-            ForegroundThemeColor,
-            BorderThemeColor.ToElevation4(IsHighContrast)
+            BackgroundColor.ToElevation4(IsHighContrast),
+            ForegroundColor,
+            AccentColor,
+            BorderColor.ToElevation4(IsHighContrast)
         );
 
     /// <summary>Returns a slightly lighter version of this palette for focused UI states.</summary>
@@ -221,9 +247,10 @@ public readonly record struct Palette
     public Palette ToFocused()
         => Cascade(
             SurfaceThemeColor.ToFocused(IsHighContrast),
-            BackgroundThemeColor.ToFocused(IsHighContrast),
-            ForegroundThemeColor.ToFocused(),
-            BorderThemeColor.ToFocused(IsHighContrast)
+            BackgroundColor.ToFocused(IsHighContrast),
+            ForegroundColor.ToFocused(),
+            AccentColor.ToFocused(),
+            BorderColor.ToFocused(IsHighContrast)
         );
 
     /// <summary>Returns a slightly lighter version of this palette for hovered UI states.</summary>
@@ -231,9 +258,10 @@ public readonly record struct Palette
     public Palette ToHovered()
         => Cascade(
             SurfaceThemeColor.ToHovered(IsHighContrast),
-            BackgroundThemeColor.ToHovered(IsHighContrast),
-            ForegroundThemeColor.ToHovered(),
-            BorderThemeColor.ToHovered(IsHighContrast)
+            BackgroundColor.ToHovered(IsHighContrast),
+            ForegroundColor.ToHovered(),
+            AccentColor.ToHovered(),
+            BorderColor.ToHovered(IsHighContrast)
         );
 
     /// <summary>Returns a noticeably lighter version of this palette for pressed UI states.</summary>
@@ -241,8 +269,9 @@ public readonly record struct Palette
     public Palette ToPressed()
         => Cascade(
             SurfaceThemeColor.ToPressed(IsHighContrast),
-            BackgroundThemeColor.ToPressed(IsHighContrast),
-            ForegroundThemeColor.ToPressed(),
-            BorderThemeColor.ToPressed(IsHighContrast)
+            BackgroundColor.ToPressed(IsHighContrast),
+            ForegroundColor.ToPressed(),
+            AccentColor.ToPressed(),
+            BorderColor.ToPressed(IsHighContrast)
         );
 }

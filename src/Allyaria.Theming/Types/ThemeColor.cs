@@ -58,6 +58,21 @@ public sealed class ThemeColor : ThemeBase
     public static ThemeColor Parse(string value) => new(new HexColor(value));
 
     /// <summary>
+    /// Derives an accent variant of this theme color for use in component highlights or accent regions. When
+    /// <paramref name="highContrast" /> is <see langword="true" />, returns the original color unchanged to maintain
+    /// high-contrast accessibility. Otherwise, produces a perceptually lighter accent color by shifting the HSV Value upward
+    /// to increase brightness while preserving hue and saturation.
+    /// </summary>
+    /// <param name="highContrast">
+    /// If <see langword="true" />, bypasses accent adjustment and preserves the original color. If <see langword="false" />,
+    /// applies the accent transformation to produce a lighter, more vivid tone.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="ThemeColor" /> representing the accent color, or the original color if high-contrast mode is active.
+    /// </returns>
+    public ThemeColor ToAccent(bool highContrast = false) => new(Color.ToComponentAccentColor(highContrast));
+
+    /// <summary>
     /// Computes the appropriate border color for the element based on its background context, meeting WCAG non-text contrast
     /// (≥ 3:1) and preserving hue where possible.
     /// </summary>

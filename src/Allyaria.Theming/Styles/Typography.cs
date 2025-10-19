@@ -133,15 +133,21 @@ public readonly record struct Typography
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
     /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
+    /// <param name="includeSize">Include the font size in the CSS output.</param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by
     /// <see cref="StyleHelper.ToCss(StringBuilder, ThemeBase, string, string)" />).
     /// </returns>
-    public string ToCss(string? varPrefix = "")
+    public string ToCss(string? varPrefix = "", bool includeSize = true)
     {
         var builder = new StringBuilder();
+
+        if (includeSize)
+        {
+            builder.ToCss(FontSize, "font-size", varPrefix);
+        }
+
         builder.ToCss(FontFamily, "font-family", varPrefix);
-        builder.ToCss(FontSize, "font-size", varPrefix);
         builder.ToCss(FontStyle, "font-style", varPrefix);
         builder.ToCss(FontWeight, "font-weight", varPrefix);
         builder.ToCss(LetterSpacing, "letter-spacing", varPrefix);

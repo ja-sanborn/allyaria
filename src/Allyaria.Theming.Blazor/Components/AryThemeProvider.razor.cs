@@ -16,6 +16,9 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     /// </summary>
     private bool _applyingSystemEffective;
 
+    /// <summary>The global CSS values.</summary>
+    private string _css = string.Empty;
+
     /// <summary>
     /// The active <see cref="CancellationTokenSource" /> controlling asynchronous operations and allowing cooperative
     /// cancellation during teardown.
@@ -32,9 +35,6 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
 
     /// <summary>Tracks the previous persisted state to detect transitions in user persistence preferences.</summary>
     private bool _prevPersisted;
-
-    /// <summary>The list of CSS vars from the theme.</summary>
-    private string _varList = string.Empty;
 
     /// <summary>Gets or sets the render fragment representing the child content.</summary>
     [Parameter]
@@ -55,6 +55,136 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     /// <summary>Gets or sets the <see cref="IThemeWatcher" /> used to detect and watch system theme changes.</summary>
     [Inject]
     public required IThemeWatcher ThemeWatcher { get; init; }
+
+    /// <summary>Rebuilds the global CSS values from the current theme.</summary>
+    private void BuildCss()
+    {
+        // TODO: Link Colors
+        var link = ThemeProvider.GetStyle(ComponentType.Surface);
+        var linkFocus = ThemeProvider.GetStyle(ComponentType.Surface, state: ComponentState.Focused);
+        var linkHover = ThemeProvider.GetStyle(ComponentType.Surface, state: ComponentState.Hovered);
+        var linkPressed = ThemeProvider.GetStyle(ComponentType.Surface, state: ComponentState.Pressed);
+        var surface = ThemeProvider.GetStyle(ComponentType.Surface, ComponentElevation.Low);
+        var output = new StringBuilder();
+
+        // Define the global variables
+        output.Append(ThemeProvider.GetCss());
+
+        // Root resets and color scheme
+        output.Append(":root");
+        output.Append("{");
+        output.Append("color-scheme:light dark;");
+        output.Append("}");
+
+        // Html and Body global
+        output.Append("html");
+        output.Append("{");
+        output.Append("box-sizing:border-box;");
+        output.Append("-webkit-text-size-adjust:100%;");
+        output.Append("text-size-adjust:100%;");
+        output.Append("}");
+
+        output.Append("*,*::before,*::after");
+        output.Append("{");
+        output.Append("box-sizing:inherit;");
+        output.Append("}");
+
+        output.Append("html,body");
+        output.Append("{");
+        output.Append("min-height:100%;");
+        output.Append("}");
+
+        output.Append("body");
+        output.Append("{");
+
+        // Typography and Colors
+        output.Append(surface.Palette.ToCss());
+        output.Append(surface.Typography.ToCss());
+        output.Append("text-rendering:optimizeLegibility;");
+        output.Append("-webkit-font-smoothing:antialiased;");
+        output.Append("-moz-osx-font-smoothing:auto;");
+
+        // Layout and Behavior
+        output.Append("margin:0;");
+        output.Append("padding:0;");
+        output.Append("width:100%;");
+        output.Append("overflow-x:clip;");
+
+        // Scroll and Mobile
+        output.Append("scroll-behavior:smooth;");
+        output.Append("-webkit-tap-highlight-color:transparent;");
+        output.Append("}");
+
+        // Focus Visibility
+        output.Append(":focus-visible");
+        output.Append("{");
+        output.Append(surface.Palette.ToCss());
+        output.Append("outline-width:2px;");
+        output.Append("outline-style:solid;");
+        output.Append(surface.Palette.AccentColor.ToCss("outline-color"));
+        output.Append("outline-offset:3px;");
+        output.Append("}");
+
+        // Links
+        output.Append("a");
+        output.Append("{");
+        output.Append(link.Palette.ToCss(includeBackground: false));
+        output.Append(link.Typography.ToCss(includeSize: false));
+        output.Append("text-underline-offset:0.15em;");
+        output.Append("transition: all 0.15s ease;");
+        output.Append("}");
+
+        output.Append("a:visited");
+        output.Append("{");
+        output.Append(linkPressed.Palette.ToCss(includeBackground: false));
+        output.Append("}");
+
+        output.Append("a:hover");
+        output.Append("{");
+        output.Append(linkHover.Palette.ToCss());
+        output.Append("text-decoration-line:underline;");
+        output.Append("text-decoration-thickness:2px;");
+        output.Append("}");
+
+        output.Append("a:focus-visible");
+        output.Append("{");
+        output.Append(linkFocus.Palette.ToCss(includeBackground: false));
+        output.Append(linkFocus.Palette.AccentColor.ToCss("outline-color"));
+        output.Append("text-decoration:none;");
+        output.Append("}");
+
+        output.Append("a:active");
+        output.Append("{");
+        output.Append(linkPressed.Palette.ToCss(includeBackground: false));
+        output.Append("text-decoration:none;");
+        output.Append("}");
+
+        // Reduced Motion
+        output.Append("@media(prefers-reduced-motion:reduce)");
+        output.Append("{");
+        output.Append("*");
+        output.Append("{");
+        output.Append("animation:none !important;");
+        output.Append("transition:none !important;");
+        output.Append("}");
+        output.Append("html,body");
+        output.Append("{");
+        output.Append("scroll-behavior:auto !important;");
+        output.Append("}");
+        output.Append("}");
+
+        // Output the global CSS values
+        _css = output.ToString();
+
+        try
+        {
+            StateHasChanged();
+        }
+        catch
+        {
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
 
     /// <summary>
     /// Performs asynchronous cleanup of resources and unsubscribes from all event handlers. Cancels any pending operations,
@@ -126,8 +256,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         try
         {
             ThemeProvider.SetThemeType(systemType);
-            _varList = ThemeProvider.GetCss();
-            _ = InvokeAsync(StateHasChanged);
+            BuildCss();
         }
         finally
         {
@@ -180,8 +309,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             await (ThemeWatcher as AryThemeWatcher)!.StartAsync(_host, _cts.Token).ConfigureAwait(false);
         }
 
-        _varList = ThemeProvider.GetCss();
-        StateHasChanged();
+        BuildCss();
     }
 
     /// <summary>Handles persistence state changes by enabling/disabling local storage usage.</summary>
@@ -250,8 +378,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             else
             {
                 await (ThemeWatcher as AryThemeWatcher)!.StopAsync(_host, _cts.Token).ConfigureAwait(false);
-                _varList = ThemeProvider.GetCss();
-                StateHasChanged();
+                BuildCss();
             }
         }
         catch

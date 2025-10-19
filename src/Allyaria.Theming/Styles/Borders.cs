@@ -85,30 +85,6 @@ public readonly record struct Borders
     /// <summary>Gets or initializes the <c>border-inline-end-width</c>.</summary>
     public ThemeNumber EndWidth { get; init; }
 
-    /// <summary>
-    /// Gets the focus border width based on the largest of all four border widths. If the largest width is less than 2, the
-    /// focus width is 2. Otherwise, the focus width is the largest width plus 2.
-    /// </summary>
-    public ThemeNumber FocusWidth
-    {
-        get
-        {
-            var largest = new[]
-            {
-                TopWidth.Number,
-                StartWidth.Number,
-                BottomWidth.Number,
-                EndWidth.Number
-            }.Max();
-
-            var focus = largest < 2
-                ? 2
-                : largest + 2;
-
-            return new ThemeNumber($"{focus}px");
-        }
-    }
-
     /// <summary>Gets or initializes the <c>border-inline-start-style</c>.</summary>
     public ThemeString StartStyle { get; init; }
 
@@ -235,55 +211,22 @@ public readonly record struct Borders
     /// Optional prefix for generating CSS custom properties. When provided, each property name is emitted as
     /// <c>--{varPrefix}-[propertyName]</c>. Hyphens and whitespace in the prefix are normalized; case is lowered.
     /// </param>
-    /// <param name="isFocused">Determines if this is a focus border or not.</param>
     /// <returns>
     /// A CSS string containing zero or more declarations (each ending as produced by
     /// <see cref="StyleHelper.ToCss(StringBuilder, ThemeBase, string, string)" />).
     /// </returns>
-    public string ToCss(string? varPrefix = "", bool isFocused = false)
+    public string ToCss(string? varPrefix = "")
     {
-        var topWidth = isFocused
-            ? FocusWidth
-            : TopWidth;
-
-        var endWidth = isFocused
-            ? FocusWidth
-            : EndWidth;
-
-        var bottomWidth = isFocused
-            ? FocusWidth
-            : BottomWidth;
-
-        var startWidth = isFocused
-            ? FocusWidth
-            : StartWidth;
-
-        var topStyle = isFocused
-            ? BorderStyle.Dashed
-            : TopStyle;
-
-        var endStyle = isFocused
-            ? BorderStyle.Dashed
-            : EndStyle;
-
-        var bottomStyle = isFocused
-            ? BorderStyle.Dashed
-            : BottomStyle;
-
-        var startStyle = isFocused
-            ? BorderStyle.Dashed
-            : StartStyle;
-
         var builder = new StringBuilder();
 
-        builder.ToCss(topWidth, "border-top-width", varPrefix);
-        builder.ToCss(endWidth, "border-inline-end-width", varPrefix);
-        builder.ToCss(bottomWidth, "border-bottom-width", varPrefix);
-        builder.ToCss(startWidth, "border-inline-start-width", varPrefix);
-        builder.ToCss(topStyle, "border-top-style", varPrefix);
-        builder.ToCss(endStyle, "border-inline-end-style", varPrefix);
-        builder.ToCss(bottomStyle, "border-bottom-style", varPrefix);
-        builder.ToCss(startStyle, "border-inline-start-style", varPrefix);
+        builder.ToCss(TopWidth, "border-top-width", varPrefix);
+        builder.ToCss(EndWidth, "border-inline-end-width", varPrefix);
+        builder.ToCss(BottomWidth, "border-bottom-width", varPrefix);
+        builder.ToCss(StartWidth, "border-inline-start-width", varPrefix);
+        builder.ToCss(TopStyle, "border-top-style", varPrefix);
+        builder.ToCss(EndStyle, "border-inline-end-style", varPrefix);
+        builder.ToCss(BottomStyle, "border-bottom-style", varPrefix);
+        builder.ToCss(StartStyle, "border-inline-start-style", varPrefix);
         builder.ToCss(TopLeftRadius, "border-top-left-radius", varPrefix);
         builder.ToCss(TopRightRadius, "border-top-right-radius", varPrefix);
         builder.ToCss(BottomLeftRadius, "border-bottom-left-radius", varPrefix);
