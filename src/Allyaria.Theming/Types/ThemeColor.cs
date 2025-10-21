@@ -42,14 +42,14 @@ public sealed class ThemeColor : ThemeBase
     /// Ensures this color meets a minimum WCAG contrast ratio against the specified background, currently enforcing 4.5:1 (AA
     /// for normal text), returning an adjusted foreground color when necessary.
     /// </summary>
-    /// <param name="backgroundThemeColor">The background color to contrast against.</param>
+    /// <param name="surfaceColor">The background color to contrast against.</param>
     /// <returns>
     /// An <see cref="ThemeColor" /> that meets or exceeds the default minimum non-text contrast ratio (4.5:1) versus
-    /// <paramref name="backgroundThemeColor" />. If the current color already meets the requirement, the original color is
-    /// returned unchanged.
+    /// <paramref name="surfaceColor" />. If the current color already meets the requirement, the original color is returned
+    /// unchanged.
     /// </returns>
-    public ThemeColor EnsureContrast(ThemeColor backgroundThemeColor)
-        => new(Color.EnsureMinimumContrast(backgroundThemeColor.Color, 4.5));
+    public ThemeColor EnsureContrast(ThemeColor surfaceColor)
+        => new(Color.EnsureMinimumContrast(surfaceColor.Color, 4.5));
 
     /// <summary>Parses a color string into an <see cref="ThemeColor" />.</summary>
     /// <param name="value">The color theme to parse.</param>
@@ -57,114 +57,27 @@ public sealed class ThemeColor : ThemeBase
     /// <exception cref="AryArgumentException">Thrown when parsing fails.</exception>
     public static ThemeColor Parse(string value) => new(new HexColor(value));
 
-    /// <summary>Derives an accent variant of this theme color for use in component highlights or accent regions.</summary>
-    /// <param name="highContrast">If true, bypasses brightening.</param>
-    /// <returns>
-    /// A new <see cref="ThemeColor" /> representing the accent color, or the original color if high-contrast mode is active.
-    /// </returns>
-    public ThemeColor ToAccent(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.6));
+    public ThemeColor ToAccent() => new(Color.ShiftLightness(0.6));
 
-    /// <summary>
-    /// Computes the appropriate border color for the element based on its background context, meeting WCAG non-text contrast
-    /// (≥ 3:1) and preserving hue where possible.
-    /// </summary>
-    /// <param name="outerBackground">The surrounding background surface color.</param>
-    /// <param name="componentFill">
-    /// Optional fill color of the component; if <see langword="null" />, the border is treated as a divider on the background.
-    /// </param>
-    /// <param name="highContrast">
-    /// When <see langword="true" />, returns a strong high-contrast outline (black on light surfaces or white on dark).
-    /// </param>
-    /// <returns>The resolved <see cref="ThemeColor" /> representing the border color.</returns>
-    public ThemeColor ToBorder(ThemeColor outerBackground,
-        ThemeColor? componentFill = null,
-        bool highContrast = false)
-        => new(Color.ToComponentBorderColor(outerBackground.Color, componentFill?.Color, 3.0, highContrast));
-
-    /// <summary>
-    /// Returns a desaturated version of this color for disabled UI states. This effect is preserved even in high-contrast mode
-    /// so that disabled elements remain visibly distinct.
-    /// </summary>
-    /// <returns>A new <see cref="ThemeColor" /> instance with reduced saturation.</returns>
     public ThemeColor ToDisabled() => new(Color.Desaturate(0.6));
 
-    /// <summary>
-    /// Returns a brightened version of this color for dragged UI states. In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    /// <param name="highContrast">If true, bypasses brightening.</param>
-    /// <returns>A new <see cref="ThemeColor" /> for dragged state.</returns>
-    public ThemeColor ToDragged(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.18));
+    public ThemeColor ToDragged() => new(Color.ShiftLightness(0.18));
 
-    /// <summary>
-    /// Returns a slightly elevated version of this color (Elevation 1). In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    public ThemeColor ToElevation1(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.04));
+    public ThemeColor ToElevation1() => new(Color.ShiftLightness(0.04));
 
-    /// <summary>
-    /// Returns a moderately elevated version of this color (Elevation 2). In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    public ThemeColor ToElevation2(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.08));
+    public ThemeColor ToElevation2() => new(Color.ShiftLightness(0.08));
 
-    /// <summary>
-    /// Returns a higher elevated version of this color (Elevation 3). In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    public ThemeColor ToElevation3(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.12));
+    public ThemeColor ToElevation3() => new(Color.ShiftLightness(0.12));
 
-    /// <summary>
-    /// Returns a strongly elevated version of this color (Elevation 4). In high-contrast mode, returns this color unchanged.
-    /// </summary>
-    public ThemeColor ToElevation4(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.16));
+    public ThemeColor ToElevation4() => new(Color.ShiftLightness(0.16));
 
-    /// <summary>
-    /// Returns a slightly lighter version of this color for focused UI states. In high-contrast mode, returns this color
-    /// unchanged.
-    /// </summary>
-    /// <param name="highContrast">If true, bypasses lightening.</param>
-    /// <returns>A new <see cref="ThemeColor" /> for focused state.</returns>
-    public ThemeColor ToFocused(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.1));
+    public ThemeColor ToFocused() => new(Color.ShiftLightness(0.1));
 
-    /// <summary>
-    /// Returns a slightly lighter version of this color for hovered UI states. In high-contrast mode, returns this color
-    /// unchanged.
-    /// </summary>
-    /// <param name="highContrast">If true, bypasses lightening.</param>
-    /// <returns>A new <see cref="ThemeColor" /> for hovered state.</returns>
-    public ThemeColor ToHovered(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.06));
+    public ThemeColor ToForeground() => new(Color.ShiftLightness(0.7));
 
-    /// <summary>
-    /// Returns a noticeably lighter version of this color for pressed UI states. In high-contrast mode, returns this color
-    /// unchanged.
-    /// </summary>
-    /// <param name="highContrast">If true, bypasses lightening.</param>
-    /// <returns>A new <see cref="ThemeColor" /> for pressed state.</returns>
-    public ThemeColor ToPressed(bool highContrast = false)
-        => highContrast
-            ? this
-            : new ThemeColor(Color.ShiftLightness(0.14));
+    public ThemeColor ToHovered() => new(Color.ShiftLightness(0.06));
+
+    public ThemeColor ToPressed() => new(Color.ShiftLightness(0.14));
 
     /// <summary>Attempts to parse a color string into an <see cref="ThemeColor" />.</summary>
     /// <param name="value">The color theme to parse.</param>

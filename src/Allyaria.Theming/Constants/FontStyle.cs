@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Constants;
+namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed font style constants for Allyaria theming.</summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]

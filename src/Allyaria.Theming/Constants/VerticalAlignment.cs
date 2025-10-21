@@ -1,8 +1,8 @@
-﻿namespace Allyaria.Theming.Constants;
+namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed vertical alignment constants for Allyaria theming.</summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
-public static class VerticalAlign
+public static class VerticalAlignment
 {
     /// <summary>Represents baseline vertical alignment (default).</summary>
     public static readonly ThemeString Baseline = new("baseline");

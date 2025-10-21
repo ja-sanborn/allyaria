@@ -1,8 +1,8 @@
-﻿namespace Allyaria.Theming.Constants;
+namespace Allyaria.Theming.Constants;
 
 /// <summary>Provides strongly-typed text transform constants for Allyaria theming.</summary>
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
-public static class TextTransform
+public static class TextTransformation
 {
     /// <summary>Represents capitalizing the first letter of each word.</summary>
     public static readonly ThemeString Capitalize = new("capitalize");

@@ -13,6 +13,62 @@ public static class StyleDefaults
     /// <summary>Default CSS var prefix.</summary>
     public static readonly string VarPrefix = "ary";
 
+    public static ThemeColor AccentColorHighContrastDark = new(Colors.YellowA400);
+
+    public static ThemeColor BackgroundColorHighContrastDark = new(Colors.Black);
+
+    public static ThemeColor ErrorColorHighContrastDark = new(Colors.RedA200);
+
+    public static ThemeColor ForegroundColorHighContrastDark = new(Colors.White);
+
+    public static ThemeColor SuccessColorHighContrastDark = new(Colors.GreenA400);
+
+    public static ThemeColor WarningColorHighContrastDark = new(Colors.YellowA400);
+
+    public static ThemeColor AccentColorHighContrastLight = new(Colors.BlueA700);
+
+    public static ThemeColor BackgroundColorHighContrastLight = new(Colors.White);
+
+    public static ThemeColor ErrorColorHighContrastLight = new(Colors.Red700);
+
+    public static ThemeColor ForegroundColorHighContrastLight = new(Colors.Black);
+
+    public static ThemeColor SuccessColorHighContrastLight = new(Colors.Green800);
+
+    public static ThemeColor WarningColorHighContrastLight = new(Colors.Amber800);
+
+    public static ThemeColor ErrorColorDark = new(Colors.Red300);
+
+    public static ThemeColor PrimaryColorDark = new(Colors.Blue300);
+
+    public static ThemeColor SecondaryColorDark = new(Colors.Indigo300);
+
+    public static ThemeColor SuccessColorDark = new(Colors.Green300);
+
+    public static ThemeColor SurfaceColorDark = new(Colors.Grey900);
+
+    public static ThemeColor SurfaceVariantDark  = new(Colors.BlueGrey700);
+
+    public static ThemeColor TertiaryColorDark = new(Colors.Teal300);
+
+    public static ThemeColor WarningColorDark = new(Colors.Amber300);
+
+    public static ThemeColor ErrorColorLight = new(Colors.Red700);
+
+    public static ThemeColor PrimaryColorLight = new(Colors.Blue700);
+
+    public static ThemeColor SecondaryColorLight = new(Colors.Indigo600);
+
+    public static ThemeColor SuccessColorLight = new(Colors.Green600);
+
+    public static ThemeColor SurfaceColorLight = new(Colors.Grey50);
+
+    public static ThemeColor SurfaceVariantLight = new(Colors.BlueGrey100);
+
+    public static ThemeColor TertiaryColorLight = new(Colors.Teal600);
+
+    public static ThemeColor WarningColorLight = new(Colors.Amber700);
+
     /*
     /// <summary>Default border style.</summary>
     public static readonly ThemeString BorderStyle = Constants.BorderStyle.Solid;

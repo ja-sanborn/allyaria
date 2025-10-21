@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types;
 
 public readonly record struct StyleBorderColor(
     ThemeColor? BlockStart = null,
@@ -23,6 +23,14 @@ public readonly record struct StyleBorderColor(
             InlineEnd = inlineEnd ?? InlineEnd,
             InlineStart = inlineStart ?? InlineStart
         };
+
+    public StyleBorderColor EnsureContrast(ThemeColor surfaceColor)
+        => new(
+            BlockStart?.EnsureContrast(surfaceColor),
+            InlineStart?.EnsureContrast(surfaceColor),
+            BlockEnd?.EnsureContrast(surfaceColor),
+            InlineEnd?.EnsureContrast(surfaceColor)
+        );
 
     public static StyleBorderColor FromSingle(ThemeColor value) => new(value, value, value, value);
 

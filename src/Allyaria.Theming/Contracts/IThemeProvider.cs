@@ -28,60 +28,6 @@ public interface IThemeProvider
     /// <param name="varPrefix">An optional prefix applied to generated CSS variables.</param>
     /// <returns>A CSS string representing the component's visual style under the current theme.</returns>
     string GetCss(ComponentType componentType,
-        ComponentElevation elevation = ComponentElevation.Mid,
         ComponentState state = ComponentState.Default,
         string? varPrefix = "");
-
-    /// <summary>
-    /// Retrieves the structured <see cref="Style" /> for a component based on its type, elevation, and state.
-    /// </summary>
-    /// <param name="componentType">The type of the component for which a style object should be retrieved.</param>
-    /// <param name="elevation">The component's visual elevation level. Defaults to <see cref="ComponentElevation.Mid" />.</param>
-    /// <param name="state">The component's interaction state. Defaults to <see cref="ComponentState.Default" />.</param>
-    /// <returns>An <see cref="Style" /> object representing the component's themed style data.</returns>
-    Style GetStyle(ComponentType componentType,
-        ComponentElevation elevation = ComponentElevation.Mid,
-        ComponentState state = ComponentState.Default);
-
-    /// <summary>Updates the current theme's border configuration.</summary>
-    /// <param name="borders">The border configuration to apply. If <see langword="null" />, the default borders are restored.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetBorders(Borders? borders = null);
-
-    /// <summary>Updates or replaces the dark theme palette.</summary>
-    /// <param name="palette">The dark theme palette to apply. If <see langword="null" />, defaults are used.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetDarkPalette(Palette? palette = null);
-
-    /// <summary>Updates or replaces the high-contrast theme palette.</summary>
-    /// <param name="palette">The high-contrast palette to apply. If <see langword="null" />, defaults are used.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetHighContrastPalette(Palette? palette = null);
-
-    /// <summary>Updates or replaces the light theme palette.</summary>
-    /// <param name="palette">The light theme palette to apply. If <see langword="null" />, defaults are used.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetLightPalette(Palette? palette = null);
-
-    /// <summary>Updates the current theme's spacing configuration.</summary>
-    /// <param name="spacing">The spacing configuration to apply. If <see langword="null" />, default spacing is restored.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetSpacing(Spacing? spacing = null);
-
-    /// <summary>Updates the typography applied to surface-level components.</summary>
-    /// <param name="typoSurface">The typography configuration to apply. If <see langword="null" />, defaults are used.</param>
-    /// <returns><see langword="true" /> if the operation succeeded; otherwise, <see langword="false" />.</returns>
-    bool SetSurfaceTypography(Typography? typoSurface = null);
-
-    /// <summary>Replaces the entire active <see cref="Theme" /> configuration.</summary>
-    /// <param name="theme">The theme to apply.</param>
-    /// <returns><see langword="true" /> if the theme was successfully applied; otherwise, <see langword="false" />.</returns>
-    bool SetTheme(Theme theme);
-
-    /// <summary>
-    /// Changes the current <see cref="ThemeType" /> and raises <see cref="ThemeChanged" /> if the type differs.
-    /// </summary>
-    /// <param name="themeType">The new theme type to activate.</param>
-    /// <returns><see langword="true" /> if the theme type was changed; otherwise, <see langword="false" />.</returns>
-    bool SetThemeType(ThemeType themeType);
 }
