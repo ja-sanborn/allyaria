@@ -105,7 +105,7 @@ public sealed class AryThemeWatcher : IThemeWatcher
     private static ThemeType ParseThemeType(string? value)
         => value?.ToLowerInvariant() switch
         {
-            "highcontrast" or "hc" or "forced" => ThemeType.HighContrast,
+            "highcontrast" or "hc" or "forced" => ThemeType.HighContrastLight,
             "dark" => ThemeType.Dark,
             "light" => ThemeType.Light,
             _ => ThemeType.System

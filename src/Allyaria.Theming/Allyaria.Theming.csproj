@@ -68,12 +68,6 @@
         <InternalsVisibleTo Include="Allyaria.Theming.UnitTests"/>
     </ItemGroup>
     <ItemGroup>
-        <None Include="Archives\Contracts\IThemePersistence.cs"/>
-        <None Include="Archives\Contracts\IThemeProvider.cs"/>
-        <None Include="Archives\Contracts\IThemeWatcher.cs"/>
-        <None Include="Archives\Services\ThemePersistence.cs"/>
-        <None Include="Archives\Services\ThemeProvider.cs"/>
-        <None Include="Archives\Services\ThemeWatcher.cs"/>
         <Compile Include="Constants\Colors.cs"/>
         <Compile Include="Enumerations\LengthUnits.cs"/>
         <Compile Include="Constants\AlignPositioning.cs"/>
@@ -97,6 +91,12 @@
         <Compile Include="Constants\WhiteSpacing.cs"/>
         <Compile Include="Constants\WritingMode.cs"/>
         <Compile Include="Constants\ThemingDefaults.cs"/>
+        <Compile Include="Contracts\IThemeWatcher.cs"/>
+        <Compile Include="Services\ThemeWatcher.cs"/>
+        <Compile Include="Contracts\IThemePersistence.cs"/>
+        <Compile Include="Services\ThemePersistence.cs"/>
+        <Compile Include="Contracts\IThemeProvider.cs"/>
+        <Compile Include="Services\ThemeProvider.cs"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Allyaria.Abstractions\Allyaria.Abstractions.csproj"/>
