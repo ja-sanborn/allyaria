@@ -14,7 +14,7 @@ public sealed record ThemeGroupTypography(
     StyleValueString? VerticalAlign = null,
     StyleValueString? WhiteSpace = null,
     StyleValueString? WritingMode = null
-) : IThemeGroup
+)
 {
     public static readonly ThemeGroupTypography Empty = new();
 
@@ -146,4 +146,6 @@ public sealed record ThemeGroupTypography(
         {
             WritingMode = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

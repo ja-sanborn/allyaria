@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupPalette : IThemeGroup
+public sealed record ThemeGroupPalette
 {
     public static readonly ThemeGroupPalette Empty = new();
 
@@ -209,6 +209,8 @@ public sealed record ThemeGroupPalette : IThemeGroup
                 ? value
                 : value?.EnsureContrast(BackgroundColor.Value)
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 
     public ThemeGroupPalette ToDisabled()
         => SetBackgroundColor(BackgroundColor?.ToDisabled())

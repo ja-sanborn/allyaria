@@ -6,7 +6,7 @@ public sealed record ThemeGroupOverflow(
     StyleValueString? OverflowY = null,
     StyleValueString? OverscrollBehaviorX = null,
     StyleValueString? OverscrollBehaviorY = null
-) : IThemeGroup
+)
 {
     public static readonly ThemeGroupOverflow Empty = new();
 
@@ -60,4 +60,6 @@ public sealed record ThemeGroupOverflow(
         {
             OverscrollBehaviorY = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

@@ -89,6 +89,8 @@ public sealed record StyleGroupBorderColor : IStyleGroup
             InlineStart = value
         };
 
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+
     public StyleGroupBorderColor ToDisabled()
         => this with
         {

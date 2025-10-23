@@ -4,7 +4,7 @@ public sealed record ThemeGroupBorder(
     StyleGroupBorderRadius? BorderRadius = null,
     StyleGroupBorderStyle? BorderStyle = null,
     StyleGroupBorderWidth? BorderWidth = null
-) : IThemeGroup
+)
 {
     public static readonly ThemeGroupBorder Empty = new();
 
@@ -130,4 +130,6 @@ public sealed record ThemeGroupBorder(
                     .SetInlineEnd(inlineEnd)
                     .SetInlineStart(inlineStart)
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

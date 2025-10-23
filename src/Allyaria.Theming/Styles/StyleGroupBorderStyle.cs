@@ -71,4 +71,6 @@ public sealed record StyleGroupBorderStyle : IStyleGroup
         {
             InlineStart = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

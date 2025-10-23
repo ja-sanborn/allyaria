@@ -84,4 +84,6 @@ public sealed record ThemeStyle(
         {
             Typography = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

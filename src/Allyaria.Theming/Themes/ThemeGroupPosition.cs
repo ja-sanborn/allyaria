@@ -11,7 +11,7 @@ public sealed record ThemeGroupPosition(
     StyleValueString? JustifySelf = null,
     StyleValueString? Position = null,
     StyleValueNumber? ZIndex = null
-) : IThemeGroup
+)
 {
     public static readonly ThemeGroupPosition Empty = new();
 
@@ -105,4 +105,6 @@ public sealed record ThemeGroupPosition(
         {
             ZIndex = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

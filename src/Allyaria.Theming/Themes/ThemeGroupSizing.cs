@@ -7,7 +7,7 @@ public sealed record ThemeGroupSizing(
     StyleValueNumber? MaxWidth = null,
     StyleGroupPadding? Padding = null,
     StyleValueNumber? Width = null
-) : IThemeGroup
+)
 {
     public static readonly ThemeGroupSizing Empty = new();
 
@@ -130,4 +130,6 @@ public sealed record ThemeGroupSizing(
         {
             Width = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

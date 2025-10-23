@@ -71,4 +71,6 @@ public sealed record StyleGroupBorderRadius : IStyleGroup
         {
             StartStart = value
         };
+
+    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
 }

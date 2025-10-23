@@ -1,11 +1,7 @@
-namespace Allyaria.Theming.Extensions;
+namespace Allyaria.Theming.Helpers;
 
-internal static class StyleExtensions
+public static class StyleHelpers
 {
-    public static string ToCssGroup<TStyle>(this TStyle? style, string? varPrefix = "")
-        where TStyle : struct, IStyleGroup
-        => style?.BuildCss(new CssBuilder(), varPrefix).ToString() ?? string.Empty;
-
     public static string ToCssName(this string? value)
         => Regex.Replace((value ?? string.Empty).Replace('_', '-'), @"[\s-]+", "-").Trim('-').ToLowerInvariant();
 
