@@ -34,6 +34,9 @@ public enum ComponentState
     /// </summary>
     Pressed,
 
+    /// <summary>Indicates that the component has been visited, usually relating to visited links.</summary>
+    Visited,
+
     /// <summary>
     /// Indicates that the component is visible and interactive but does not allow modification of its theme or contents.
     /// Typically used for static displays or locked fields.

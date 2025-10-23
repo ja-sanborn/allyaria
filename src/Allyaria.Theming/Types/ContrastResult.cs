@@ -10,7 +10,7 @@ namespace Allyaria.Theming.Types;
 /// <c>true</c> if the computed ratio meets or exceeds the required minimum; otherwise
 /// <c>false</c>.
 /// </param>
-internal readonly record struct ContrastResult(
+public readonly record struct ContrastResult(
     HexColor ForegroundColor,
     double ContrastRatio,
     bool IsMinimumMet

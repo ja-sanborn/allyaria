@@ -159,7 +159,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// </remarks>
     public HexColor(string value)
     {
-        AryArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
+        AryArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
         HexByte red;
         HexByte green;
@@ -411,12 +411,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>A hash code for the current object.</returns>
     public override int GetHashCode() => HashCode.Combine(R, G, B, A);
 
-    /// <summary>Picks a strong high-contrast stroke for a given surface: black for light surfaces, white for dark.</summary>
-    private static HexColor HighContrastStroke(HexColor surface)
-        => surface.IsLight()
-            ? Colors.Black
-            : Colors.White;
-
     /// <summary>Converts HSVA values to an equivalent <see cref="HexColor" />.</summary>
     /// <param name="hue">Hue in degrees (can wrap), nominally 0–360.</param>
     /// <param name="saturation">Saturation in the 0–1 range.</param>
@@ -546,40 +540,26 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>A new <see cref="HexColor" />.</returns>
     public static HexColor Parse(string value) => new(value);
 
-    /// <summary>Parses an alpha theme in the range 0–1 from a string into a <see cref="HexByte" />.</summary>
-    /// <param name="value">The alpha string to parse.</param>
-    /// <returns>A <see cref="HexByte" /> corresponding to the parsed alpha.</returns>
-    /// <exception cref="AryArgumentException">Thrown when the theme is invalid or out of range.</exception>
     private static HexByte ParseAlpha(string value)
     {
         var trimmed = value.Trim();
 
-        _ = double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var alpha);
+        if (!double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var alpha) ||
+            !double.IsFinite(alpha))
+        {
+            throw new AryArgumentException($"Invalid alpha value: {value}", nameof(value));
+        }
+
+        AryArgumentException.ThrowIfOutOfRange<double>(alpha, 0.0, 1.0, nameof(value));
 
         return HexByte.FromNormalized(alpha);
     }
 
-    /// <summary>Parses a decimal byte theme (0–255) from a string into a <see cref="HexByte" />.</summary>
-    /// <param name="value">The string containing the byte theme.</param>
-    /// <returns>A <see cref="HexByte" /> representing the parsed byte.</returns>
-    /// <exception cref="AryArgumentException">Thrown when the theme is not a valid byte.</exception>
     private static HexByte ParseByte(string value)
         => byte.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var byteValue)
             ? new HexByte(byteValue)
             : throw new AryArgumentException($"Byte theme is out of range: {value}", nameof(value));
 
-    /// <summary>
-    /// Parses a single RGB channel theme that may be expressed either as a byte (0–255) or as a percentage (0%–100%).
-    /// </summary>
-    /// <param name="value">
-    /// The channel text to parse. May include a trailing percent sign (e.g., "128", "50%"). Whitespace around the theme is
-    /// ignored.
-    /// </param>
-    /// <returns>A <see cref="HexByte" /> representing the normalized channel intensity from 0.0 to 1.0.</returns>
-    /// <remarks>
-    /// This method supports both integer and percentage inputs per CSS Color specifications. Percentage values are clamped to
-    /// the [0, 100] range before normalization to [0, 1].
-    /// </remarks>
     private static HexByte ParseChannel(string value)
     {
         var trimmed = value.Trim();
@@ -589,9 +569,17 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             return ParseByte(trimmed);
         }
 
-        var p = double.Parse(trimmed.TrimEnd('%'), NumberStyles.Float, CultureInfo.InvariantCulture);
+        var text = trimmed.TrimEnd('%').Trim();
 
-        return HexByte.FromNormalized(Math.Clamp(p / 100.0, 0.0, 1.0));
+        if (!double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var channel) ||
+            !double.IsFinite(channel))
+        {
+            throw new AryArgumentException($"Invalid channel percentage: {value}", nameof(value));
+        }
+
+        AryArgumentException.ThrowIfOutOfRange<double>(channel, 0.0, 100.0, nameof(value));
+
+        return HexByte.FromNormalized(channel);
     }
 
     /// <summary>
@@ -720,16 +708,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
                 ? throw new AryArgumentException($"Invalid hue theme: {value}", nameof(value))
                 : hue;
 
-    /// <summary>
-    /// Parses a percentage or fraction string (e.g., <c>75%</c> or <c>0.75</c>) into a normalized theme (0–1).
-    /// </summary>
-    /// <param name="value">The percentage/fraction string to parse.</param>
-    /// <returns>The normalized theme.</returns>
-    /// <exception cref="AryArgumentException">Thrown when the percentage is invalid or out of 0–100 range.</exception>
-    /// <remarks>
-    /// Values with a '%' suffix are treated as percentages (0–100). Values without '%' are interpreted as normalized fractions
-    /// (0–1). For example, "0.75" = 75% and "75" = 75%.
-    /// </remarks>
     private static double ParsePercent(string value)
     {
         var trimmed = value.Trim();
@@ -739,7 +717,11 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ? trimmed.TrimEnd('%').Trim()
             : trimmed;
 
-        _ = double.TryParse(numericText, NumberStyles.Float, CultureInfo.InvariantCulture, out var number);
+        if (!double.TryParse(numericText, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ||
+            !double.IsFinite(number))
+        {
+            throw new AryArgumentException($"Invalid percentage value: {value}", nameof(value));
+        }
 
         var percent = hadPercent
             ? number
@@ -747,10 +729,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
                 ? number * 100.0
                 : number;
 
-        if (!double.IsFinite(percent) || percent is < 0.0 or > 100.0)
-        {
-            throw new AryArgumentException($"Percentage must be between 0 and 100: {value}", nameof(value));
-        }
+        AryArgumentException.ThrowIfOutOfRange<double>(percent, 0.0, 100.0, nameof(value));
 
         return percent / 100.0;
     }
@@ -801,36 +780,6 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
                 )
                 : ParseAlpha(match.Groups["alpha"].Value)
             : new HexByte(255);
-    }
-
-    /// <summary>
-    /// Computes the “least intrusive” passing score (lower is better) for a candidate border against its two adjacencies.
-    /// Returns <see cref="double.PositiveInfinity" /> when it does not pass against any side.
-    /// </summary>
-    /// <param name="passes">Whether the candidate passes against at least one adjacency.</param>
-    /// <param name="contrastA">Contrast versus adjacency A (e.g., component fill).</param>
-    /// <param name="contrastB">Contrast versus adjacency B (e.g., outer background).</param>
-    /// <param name="minContrast">The threshold that defines a “pass”.</param>
-    private static double PassingScore(bool passes, double contrastA, double contrastB, double minContrast)
-    {
-        if (!passes)
-        {
-            return double.PositiveInfinity;
-        }
-
-        var best = double.PositiveInfinity;
-
-        if (contrastA >= minContrast)
-        {
-            best = Math.Min(best, contrastA);
-        }
-
-        if (contrastB >= minContrast)
-        {
-            best = Math.Min(best, contrastB);
-        }
-
-        return best;
     }
 
     /// <summary>

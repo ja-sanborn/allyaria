@@ -5,26 +5,26 @@ namespace Allyaria.Theming.Constants;
 public static class VerticalAlignment
 {
     /// <summary>Represents baseline vertical alignment (default).</summary>
-    public static readonly ThemeString Baseline = new("baseline");
+    public static readonly StyleValueString Baseline = new("baseline");
 
     /// <summary>Represents aligning to the bottom of the element.</summary>
-    public static readonly ThemeString Bottom = new("bottom");
+    public static readonly StyleValueString Bottom = new("bottom");
 
     /// <summary>Represents aligning to the middle of the element.</summary>
-    public static readonly ThemeString Middle = new("middle");
+    public static readonly StyleValueString Middle = new("middle");
 
     /// <summary>Represents subscript vertical alignment.</summary>
-    public static readonly ThemeString Sub = new("sub");
+    public static readonly StyleValueString Sub = new("sub");
 
     /// <summary>Represents superscript vertical alignment.</summary>
-    public static readonly ThemeString Super = new("super");
+    public static readonly StyleValueString Super = new("super");
 
     /// <summary>Represents aligning to the bottom of the parent element’s font.</summary>
-    public static readonly ThemeString TextBottom = new("text-bottom");
+    public static readonly StyleValueString TextBottom = new("text-bottom");
 
     /// <summary>Represents aligning to the top of the parent element’s font.</summary>
-    public static readonly ThemeString TextTop = new("text-top");
+    public static readonly StyleValueString TextTop = new("text-top");
 
     /// <summary>Represents aligning to the top of the element.</summary>
-    public static readonly ThemeString Top = new("top");
+    public static readonly StyleValueString Top = new("top");
 }

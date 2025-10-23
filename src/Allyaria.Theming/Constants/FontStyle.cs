@@ -5,11 +5,11 @@ namespace Allyaria.Theming.Constants;
 public static class FontStyle
 {
     /// <summary>Represents italic font style.</summary>
-    public static readonly ThemeString Italic = new("italic");
+    public static readonly StyleValueString Italic = new("italic");
 
     /// <summary>Represents normal font style.</summary>
-    public static readonly ThemeString Normal = new("normal");
+    public static readonly StyleValueString Normal = new("normal");
 
     /// <summary>Represents oblique font style.</summary>
-    public static readonly ThemeString Oblique = new("oblique");
+    public static readonly StyleValueString Oblique = new("oblique");
 }
