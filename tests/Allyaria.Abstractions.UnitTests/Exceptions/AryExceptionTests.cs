@@ -41,7 +41,7 @@ public sealed class AryExceptionTests
         var message = "Top-level failure";
 
         // Act
-        var sut = new AryException(message, inner);
+        var sut = new AryException(message: message, innerException: inner);
 
         // Assert
         sut.Message.Should().Be(message);

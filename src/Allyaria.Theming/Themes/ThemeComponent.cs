@@ -1,86 +1,48 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeComponent
+public sealed record ThemeComponent(
+    ThemeStyle Light,
+    ThemeStyle Dark,
+    ThemeStyle HighContrastLight,
+    ThemeStyle HighContrastDark
+)
 {
     public static readonly ThemeComponent Empty = new(
-        ThemeStyle.Empty, ThemeStyle.Empty, ThemeStyle.Empty, ThemeStyle.Empty, ThemeStyle.Empty, ThemeStyle.Empty,
-        ThemeStyle.Empty
+        Light: ThemeStyle.Empty, Dark: ThemeStyle.Empty, HighContrastLight: ThemeStyle.Empty,
+        HighContrastDark: ThemeStyle.Empty
     );
 
-    public ThemeComponent(ThemeStyle defaultStyle,
-        ThemeStyle? disabledStyle = null,
-        ThemeStyle? draggedStyle = null,
-        ThemeStyle? focusedStyle = null,
-        ThemeStyle? hoveredStyle = null,
-        ThemeStyle? pressedStyle = null,
-        ThemeStyle? visitedStyle = null)
-    {
-        Default = defaultStyle;
-        Disabled = disabledStyle ?? Default.SetPalette(defaultStyle.Palette.ToDisabled());
-        Dragged = draggedStyle ?? Default.SetPalette(defaultStyle.Palette.ToDragged());
-        Focused = focusedStyle ?? Default.SetPalette(defaultStyle.Palette.ToFocused());
-        Hovered = hoveredStyle ?? Default.SetPalette(defaultStyle.Palette.ToHovered());
-        Pressed = pressedStyle ?? Default.SetPalette(defaultStyle.Palette.ToPressed());
-        Visited = visitedStyle ?? Default.SetPalette(defaultStyle.Palette.ToVisited());
-    }
-
-    public ThemeStyle Default { get; init; }
-
-    public ThemeStyle Disabled { get; init; }
-
-    public ThemeStyle Dragged { get; init; }
-
-    public ThemeStyle Focused { get; init; }
-
-    public ThemeStyle Hovered { get; init; }
-
-    public ThemeStyle Pressed { get; init; }
-
-    public ThemeStyle Visited { get; init; }
-
-    public CssBuilder BuildCss(CssBuilder builder, ComponentState state, string? varPrefix = null)
+    public CssBuilder BuildCss(CssBuilder builder,
+        ThemeType themeType,
+        ComponentState state,
+        string? varPrefix = null)
     {
         var prefix = varPrefix.ToCssName();
 
         if (!string.IsNullOrWhiteSpace(prefix))
         {
-            prefix = $"{prefix}-{state}";
+            prefix = $"{prefix}-{themeType}";
         }
 
-        switch (state)
+        switch (themeType)
         {
-            case ComponentState.Default:
-                builder = Default.BuildCss(builder, prefix);
+            case ThemeType.Dark:
+                builder = Dark.BuildCss(builder: builder, state: state, varPrefix: prefix);
 
                 break;
 
-            case ComponentState.Disabled:
-                builder = Disabled.BuildCss(builder, prefix);
+            case ThemeType.HighContrastDark:
+                builder = HighContrastDark.BuildCss(builder: builder, state: state, varPrefix: prefix);
 
                 break;
 
-            case ComponentState.Dragged:
-                builder = Dragged.BuildCss(builder, prefix);
+            case ThemeType.HighContrastLight:
+                builder = HighContrastLight.BuildCss(builder: builder, state: state, varPrefix: prefix);
 
                 break;
 
-            case ComponentState.Focused:
-                builder = Focused.BuildCss(builder, prefix);
-
-                break;
-
-            case ComponentState.Hovered:
-                builder = Hovered.BuildCss(builder, prefix);
-
-                break;
-
-            case ComponentState.Pressed:
-                builder = Pressed.BuildCss(builder, prefix);
-
-                break;
-
-            case ComponentState.Visited:
-                builder = Visited.BuildCss(builder, prefix);
+            default:
+                builder = Light.BuildCss(builder: builder, state: state, varPrefix: prefix);
 
                 break;
         }
@@ -88,63 +50,66 @@ public sealed record ThemeComponent
         return builder;
     }
 
-    public static ThemeComponent FromDefault(PaletteColor paletteColor,
-        ThemeType themeType,
-        PaletteType paletteType,
-        string? fontFamily = null)
-        => new(ThemeStyle.FromDefault(paletteColor, themeType, paletteType, fontFamily));
+    public static ThemeComponent FromDefault(PaletteType paletteType, FontType fontType)
+        => new(
+            Light: ThemeStyle.FromDefault(themeType: ThemeType.Light, paletteType: paletteType, fontType: fontType),
+            Dark: ThemeStyle.FromDefault(themeType: ThemeType.Dark, paletteType: paletteType, fontType: fontType),
+            HighContrastLight: ThemeStyle.FromDefault(
+                themeType: ThemeType.HighContrastLight, paletteType: paletteType, fontType: fontType
+            ),
+            HighContrastDark: ThemeStyle.FromDefault(
+                themeType: ThemeType.HighContrastDark, paletteType: paletteType, fontType: fontType
+            )
+        );
 
     public ThemeComponent Merge(ThemeComponent other)
-        => SetDefault(Default.Merge(other.Default))
-            .SetDisabled(Disabled.Merge(other.Disabled))
-            .SetDragged(Dragged.Merge(other.Dragged))
-            .SetFocused(Focused.Merge(other.Focused))
-            .SetHovered(Hovered.Merge(other.Hovered))
-            .SetPressed(Pressed.Merge(other.Pressed))
-            .SetVisited(Visited.Merge(other.Visited));
+        => SetDark(Dark.Merge(other.Dark))
+            .SetHighContrastDark(HighContrastDark.Merge(other.HighContrastDark))
+            .SetHighContrastLight(HighContrastLight.Merge(other.HighContrastLight))
+            .SetLight(Light.Merge(other.Light));
 
-    public ThemeComponent SetDefault(ThemeStyle value)
+    public ThemeComponent SetDark(ThemeStyle value)
         => this with
         {
-            Default = value
+            Dark = value
         };
 
-    public ThemeComponent SetDisabled(ThemeStyle value)
+    public ThemeComponent SetHighContrastDark(ThemeStyle value)
         => this with
         {
-            Disabled = value
+            HighContrastDark = value
         };
 
-    public ThemeComponent SetDragged(ThemeStyle value)
+    public ThemeComponent SetHighContrastLight(ThemeStyle value)
         => this with
         {
-            Dragged = value
+            HighContrastLight = value
         };
 
-    public ThemeComponent SetFocused(ThemeStyle value)
+    public ThemeComponent SetLight(ThemeStyle value)
         => this with
         {
-            Focused = value
+            Light = value
         };
 
-    public ThemeComponent SetHovered(ThemeStyle value)
-        => this with
-        {
-            Hovered = value
-        };
+    public string ToCss(ThemeType themeType, ComponentState state, string? varPrefix = "")
+        => BuildCss(builder: new CssBuilder(), themeType: themeType, state: state, varPrefix: varPrefix).ToString();
 
-    public ThemeComponent SetPressed(ThemeStyle value)
-        => this with
-        {
-            Pressed = value
-        };
+    public ThemeComponent Update(ColorPalette colorPalette, FontDefinition fontDefinion)
+        => SetDark(Dark.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetHighContrastDark(HighContrastDark.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetHighContrastLight(HighContrastLight.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetLight(Light.Update(colorPalette: colorPalette, fontDefinion: fontDefinion));
 
-    public ThemeComponent SetVisited(ThemeStyle value)
-        => this with
-        {
-            Visited = value
-        };
+    public ThemeComponent UpdateFontFamily(FontDefinition fontDefinion)
+        => SetDark(Dark.UpdateFontFamily(fontDefinion))
+            .SetHighContrastDark(HighContrastDark.UpdateFontFamily(fontDefinion))
+            .SetHighContrastLight(HighContrastLight.UpdateFontFamily(fontDefinion))
+            .SetLight(Light.UpdateFontFamily(fontDefinion));
 
-    public string ToCss(ComponentState state, string? varPrefix = "")
-        => BuildCss(new CssBuilder(), state, varPrefix).ToString();
+    public ThemeComponent UpdatePalette(ColorPalette colorPalette)
+        => SetDark(Dark.UpdatePalette(colorPalette))
+            .SetHighContrastDark(HighContrastDark.UpdatePalette(colorPalette))
+            .SetHighContrastLight(HighContrastLight.UpdatePalette(colorPalette))
+            .SetLight(Light.UpdatePalette(colorPalette));
 }

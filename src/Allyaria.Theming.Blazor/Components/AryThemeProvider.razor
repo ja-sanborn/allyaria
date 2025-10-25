@@ -1,2 +1,8 @@
-﻿<style>@_css</style>
-<div @ref="_host">@ChildContent</div>
+<div @ref="_host" hidden aria-hidden="true"></div>
+<style id="ary-theme-style">@_css</style>
+
+<CascadingValue Name="Theme" Value="@_theme">
+    <CascadingValue Name="ThemeType" Value="@_effectiveType">
+        @ChildContent
+    </CascadingValue>
+</CascadingValue>

@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupBorderStyle : IStyleGroup
+public readonly record struct StyleGroupBorderStyle : IStyleGroup
 {
     public StyleGroupBorderStyle(StyleValueString value)
     {
@@ -40,10 +40,10 @@ public sealed record StyleGroupBorderStyle : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueString>("border-block-end-style", BlockEnd, varPrefix)
-            .Add<StyleValueString>("border-block-start-style", BlockStart, varPrefix)
-            .Add<StyleValueString>("border-inline-end-style", InlineEnd, varPrefix)
-            .Add<StyleValueString>("border-inline-start-style", InlineStart, varPrefix);
+            .Add<StyleValueString>(propertyName: "border-block-end-style", value: BlockEnd, varPrefix: varPrefix)
+            .Add<StyleValueString>(propertyName: "border-block-start-style", value: BlockStart, varPrefix: varPrefix)
+            .Add<StyleValueString>(propertyName: "border-inline-end-style", value: InlineEnd, varPrefix: varPrefix)
+            .Add<StyleValueString>(propertyName: "border-inline-start-style", value: InlineStart, varPrefix: varPrefix);
 
         return builder;
     }
@@ -72,5 +72,5 @@ public sealed record StyleGroupBorderStyle : IStyleGroup
             InlineStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

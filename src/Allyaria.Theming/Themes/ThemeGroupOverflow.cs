@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupOverflow(
+public sealed partial record ThemeGroupOverflow(
     StyleValueString? OverflowWrap = null,
     StyleValueString? OverflowX = null,
     StyleValueString? OverflowY = null,
@@ -8,21 +8,17 @@ public sealed record ThemeGroupOverflow(
     StyleValueString? OverscrollBehaviorY = null
 )
 {
-    public static readonly ThemeGroupOverflow Empty = new();
-
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
-            .Add("overflow-wrap", OverflowWrap, varPrefix)
-            .Add("overflow-x", OverflowX, varPrefix)
-            .Add("overflow-y", OverflowY, varPrefix)
-            .Add("overscroll-behavior-x", OverscrollBehaviorX, varPrefix)
-            .Add("overscroll-behavior-y", OverscrollBehaviorY, varPrefix);
+            .Add(propertyName: "overflow-wrap", value: OverflowWrap, varPrefix: varPrefix)
+            .Add(propertyName: "overflow-x", value: OverflowX, varPrefix: varPrefix)
+            .Add(propertyName: "overflow-y", value: OverflowY, varPrefix: varPrefix)
+            .Add(propertyName: "overscroll-behavior-x", value: OverscrollBehaviorX, varPrefix: varPrefix)
+            .Add(propertyName: "overscroll-behavior-y", value: OverscrollBehaviorY, varPrefix: varPrefix);
 
         return builder;
     }
-
-    public static ThemeGroupOverflow FromDefault() => new();
 
     public ThemeGroupOverflow Merge(ThemeGroupOverflow other)
         => SetOverflowWrap(other.OverflowWrap ?? OverflowWrap)
@@ -61,5 +57,5 @@ public sealed record ThemeGroupOverflow(
             OverscrollBehaviorY = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

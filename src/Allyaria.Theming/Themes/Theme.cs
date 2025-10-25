@@ -1,19 +1,26 @@
 namespace Allyaria.Theming.Themes;
 
 public sealed record Theme(
-    ThemeVariant Light,
-    ThemeVariant Dark,
-    ThemeVariant HighContrastLight,
-    ThemeVariant HighContrastDark
+    ThemeComponent Body,
+    ThemeComponent BodyVariant,
+    ThemeComponent Link,
+    ThemeComponent LinkVariant,
+    ThemeComponent Surface,
+    ThemeComponent SurfaceVariant
 )
 {
     public static readonly Theme Empty = new(
-        ThemeVariant.Empty, ThemeVariant.Empty, ThemeVariant.Empty, ThemeVariant.Empty
+        Body: ThemeComponent.Empty,
+        BodyVariant: ThemeComponent.Empty,
+        Link: ThemeComponent.Empty,
+        LinkVariant: ThemeComponent.Empty,
+        Surface: ThemeComponent.Empty,
+        SurfaceVariant: ThemeComponent.Empty
     );
 
     public CssBuilder BuildCss(CssBuilder builder,
-        ThemeType theme,
         ComponentType type,
+        ThemeType themeType,
         ComponentState state,
         string? varPrefix = null)
     {
@@ -21,28 +28,37 @@ public sealed record Theme(
 
         if (!string.IsNullOrWhiteSpace(prefix))
         {
-            prefix = $"{prefix}-{theme}";
+            prefix = $"{prefix}-{type}";
         }
 
-        switch (theme)
+        switch (type)
         {
-            case ThemeType.Dark:
-                builder = Dark.BuildCss(builder, type, state, prefix);
+            case ComponentType.Body:
+                builder = Body.BuildCss(builder: builder, themeType: themeType, state: state, varPrefix: prefix);
 
                 break;
 
-            case ThemeType.HighContrastDark:
-                builder = HighContrastDark.BuildCss(builder, type, state, prefix);
+            case ComponentType.BodyVariant:
+                builder = BodyVariant.BuildCss(builder: builder, themeType: themeType, state: state, varPrefix: prefix);
+
+                break;
+            case ComponentType.Link:
+                builder = Link.BuildCss(builder: builder, themeType: themeType, state: state, varPrefix: prefix);
+
+                break;
+            case ComponentType.LinkVariant:
+                builder = LinkVariant.BuildCss(builder: builder, themeType: themeType, state: state, varPrefix: prefix);
+
+                break;
+            case ComponentType.Surface:
+                builder = Surface.BuildCss(builder: builder, themeType: themeType, state: state, varPrefix: prefix);
 
                 break;
 
-            case ThemeType.HighContrastLight:
-                builder = HighContrastLight.BuildCss(builder, type, state, prefix);
-
-                break;
-
-            default:
-                builder = Light.BuildCss(builder, type, state, prefix);
+            case ComponentType.SurfaceVariant:
+                builder = SurfaceVariant.BuildCss(
+                    builder: builder, themeType: themeType, state: state, varPrefix: prefix
+                );
 
                 break;
         }
@@ -50,46 +66,64 @@ public sealed record Theme(
         return builder;
     }
 
-    public static Theme FromDefault(PaletteColor? paletteColor = null, string? fontFamily = null)
+    public Theme FromDefault(PaletteType paletteType, FontType fontType)
         => new(
-            ThemeVariant.FromDefault(paletteColor ?? new PaletteColor(), ThemeType.Light, fontFamily),
-            ThemeVariant.FromDefault(paletteColor ?? new PaletteColor(), ThemeType.Dark, fontFamily),
-            ThemeVariant.FromDefault(paletteColor ?? new PaletteColor(), ThemeType.HighContrastLight, fontFamily),
-            ThemeVariant.FromDefault(paletteColor ?? new PaletteColor(), ThemeType.HighContrastDark, fontFamily)
+            Body: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
+            BodyVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
+            Link: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
+            LinkVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
+            Surface: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
+            SurfaceVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType)
         );
 
     public Theme Merge(Theme other)
-        => SetDark(Dark.Merge(other.Dark))
-            .SetHighContrastDark(HighContrastDark.Merge(other.HighContrastDark))
-            .SetHighContrastLight(HighContrastLight.Merge(other.HighContrastLight))
-            .SetLight(Light.Merge(other.Light));
+        => SetBody(Body.Merge(other.Body))
+            .SetBodyVariant(BodyVariant.Merge(other.BodyVariant))
+            .SetLink(Link.Merge(other.Link))
+            .SetLinkVariant(LinkVariant.Merge(other.LinkVariant))
+            .SetSurface(Surface.Merge(other.Surface))
+            .SetSurfaceVariant(SurfaceVariant.Merge(other.SurfaceVariant));
 
-    public Theme SetDark(ThemeVariant value)
+    public Theme SetBody(ThemeComponent value)
         => this with
         {
-            Dark = value
+            Body = value
         };
 
-    public Theme SetHighContrastDark(ThemeVariant value)
+    public Theme SetBodyVariant(ThemeComponent value)
         => this with
         {
-            HighContrastDark = value
+            BodyVariant = value
         };
 
-    public Theme SetHighContrastLight(ThemeVariant value)
+    public Theme SetLink(ThemeComponent value)
         => this with
         {
-            HighContrastLight = value
+            Link = value
         };
 
-    public Theme SetLight(ThemeVariant value)
+    public Theme SetLinkVariant(ThemeComponent value)
         => this with
         {
-            Light = value
+            LinkVariant = value
         };
 
-    public string ToCss(ThemeType themeType, ComponentType component, ComponentState state, string? varPrefix = "")
-        => BuildCss(new CssBuilder(), themeType, component, state, varPrefix).ToString();
+    public Theme SetSurface(ThemeComponent value)
+        => this with
+        {
+            Surface = value
+        };
+
+    public Theme SetSurfaceVariant(ThemeComponent value)
+        => this with
+        {
+            SurfaceVariant = value
+        };
+
+    public string ToCss(ComponentType component, ThemeType themeType, ComponentState state, string? varPrefix = "")
+        => BuildCss(
+            builder: new CssBuilder(), type: component, themeType: themeType, state: state, varPrefix: varPrefix
+        ).ToString();
 
     public string ToCssVars(ThemeType themeType)
     {
@@ -101,10 +135,36 @@ public sealed record Theme(
         {
             foreach (var state in stateItems)
             {
-                builder = BuildCss(builder, themeType, component, state, ThemingDefaults.VarPrefix);
+                builder = BuildCss(
+                    builder: builder, type: component, themeType: themeType, state: state, varPrefix: General.VarPrefix
+                );
             }
         }
 
         return builder.ToString();
     }
+
+    public Theme Update(ColorPalette colorPalette, FontDefinition fontDefinion)
+        => SetBody(Body.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetBodyVariant(BodyVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetLink(Link.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetLinkVariant(LinkVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetSurface(Surface.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
+            .SetSurfaceVariant(SurfaceVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion));
+
+    public Theme UpdateFontFamily(FontDefinition fontDefinion)
+        => SetBody(Body.UpdateFontFamily(fontDefinion))
+            .SetBodyVariant(BodyVariant.UpdateFontFamily(fontDefinion))
+            .SetLink(Link.UpdateFontFamily(fontDefinion))
+            .SetLinkVariant(LinkVariant.UpdateFontFamily(fontDefinion))
+            .SetSurface(Surface.UpdateFontFamily(fontDefinion))
+            .SetSurfaceVariant(SurfaceVariant.UpdateFontFamily(fontDefinion));
+
+    public Theme UpdatePalette(ColorPalette colorPalette)
+        => SetBody(Body.UpdatePalette(colorPalette))
+            .SetBodyVariant(BodyVariant.UpdatePalette(colorPalette))
+            .SetLink(Link.UpdatePalette(colorPalette))
+            .SetLinkVariant(LinkVariant.UpdatePalette(colorPalette))
+            .SetSurface(Surface.UpdatePalette(colorPalette))
+            .SetSurfaceVariant(SurfaceVariant.UpdatePalette(colorPalette));
 }

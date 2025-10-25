@@ -13,7 +13,7 @@ public static class StringExtensions
     /// </summary>
     /// <remarks>Pattern: <c>^[a-z][A-Za-z0-9]*$</c></remarks>
     private static readonly Regex CamelCaseIdentifierRegex = new(
-        "^[a-z][A-Za-z0-9]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant
+        pattern: "^[a-z][A-Za-z0-9]*$", options: RegexOptions.Compiled | RegexOptions.CultureInvariant
     );
 
     /// <summary>
@@ -22,7 +22,7 @@ public static class StringExtensions
     /// </summary>
     /// <remarks>Pattern: <c>^[A-Za-z][A-Za-z0-9-]*$</c></remarks>
     private static readonly Regex KebabCaseIdentifierRegex = new(
-        "^[A-Za-z][A-Za-z0-9-]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant
+        pattern: "^[A-Za-z][A-Za-z0-9-]*$", options: RegexOptions.Compiled | RegexOptions.CultureInvariant
     );
 
     /// <summary>
@@ -31,7 +31,7 @@ public static class StringExtensions
     /// </summary>
     /// <remarks>Pattern: <c>^[A-Z][A-Za-z0-9]*$</c></remarks>
     private static readonly Regex PascalCaseIdentifierRegex = new(
-        "^[A-Z][A-Za-z0-9]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant
+        pattern: "^[A-Z][A-Za-z0-9]*$", options: RegexOptions.Compiled | RegexOptions.CultureInvariant
     );
 
     /// <summary>
@@ -40,7 +40,7 @@ public static class StringExtensions
     /// </summary>
     /// <remarks>Pattern: <c>^[A-Za-z][A-Za-z0-9_]*$</c></remarks>
     private static readonly Regex SnakeCaseIdentifierRegex = new(
-        "^[A-Za-z][A-Za-z0-9_]*$", RegexOptions.Compiled | RegexOptions.CultureInvariant
+        pattern: "^[A-Za-z][A-Za-z0-9_]*$", options: RegexOptions.Compiled | RegexOptions.CultureInvariant
     );
 
     /// <summary>
@@ -57,8 +57,8 @@ public static class StringExtensions
         var ci = culture ?? CultureInfo.InvariantCulture;
 
         return word.Length == 1
-            ? char.ToUpper(word[0], ci).ToString(ci)
-            : char.ToUpper(word[0], ci) + word[1..].ToLower(ci);
+            ? char.ToUpper(c: word[0], culture: ci).ToString(ci)
+            : char.ToUpper(c: word[0], culture: ci) + word[1..].ToLower(ci);
     }
 
     /// <summary>
@@ -67,7 +67,10 @@ public static class StringExtensions
     /// </summary>
     /// <remarks>Example: for <c>'-'</c>, the effective pattern is <c>"-+"</c>; for <c>'_'</c>, <c>"_+"</c>.</remarks>
     private static Regex CollapseSeparatorRegex(char replaceChar)
-        => new($"[{Regex.Escape(replaceChar.ToString())}]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        => new(
+            pattern: $"[{Regex.Escape(replaceChar.ToString())}]+",
+            options: RegexOptions.Compiled | RegexOptions.CultureInvariant
+        );
 
     /// <summary>Converts a camelCase identifier into a human-readable string with spaces.</summary>
     /// <exception cref="AryArgumentException">Thrown when the trimmed input is not a valid camelCase identifier.</exception>
@@ -83,9 +86,9 @@ public static class StringExtensions
         if (!CamelCaseIdentifierRegex.IsMatch(text))
         {
             throw new AryArgumentException(
-                "must be a camelCase identifier (start with a lowercase letter; letters and digits only)",
-                nameof(value),
-                value
+                message: "must be a camelCase identifier (start with a lowercase letter; letters and digits only)",
+                argName: nameof(value),
+                argValue: value
             );
         }
 
@@ -106,14 +109,14 @@ public static class StringExtensions
         if (!KebabCaseIdentifierRegex.IsMatch(text))
         {
             throw new AryArgumentException(
-                "must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)",
-                nameof(value),
-                value
+                message: "must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)",
+                argName: nameof(value),
+                argValue: value
             );
         }
 
         // Replace hyphens with single spaces (consecutive hyphens collapse to one space)
-        return ReplaceAndCollapseSeparators(text, '-');
+        return ReplaceAndCollapseSeparators(value: text, replaceChar: '-');
     }
 
     /// <summary>Converts a PascalCase identifier into a human-readable string with spaces.</summary>
@@ -130,9 +133,9 @@ public static class StringExtensions
         if (!PascalCaseIdentifierRegex.IsMatch(text))
         {
             throw new AryArgumentException(
-                "must be a PascalCase identifier (start with an uppercase letter; letters and digits only)",
-                nameof(value),
-                value
+                message: "must be a PascalCase identifier (start with an uppercase letter; letters and digits only)",
+                argName: nameof(value),
+                argValue: value
             );
         }
 
@@ -159,9 +162,9 @@ public static class StringExtensions
         if (core.Length == 0)
         {
             throw new AryArgumentException(
-                "Input cannot be reduced to a valid identifier.",
-                nameof(value),
-                value
+                message: "Input cannot be reduced to a valid identifier.",
+                argName: nameof(value),
+                argValue: value
             );
         }
 
@@ -186,9 +189,10 @@ public static class StringExtensions
         }
 
         throw new AryArgumentException(
+            message:
             "Input must be PascalCase, camelCase, snake_case, or kebab-case (with optional leading '_' or '-').",
-            nameof(value),
-            value
+            argName: nameof(value),
+            argValue: value
         );
     }
 
@@ -206,14 +210,14 @@ public static class StringExtensions
         if (!SnakeCaseIdentifierRegex.IsMatch(text))
         {
             throw new AryArgumentException(
-                "must be a snake_case identifier (start with a letter; letters, digits, and underscores only)",
-                nameof(value),
-                value
+                message: "must be a snake_case identifier (start with a letter; letters, digits, and underscores only)",
+                argName: nameof(value),
+                argValue: value
             );
         }
 
         // Replace underscores with single spaces (consecutive underscores collapse to one space)
-        return ReplaceAndCollapseSeparators(text, '_');
+        return ReplaceAndCollapseSeparators(value: text, replaceChar: '_');
     }
 
     /// <summary>Removes diacritic marks (accents) from a string.</summary>
@@ -257,7 +261,7 @@ public static class StringExtensions
     {
         var text = value.Trim();
 
-        return CollapseSeparatorRegex(replaceChar).Replace(text, " ").Trim();
+        return CollapseSeparatorRegex(replaceChar).Replace(input: text, replacement: " ").Trim();
     }
 
     /// <summary>
@@ -318,12 +322,13 @@ public static class StringExtensions
             : SplitConcatenated(text);
 
         var words = tokenSource.Split(
+            separator:
             [
                 ' ',
                 '\t',
                 '\r',
                 '\n'
-            ], StringSplitOptions.RemoveEmptyEntries
+            ], options: StringSplitOptions.RemoveEmptyEntries
         );
 
         var sb = new StringBuilder(text.Length);
@@ -346,7 +351,7 @@ public static class StringExtensions
                 }
                 else
                 {
-                    sb.Append(char.ToLower(w[0], CultureInfo.InvariantCulture));
+                    sb.Append(char.ToLower(c: w[0], culture: CultureInfo.InvariantCulture));
 
                     if (w.Length > 1)
                     {
@@ -358,7 +363,7 @@ public static class StringExtensions
             {
                 // Subsequent tokens: TitleCase the lower-cased token (acronyms like HTTP -> Http).
                 var lower = w.ToLower(CultureInfo.InvariantCulture);
-                sb.Append(char.ToUpper(lower[0], CultureInfo.InvariantCulture));
+                sb.Append(char.ToUpper(c: lower[0], culture: CultureInfo.InvariantCulture));
 
                 if (lower.Length > 1)
                 {
@@ -381,8 +386,11 @@ public static class StringExtensions
         var cleaned = value.Trim().NormalizeAccents();
 
         // Convert any whitespace to hyphens, then collapse runs of hyphens.
-        var withHyphens = Regex.Replace(cleaned, "\\s+", "-", RegexOptions.CultureInvariant);
-        var collapsed = CollapseSeparatorRegex('-').Replace(withHyphens, "-");
+        var withHyphens = Regex.Replace(
+            input: cleaned, pattern: "\\s+", replacement: "-", options: RegexOptions.CultureInvariant
+        );
+
+        var collapsed = CollapseSeparatorRegex('-').Replace(input: withHyphens, replacement: "-");
 
         return collapsed.ToLowerInvariant();
     }
@@ -396,12 +404,13 @@ public static class StringExtensions
         }
 
         var words = value.Split(
+            separator:
             [
                 ' ',
                 '\t',
                 '\r',
                 '\n'
-            ], StringSplitOptions.RemoveEmptyEntries
+            ], options: StringSplitOptions.RemoveEmptyEntries
         );
 
         var sb = new StringBuilder(value.Length);
@@ -418,7 +427,7 @@ public static class StringExtensions
             sb.Append(
                 normalized.All(char.IsUpper)
                     ? normalized
-                    : Capitalize(normalized, CultureInfo.InvariantCulture)
+                    : Capitalize(word: normalized, culture: CultureInfo.InvariantCulture)
             );
         }
 
@@ -436,8 +445,11 @@ public static class StringExtensions
         var cleaned = value.Trim().NormalizeAccents();
 
         // Convert any whitespace to underscores, then collapse runs of underscores.
-        var withUnderscores = Regex.Replace(cleaned, "\\s+", "_", RegexOptions.CultureInvariant);
-        var collapsed = CollapseSeparatorRegex('_').Replace(withUnderscores, "_");
+        var withUnderscores = Regex.Replace(
+            input: cleaned, pattern: "\\s+", replacement: "_", options: RegexOptions.CultureInvariant
+        );
+
+        var collapsed = CollapseSeparatorRegex('_').Replace(input: withUnderscores, replacement: "_");
 
         return collapsed.ToLowerInvariant();
     }

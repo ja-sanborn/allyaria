@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupBorderColor : IStyleGroup
+public readonly record struct StyleGroupBorderColor : IStyleGroup
 {
     public StyleGroupBorderColor(StyleValueColor value)
     {
@@ -40,17 +40,18 @@ public sealed record StyleGroupBorderColor : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueColor>("border-block-end-color", BlockEnd, varPrefix)
-            .Add<StyleValueColor>("border-block-start-color", BlockStart, varPrefix)
-            .Add<StyleValueColor>("border-inline-end-color", InlineEnd, varPrefix)
-            .Add<StyleValueColor>("border-inline-start-color", InlineStart, varPrefix);
+            .Add<StyleValueColor>(propertyName: "border-block-end-color", value: BlockEnd, varPrefix: varPrefix)
+            .Add<StyleValueColor>(propertyName: "border-block-start-color", value: BlockStart, varPrefix: varPrefix)
+            .Add<StyleValueColor>(propertyName: "border-inline-end-color", value: InlineEnd, varPrefix: varPrefix)
+            .Add<StyleValueColor>(propertyName: "border-inline-start-color", value: InlineStart, varPrefix: varPrefix);
 
         return builder;
     }
 
     public StyleGroupBorderColor EnsureContrast(StyleValueColor backgroundColor)
     {
-        if (BlockStart.Equals(BlockEnd) && BlockStart.Equals(InlineStart) && BlockStart.Equals(InlineEnd))
+        if (BlockStart.Equals(BlockEnd) && BlockStart.Equals(InlineStart) &&
+            BlockStart.Equals(InlineEnd))
         {
             var contrasted = BlockStart.EnsureContrast(backgroundColor);
 
@@ -58,10 +59,10 @@ public sealed record StyleGroupBorderColor : IStyleGroup
         }
 
         return new StyleGroupBorderColor(
-            BlockStart.EnsureContrast(backgroundColor),
-            BlockEnd.EnsureContrast(backgroundColor),
-            InlineStart.EnsureContrast(backgroundColor),
-            InlineEnd.EnsureContrast(backgroundColor)
+            blockStart: BlockStart.EnsureContrast(backgroundColor),
+            blockEnd: BlockEnd.EnsureContrast(backgroundColor),
+            inlineStart: InlineStart.EnsureContrast(backgroundColor),
+            inlineEnd: InlineEnd.EnsureContrast(backgroundColor)
         );
     }
 
@@ -89,7 +90,7 @@ public sealed record StyleGroupBorderColor : IStyleGroup
             InlineStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 
     public StyleGroupBorderColor ToDisabled()
         => this with

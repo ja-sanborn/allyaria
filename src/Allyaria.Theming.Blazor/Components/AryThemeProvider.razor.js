@@ -8,16 +8,17 @@ const state = new WeakMap();
  * Detects the current system theme with High Contrast taking precedence over Dark/Light.
  * Falls back to "System" if matchMedia is unavailable or throws.
  *
- * @returns {"HighContrast"|"Dark"|"Light"|"System"} The detected theme.
+ * @returns {"HighContrastDark"|"HighContrastLight"|"Dark"|"Light"|"System"} The detected theme.
  */
 export function detect() {
     try {
-        if (window.matchMedia('(forced-colors: active)').matches) {
-            return 'HighContrast';
+        const forced = window.matchMedia('(forced-colors: active)').matches;
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (forced) {
+            return dark ? 'HighContrastDark' : 'HighContrastLight';
         }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light';
+        return dark ? 'Dark' : 'Light';
     } catch {
-        // Conservative fallback when the environment is non-standard (e.g., WebView, restricted iframes).
         return 'System';
     }
 }

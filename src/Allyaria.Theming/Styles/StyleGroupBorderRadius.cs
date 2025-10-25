@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupBorderRadius : IStyleGroup
+public readonly record struct StyleGroupBorderRadius : IStyleGroup
 {
     public StyleGroupBorderRadius(StyleValueNumber value)
     {
@@ -40,10 +40,10 @@ public sealed record StyleGroupBorderRadius : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueNumber>("border-end-end-radius", EndEnd, varPrefix)
-            .Add<StyleValueNumber>("border-end-start-radius", EndStart, varPrefix)
-            .Add<StyleValueNumber>("border-start-end-radius", StartEnd, varPrefix)
-            .Add<StyleValueNumber>("border-start-start-radius", StartStart, varPrefix);
+            .Add<StyleValueNumber>(propertyName: "border-end-end-radius", value: EndEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-end-start-radius", value: EndStart, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-start-end-radius", value: StartEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-start-start-radius", value: StartStart, varPrefix: varPrefix);
 
         return builder;
     }
@@ -72,5 +72,5 @@ public sealed record StyleGroupBorderRadius : IStyleGroup
             StartStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

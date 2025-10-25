@@ -17,14 +17,16 @@ public sealed class GenericExtensionsTests
     {
         yield return new object[]
         {
-            new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+            new DateTime(year: 2000, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc),
             DateTime.MaxValue
         };
 
         yield return new object[]
         {
-            new DateTime(2024, 2, 29, 23, 59, 59, DateTimeKind.Unspecified),
-            new DateTime(1999, 12, 31)
+            new DateTime(
+                year: 2024, month: 2, day: 29, hour: 23, minute: 59, second: 59, kind: DateTimeKind.Unspecified
+            ),
+            new DateTime(year: 1999, month: 12, day: 31)
         };
 
         yield return new object[]
@@ -110,7 +112,10 @@ public sealed class GenericExtensionsTests
     {
         // Arrange
         DateTime? input = null;
-        var fallback = new DateTime(2030, 12, 25, 6, 30, 0, DateTimeKind.Local);
+
+        var fallback = new DateTime(
+            year: 2030, month: 12, day: 25, hour: 6, minute: 30, second: 0, kind: DateTimeKind.Local
+        );
 
         // Act
         var result = input.OrDefault(fallback);

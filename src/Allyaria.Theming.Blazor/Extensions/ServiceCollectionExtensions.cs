@@ -1,4 +1,3 @@
-﻿using Allyaria.Theming.Blazor.Services;
 using Allyaria.Theming.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,15 +20,13 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The <see cref="IServiceCollection" /> to which the theming services will be added.</param>
     /// <returns>The same <see cref="IServiceCollection" /> instance, allowing for method chaining.</returns>
     /// <remarks>
-    /// - <see cref="IThemePersistence" /> is registered as scoped, ensuring one instance per Blazor circuit.<br /> -
-    /// <see cref="IThemeProvider" /> is registered as scoped for consistent state management.<br /> -
-    /// <see cref="IThemeWatcher" /> is registered as a singleton to coordinate theme detection across components.
+    /// - <see cref="IThemePersistenceOld" /> is registered as scoped, ensuring one instance per Blazor circuit.<br /> -
+    /// <see cref="IThemeProviderOld" /> is registered as scoped for consistent state management.<br /> -
+    /// <see cref="IThemeWatcherOld" /> is registered as a singleton to coordinate theme detection across components.
     /// </remarks>
     public static IServiceCollection AddAllyariaThemingBlazor(this IServiceCollection services)
     {
-        services.AddScoped<IThemePersistence, ThemePersistence>();
-        services.AddScoped<IThemeProvider, ThemeProvider>();
-        services.AddSingleton<IThemeWatcher, AryThemeWatcher>();
+        services.AddScoped<IThemingService, ThemingService>();
 
         return services;
     }

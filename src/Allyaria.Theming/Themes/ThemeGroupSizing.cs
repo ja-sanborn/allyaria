@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupSizing(
+public sealed partial record ThemeGroupSizing(
     StyleValueNumber? Height = null,
     StyleGroupMargin? Margin = null,
     StyleValueNumber? MaxHeight = null,
@@ -9,27 +9,19 @@ public sealed record ThemeGroupSizing(
     StyleValueNumber? Width = null
 )
 {
-    public static readonly ThemeGroupSizing Empty = new();
-
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
-            .Add("height", Height, varPrefix)
-            .Add("max-height", MaxHeight, varPrefix)
-            .Add("max-width", MaxWidth, varPrefix)
-            .Add("width", Width, varPrefix);
+            .Add(propertyName: "height", value: Height, varPrefix: varPrefix)
+            .Add(propertyName: "max-height", value: MaxHeight, varPrefix: varPrefix)
+            .Add(propertyName: "max-width", value: MaxWidth, varPrefix: varPrefix)
+            .Add(propertyName: "width", value: Width, varPrefix: varPrefix);
 
-        builder = Margin?.BuildCss(builder, varPrefix) ?? builder;
-        builder = Padding?.BuildCss(builder, varPrefix) ?? builder;
+        builder = Margin?.BuildCss(builder: builder, varPrefix: varPrefix) ?? builder;
+        builder = Padding?.BuildCss(builder: builder, varPrefix: varPrefix) ?? builder;
 
         return builder;
     }
-
-    public static ThemeGroupSizing FromDefault()
-        => new(
-            Margin: new StyleGroupMargin(Sizing.Size2),
-            Padding: new StyleGroupPadding(Sizing.Size3)
-        );
 
     public ThemeGroupSizing Merge(ThemeGroupSizing other)
         => SetHeight(other.Height ?? Height)
@@ -47,7 +39,10 @@ public sealed record ThemeGroupSizing(
 
     public ThemeGroupSizing SetMargin(StyleGroupMargin? value)
         => value is not null
-            ? SetMargin(value.BlockStart, value.BlockEnd, value.InlineStart, value.InlineEnd)
+            ? SetMargin(
+                blockStart: value.Value.BlockStart, blockEnd: value.Value.BlockEnd,
+                inlineStart: value.Value.InlineStart, inlineEnd: value.Value.InlineEnd
+            )
             : this with
             {
                 Margin = null
@@ -55,14 +50,16 @@ public sealed record ThemeGroupSizing(
 
     public ThemeGroupSizing SetMargin(StyleValueNumber? value)
         => value is not null
-            ? SetMargin(value.Value, value.Value, value.Value, value.Value)
+            ? SetMargin(
+                blockStart: value.Value, blockEnd: value.Value, inlineStart: value.Value, inlineEnd: value.Value
+            )
             : this with
             {
                 Margin = null
             };
 
     public ThemeGroupSizing SetMargin(StyleValueNumber block, StyleValueNumber inline)
-        => SetMargin(block, block, inline, inline);
+        => SetMargin(blockStart: block, blockEnd: block, inlineStart: inline, inlineEnd: inline);
 
     public ThemeGroupSizing SetMargin(StyleValueNumber blockStart,
         StyleValueNumber blockEnd,
@@ -71,8 +68,10 @@ public sealed record ThemeGroupSizing(
         => this with
         {
             Margin = Margin is null
-                ? new StyleGroupMargin(blockStart, blockEnd, inlineStart, inlineEnd)
-                : Margin
+                ? new StyleGroupMargin(
+                    blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
+                )
+                : Margin.Value
                     .SetBlockEnd(blockEnd)
                     .SetBlockStart(blockStart)
                     .SetInlineEnd(inlineEnd)
@@ -93,7 +92,10 @@ public sealed record ThemeGroupSizing(
 
     public ThemeGroupSizing SetPadding(StyleGroupPadding? value)
         => value is not null
-            ? SetPadding(value.BlockStart, value.BlockEnd, value.InlineStart, value.InlineEnd)
+            ? SetPadding(
+                blockStart: value.Value.BlockStart, blockEnd: value.Value.BlockEnd,
+                inlineStart: value.Value.InlineStart, inlineEnd: value.Value.InlineEnd
+            )
             : this with
             {
                 Padding = null
@@ -101,14 +103,16 @@ public sealed record ThemeGroupSizing(
 
     public ThemeGroupSizing SetPadding(StyleValueNumber? value)
         => value is not null
-            ? SetPadding(value.Value, value.Value, value.Value, value.Value)
+            ? SetPadding(
+                blockStart: value.Value, blockEnd: value.Value, inlineStart: value.Value, inlineEnd: value.Value
+            )
             : this with
             {
                 Padding = null
             };
 
     public ThemeGroupSizing SetPadding(StyleValueNumber block, StyleValueNumber inline)
-        => SetPadding(block, block, inline, inline);
+        => SetPadding(blockStart: block, blockEnd: block, inlineStart: inline, inlineEnd: inline);
 
     public ThemeGroupSizing SetPadding(StyleValueNumber blockStart,
         StyleValueNumber blockEnd,
@@ -117,8 +121,10 @@ public sealed record ThemeGroupSizing(
         => this with
         {
             Padding = Padding is null
-                ? new StyleGroupPadding(blockStart, blockEnd, inlineStart, inlineEnd)
-                : Padding
+                ? new StyleGroupPadding(
+                    blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
+                )
+                : Padding.Value
                     .SetBlockEnd(blockEnd)
                     .SetBlockStart(blockStart)
                     .SetInlineEnd(inlineEnd)
@@ -131,5 +137,5 @@ public sealed record ThemeGroupSizing(
             Width = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

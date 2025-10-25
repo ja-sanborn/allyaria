@@ -7,14 +7,17 @@ public readonly record struct StyleValueColor : IStyleValue
     public StyleValueColor(HexColor color) => Color = color;
 
     public StyleValueColor(byte red, byte green, byte blue, double alpha = 1.0)
-        => Color = new HexColor(new HexByte(red), new HexByte(green), new HexByte(blue), HexByte.FromNormalized(alpha));
+        => Color = new HexColor(
+            red: new HexByte(red), green: new HexByte(green), blue: new HexByte(blue),
+            alpha: HexByte.FromNormalized(alpha)
+        );
 
     public HexColor Color { get; }
 
     public string Value => Color.ToString();
 
     public StyleValueColor EnsureContrast(StyleValueColor surface)
-        => new(Color.EnsureMinimumContrast(surface.Color, 4.5));
+        => new(Color.EnsureMinimumContrast(surfaceColor: surface.Color, minimumRatio: 4.5));
 
     public static StyleValueColor Parse(string value) => new(value);
 
@@ -34,7 +37,7 @@ public readonly record struct StyleValueColor : IStyleValue
 
     public StyleValueColor ToFocused() => new(Color.ShiftLightness(0.1));
 
-    public StyleValueColor ToForeground() => new(Color.ShiftLightness(0.7));
+    public StyleValueColor ToForeground() => new(Color.ShiftLightness(0.9));
 
     public StyleValueColor ToHovered() => new(Color.ShiftLightness(0.06));
 

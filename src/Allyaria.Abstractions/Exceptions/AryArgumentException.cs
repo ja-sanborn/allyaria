@@ -25,7 +25,7 @@ public sealed class AryArgumentException : AryException
     /// <param name="message">The error message.</param>
     /// <param name="innerException">The inner exception.</param>
     public AryArgumentException(string? message, Exception? innerException)
-        : base(message, innerException) { }
+        : base(message: message, innerException: innerException) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AryArgumentException" /> class with a specified error message and argument
@@ -45,7 +45,7 @@ public sealed class AryArgumentException : AryException
     /// <param name="argName">The argument name.</param>
     /// <param name="innerException">The inner exception.</param>
     public AryArgumentException(string? message, string? argName, Exception? innerException)
-        : base(message, innerException)
+        : base(message: message, innerException: innerException)
         => ArgName = argName;
 
     /// <summary>
@@ -66,7 +66,7 @@ public sealed class AryArgumentException : AryException
     /// <param name="argValue">The argument value.</param>
     /// <param name="innerException">The inner exception.</param>
     public AryArgumentException(string? message, object? argValue, Exception? innerException)
-        : base(message, innerException)
+        : base(message: message, innerException: innerException)
         => ArgValue = argValue;
 
     /// <summary>
@@ -92,7 +92,7 @@ public sealed class AryArgumentException : AryException
     /// <param name="argValue">The argument value.</param>
     /// <param name="innerException">The inner exception.</param>
     public AryArgumentException(string? message, string? argName, object? argValue, Exception? innerException)
-        : base(message, innerException)
+        : base(message: message, innerException: innerException)
     {
         ArgName = argName;
         ArgValue = argValue;
@@ -175,10 +175,10 @@ public sealed class AryArgumentException : AryException
     {
         if (string.IsNullOrWhiteSpace(argName))
         {
-            throw new AryArgumentException($"Value {message}.", argValue);
+            throw new AryArgumentException(message: $"Value {message}.", argValue: argValue);
         }
 
-        throw new AryArgumentException($"{argName} {message}.", argName, argValue);
+        throw new AryArgumentException(message: $"{argName} {message}.", argName: argName, argValue: argValue);
     }
 
     /// <summary>Throws if the specified span is empty.</summary>
@@ -189,7 +189,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue.Length == 0)
         {
-            ThrowError("cannot be empty", argName, null);
+            ThrowError(message: "cannot be empty", argName: argName, argValue: null);
         }
     }
 
@@ -201,7 +201,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue.Length == 0)
         {
-            ThrowError("cannot be empty", argName, null);
+            ThrowError(message: "cannot be empty", argName: argName, argValue: null);
         }
     }
 
@@ -213,7 +213,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue.IsEmpty)
         {
-            ThrowError("cannot be empty", argName, argValue);
+            ThrowError(message: "cannot be empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -224,7 +224,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue is null)
         {
-            ThrowError("cannot be null", argName, argValue);
+            ThrowError(message: "cannot be null", argName: argName, argValue: argValue);
         }
     }
 
@@ -239,7 +239,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue is null || argValue.Value.Equals(default(T)))
         {
-            ThrowError("cannot be null or the default value", argName, argValue);
+            ThrowError(message: "cannot be null or the default value", argName: argName, argValue: argValue);
         }
     }
 
@@ -250,7 +250,7 @@ public sealed class AryArgumentException : AryException
     {
         if (string.IsNullOrEmpty(argValue))
         {
-            ThrowError("cannot be null or empty", argName, argValue);
+            ThrowError(message: "cannot be null or empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -261,7 +261,7 @@ public sealed class AryArgumentException : AryException
     {
         if (!HasAny(argValue))
         {
-            ThrowError("cannot be null or empty", argName, argValue);
+            ThrowError(message: "cannot be null or empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -273,7 +273,7 @@ public sealed class AryArgumentException : AryException
     {
         if (!HasAny(argValue))
         {
-            ThrowError("cannot be null or empty", argName, argValue);
+            ThrowError(message: "cannot be null or empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -285,7 +285,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue is null || argValue.Value.Length == 0)
         {
-            ThrowError("cannot be null or empty", argName, argValue);
+            ThrowError(message: "cannot be null or empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -297,7 +297,7 @@ public sealed class AryArgumentException : AryException
     {
         if (argValue is null || argValue.Value.Length == 0)
         {
-            ThrowError("cannot be null or empty", argName, argValue);
+            ThrowError(message: "cannot be null or empty", argName: argName, argValue: argValue);
         }
     }
 
@@ -308,7 +308,7 @@ public sealed class AryArgumentException : AryException
     {
         if (string.IsNullOrWhiteSpace(argValue))
         {
-            ThrowError("cannot be null, empty or whitespace", argName, argValue);
+            ThrowError(message: "cannot be null, empty or whitespace", argName: argName, argValue: argValue);
         }
     }
 
@@ -325,7 +325,7 @@ public sealed class AryArgumentException : AryException
     public static void ThrowIfOutOfRange<T>(T? argValue, T? min = null, T? max = null, string? argName = null)
         where T : struct, IComparable<T>
     {
-        ThrowIfNull(argValue, argName);
+        ThrowIfNull(argValue: argValue, argName: argName);
 
         if (min is null && max is null)
         {
@@ -340,7 +340,7 @@ public sealed class AryArgumentException : AryException
         if ((argValue is double d && (double.IsNaN(d) || double.IsInfinity(d))) ||
             (argValue is float f && (float.IsNaN(f) || float.IsInfinity(f))))
         {
-            ThrowError("is not a finite number", argName, argValue);
+            ThrowError(message: "is not a finite number", argName: argName, argValue: argValue);
         }
 
         var value = argValue!.Value;
@@ -349,11 +349,11 @@ public sealed class AryArgumentException : AryException
 
         if (belowMin)
         {
-            ThrowError($"must be greater than or equal to {min!.Value}", argName, argValue);
+            ThrowError(message: $"must be greater than or equal to {min!.Value}", argName: argName, argValue: argValue);
         }
         else if (aboveMax)
         {
-            ThrowError($"must be less than or equal to {max!.Value}", argName, argValue);
+            ThrowError(message: $"must be less than or equal to {max!.Value}", argName: argName, argValue: argValue);
         }
     }
 }

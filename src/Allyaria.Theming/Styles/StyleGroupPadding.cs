@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupPadding : IStyleGroup
+public readonly record struct StyleGroupPadding : IStyleGroup
 {
     public StyleGroupPadding(StyleValueNumber value)
     {
@@ -40,10 +40,10 @@ public sealed record StyleGroupPadding : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueNumber>("padding-block-end", BlockEnd, varPrefix)
-            .Add<StyleValueNumber>("padding-block-start", BlockStart, varPrefix)
-            .Add<StyleValueNumber>("padding-inline-end", InlineEnd, varPrefix)
-            .Add<StyleValueNumber>("padding-inline-start", InlineStart, varPrefix);
+            .Add<StyleValueNumber>(propertyName: "padding-block-end", value: BlockEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "padding-block-start", value: BlockStart, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "padding-inline-end", value: InlineEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "padding-inline-start", value: InlineStart, varPrefix: varPrefix);
 
         return builder;
     }
@@ -72,5 +72,5 @@ public sealed record StyleGroupPadding : IStyleGroup
             InlineStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

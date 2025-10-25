@@ -1,21 +1,26 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupPalette
+public sealed partial record ThemeGroupPalette
 {
-    public static readonly ThemeGroupPalette Empty = new();
-
-    public ThemeGroupPalette(StyleValueColor? accentColor = null,
+    public ThemeGroupPalette(ThemeType themeType = ThemeType.Light,
+        PaletteType paletteType = PaletteType.Surface,
+        StyleValueColor? accentColor = null,
         StyleValueColor? backgroundColor = null,
         StyleGroupBorderColor? borderColor = null,
         StyleValueColor? caretColor = null,
         StyleValueColor? color = null,
+        StyleValueColor? outlineColor = null,
         StyleValueColor? textDecorationColor = null)
     {
+        ThemeType = themeType;
+        PaletteType = paletteType;
+
         AccentColor = accentColor;
         BackgroundColor = backgroundColor;
         BorderColor = borderColor;
         CaretColor = caretColor;
         Color = color;
+        OutlineColor = outlineColor;
         TextDecorationColor = textDecorationColor;
 
         if (BackgroundColor?.Color.IsTransparent() ?? true)
@@ -27,6 +32,7 @@ public sealed record ThemeGroupPalette
         BorderColor = BorderColor?.EnsureContrast(BackgroundColor.Value);
         CaretColor = CaretColor?.EnsureContrast(BackgroundColor.Value);
         Color = Color?.EnsureContrast(BackgroundColor.Value);
+        OutlineColor = OutlineColor?.EnsureContrast(BackgroundColor.Value);
         TextDecorationColor = TextDecorationColor?.EnsureContrast(BackgroundColor.Value);
     }
 
@@ -40,57 +46,72 @@ public sealed record ThemeGroupPalette
 
     public StyleValueColor? Color { get; init; }
 
+    public StyleValueColor? OutlineColor { get; init; }
+
+    public PaletteType PaletteType { get; init; } = PaletteType.Surface;
+
     public StyleValueColor? TextDecorationColor { get; init; }
+
+    public ThemeType ThemeType { get; init; } = ThemeType.Light;
 
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
-            .Add("accent-color", AccentColor, varPrefix)
-            .Add("background-color", BackgroundColor, varPrefix)
-            .Add("caret-color", CaretColor, varPrefix)
-            .Add("color", Color, varPrefix)
-            .Add("text-decoration-color", TextDecorationColor, varPrefix);
+            .Add(propertyName: "accent-color", value: AccentColor, varPrefix: varPrefix)
+            .Add(propertyName: "background-color", value: BackgroundColor, varPrefix: varPrefix)
+            .Add(propertyName: "caret-color", value: CaretColor, varPrefix: varPrefix)
+            .Add(propertyName: "color", value: Color, varPrefix: varPrefix)
+            .Add(propertyName: "outline-color", value: OutlineColor, varPrefix: varPrefix)
+            .Add(propertyName: "text-decoration-color", value: TextDecorationColor, varPrefix: varPrefix);
 
-        builder = BorderColor?.BuildCss(builder, varPrefix) ?? builder;
+        builder = BorderColor?.BuildCss(builder: builder, varPrefix: varPrefix) ?? builder;
 
         return builder;
     }
 
-    public static ThemeGroupPalette FromDefault(PaletteColor paletteColor, ThemeType themeType, PaletteType paletteType)
+    public static ThemeGroupPalette FromColorPalette(ColorPalette colorPalette,
+        ThemeType themeType,
+        PaletteType paletteType)
     {
-        var backgroundColor = paletteColor.GetColor(themeType, paletteType);
+        var backgroundColor = colorPalette.GetColor(themeType: themeType, paletteType: paletteType);
         var color = backgroundColor.ToForeground().EnsureContrast(backgroundColor);
         var caretColor = new StyleValueColor(color.Color);
         var accentColor = color.ToAccent().EnsureContrast(backgroundColor);
-        var borderColor = new StyleGroupBorderColor(backgroundColor.ToAccent().EnsureContrast(backgroundColor));
+        var borderColor = new StyleGroupBorderColor(backgroundColor);
+        var outlineColor = new StyleValueColor(accentColor.Color);
         var textDecorationColor = new StyleValueColor(accentColor.Color);
 
         if (themeType is ThemeType.HighContrastDark)
         {
-            backgroundColor = ThemingDefaults.BackgroundColorHighContrastDark;
-            color = ThemingDefaults.ForegroundColorHighContrastDark;
+            backgroundColor = CssColors.BackgroundColorHighContrastDark;
+            color = CssColors.ForegroundColorHighContrastDark;
             caretColor = color;
-            accentColor = ThemingDefaults.AccentColorHighContrastDark;
+            accentColor = CssColors.AccentColorHighContrastDark;
             borderColor = new StyleGroupBorderColor(accentColor);
+            outlineColor = accentColor;
             textDecorationColor = color;
         }
         else if (themeType is ThemeType.HighContrastLight)
         {
-            backgroundColor = ThemingDefaults.BackgroundColorHighContrastLight;
-            color = ThemingDefaults.ForegroundColorHighContrastLight;
+            backgroundColor = CssColors.BackgroundColorHighContrastLight;
+            color = CssColors.ForegroundColorHighContrastLight;
             caretColor = color;
-            accentColor = ThemingDefaults.AccentColorHighContrastLight;
+            accentColor = CssColors.AccentColorHighContrastLight;
             borderColor = new StyleGroupBorderColor(accentColor);
+            outlineColor = accentColor;
             textDecorationColor = color;
         }
 
         return new ThemeGroupPalette(
-            accentColor,
-            backgroundColor,
-            borderColor,
-            caretColor,
-            color,
-            textDecorationColor
+            themeType: themeType,
+            paletteType: paletteType,
+            accentColor: accentColor,
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
+            caretColor: caretColor,
+            color: color,
+            outlineColor: outlineColor,
+            textDecorationColor: textDecorationColor
         );
     }
 
@@ -100,6 +121,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(other.BorderColor ?? BorderColor)
             .SetCaretColor(other.CaretColor ?? CaretColor)
             .SetColor(other.Color ?? Color)
+            .SetOutlineColor(other.OutlineColor ?? OutlineColor)
             .SetTextDecorationColor(other.TextDecorationColor ?? TextDecorationColor);
 
     public ThemeGroupPalette SetAccentColor(StyleValueColor? value)
@@ -128,12 +150,16 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor)
             .SetCaretColor(CaretColor)
             .SetColor(Color)
+            .SetOutlineColor(OutlineColor)
             .SetTextDecorationColor(TextDecorationColor);
     }
 
     public ThemeGroupPalette SetBorderColor(StyleGroupBorderColor? value)
         => value is not null
-            ? SetBorderColor(value.BlockStart, value.BlockEnd, value.InlineStart, value.InlineEnd)
+            ? SetBorderColor(
+                blockStart: value.Value.BlockStart, blockEnd: value.Value.BlockEnd,
+                inlineStart: value.Value.InlineStart, inlineEnd: value.Value.InlineEnd
+            )
             : this with
             {
                 BorderColor = null
@@ -141,14 +167,17 @@ public sealed record ThemeGroupPalette
 
     public ThemeGroupPalette SetBorderColor(StyleValueColor? value)
         => value is not null
-            ? SetBorderColor(value.Value, value.Value, value.Value, value.Value)
+            ? SetBorderColor(
+                blockStart: value.Value.Value, blockEnd: value.Value.Value, inlineStart: value.Value.Value,
+                inlineEnd: value.Value.Value
+            )
             : this with
             {
                 BorderColor = null
             };
 
     public ThemeGroupPalette SetBorderColor(StyleValueColor block, StyleValueColor inline)
-        => SetBorderColor(block, block, inline, inline);
+        => SetBorderColor(blockStart: block, blockEnd: block, inlineStart: inline, inlineEnd: inline);
 
     public ThemeGroupPalette SetBorderColor(StyleValueColor blockStart,
         StyleValueColor blockEnd,
@@ -174,11 +203,14 @@ public sealed record ThemeGroupPalette
         return BorderColor is null
             ? this with
             {
-                BorderColor = new StyleGroupBorderColor(newBlockStart, newBlockEnd, newInlineStart, newInlineEnd)
+                BorderColor = new StyleGroupBorderColor(
+                    blockStart: newBlockStart, blockEnd: newBlockEnd, inlineStart: newInlineStart,
+                    inlineEnd: newInlineEnd
+                )
             }
             : this with
             {
-                BorderColor = BorderColor
+                BorderColor = BorderColor.Value
                     .SetBlockEnd(newBlockEnd)
                     .SetBlockStart(newBlockStart)
                     .SetInlineEnd(newInlineEnd)
@@ -202,6 +234,14 @@ public sealed record ThemeGroupPalette
                 : value?.EnsureContrast(BackgroundColor.Value)
         };
 
+    public ThemeGroupPalette SetOutlineColor(StyleValueColor? value)
+        => this with
+        {
+            OutlineColor = BackgroundColor?.Color.IsTransparent() ?? true
+                ? value
+                : value?.EnsureContrast(BackgroundColor.Value)
+        };
+
     public ThemeGroupPalette SetTextDecorationColor(StyleValueColor? value)
         => this with
         {
@@ -210,7 +250,7 @@ public sealed record ThemeGroupPalette
                 : value?.EnsureContrast(BackgroundColor.Value)
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 
     public ThemeGroupPalette ToDisabled()
         => SetBackgroundColor(BackgroundColor?.ToDisabled())
@@ -218,6 +258,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToDisabled())
             .SetCaretColor(CaretColor?.ToDisabled())
             .SetColor(Color?.ToDisabled())
+            .SetOutlineColor(OutlineColor?.ToDisabled())
             .SetTextDecorationColor(TextDecorationColor?.ToDisabled());
 
     public ThemeGroupPalette ToDragged()
@@ -226,6 +267,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToDragged())
             .SetCaretColor(CaretColor?.ToDragged())
             .SetColor(Color?.ToDragged())
+            .SetOutlineColor(OutlineColor?.ToDragged())
             .SetTextDecorationColor(TextDecorationColor?.ToDragged());
 
     public ThemeGroupPalette ToFocused()
@@ -234,6 +276,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToFocused())
             .SetCaretColor(CaretColor?.ToFocused())
             .SetColor(Color?.ToFocused())
+            .SetOutlineColor(OutlineColor?.ToFocused())
             .SetTextDecorationColor(TextDecorationColor?.ToFocused());
 
     public ThemeGroupPalette ToHovered()
@@ -242,6 +285,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToHovered())
             .SetCaretColor(CaretColor?.ToHovered())
             .SetColor(Color?.ToHovered())
+            .SetOutlineColor(OutlineColor?.ToHovered())
             .SetTextDecorationColor(TextDecorationColor?.ToHovered());
 
     public ThemeGroupPalette ToPressed()
@@ -250,6 +294,7 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToPressed())
             .SetCaretColor(CaretColor?.ToPressed())
             .SetColor(Color?.ToPressed())
+            .SetOutlineColor(OutlineColor?.ToPressed())
             .SetTextDecorationColor(TextDecorationColor?.ToPressed());
 
     public ThemeGroupPalette ToVisited()
@@ -258,5 +303,6 @@ public sealed record ThemeGroupPalette
             .SetBorderColor(BorderColor?.ToVisited())
             .SetCaretColor(CaretColor?.ToVisited())
             .SetColor(Color?.ToVisited())
+            .SetOutlineColor(OutlineColor?.ToVisited())
             .SetTextDecorationColor(TextDecorationColor?.ToVisited());
 }

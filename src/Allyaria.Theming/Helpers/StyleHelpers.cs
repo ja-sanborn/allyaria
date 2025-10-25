@@ -3,7 +3,10 @@ namespace Allyaria.Theming.Helpers;
 public static class StyleHelpers
 {
     public static string ToCssName(this string? value)
-        => Regex.Replace((value ?? string.Empty).Replace('_', '-'), @"[\s-]+", "-").Trim('-').ToLowerInvariant();
+        => Regex.Replace(
+                input: (value ?? string.Empty).Replace(oldChar: '_', newChar: '-'), pattern: @"[\s-]+", replacement: "-"
+            ).Trim('-')
+            .ToLowerInvariant();
 
     public static string ToCssProperty<TStyle>(this TStyle? style, string propertyName)
         where TStyle : struct, IStyleValue
@@ -36,12 +39,14 @@ public static class StyleHelpers
 
     public static string ValidateInput(this string? value)
     {
-        AryArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        AryArgumentException.ThrowIfNullOrWhiteSpace(argValue: value, argName: nameof(value));
 
         var trimmed = value!.Trim();
 
         return trimmed.Any(static c => char.IsControl(c))
-            ? throw new AryArgumentException("Value contains control characters.", nameof(value), value)
+            ? throw new AryArgumentException(
+                message: "Value contains control characters.", argName: nameof(value), argValue: value
+            )
             : trimmed;
     }
 }

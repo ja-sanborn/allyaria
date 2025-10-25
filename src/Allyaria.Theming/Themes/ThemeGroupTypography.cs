@@ -1,57 +1,47 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupTypography(
+public sealed partial record ThemeGroupTypography(
+    ThemeType ThemeType = ThemeType.Light,
+    FontType FontType = FontType.Primary,
     StyleValueString? FontFamily = null,
     StyleValueNumber? FontSize = null,
     StyleValueString? FontStyle = null,
     StyleValueString? FontWeight = null,
-    StyleValueNumber? LetterSpacing = null,
-    StyleValueNumber? LineHeight = null,
-    StyleValueString? TextAlign = null,
     StyleValueString? TextDecorationLine = null,
     StyleValueString? TextDecorationStyle = null,
-    StyleValueString? TextTransform = null,
-    StyleValueString? VerticalAlign = null,
-    StyleValueString? WhiteSpace = null,
-    StyleValueString? WritingMode = null
+    StyleValueNumber? TextDecorationThickness = null,
+    StyleValueString? TextTransform = null
 )
 {
-    public static readonly ThemeGroupTypography Empty = new();
-
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
-            .Add("font-family", FontFamily, varPrefix)
-            .Add("font-size", FontSize, varPrefix)
-            .Add("font-style", FontStyle, varPrefix)
-            .Add("font-weight", FontWeight, varPrefix)
-            .Add("letter-spacing", LetterSpacing, varPrefix)
-            .Add("line-height", LineHeight, varPrefix)
-            .Add("text-align", TextAlign, varPrefix)
-            .Add("text-decoration-line", TextDecorationLine, varPrefix)
-            .Add("text-decoration-style", TextDecorationStyle, varPrefix)
-            .Add("text-transform", TextTransform, varPrefix)
-            .Add("vertical-align", VerticalAlign, varPrefix)
-            .Add("white-space", WhiteSpace, varPrefix)
-            .Add("writing-mode", WritingMode, varPrefix);
+            .Add(propertyName: "font-family", value: FontFamily, varPrefix: varPrefix)
+            .Add(propertyName: "font-size", value: FontSize, varPrefix: varPrefix)
+            .Add(propertyName: "font-style", value: FontStyle, varPrefix: varPrefix)
+            .Add(propertyName: "font-weight", value: FontWeight, varPrefix: varPrefix)
+            .Add(propertyName: "text-decoration-line", value: TextDecorationLine, varPrefix: varPrefix)
+            .Add(propertyName: "text-decoration-style", value: TextDecorationStyle, varPrefix: varPrefix)
+            .Add(propertyName: "text-decoration-thickness", value: TextDecorationThickness, varPrefix: varPrefix)
+            .Add(propertyName: "text-transform", value: TextTransform, varPrefix: varPrefix);
 
         return builder;
     }
 
-    public static ThemeGroupTypography FromDefault(string? fontFamily = "")
+    public static ThemeGroupTypography FromFontDefinition(FontDefinition fontDefinition,
+        ThemeType themeType,
+        FontType fontType)
         => new(
-            string.IsNullOrWhiteSpace(fontFamily)
-                ? ThemingDefaults.FontFamily
-                : new StyleValueString(fontFamily.Trim()),
-            Sizing.Size3,
-            Constants.FontStyle.Normal,
-            Constants.FontWeight.Normal,
-            new StyleValueNumber("0.5px"),
-            new StyleValueNumber("1.5"),
-            TextDecorationLine: Constants.TextDecorationLine.None,
-            TextDecorationStyle: Constants.TextDecorationStyle.Solid,
-            TextTransform: TextTransformation.None,
-            WhiteSpace: WhiteSpacing.Normal
+            ThemeType: themeType,
+            FontType: fontType,
+            FontFamily: fontDefinition.GetFontFamily(themeType: themeType, fontType: fontType),
+            FontSize: CssSize.Size3,
+            FontStyle: CssFontStyle.Normal,
+            FontWeight: CssFontWeight.Normal,
+            TextDecorationLine: CssTextDecorationLine.None,
+            TextDecorationStyle: CssTextDecorationStyle.Solid,
+            TextDecorationThickness: CssSize.Thin,
+            TextTransform: CssTextTransform.None
         );
 
     public ThemeGroupTypography Merge(ThemeGroupTypography other)
@@ -59,15 +49,10 @@ public sealed record ThemeGroupTypography(
             .SetFontSize(other.FontSize ?? FontSize)
             .SetFontStyle(other.FontStyle ?? FontStyle)
             .SetFontWeight(other.FontWeight ?? FontWeight)
-            .SetLetterSpacing(other.LetterSpacing ?? LetterSpacing)
-            .SetLineHeight(other.LineHeight ?? LineHeight)
-            .SetTextAlign(other.TextAlign ?? TextAlign)
             .SetTextDecorationLine(other.TextDecorationLine ?? TextDecorationLine)
             .SetTextDecorationStyle(other.TextDecorationStyle ?? TextDecorationStyle)
-            .SetTextTransform(other.TextTransform ?? TextTransform)
-            .SetVerticalAlign(other.VerticalAlign ?? VerticalAlign)
-            .SetWhiteSpace(other.WhiteSpace ?? WhiteSpace)
-            .SetWritingMode(other.WritingMode ?? WritingMode);
+            .SetTextDecorationThickness(other.TextDecorationThickness ?? TextDecorationThickness)
+            .SetTextTransform(other.TextTransform ?? TextTransform);
 
     public ThemeGroupTypography SetFontFamily(StyleValueString? value)
         => this with
@@ -93,24 +78,6 @@ public sealed record ThemeGroupTypography(
             FontWeight = value
         };
 
-    public ThemeGroupTypography SetLetterSpacing(StyleValueNumber? value)
-        => this with
-        {
-            LetterSpacing = value
-        };
-
-    public ThemeGroupTypography SetLineHeight(StyleValueNumber? value)
-        => this with
-        {
-            LineHeight = value
-        };
-
-    public ThemeGroupTypography SetTextAlign(StyleValueString? value)
-        => this with
-        {
-            TextAlign = value
-        };
-
     public ThemeGroupTypography SetTextDecorationLine(StyleValueString? value)
         => this with
         {
@@ -123,29 +90,17 @@ public sealed record ThemeGroupTypography(
             TextDecorationStyle = value
         };
 
+    public ThemeGroupTypography SetTextDecorationThickness(StyleValueNumber? value)
+        => this with
+        {
+            TextDecorationThickness = value
+        };
+
     public ThemeGroupTypography SetTextTransform(StyleValueString? value)
         => this with
         {
             TextTransform = value
         };
 
-    public ThemeGroupTypography SetVerticalAlign(StyleValueString? value)
-        => this with
-        {
-            VerticalAlign = value
-        };
-
-    public ThemeGroupTypography SetWhiteSpace(StyleValueString? value)
-        => this with
-        {
-            WhiteSpace = value
-        };
-
-    public ThemeGroupTypography SetWritingMode(StyleValueString? value)
-        => this with
-        {
-            WritingMode = value
-        };
-
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

@@ -34,29 +34,29 @@ public static class EnumExtensions
     /// <exception cref="AryArgumentException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
     public static string GetDescription(this Enum value)
     {
-        AryArgumentException.ThrowIfNull(value, nameof(value));
+        AryArgumentException.ThrowIfNull(argValue: value, argName: nameof(value));
 
         var type = value.GetType();
         var name = value.ToString(); // May be "A" or "A, B" for [Flags].
 
         return DescriptionCache.GetOrAdd(
-            (type, name),
-            static key =>
+            key: (type, name),
+            valueFactory: static key =>
             {
                 (var t, var n) = key;
 
                 // Handle [Flags] combined names like "Read, Write".
                 if (!n.Contains(','))
                 {
-                    return GetSingleDescription(t, n);
+                    return GetSingleDescription(enumType: t, memberName: n);
                 }
 
                 var parts = n.Split(',')
                     .Select(s => s.Trim())
                     .Where(s => s.Length > 0)
-                    .Select(part => GetSingleDescription(t, part));
+                    .Select(part => GetSingleDescription(enumType: t, memberName: part));
 
-                return string.Join(", ", parts);
+                return string.Join(separator: ", ", values: parts);
             }
         );
     }
@@ -83,7 +83,7 @@ public static class EnumExtensions
         if (mi.Length > 0)
         {
             var attr = mi[0]
-                .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                .GetCustomAttributes(attributeType: typeof(DescriptionAttribute), inherit: false)
                 .OfType<DescriptionAttribute>()
                 .FirstOrDefault();
 

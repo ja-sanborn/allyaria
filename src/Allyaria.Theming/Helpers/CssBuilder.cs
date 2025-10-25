@@ -33,5 +33,5 @@ public sealed class CssBuilder
         return Add(value.ToCssProperty(prefixedProperty));
     }
 
-    public override string ToString() => string.Join(string.Empty, _values);
+    public override string ToString() => string.Join(separator: string.Empty, values: _values);
 }

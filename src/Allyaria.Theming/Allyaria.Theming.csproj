@@ -70,33 +70,6 @@
     <ItemGroup>
         <Compile Include="Constants\Colors.cs"/>
         <Compile Include="Enumerations\LengthUnits.cs"/>
-        <Compile Include="Constants\AlignPositioning.cs"/>
-        <Compile Include="Constants\BorderStyle.cs"/>
-        <Compile Include="Constants\BoxSizing.cs"/>
-        <Compile Include="Constants\Display.cs"/>
-        <Compile Include="Constants\FloatAlignment.cs"/>
-        <Compile Include="Constants\FontStyle.cs"/>
-        <Compile Include="Constants\FontWeight.cs"/>
-        <Compile Include="Constants\JustifyPositioning.cs"/>
-        <Compile Include="Constants\OverflowScrolling.cs"/>
-        <Compile Include="Constants\OverflowWrapping.cs"/>
-        <Compile Include="Constants\Positioning.cs"/>
-        <Compile Include="Constants\Sizing.cs"/>
-        <Compile Include="Constants\TextAlignment.cs"/>
-        <Compile Include="Constants\TextDecorationLine.cs"/>
-        <Compile Include="Constants\TextDecorationStyle.cs"/>
-        <Compile Include="Constants\TextOverflow.cs"/>
-        <Compile Include="Constants\TextTransformation.cs"/>
-        <Compile Include="Constants\VerticalAlignment.cs"/>
-        <Compile Include="Constants\WhiteSpacing.cs"/>
-        <Compile Include="Constants\WritingMode.cs"/>
-        <Compile Include="Constants\ThemingDefaults.cs"/>
-        <Compile Include="Contracts\IThemeWatcher.cs"/>
-        <Compile Include="Services\ThemeWatcher.cs"/>
-        <Compile Include="Contracts\IThemePersistence.cs"/>
-        <Compile Include="Services\ThemePersistence.cs"/>
-        <Compile Include="Contracts\IThemeProvider.cs"/>
-        <Compile Include="Services\ThemeProvider.cs"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Allyaria.Abstractions\Allyaria.Abstractions.csproj"/>

@@ -1,7 +1,12 @@
-﻿namespace Allyaria.Theming.Enumerations;
+namespace Allyaria.Theming.Enumerations;
 
 /// <summary>Defines the component types used for theming.</summary>
 public enum ComponentType
 {
-    Surface
+    Body,
+    BodyVariant,
+    Link,
+    LinkVariant,
+    Surface,
+    SurfaceVariant
 }

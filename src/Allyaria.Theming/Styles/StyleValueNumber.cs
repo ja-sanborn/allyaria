@@ -3,9 +3,9 @@ namespace Allyaria.Theming.Styles;
 public readonly record struct StyleValueNumber : IStyleValue
 {
     private static readonly Regex NumberWithUnitRegex = new(
-        @"^\s*(?<num>[+\-]?(?:\d+(?:\.\d+)?|\.\d+))\s*(?<unit>[A-Za-z%]+)?\s*$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant,
-        TimeSpan.FromMilliseconds(250)
+        pattern: @"^\s*(?<num>[+\-]?(?:\d+(?:\.\d+)?|\.\d+))\s*(?<unit>[A-Za-z%]+)?\s*$",
+        options: RegexOptions.Compiled | RegexOptions.CultureInvariant,
+        matchTimeout: TimeSpan.FromMilliseconds(250)
     );
 
     private static readonly Dictionary<string, LengthUnits> UnitByToken = BuildUnitMap();
@@ -15,9 +15,9 @@ public readonly record struct StyleValueNumber : IStyleValue
 
     public StyleValueNumber(string? value)
     {
-        if (!TryNormalizeNumber(value, out var newValue, out var number, out var unit))
+        if (!TryNormalizeNumber(input: value, value: out var newValue, number: out var number, unit: out var unit))
         {
-            throw new AryArgumentException("Invalid number value.", nameof(value), value);
+            throw new AryArgumentException(message: "Invalid number value.", argName: nameof(value), argValue: value);
         }
 
         Value = newValue;
@@ -49,7 +49,7 @@ public readonly record struct StyleValueNumber : IStyleValue
             if (!string.IsNullOrWhiteSpace(desc))
             {
                 var key = desc.ToLowerInvariant();
-                dict.TryAdd(key, unit);
+                dict.TryAdd(key: key, value: unit);
             }
         }
 
@@ -60,7 +60,7 @@ public readonly record struct StyleValueNumber : IStyleValue
 
     private static bool TryMapUnit(string token, out LengthUnits unit, out string canonical)
     {
-        if (UnitByToken.TryGetValue(token.Trim().ToLowerInvariant(), out var u))
+        if (UnitByToken.TryGetValue(key: token.Trim().ToLowerInvariant(), value: out var u))
         {
             unit = u;
             canonical = u.GetDescription();
@@ -85,10 +85,11 @@ public readonly record struct StyleValueNumber : IStyleValue
             return false;
         }
 
-        if (valid.Equals("auto", StringComparison.OrdinalIgnoreCase))
+        if (valid.Equals(value: "auto", comparisonType: StringComparison.OrdinalIgnoreCase) ||
+            valid.Equals(value: "normal", comparisonType: StringComparison.OrdinalIgnoreCase))
         {
             number = double.NaN;
-            value = "auto";
+            value = valid.ToLowerInvariant();
 
             return true;
         }
@@ -106,7 +107,9 @@ public readonly record struct StyleValueNumber : IStyleValue
             ? match.Groups["unit"].Value
             : null;
 
-        if (!double.TryParse(numText, NumberStyles.Float, CultureInfo.InvariantCulture, out number) ||
+        if (!double.TryParse(
+                s: numText, style: NumberStyles.Float, provider: CultureInfo.InvariantCulture, result: out number
+            ) ||
             double.IsInfinity(number))
         {
             return false;
@@ -117,7 +120,7 @@ public readonly record struct StyleValueNumber : IStyleValue
 
         if (!string.IsNullOrEmpty(unitText))
         {
-            if (!TryMapUnit(unitText, out var lengthUnit, out canonicalUnit))
+            if (!TryMapUnit(token: unitText, unit: out var lengthUnit, canonical: out canonicalUnit))
             {
                 return false;
             }
@@ -128,12 +131,12 @@ public readonly record struct StyleValueNumber : IStyleValue
         var abs = Math.Abs(number);
 
         var numCanonical = number.ToString(
-            abs is > 0 and < 0.0001 or >= 1e6
+            format: abs is > 0 and < 0.0001 or >= 1e6
                 ? "0.################"
-                : "0.#######", CultureInfo.InvariantCulture
+                : "0.#######", provider: CultureInfo.InvariantCulture
         );
 
-        value = string.Concat(numCanonical, canonicalUnit);
+        value = string.Concat(str0: numCanonical, str1: canonicalUnit);
 
         return true;
     }
@@ -142,12 +145,12 @@ public readonly record struct StyleValueNumber : IStyleValue
     {
         result = null;
 
-        if (!TryNormalizeNumber(value, out var normalized, out var number, out var unit))
+        if (!TryNormalizeNumber(input: value, value: out var normalized, number: out var number, unit: out var unit))
         {
             return false;
         }
 
-        result = new StyleValueNumber(normalized, number, unit);
+        result = new StyleValueNumber(value: normalized, number: number, unit: unit);
 
         return true;
     }

@@ -21,11 +21,14 @@ public sealed class ColorsLookupTests
 
         var expectedTotal = fieldCount + propertyCount;
 
-        var buildMethod = colorsType.GetMethod("BuildDictionary", BindingFlags.NonPublic | BindingFlags.Static);
+        var buildMethod = colorsType.GetMethod(
+            name: "BuildDictionary", bindingAttr: BindingFlags.NonPublic | BindingFlags.Static
+        );
+
         buildMethod.Should().NotBeNull("BuildDictionary must exist on Colors.");
 
         // Act
-        var result = (IReadOnlyDictionary<string, HexColor>)buildMethod.Invoke(null, null)!;
+        var result = (IReadOnlyDictionary<string, HexColor>)buildMethod.Invoke(obj: null, parameters: null)!;
 
         // Assert
         result.Count.Should().Be(expectedTotal);
@@ -81,7 +84,8 @@ public sealed class ColorsLookupTests
         var act = () => Colors.Contains(name!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>("contains on a case-insensitive dictionary throws for null key");
+        act.Should()
+            .Throw<ArgumentNullException>("contains on a case-insensitive dictionary throws for null key");
     }
 
     [Fact]
@@ -91,7 +95,7 @@ public sealed class ColorsLookupTests
         var name = "definitely_not_a_real_color";
 
         // Act
-        var ok = Colors.TryGet(name, out var value);
+        var ok = Colors.TryGet(name: name, value: out var value);
 
         // Assert
         ok.Should().BeFalse();
@@ -106,8 +110,8 @@ public sealed class ColorsLookupTests
         var nameMixed = "bLuE500";
 
         // Act
-        var ok1 = Colors.TryGet(nameLower, out var c1);
-        var ok2 = Colors.TryGet(nameMixed, out var c2);
+        var ok1 = Colors.TryGet(name: nameLower, value: out var c1);
+        var ok2 = Colors.TryGet(name: nameMixed, value: out var c2);
 
         // Assert
         ok1.Should().BeTrue();
@@ -124,7 +128,7 @@ public sealed class ColorsLookupTests
         string? name = null;
 
         // Act
-        var act = () => Colors.TryGet(name!, out _);
+        var act = () => Colors.TryGet(name: name!, value: out _);
 
         // Assert
         act.Should().Throw<ArgumentNullException>("the underlying dictionary lookup throws when key is null");

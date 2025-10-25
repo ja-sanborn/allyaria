@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupMargin : IStyleGroup
+public readonly record struct StyleGroupMargin : IStyleGroup
 {
     public StyleGroupMargin(StyleValueNumber value)
     {
@@ -40,10 +40,10 @@ public sealed record StyleGroupMargin : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueNumber>("margin-block-end", BlockEnd, varPrefix)
-            .Add<StyleValueNumber>("margin-block-start", BlockStart, varPrefix)
-            .Add<StyleValueNumber>("margin-inline-end", InlineEnd, varPrefix)
-            .Add<StyleValueNumber>("margin-inline-start", InlineStart, varPrefix);
+            .Add<StyleValueNumber>(propertyName: "margin-block-end", value: BlockEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "margin-block-start", value: BlockStart, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "margin-inline-end", value: InlineEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "margin-inline-start", value: InlineStart, varPrefix: varPrefix);
 
         return builder;
     }
@@ -72,5 +72,5 @@ public sealed record StyleGroupMargin : IStyleGroup
             InlineStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

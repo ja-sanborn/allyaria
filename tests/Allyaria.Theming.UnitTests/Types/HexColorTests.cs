@@ -14,7 +14,7 @@ public sealed class HexColorTests
         var ratio = black.ContrastRatio(white);
 
         // Assert
-        ratio.Should().BeApproximately(21.0, 1e-12);
+        ratio.Should().BeApproximately(expectedValue: 21.0, precision: 1e-12);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class HexColorTests
         var a = new HexByte(40);
 
         // Act
-        var sut = new HexColor(r, g, b, a);
+        var sut = new HexColor(red: r, green: g, blue: b, alpha: a);
 
         // Assert
         sut.R.Value.Should().Be(10);
@@ -36,7 +36,7 @@ public sealed class HexColorTests
         sut.A.Value.Should().Be(40);
 
         // HSV sanity: V=max/255, S>0, H in [0,360)
-        sut.V.Should().BeApproximately(30 / 255.0, 1e-12);
+        sut.V.Should().BeApproximately(expectedValue: 30 / 255.0, precision: 1e-12);
         sut.S.Should().BeGreaterThan(0);
         sut.H.Should().BeGreaterThanOrEqualTo(0).And.BeLessThan(360);
     }
@@ -215,19 +215,19 @@ public sealed class HexColorTests
     public void Desaturate_Should_Reduce_S_And_Optionally_Blend_Value_Toward_Mid_With_ByteQuantization()
     {
         // Arrange
-        var saturated = HexColor.FromHsva(0, 1, 1); // bright red
+        var saturated = HexColor.FromHsva(hue: 0, saturation: 1, value: 1); // bright red
 
         // Act
-        var desat = saturated.Desaturate(0.6, 0.2);
+        var desat = saturated.Desaturate(desaturateBy: 0.6, valueBlendTowardMid: 0.2);
 
         // Assert
         // S is reduced by amount: S' = 1 - 0.6 = 0.4
-        desat.S.Should().BeApproximately(0.4, 1e-12);
+        desat.S.Should().BeApproximately(expectedValue: 0.4, precision: 1e-12);
 
         // V is blended toward 0.5: V_target = 1 + (0.5 - 1) * 0.2 = 0.9
         // BUT after converting back to 8-bit, 0.9 * 255 = 229.5 -> bankers round => 230 => 230/255
         var expectedQuantizedV = 230.0 / 255.0;
-        desat.V.Should().BeApproximately(expectedQuantizedV, 1e-12);
+        desat.V.Should().BeApproximately(expectedValue: expectedQuantizedV, precision: 1e-12);
 
         // (Optional extra sanity: resulting RGB should reflect the same quantization)
         // For H=0, S=0.4, V≈0.9 -> RGB ≈ (0.9, 0.54, 0.54) -> bytes (230, 138, 138) with banker’s rounding.
@@ -244,7 +244,7 @@ public sealed class HexColorTests
         var bg = Colors.Grey500;
 
         // Sanity: starting contrast is 1
-        fg.ContrastRatio(bg).Should().BeApproximately(1.0, 1e-12);
+        fg.ContrastRatio(bg).Should().BeApproximately(expectedValue: 1.0, precision: 1e-12);
 
         // Act
         var resolved = fg.EnsureMinimumContrast(bg);
@@ -257,8 +257,8 @@ public sealed class HexColorTests
         resolved.ContrastRatio(bg).Should().BeGreaterThanOrEqualTo(3.0);
 
         // 3) Preserve hue/saturation (theme rail only) and alpha
-        resolved.S.Should().BeApproximately(fg.S, 1e-12);
-        resolved.H.Should().BeApproximately(fg.H, 1e-12);
+        resolved.S.Should().BeApproximately(expectedValue: fg.S, precision: 1e-12);
+        resolved.H.Should().BeApproximately(expectedValue: fg.H, precision: 1e-12);
         resolved.A.Should().BeEquivalentTo(fg.A);
 
         // 4) Implementation may choose either pole (black or white). Validate it moved away
@@ -277,10 +277,12 @@ public sealed class HexColorTests
     {
         // Arrange
         var bg = Colors.Black;
-        var sut = HexColor.FromHsva(240, 1.0, 0.5);
+        var sut = HexColor.FromHsva(hue: 240, saturation: 1.0, value: 0.5);
 
         sut.ContrastRatio(bg).Should().BeLessThan(3.0);
-        HexColor.FromHsva(240, 1.0, 1.0).ContrastRatio(bg).Should().BeLessThan(3.0);
+
+        HexColor.FromHsva(hue: 240, saturation: 1.0, value: 1.0).ContrastRatio(bg).Should()
+            .BeLessThan(3.0);
 
         // Act
         var resolved = sut.EnsureMinimumContrast(bg);
@@ -300,7 +302,7 @@ public sealed class HexColorTests
         const double minRatio = 21.0; // maximum allowed, unreachable vs mid-gray
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(bg, minRatio);
+        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg, minimumRatio: minRatio);
 
         // Assert
         // We can't meet 21:1 vs Grey500, so result must be a "best effort" (contrast < 21)
@@ -322,7 +324,7 @@ public sealed class HexColorTests
         fg.ContrastRatio(bg).Should().BeLessThan(minRatio);
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(bg, minRatio);
+        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg, minimumRatio: minRatio);
 
         // Assert
         resolved.Should().NotBe(fg);
@@ -366,8 +368,8 @@ public sealed class HexColorTests
         (a <= c).Should().BeTrue();
 
         a.GetHashCode().Should().Be(b.GetHashCode());
-        a.Equals((object)b).Should().BeTrue();
-        a.Equals((object)c).Should().BeFalse();
+        a.Equals(obj: b).Should().BeTrue();
+        a.Equals(obj: c).Should().BeFalse();
     }
 
     [Fact]
@@ -381,9 +383,9 @@ public sealed class HexColorTests
         var overA = 7.0; // clamped
 
         // Act
-        var wrap0 = HexColor.FromHsva(overHue, 1, 1);
-        var wrap300 = HexColor.FromHsva(negHue, 1, 1);
-        var clamped = HexColor.FromHsva(120, overS, negV, overA);
+        var wrap0 = HexColor.FromHsva(hue: overHue, saturation: 1, value: 1);
+        var wrap300 = HexColor.FromHsva(hue: negHue, saturation: 1, value: 1);
+        var clamped = HexColor.FromHsva(hue: 120, saturation: overS, value: negV, alpha: overA);
 
         // Assert
         wrap0.ToString().Should().Be("#FF0000FF");
@@ -401,7 +403,7 @@ public sealed class HexColorTests
     public void HsvaToRgba_Should_Produce_Expected_Primaries_And_Secondaries(double hue, string expected)
     {
         // Arrange & Act
-        var sut = HexColor.FromHsva(hue, 1, 1);
+        var sut = HexColor.FromHsva(hue: hue, saturation: 1, value: 1);
 
         // Assert
         sut.ToString().Should().Be(expected);
@@ -433,7 +435,11 @@ public sealed class HexColorTests
         var negative = sut.Invert();
 
         // Assert
-        negative.ToString().Should().Be("#FFFFFFFF".Replace("FF", "FF").Insert(7, "7F").Remove(9)); // #FFFFFF7F
+        negative.ToString().Should().Be(
+            "#FFFFFFFF".Replace(oldValue: "FF", newValue: "FF").Insert(startIndex: 7, value: "7F")
+                .Remove(9)
+        ); // #FFFFFF7F
+
         negative.R.Value.Should().Be(255);
         negative.A.Value.Should().Be(0x7F); // alpha preserved
         negative.ToString().Should().Be("#FFFFFF7F");
@@ -464,9 +470,9 @@ public sealed class HexColorTests
         // Arrange & Act
         var parsed = HexColor.Parse("#11223344");
 
-        var ok1 = HexColor.TryParse("red", out var fromName);
-        var ok2 = HexColor.TryParse("#BADHEX", out var bad1);
-        var ok3 = HexColor.TryParse(null, out var bad2);
+        var ok1 = HexColor.TryParse(value: "red", result: out var fromName);
+        var ok2 = HexColor.TryParse(value: "#BADHEX", result: out var bad1);
+        var ok3 = HexColor.TryParse(value: null, result: out var bad2);
 
         // Assert
         parsed.ToString().Should().Be("#11223344");
@@ -485,25 +491,30 @@ public sealed class HexColorTests
     public void RgbToHsv_Should_Handle_Gray_And_Sector_Picks_With_Ties()
     {
         // gray => H=0,S=0,V=~0.5
-        var gray = new HexColor(new HexByte(128), new HexByte(128), new HexByte(128));
+        var gray = new HexColor(red: new HexByte(128), green: new HexByte(128), blue: new HexByte(128));
+
         gray.S.Should().Be(0);
         gray.H.Should().Be(0);
-        gray.V.Should().BeApproximately(128 / 255.0, 1e-12);
+        gray.V.Should().BeApproximately(expectedValue: 128 / 255.0, precision: 1e-12);
 
         // red >= green & red >= blue sector
-        var redish = new HexColor(new HexByte(200), new HexByte(100), new HexByte(50));
+        var redish = new HexColor(red: new HexByte(200), green: new HexByte(100), blue: new HexByte(50));
+
         redish.H.Should().BeGreaterThanOrEqualTo(0).And.BeLessThan(120);
 
         // green >= red & green >= blue sector
-        var greenish = new HexColor(new HexByte(50), new HexByte(220), new HexByte(60));
+        var greenish = new HexColor(red: new HexByte(50), green: new HexByte(220), blue: new HexByte(60));
+
         greenish.H.Should().BeGreaterThanOrEqualTo(120).And.BeLessThan(240);
 
         // blue sector by elimination
-        var blueish = new HexColor(new HexByte(40), new HexByte(30), new HexByte(200));
+        var blueish = new HexColor(red: new HexByte(40), green: new HexByte(30), blue: new HexByte(200));
+
         blueish.H.Should().BeGreaterThanOrEqualTo(240).And.BeLessThan(360);
 
         // ties favor first true branch (R then G then B)
-        var tieRg = new HexColor(new HexByte(200), new HexByte(200), new HexByte(0)); // R>=G and R>=B
+        var tieRg = new HexColor(red: new HexByte(200), green: new HexByte(200), blue: new HexByte(0)); // R>=G and R>=B
+
         tieRg.H.Should().BeGreaterThanOrEqualTo(0).And.BeLessThan(120);
     }
 
@@ -531,7 +542,7 @@ public sealed class HexColorTests
         // Arrange
         var h = 210.0;
         var s = 0.5;
-        var start = HexColor.FromHsva(h, s, startV);
+        var start = HexColor.FromHsva(hue: h, saturation: s, value: startV);
 
         // Act
         var shifted = start.ShiftLightness(0.25);
@@ -545,8 +556,8 @@ public sealed class HexColorTests
         Math.Abs(shifted.V - 0.5).Should().BeLessThanOrEqualTo(oneStep);
 
         // Hue & Saturation can drift slightly due to quantization and sector math.
-        shifted.H.Should().BeApproximately(start.H, 0.5); // allow ~±0.5° drift
-        shifted.S.Should().BeApproximately(start.S, oneStep); // allow ±1/255 drift
+        shifted.H.Should().BeApproximately(expectedValue: start.H, precision: 0.5); // allow ~±0.5° drift
+        shifted.S.Should().BeApproximately(expectedValue: start.S, precision: oneStep); // allow ±1/255 drift
     }
 
     [Fact]
@@ -557,7 +568,7 @@ public sealed class HexColorTests
         var end = Colors.White.SetAlpha(255);
 
         // Act
-        var mid = start.ToLerpLinear(end, 0.5);
+        var mid = start.ToLerpLinear(end: end, factor: 0.5);
 
         // Assert
         // In linear light, midpoint is ~#BCBCBC and alpha half
@@ -576,7 +587,7 @@ public sealed class HexColorTests
         var end = Colors.White.SetAlpha(0x20);
 
         // Act
-        var mid = start.ToLerpLinearPreserveAlpha(end, 0.5);
+        var mid = start.ToLerpLinearPreserveAlpha(end: end, factor: 0.5);
 
         // Assert
         mid.ToString().Should().Be("#BCBCBC7F"); // same RGB as above, preserved alpha
@@ -594,15 +605,18 @@ public sealed class HexColorTests
         var lw = white.ToRelativeLuminance();
 
         // Assert
-        lb.Should().BeApproximately(0.0, 1e-12);
-        lw.Should().BeApproximately(1.0, 1e-12);
+        lb.Should().BeApproximately(expectedValue: 0.0, precision: 1e-12);
+        lw.Should().BeApproximately(expectedValue: 1.0, precision: 1e-12);
     }
 
     [Fact]
     public void ToString_Should_Format_As_RRGGBBAA()
     {
         // Arrange
-        var sut = new HexColor(new HexByte(0x0A), new HexByte(0x1B), new HexByte(0x2C), new HexByte(0x3D));
+        var sut = new HexColor(
+            red: new HexByte(0x0A), green: new HexByte(0x1B), blue: new HexByte(0x2C),
+            alpha: new HexByte(0x3D)
+        );
 
         // Act
         var s = sut.ToString();

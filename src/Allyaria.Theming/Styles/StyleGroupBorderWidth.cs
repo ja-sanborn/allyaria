@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Styles;
 
-public sealed record StyleGroupBorderWidth : IStyleGroup
+public readonly record struct StyleGroupBorderWidth : IStyleGroup
 {
     public StyleGroupBorderWidth(StyleValueNumber value)
     {
@@ -40,10 +40,10 @@ public sealed record StyleGroupBorderWidth : IStyleGroup
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         builder
-            .Add<StyleValueNumber>("border-block-end-width", BlockEnd, varPrefix)
-            .Add<StyleValueNumber>("border-block-start-width", BlockStart, varPrefix)
-            .Add<StyleValueNumber>("border-inline-end-width", InlineEnd, varPrefix)
-            .Add<StyleValueNumber>("border-inline-start-width", InlineStart, varPrefix);
+            .Add<StyleValueNumber>(propertyName: "border-block-end-width", value: BlockEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-block-start-width", value: BlockStart, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-inline-end-width", value: InlineEnd, varPrefix: varPrefix)
+            .Add<StyleValueNumber>(propertyName: "border-inline-start-width", value: InlineStart, varPrefix: varPrefix);
 
         return builder;
     }
@@ -72,5 +72,5 @@ public sealed record StyleGroupBorderWidth : IStyleGroup
             InlineStart = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }

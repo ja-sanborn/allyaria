@@ -95,7 +95,7 @@ public sealed class HexByteTests
         (a == b).Should().BeTrue();
         (a != b).Should().BeFalse();
         a.GetHashCode().Should().Be(b.GetHashCode());
-        a.Equals((object)b).Should().BeTrue();
+        a.Equals(obj: b).Should().BeTrue();
     }
 
     [Theory]
@@ -222,7 +222,7 @@ public sealed class HexByteTests
         var sut = new HexByte((byte)start);
 
         // Act
-        var actual = sut.ToLerpByte((byte)end, t);
+        var actual = sut.ToLerpByte(end: (byte)end, factor: t);
 
         // Assert
         actual.Should().Be((byte)expected);
@@ -243,7 +243,7 @@ public sealed class HexByteTests
         var sut = new HexByte((byte)start);
 
         // Act
-        var actual = sut.ToLerpByte((byte)end, t);
+        var actual = sut.ToLerpByte(end: (byte)end, factor: t);
 
         // Assert
         actual.Should().Be((byte)expected);
@@ -256,7 +256,7 @@ public sealed class HexByteTests
         var sut = new HexByte(77);
 
         // Act
-        var actual = sut.ToLerpByte(200, double.NaN);
+        var actual = sut.ToLerpByte(end: 200, factor: double.NaN);
 
         // Assert
         actual.Should().Be(77);
@@ -269,7 +269,7 @@ public sealed class HexByteTests
         var sut = new HexByte(10);
 
         // Act
-        var hex = sut.ToLerpHexByte(20, 0.25);
+        var hex = sut.ToLerpHexByte(end: 20, factor: 0.25);
 
         // Assert
         ((byte)hex).Should().Be(12);
@@ -286,7 +286,7 @@ public sealed class HexByteTests
         var sut = new HexByte((byte)start);
 
         // Act
-        var actual = sut.ToLerpLinearByte((byte)end, t);
+        var actual = sut.ToLerpLinearByte(end: (byte)end, factor: t);
 
         // Assert
         actual.Should().Be((byte)expected);
@@ -299,7 +299,7 @@ public sealed class HexByteTests
         var sut = new HexByte(100);
 
         // Act
-        var actual = sut.ToLerpLinearByte(200, double.PositiveInfinity);
+        var actual = sut.ToLerpLinearByte(end: 200, factor: double.PositiveInfinity);
 
         // Assert
         actual.Should().Be(100);
@@ -312,7 +312,7 @@ public sealed class HexByteTests
         var sut = new HexByte(0);
 
         // Act
-        var hex = sut.ToLerpLinearHexByte(new HexByte(255), 0.5);
+        var hex = sut.ToLerpLinearHexByte(end: new HexByte(255), factor: 0.5);
 
         // Assert
         ((byte)hex).Should().Be(188);
@@ -329,7 +329,7 @@ public sealed class HexByteTests
         var actual = sut.ToNormalized();
 
         // Assert
-        actual.Should().BeApproximately(128.0 / 255.0, 1e-12);
+        actual.Should().BeApproximately(expectedValue: 128.0 / 255.0, precision: 1e-12);
     }
 
     [Theory]
@@ -344,7 +344,7 @@ public sealed class HexByteTests
         var linear = sut.ToSrgbLinearValue();
 
         // Assert
-        linear.Should().BeApproximately(expected, 1e-12);
+        linear.Should().BeApproximately(expectedValue: expected, precision: 1e-12);
     }
 
     [Fact]
@@ -359,8 +359,8 @@ public sealed class HexByteTests
         // Assert
         // Verified expected via the sRGB EOTF: ((c+0.055)/1.055)^2.4 where c=12/255
         var c = 12 / 255.0;
-        var expected = Math.Pow((c + 0.055) / 1.055, 2.4);
-        linear.Should().BeApproximately(expected, 1e-12);
+        var expected = Math.Pow(x: (c + 0.055) / 1.055, y: 2.4);
+        linear.Should().BeApproximately(expectedValue: expected, precision: 1e-12);
     }
 
     [Fact]
@@ -382,7 +382,7 @@ public sealed class HexByteTests
     public void TryParse_Should_ReturnFalse_When_Invalid(string input)
     {
         // Arrange & Act
-        var ok = HexByte.TryParse(input, out var result);
+        var ok = HexByte.TryParse(value: input, result: out var result);
 
         // Assert
         ok.Should().BeFalse();
@@ -393,9 +393,9 @@ public sealed class HexByteTests
     public void TryParse_Should_ReturnFalse_When_NullOrWhitespace()
     {
         // Arrange & Act
-        var okNull = HexByte.TryParse(null, out var r1);
-        var okEmpty = HexByte.TryParse("", out var r2);
-        var okWs = HexByte.TryParse("   ", out var r3);
+        var okNull = HexByte.TryParse(value: null, result: out var r1);
+        var okEmpty = HexByte.TryParse(value: "", result: out var r2);
+        var okWs = HexByte.TryParse(value: "   ", result: out var r3);
 
         // Assert
         okNull.Should().BeFalse();
@@ -413,7 +413,7 @@ public sealed class HexByteTests
     public void TryParse_Should_SetResult_When_Valid(string input, int expected)
     {
         // Arrange & Act
-        var ok = HexByte.TryParse(input, out var result);
+        var ok = HexByte.TryParse(value: input, result: out var result);
 
         // Assert
         ok.Should().BeTrue();

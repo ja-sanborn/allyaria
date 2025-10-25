@@ -1198,7 +1198,9 @@ public static class Colors
     /// Lazily initialized collection of all public <see cref="HexColor" /> members on <see cref="Colors" />. Built once, in a
     /// thread-safe manner, when first accessed.
     /// </summary>
-    private static readonly Lazy<IReadOnlyDictionary<string, HexColor>> AllColors = new(BuildDictionary, true);
+    private static readonly Lazy<IReadOnlyDictionary<string, HexColor>> AllColors = new(
+        valueFactory: BuildDictionary, isThreadSafe: true
+    );
 
     /// <summary>
     /// Uses reflection to build an immutable dictionary of all public static members of <see cref="Colors" /> whose type is
@@ -1214,6 +1216,7 @@ public static class Colors
     private static IReadOnlyDictionary<string, HexColor> BuildDictionary()
     {
         var type = typeof(Colors);
+
         var builder = ImmutableDictionary.CreateBuilder<string, HexColor>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.Static))
@@ -1253,5 +1256,6 @@ public static class Colors
     /// <see langword="default" />.
     /// </param>
     /// <returns><see langword="true" /> if a matching color name was found; otherwise, <see langword="false" />.</returns>
-    public static bool TryGet(string name, out HexColor value) => AllColors.Value.TryGetValue(name, out value);
+    public static bool TryGet(string name, out HexColor value)
+        => AllColors.Value.TryGetValue(key: name, value: out value);
 }

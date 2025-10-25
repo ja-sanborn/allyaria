@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed record ThemeGroupPosition(
+public sealed partial record ThemeGroupPosition(
     StyleValueString? AlignContent = null,
     StyleValueString? AlignItems = null,
     StyleValueString? AlignSelf = null,
@@ -10,29 +10,31 @@ public sealed record ThemeGroupPosition(
     StyleValueString? JustifyItems = null,
     StyleValueString? JustifySelf = null,
     StyleValueString? Position = null,
+    StyleValueString? TextOrientation = null,
+    StyleValueString? UnicodeBidi = null,
+    StyleValueString? WritingMode = null,
     StyleValueNumber? ZIndex = null
 )
 {
-    public static readonly ThemeGroupPosition Empty = new();
-
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
-            .Add("align-content", AlignContent, varPrefix)
-            .Add("align-items", AlignItems, varPrefix)
-            .Add("align-self", AlignSelf, varPrefix)
-            .Add("box-sizing", BoxSizing, varPrefix)
-            .Add("display", Display, varPrefix)
-            .Add("justify-content", JustifyContent, varPrefix)
-            .Add("justify-items", JustifyItems, varPrefix)
-            .Add("justify-self", JustifySelf, varPrefix)
-            .Add("position", Position, varPrefix)
-            .Add("z-index", ZIndex, varPrefix);
+            .Add(propertyName: "align-content", value: AlignContent, varPrefix: varPrefix)
+            .Add(propertyName: "align-items", value: AlignItems, varPrefix: varPrefix)
+            .Add(propertyName: "align-self", value: AlignSelf, varPrefix: varPrefix)
+            .Add(propertyName: "box-sizing", value: BoxSizing, varPrefix: varPrefix)
+            .Add(propertyName: "display", value: Display, varPrefix: varPrefix)
+            .Add(propertyName: "justify-content", value: JustifyContent, varPrefix: varPrefix)
+            .Add(propertyName: "justify-items", value: JustifyItems, varPrefix: varPrefix)
+            .Add(propertyName: "justify-self", value: JustifySelf, varPrefix: varPrefix)
+            .Add(propertyName: "position", value: Position, varPrefix: varPrefix)
+            .Add(propertyName: "text-orientation", value: TextOrientation, varPrefix: varPrefix)
+            .Add(propertyName: "unicode-bidi", value: UnicodeBidi, varPrefix: varPrefix)
+            .Add(propertyName: "writing-mode", value: WritingMode, varPrefix: varPrefix)
+            .Add(propertyName: "z-index", value: ZIndex, varPrefix: varPrefix);
 
         return builder;
     }
-
-    public static ThemeGroupPosition FromDefault() => new();
 
     public ThemeGroupPosition Merge(ThemeGroupPosition other)
         => SetAlignContent(other.AlignContent ?? AlignContent)
@@ -44,6 +46,9 @@ public sealed record ThemeGroupPosition(
             .SetJustifyItems(other.JustifyItems ?? JustifyItems)
             .SetJustifySelf(other.JustifySelf ?? JustifySelf)
             .SetPosition(other.Position ?? Position)
+            .SetTextOrientation(other.TextOrientation ?? TextOrientation)
+            .SetUnicodeBidi(other.UnicodeBidi ?? UnicodeBidi)
+            .SetWritingMode(other.WritingMode ?? WritingMode)
             .SetZIndex(other.ZIndex ?? ZIndex);
 
     public ThemeGroupPosition SetAlignContent(StyleValueString? value)
@@ -100,11 +105,29 @@ public sealed record ThemeGroupPosition(
             Position = value
         };
 
+    public ThemeGroupPosition SetTextOrientation(StyleValueString? value)
+        => this with
+        {
+            TextOrientation = value
+        };
+
+    public ThemeGroupPosition SetUnicodeBidi(StyleValueString? value)
+        => this with
+        {
+            UnicodeBidi = value
+        };
+
+    public ThemeGroupPosition SetWritingMode(StyleValueString? value)
+        => this with
+        {
+            WritingMode = value
+        };
+
     public ThemeGroupPosition SetZIndex(StyleValueNumber? value)
         => this with
         {
             ZIndex = value
         };
 
-    public string ToCss(string? varPrefix = "") => BuildCss(new CssBuilder(), varPrefix).ToString();
+    public string ToCss(string? varPrefix = "") => BuildCss(builder: new CssBuilder(), varPrefix: varPrefix).ToString();
 }
