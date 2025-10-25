@@ -12,12 +12,12 @@ public sealed class ColorsLookupTests
         var colorsType = typeof(Colors);
 
         var fieldCount = colorsType
-            .GetFields(BindingFlags.Public | BindingFlags.Static)
-            .Count(f => f.FieldType == typeof(HexColor));
+            .GetFields(bindingAttr: BindingFlags.Public | BindingFlags.Static)
+            .Count(predicate: f => f.FieldType == typeof(HexColor));
 
         var propertyCount = colorsType
-            .GetProperties(BindingFlags.Public | BindingFlags.Static)
-            .Count(p => p.PropertyType == typeof(HexColor) && p.GetIndexParameters().Length == 0);
+            .GetProperties(bindingAttr: BindingFlags.Public | BindingFlags.Static)
+            .Count(predicate: p => p.PropertyType == typeof(HexColor) && p.GetIndexParameters().Length == 0);
 
         var expectedTotal = fieldCount + propertyCount;
 
@@ -25,24 +25,24 @@ public sealed class ColorsLookupTests
             name: "BuildDictionary", bindingAttr: BindingFlags.NonPublic | BindingFlags.Static
         );
 
-        buildMethod.Should().NotBeNull("BuildDictionary must exist on Colors.");
+        buildMethod.Should().NotBeNull(because: "BuildDictionary must exist on Colors.");
 
         // Act
         var result = (IReadOnlyDictionary<string, HexColor>)buildMethod.Invoke(obj: null, parameters: null)!;
 
         // Assert
-        result.Count.Should().Be(expectedTotal);
+        result.Count.Should().Be(expected: expectedTotal);
 
-        result.ContainsKey("red").Should().BeTrue("lookup should be case-insensitive when key exists");
-        result.ContainsKey("ReD").Should().BeTrue();
-        result["red"].Should().Be(Colors.Red);
-        result["ReD"].Should().Be(Colors.Red);
+        result.ContainsKey(key: "red").Should().BeTrue(because: "lookup should be case-insensitive when key exists");
+        result.ContainsKey(key: "ReD").Should().BeTrue();
+        result[key: "red"].Should().Be(expected: Colors.Red);
+        result[key: "ReD"].Should().Be(expected: Colors.Red);
 
-        result.ContainsKey(nameof(Colors.White)).Should().BeTrue();
-        result.ContainsKey(nameof(Colors.Blue500)).Should().BeTrue();
+        result.ContainsKey(key: nameof(Colors.White)).Should().BeTrue();
+        result.ContainsKey(key: nameof(Colors.Blue500)).Should().BeTrue();
 
-        result.ContainsKey("notacolor").Should().BeFalse();
-        result.ContainsKey("NOTACOLOR").Should().BeFalse();
+        result.ContainsKey(key: "notacolor").Should().BeFalse();
+        result.ContainsKey(key: "NOTACOLOR").Should().BeFalse();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class ColorsLookupTests
         var name = "fake_fake_fake";
 
         // Act
-        var has = Colors.Contains(name);
+        var has = Colors.Contains(name: name);
 
         // Assert
         has.Should().BeFalse();
@@ -66,8 +66,8 @@ public sealed class ColorsLookupTests
         var name2 = "royalblue";
 
         // Act
-        var has1 = Colors.Contains(name1);
-        var has2 = Colors.Contains(name2);
+        var has1 = Colors.Contains(name: name1);
+        var has2 = Colors.Contains(name: name2);
 
         // Assert
         has1.Should().BeTrue();
@@ -81,11 +81,11 @@ public sealed class ColorsLookupTests
         string? name = null;
 
         // Act
-        var act = () => Colors.Contains(name!);
+        var act = () => Colors.Contains(name: name!);
 
         // Assert
         act.Should()
-            .Throw<ArgumentNullException>("contains on a case-insensitive dictionary throws for null key");
+            .Throw<ArgumentNullException>(because: "contains on a case-insensitive dictionary throws for null key");
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class ColorsLookupTests
 
         // Assert
         ok.Should().BeFalse();
-        value.Should().Be(default(HexColor));
+        value.Should().Be(expected: default(HexColor));
     }
 
     [Fact]
@@ -115,10 +115,10 @@ public sealed class ColorsLookupTests
 
         // Assert
         ok1.Should().BeTrue();
-        c1.Should().Be(Colors.Aliceblue);
+        c1.Should().Be(expected: Colors.Aliceblue);
 
         ok2.Should().BeTrue();
-        c2.Should().Be(Colors.Blue500);
+        c2.Should().Be(expected: Colors.Blue500);
     }
 
     [Fact]
@@ -131,6 +131,6 @@ public sealed class ColorsLookupTests
         var act = () => Colors.TryGet(name: name!, value: out _);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>("the underlying dictionary lookup throws when key is null");
+        act.Should().Throw<ArgumentNullException>(because: "the underlying dictionary lookup throws when key is null");
     }
 }

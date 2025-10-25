@@ -31,16 +31,16 @@ public sealed partial record ThemeGroupTypographyDisplay(
     }
 
     public ThemeGroupTypographyDisplay Merge(ThemeGroupTypographyDisplay other)
-        => SetHyphens(other.Hyphens ?? Hyphens)
-            .SetLetterSpacing(other.LetterSpacing ?? LetterSpacing)
-            .SetLineBreak(other.LineBreak ?? LineBreak)
-            .SetLineHeight(other.LineHeight ?? LineHeight)
-            .SetTextAlign(other.TextAlign ?? TextAlign)
-            .SetTextOverflow(other.TextOverflow ?? TextOverflow)
-            .SetVerticalAlign(other.VerticalAlign ?? VerticalAlign)
-            .SetWhiteSpace(other.WhiteSpace ?? WhiteSpace)
-            .SetWordBreak(other.WordBreak ?? WordBreak)
-            .SetWordSpacing(other.WordSpacing ?? WordSpacing);
+        => SetHyphens(value: other.Hyphens ?? Hyphens)
+            .SetLetterSpacing(value: other.LetterSpacing ?? LetterSpacing)
+            .SetLineBreak(value: other.LineBreak ?? LineBreak)
+            .SetLineHeight(value: other.LineHeight ?? LineHeight)
+            .SetTextAlign(value: other.TextAlign ?? TextAlign)
+            .SetTextOverflow(value: other.TextOverflow ?? TextOverflow)
+            .SetVerticalAlign(value: other.VerticalAlign ?? VerticalAlign)
+            .SetWhiteSpace(value: other.WhiteSpace ?? WhiteSpace)
+            .SetWordBreak(value: other.WordBreak ?? WordBreak)
+            .SetWordSpacing(value: other.WordSpacing ?? WordSpacing);
 
     public ThemeGroupTypographyDisplay SetHyphens(StyleValueString? value)
         => this with

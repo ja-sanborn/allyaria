@@ -24,12 +24,12 @@ public sealed partial record ThemeGroupSizing(
     }
 
     public ThemeGroupSizing Merge(ThemeGroupSizing other)
-        => SetHeight(other.Height ?? Height)
-            .SetMargin(other.Margin ?? Margin)
-            .SetMaxHeight(other.MaxHeight ?? MaxHeight)
-            .SetMaxWidth(other.MaxWidth ?? MaxWidth)
-            .SetPadding(other.Padding ?? Padding)
-            .SetWidth(other.Width ?? Width);
+        => SetHeight(value: other.Height ?? Height)
+            .SetMargin(value: other.Margin ?? Margin)
+            .SetMaxHeight(value: other.MaxHeight ?? MaxHeight)
+            .SetMaxWidth(value: other.MaxWidth ?? MaxWidth)
+            .SetPadding(value: other.Padding ?? Padding)
+            .SetWidth(value: other.Width ?? Width);
 
     public ThemeGroupSizing SetHeight(StyleValueNumber? value)
         => this with
@@ -72,10 +72,10 @@ public sealed partial record ThemeGroupSizing(
                     blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
                 )
                 : Margin.Value
-                    .SetBlockEnd(blockEnd)
-                    .SetBlockStart(blockStart)
-                    .SetInlineEnd(inlineEnd)
-                    .SetInlineStart(inlineStart)
+                    .SetBlockEnd(value: blockEnd)
+                    .SetBlockStart(value: blockStart)
+                    .SetInlineEnd(value: inlineEnd)
+                    .SetInlineStart(value: inlineStart)
         };
 
     public ThemeGroupSizing SetMaxHeight(StyleValueNumber? value)
@@ -125,10 +125,10 @@ public sealed partial record ThemeGroupSizing(
                     blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
                 )
                 : Padding.Value
-                    .SetBlockEnd(blockEnd)
-                    .SetBlockStart(blockStart)
-                    .SetInlineEnd(inlineEnd)
-                    .SetInlineStart(inlineStart)
+                    .SetBlockEnd(value: blockEnd)
+                    .SetBlockStart(value: blockStart)
+                    .SetInlineEnd(value: inlineEnd)
+                    .SetInlineStart(value: inlineStart)
         };
 
     public ThemeGroupSizing SetWidth(StyleValueNumber? value)

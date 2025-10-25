@@ -15,19 +15,19 @@ public sealed class StringExtensionsTests
     public void Capitalize_Should_HandleEdgeCases(string? input, string cultureName, string expected)
     {
         // Arrange
-        var culture = string.IsNullOrEmpty(cultureName)
+        var culture = string.IsNullOrEmpty(value: cultureName)
             ? null
-            : new CultureInfo(cultureName);
+            : new CultureInfo(name: cultureName);
 
         // Act
-        var result = input.Capitalize(culture);
+        var result = input.Capitalize(culture: culture);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     public void FromCamelCase_Should_ReturnEmpty_When_NullOrWhitespace(string? input)
@@ -48,7 +48,7 @@ public sealed class StringExtensionsTests
         var result = input.FromCamelCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -62,7 +62,7 @@ public sealed class StringExtensionsTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage("*must be a camelCase identifier*");
+            .WithMessage(expectedWildcardPattern: "*must be a camelCase identifier*");
     }
 
     [Theory]
@@ -74,11 +74,11 @@ public sealed class StringExtensionsTests
         var result = input.FromKebabCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     public void FromKebabCase_Should_ReturnEmpty_When_NullOrWhitespace(string? input)
@@ -101,11 +101,11 @@ public sealed class StringExtensionsTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage("*must be a kebab-case identifier*");
+            .WithMessage(expectedWildcardPattern: "*must be a kebab-case identifier*");
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\t\r\n")]
@@ -127,7 +127,7 @@ public sealed class StringExtensionsTests
         var result = input.FromPascalCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -155,11 +155,11 @@ public sealed class StringExtensionsTests
         var result = input.FromPrefixedCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\t")]
@@ -187,7 +187,7 @@ public sealed class StringExtensionsTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage(expectedMessage + "*");
+            .WithMessage(expectedWildcardPattern: expectedMessage + "*");
     }
 
     [Theory]
@@ -199,11 +199,11 @@ public sealed class StringExtensionsTests
         var result = input.FromSnakeCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     public void FromSnakeCase_Should_ReturnEmpty_When_NullOrWhitespace(string? input)
@@ -226,7 +226,7 @@ public sealed class StringExtensionsTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage("*ust be a snake_case identifier*");
+            .WithMessage(expectedWildcardPattern: "*ust be a snake_case identifier*");
     }
 
     [Theory]
@@ -241,7 +241,7 @@ public sealed class StringExtensionsTests
         var result = input.NormalizeAccents();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -251,10 +251,10 @@ public sealed class StringExtensionsTests
     public void OrDefault_Should_ReturnExpectedResult(string? input, string defaultValue, string expected)
     {
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -269,7 +269,7 @@ public sealed class StringExtensionsTests
         var result = input.ToCamelCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -309,7 +309,7 @@ public sealed class StringExtensionsTests
         var result = input.ToKebabCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -324,7 +324,7 @@ public sealed class StringExtensionsTests
         var result = input.ToPascalCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -337,7 +337,7 @@ public sealed class StringExtensionsTests
         var result = input.ToPascalCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Theory]
@@ -351,6 +351,6 @@ public sealed class StringExtensionsTests
         var result = input.ToSnakeCase();
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 }

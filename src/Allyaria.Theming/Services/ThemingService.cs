@@ -34,7 +34,7 @@ public sealed class ThemingService : IThemingService
 
         if (themeType != ThemeType.System)
         {
-            SetEffectiveType(themeType);
+            SetEffectiveType(themeType: themeType);
         }
         else
         {

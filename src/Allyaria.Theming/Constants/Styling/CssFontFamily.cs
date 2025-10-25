@@ -4,12 +4,14 @@ namespace Allyaria.Theming.Constants.Styling;
 public static class CssFontFamily
 {
     public static readonly StyleValueString Monospace = new(
-        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+        value: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
     );
 
     public static readonly StyleValueString SansSerif = new(
-        "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        value: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     );
 
-    public static readonly StyleValueString Serif = new("ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif");
+    public static readonly StyleValueString Serif = new(
+        value: "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif"
+    );
 }

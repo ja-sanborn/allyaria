@@ -5,20 +5,20 @@ public static class StyleHelpers
     public static string ToCssName(this string? value)
         => Regex.Replace(
                 input: (value ?? string.Empty).Replace(oldChar: '_', newChar: '-'), pattern: @"[\s-]+", replacement: "-"
-            ).Trim('-')
+            ).Trim(trimChar: '-')
             .ToLowerInvariant();
 
     public static string ToCssProperty<TStyle>(this TStyle? style, string propertyName)
         where TStyle : struct, IStyleValue
     {
-        if (string.IsNullOrWhiteSpace(propertyName) || string.IsNullOrWhiteSpace(style?.Value))
+        if (string.IsNullOrWhiteSpace(value: propertyName) || string.IsNullOrWhiteSpace(value: style?.Value))
         {
             return string.Empty;
         }
 
         var name = propertyName.ToCssName();
 
-        return string.IsNullOrWhiteSpace(name)
+        return string.IsNullOrWhiteSpace(value: name)
             ? string.Empty
             : $"{name}:{style.Value};";
     }
@@ -27,14 +27,14 @@ public static class StyleHelpers
     {
         result = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value: value))
         {
             return false;
         }
 
         result = value.Trim();
 
-        return !result.Any(static c => char.IsControl(c));
+        return !result.Any(predicate: static c => char.IsControl(c: c));
     }
 
     public static string ValidateInput(this string? value)
@@ -43,7 +43,7 @@ public static class StyleHelpers
 
         var trimmed = value!.Trim();
 
-        return trimmed.Any(static c => char.IsControl(c))
+        return trimmed.Any(predicate: static c => char.IsControl(c: c))
             ? throw new AryArgumentException(
                 message: "Value contains control characters.", argName: nameof(value), argValue: value
             )

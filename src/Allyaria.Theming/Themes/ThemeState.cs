@@ -33,25 +33,14 @@ public sealed record ThemeState(
         return builder;
     }
 
-    public static ThemeState FromDefault(ThemeType themeType, PaletteType paletteType, FontType fontType)
-        => new(
-            Border: new ThemeGroupBorder(),
-            Overflow: new ThemeGroupOverflow(),
-            Palette: new ThemeGroupPalette(themeType: themeType, paletteType: paletteType),
-            Position: new ThemeGroupPosition(),
-            Sizing: new ThemeGroupSizing(),
-            Typography: new ThemeGroupTypography(ThemeType: themeType, FontType: fontType),
-            TypographyDisplay: new ThemeGroupTypographyDisplay()
-        );
-
     public ThemeState Merge(ThemeState other)
-        => SetBorder(Border.Merge(other.Border))
-            .SetOverflow(Overflow.Merge(other.Overflow))
-            .SetPalette(Palette.Merge(other.Palette))
-            .SetPosition(Position.Merge(other.Position))
-            .SetSizing(Sizing.Merge(other.Sizing))
-            .SetTypography(Typography.Merge(other.Typography))
-            .SetTypographyDisplay(TypographyDisplay.Merge(other.TypographyDisplay));
+        => SetBorder(value: Border.Merge(other: other.Border))
+            .SetOverflow(value: Overflow.Merge(other: other.Overflow))
+            .SetPalette(value: Palette.Merge(other: other.Palette))
+            .SetPosition(value: Position.Merge(other: other.Position))
+            .SetSizing(value: Sizing.Merge(other: other.Sizing))
+            .SetTypography(value: Typography.Merge(other: other.Typography))
+            .SetTypographyDisplay(value: TypographyDisplay.Merge(other: other.TypographyDisplay));
 
     public ThemeState SetBorder(ThemeGroupBorder value)
         => this with

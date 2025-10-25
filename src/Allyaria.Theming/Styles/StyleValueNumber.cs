@@ -5,13 +5,13 @@ public readonly record struct StyleValueNumber : IStyleValue
     private static readonly Regex NumberWithUnitRegex = new(
         pattern: @"^\s*(?<num>[+\-]?(?:\d+(?:\.\d+)?|\.\d+))\s*(?<unit>[A-Za-z%]+)?\s*$",
         options: RegexOptions.Compiled | RegexOptions.CultureInvariant,
-        matchTimeout: TimeSpan.FromMilliseconds(250)
+        matchTimeout: TimeSpan.FromMilliseconds(value: 250)
     );
 
     private static readonly Dictionary<string, LengthUnits> UnitByToken = BuildUnitMap();
 
     public StyleValueNumber()
-        : this(null) { }
+        : this(value: null) { }
 
     public StyleValueNumber(string? value)
     {
@@ -40,13 +40,13 @@ public readonly record struct StyleValueNumber : IStyleValue
 
     private static Dictionary<string, LengthUnits> BuildUnitMap()
     {
-        var dict = new Dictionary<string, LengthUnits>(StringComparer.OrdinalIgnoreCase);
+        var dict = new Dictionary<string, LengthUnits>(comparer: StringComparer.OrdinalIgnoreCase);
 
         foreach (var unit in Enum.GetValues<LengthUnits>())
         {
             var desc = unit.GetDescription();
 
-            if (!string.IsNullOrWhiteSpace(desc))
+            if (!string.IsNullOrWhiteSpace(value: desc))
             {
                 var key = desc.ToLowerInvariant();
                 dict.TryAdd(key: key, value: unit);
@@ -56,7 +56,7 @@ public readonly record struct StyleValueNumber : IStyleValue
         return dict;
     }
 
-    public static StyleValueNumber Parse(string? value) => new(value);
+    public static StyleValueNumber Parse(string? value) => new(value: value);
 
     private static bool TryMapUnit(string token, out LengthUnits unit, out string canonical)
     {
@@ -80,7 +80,7 @@ public readonly record struct StyleValueNumber : IStyleValue
         unit = null;
         value = string.Empty;
 
-        if (!input.TryValidateInput(out var valid))
+        if (!input.TryValidateInput(result: out var valid))
         {
             return false;
         }
@@ -94,23 +94,23 @@ public readonly record struct StyleValueNumber : IStyleValue
             return true;
         }
 
-        var match = NumberWithUnitRegex.Match(valid);
+        var match = NumberWithUnitRegex.Match(input: valid);
 
         if (!match.Success)
         {
             return false;
         }
 
-        var numText = match.Groups["num"].Value;
+        var numText = match.Groups[groupname: "num"].Value;
 
-        var unitText = match.Groups["unit"].Success
-            ? match.Groups["unit"].Value
+        var unitText = match.Groups[groupname: "unit"].Success
+            ? match.Groups[groupname: "unit"].Value
             : null;
 
         if (!double.TryParse(
                 s: numText, style: NumberStyles.Float, provider: CultureInfo.InvariantCulture, result: out number
             ) ||
-            double.IsInfinity(number))
+            double.IsInfinity(d: number))
         {
             return false;
         }
@@ -118,7 +118,7 @@ public readonly record struct StyleValueNumber : IStyleValue
         unit = null;
         var canonicalUnit = string.Empty;
 
-        if (!string.IsNullOrEmpty(unitText))
+        if (!string.IsNullOrEmpty(value: unitText))
         {
             if (!TryMapUnit(token: unitText, unit: out var lengthUnit, canonical: out canonicalUnit))
             {
@@ -128,7 +128,7 @@ public readonly record struct StyleValueNumber : IStyleValue
             unit = lengthUnit;
         }
 
-        var abs = Math.Abs(number);
+        var abs = Math.Abs(value: number);
 
         var numCanonical = number.ToString(
             format: abs is > 0 and < 0.0001 or >= 1e6
@@ -155,7 +155,7 @@ public readonly record struct StyleValueNumber : IStyleValue
         return true;
     }
 
-    public static implicit operator StyleValueNumber(string? value) => new(value);
+    public static implicit operator StyleValueNumber(string? value) => new(value: value);
 
     public static implicit operator string(StyleValueNumber? value) => value?.Value ?? string.Empty;
 }

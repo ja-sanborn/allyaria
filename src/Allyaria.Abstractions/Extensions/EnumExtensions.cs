@@ -46,15 +46,15 @@ public static class EnumExtensions
                 (var t, var n) = key;
 
                 // Handle [Flags] combined names like "Read, Write".
-                if (!n.Contains(','))
+                if (!n.Contains(value: ','))
                 {
                     return GetSingleDescription(enumType: t, memberName: n);
                 }
 
-                var parts = n.Split(',')
-                    .Select(s => s.Trim())
-                    .Where(s => s.Length > 0)
-                    .Select(part => GetSingleDescription(enumType: t, memberName: part));
+                var parts = n.Split(separator: ',')
+                    .Select(selector: s => s.Trim())
+                    .Where(predicate: s => s.Length > 0)
+                    .Select(selector: part => GetSingleDescription(enumType: t, memberName: part));
 
                 return string.Join(separator: ", ", values: parts);
             }
@@ -78,7 +78,7 @@ public static class EnumExtensions
     /// </returns>
     private static string GetSingleDescription(Type enumType, string memberName)
     {
-        var mi = enumType.GetMember(memberName);
+        var mi = enumType.GetMember(name: memberName);
 
         if (mi.Length > 0)
         {
@@ -87,7 +87,7 @@ public static class EnumExtensions
                 .OfType<DescriptionAttribute>()
                 .FirstOrDefault();
 
-            if (attr is not null && !string.IsNullOrWhiteSpace(attr.Description))
+            if (attr is not null && !string.IsNullOrWhiteSpace(value: attr.Description))
             {
                 return attr.Description;
             }

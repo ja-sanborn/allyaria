@@ -21,11 +21,11 @@ public sealed partial record ThemeGroupOverflow(
     }
 
     public ThemeGroupOverflow Merge(ThemeGroupOverflow other)
-        => SetOverflowWrap(other.OverflowWrap ?? OverflowWrap)
-            .SetOverflowX(other.OverflowX ?? OverflowX)
-            .SetOverflowY(other.OverflowY ?? OverflowY)
-            .SetOverscrollBehaviorX(other.OverscrollBehaviorX ?? OverscrollBehaviorX)
-            .SetOverscrollBehaviorY(other.OverscrollBehaviorY ?? OverscrollBehaviorY);
+        => SetOverflowWrap(value: other.OverflowWrap ?? OverflowWrap)
+            .SetOverflowX(value: other.OverflowX ?? OverflowX)
+            .SetOverflowY(value: other.OverflowY ?? OverflowY)
+            .SetOverscrollBehaviorX(value: other.OverscrollBehaviorX ?? OverscrollBehaviorX)
+            .SetOverscrollBehaviorY(value: other.OverscrollBehaviorY ?? OverscrollBehaviorY);
 
     public ThemeGroupOverflow SetOverflowWrap(StyleValueString? value)
         => this with

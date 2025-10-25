@@ -2,7 +2,7 @@ namespace Allyaria.Theming.Themes;
 
 public sealed partial record ThemeGroupTypography(
     ThemeType ThemeType = ThemeType.Light,
-    FontType FontType = FontType.Primary,
+    FontType FontType = FontType.SansSerif,
     StyleValueString? FontFamily = null,
     StyleValueNumber? FontSize = null,
     StyleValueString? FontStyle = null,
@@ -28,31 +28,15 @@ public sealed partial record ThemeGroupTypography(
         return builder;
     }
 
-    public static ThemeGroupTypography FromFontDefinition(FontDefinition fontDefinition,
-        ThemeType themeType,
-        FontType fontType)
-        => new(
-            ThemeType: themeType,
-            FontType: fontType,
-            FontFamily: fontDefinition.GetFontFamily(themeType: themeType, fontType: fontType),
-            FontSize: CssSize.Size3,
-            FontStyle: CssFontStyle.Normal,
-            FontWeight: CssFontWeight.Normal,
-            TextDecorationLine: CssTextDecorationLine.None,
-            TextDecorationStyle: CssTextDecorationStyle.Solid,
-            TextDecorationThickness: CssSize.Thin,
-            TextTransform: CssTextTransform.None
-        );
-
     public ThemeGroupTypography Merge(ThemeGroupTypography other)
-        => SetFontFamily(other.FontFamily ?? FontFamily)
-            .SetFontSize(other.FontSize ?? FontSize)
-            .SetFontStyle(other.FontStyle ?? FontStyle)
-            .SetFontWeight(other.FontWeight ?? FontWeight)
-            .SetTextDecorationLine(other.TextDecorationLine ?? TextDecorationLine)
-            .SetTextDecorationStyle(other.TextDecorationStyle ?? TextDecorationStyle)
-            .SetTextDecorationThickness(other.TextDecorationThickness ?? TextDecorationThickness)
-            .SetTextTransform(other.TextTransform ?? TextTransform);
+        => SetFontFamily(value: other.FontFamily ?? FontFamily)
+            .SetFontSize(value: other.FontSize ?? FontSize)
+            .SetFontStyle(value: other.FontStyle ?? FontStyle)
+            .SetFontWeight(value: other.FontWeight ?? FontWeight)
+            .SetTextDecorationLine(value: other.TextDecorationLine ?? TextDecorationLine)
+            .SetTextDecorationStyle(value: other.TextDecorationStyle ?? TextDecorationStyle)
+            .SetTextDecorationThickness(value: other.TextDecorationThickness ?? TextDecorationThickness)
+            .SetTextTransform(value: other.TextTransform ?? TextTransform);
 
     public ThemeGroupTypography SetFontFamily(StyleValueString? value)
         => this with

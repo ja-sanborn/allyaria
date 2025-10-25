@@ -174,9 +174,9 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         try
         {
             var raw = await _module.InvokeAsync<string>(identifier: "detect", cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
+                .ConfigureAwait(continueOnCapturedContext: false);
 
-            var parsed = ParseThemeType(raw);
+            var parsed = ParseThemeType(value: raw);
 
             return parsed is ThemeType.System
                 ? null
@@ -229,7 +229,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             var raw = await _module.InvokeAsync<string?>(
                     identifier: "getStoredTheme", cancellationToken: cancellationToken, StorageKey
                 )
-                .ConfigureAwait(false);
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             return Enum.TryParse(value: raw, ignoreCase: true, result: out ThemeType parsed)
                 ? parsed
@@ -257,37 +257,37 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         _module ??= await JsRuntime.InvokeAsync<IJSObjectReference>(
                 identifier: "import", cancellationToken: _cts.Token, "./AryThemeProvider.razor.js"
             )
-            .ConfigureAwait(false);
+            .ConfigureAwait(continueOnCapturedContext: false);
 
         _theme = ThemingService.Theme;
 
-        var storedType = await GetStoredTypeAsync(_cts.Token)
-            .ConfigureAwait(false);
+        var storedType = await GetStoredTypeAsync(cancellationToken: _cts.Token)
+            .ConfigureAwait(continueOnCapturedContext: false);
 
         if (storedType != ThemeType.System || ThemingService.StoredType != ThemeType.System)
         {
-            ThemingService.SetStoredType(storedType);
+            ThemingService.SetStoredType(themeType: storedType);
         }
 
         if (ThemingService.StoredType == ThemeType.System)
         {
-            await StartDetectAsync(_cts.Token).ConfigureAwait(false);
+            await StartDetectAsync(cancellationToken: _cts.Token).ConfigureAwait(continueOnCapturedContext: false);
         }
 
         var detected = ThemingService.StoredType == ThemeType.System
-            ? await DetectThemeAsync(_cts.Token).ConfigureAwait(false)
+            ? await DetectThemeAsync(cancellationToken: _cts.Token).ConfigureAwait(continueOnCapturedContext: false)
             : null;
 
         var effectiveType = detected ?? (ThemingService.StoredType == ThemeType.System
             ? ThemeType.Light
             : ThemingService.StoredType);
 
-        UpdateEffectiveType(effectiveType);
+        UpdateEffectiveType(effectiveType: effectiveType);
 
         await UpdateStoredTypeAsync(storedType: ThemingService.StoredType, cancellationToken: _cts.Token)
-            .ConfigureAwait(false);
+            .ConfigureAwait(continueOnCapturedContext: false);
 
-        await SetDirectionAsync().ConfigureAwait(false);
+        await SetDirectionAsync().ConfigureAwait(continueOnCapturedContext: false);
     }
 
     private async void OnThemeChangedAsync(object? sender, EventArgs e)
@@ -313,14 +313,14 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
 
         if (effectiveType is ThemeType.System)
         {
-            var detectedType = await DetectThemeAsync(_cts!.Token)
-                .ConfigureAwait(false);
+            var detectedType = await DetectThemeAsync(cancellationToken: _cts!.Token)
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             effectiveType = detectedType ?? ThemeType.Light;
         }
 
         _effectiveType = effectiveType;
-        ThemingService.SetEffectiveType(effectiveType);
+        ThemingService.SetEffectiveType(type: effectiveType);
     }
 
     private static ThemeType ParseThemeType(string? value)
@@ -363,8 +363,8 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     [JSInvokable]
     public void SetFromJs(string raw)
     {
-        var effectiveType = ParseThemeType(raw);
-        UpdateEffectiveType(effectiveType);
+        var effectiveType = ParseThemeType(value: raw);
+        UpdateEffectiveType(effectiveType: effectiveType);
     }
 
     private async Task SetStoredTypeAsync(CancellationToken cancellationToken = default)
@@ -380,7 +380,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
                     identifier: "setStoredTheme", cancellationToken: cancellationToken, StorageKey,
                     _storedType.ToString()
                 )
-                .ConfigureAwait(false);
+                .ConfigureAwait(continueOnCapturedContext: false);
         }
         catch
         {
@@ -397,10 +397,10 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
 
         try
         {
-            _dotNetRef ??= DotNetObjectReference.Create(this);
+            _dotNetRef ??= DotNetObjectReference.Create(value: this);
 
             await _module.InvokeVoidAsync(identifier: "init", cancellationToken: cancellationToken, _host, _dotNetRef)
-                .ConfigureAwait(false);
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             _isStarted = true;
         }
@@ -446,7 +446,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         }
 
         _effectiveType = effectiveType;
-        ThemingService.SetEffectiveType(effectiveType);
+        ThemingService.SetEffectiveType(type: effectiveType);
     }
 
     private async Task UpdateStoredTypeAsync(ThemeType storedType, CancellationToken cancellationToken = default)
@@ -460,14 +460,14 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
 
         if (_storedType is ThemeType.System)
         {
-            await StartDetectAsync(cancellationToken)
-                .ConfigureAwait(false);
+            await StartDetectAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(continueOnCapturedContext: false);
         }
         else
         {
-            await StopDetectAsync().ConfigureAwait(false);
+            await StopDetectAsync().ConfigureAwait(continueOnCapturedContext: false);
         }
 
-        await SetStoredTypeAsync(cancellationToken).ConfigureAwait(false);
+        await SetStoredTypeAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
     }
 }

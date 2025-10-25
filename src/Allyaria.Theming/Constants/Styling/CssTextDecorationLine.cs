@@ -5,14 +5,14 @@ namespace Allyaria.Theming.Constants.Styling;
 public static class CssTextDecorationLine
 {
     /// <summary>Represents a line-through text decoration.</summary>
-    public static readonly StyleValueString LineThrough = new("line-through");
+    public static readonly StyleValueString LineThrough = new(value: "line-through");
 
     /// <summary>Represents no text decoration line.</summary>
-    public static readonly StyleValueString None = new("none");
+    public static readonly StyleValueString None = new(value: "none");
 
     /// <summary>Represents an overline text decoration.</summary>
-    public static readonly StyleValueString Overline = new("overline");
+    public static readonly StyleValueString Overline = new(value: "overline");
 
     /// <summary>Represents an underline text decoration.</summary>
-    public static readonly StyleValueString Underline = new("underline");
+    public static readonly StyleValueString Underline = new(value: "underline");
 }

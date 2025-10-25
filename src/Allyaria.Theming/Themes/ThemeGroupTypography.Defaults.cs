@@ -6,14 +6,14 @@ public sealed partial record ThemeGroupTypography
     public static readonly ThemeGroupTypography Empty = new();
 
     public static readonly ThemeGroupTypography Monospace = FromFontDefinition(
-        fontDefinition: new FontDefinition(), themeType: ThemeType.Light, fontType: FontType.Tertiary
+        fontDefinitions: new FontDefinitions(), themeType: ThemeType.Light, fontType: FontType.Monospace
     );
 
     public static readonly ThemeGroupTypography SansSerif = FromFontDefinition(
-        fontDefinition: new FontDefinition(), themeType: ThemeType.Light, fontType: FontType.Primary
+        fontDefinitions: new FontDefinitions(), themeType: ThemeType.Light, fontType: FontType.SansSerif
     );
 
     public static readonly ThemeGroupTypography Serif = FromFontDefinition(
-        fontDefinition: new FontDefinition(), themeType: ThemeType.Light, fontType: FontType.Secondary
+        fontDefinitions: new FontDefinitions(), themeType: ThemeType.Light, fontType: FontType.Serif
     );
 }

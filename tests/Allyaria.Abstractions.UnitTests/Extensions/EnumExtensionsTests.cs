@@ -8,23 +8,23 @@ public sealed class EnumExtensionsTests
 {
     private enum DescribedEnumA
     {
-        [Description("Alpha A")]
+        [Description(description: "Alpha A")]
         X = 0,
 
         // Whitespace DescriptionAttribute should be ignored and fallback used.
-        [Description("   ")]
+        [Description(description: "   ")]
         Z = 1
     }
 
     private enum DescribedEnumB
     {
-        [Description("Bravo B")]
+        [Description(description: "Bravo B")]
         X = 0
     }
 
     private enum MixedDescriptionEnum
     {
-        [Description("Has Description")]
+        [Description(description: "Has Description")]
 
         // ReSharper disable once UnusedMember.Local
         WithDescription = 0,
@@ -36,7 +36,7 @@ public sealed class EnumExtensionsTests
     [Flags]
     private enum TestFlags
     {
-        [Description("Read Only")]
+        [Description(description: "Read Only")]
         Read = 1,
 
         // No Description: fallback should be the humanized name; we pick a single-letter to avoid depending on implementation details.
@@ -58,8 +58,8 @@ public sealed class EnumExtensionsTests
         var bDescription = b.GetDescription();
 
         // Assert
-        aDescription.Should().Be("Alpha A");
-        bDescription.Should().Be("Bravo B");
+        aDescription.Should().Be(expected: "Alpha A");
+        bDescription.Should().Be(expected: "Bravo B");
     }
 
     [Fact]
@@ -75,8 +75,8 @@ public sealed class EnumExtensionsTests
 
         // Assert
         // We deliberately use single-letter enum names so that a humanizer will return the same text.
-        missingResult.Should().Be("Y");
-        whitespaceResult.Should().Be("Z");
+        missingResult.Should().Be(expected: "Y");
+        whitespaceResult.Should().Be(expected: "Z");
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public sealed class EnumExtensionsTests
         var result = sut.GetDescription();
 
         // Assert
-        result.Should().Be("Read Only, W");
+        result.Should().Be(expected: "Read Only, W");
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public sealed class EnumExtensionsTests
         var result = sut.GetDescription();
 
         // Assert
-        result.Should().Be("W");
+        result.Should().Be(expected: "W");
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public sealed class EnumExtensionsTests
         var result = sut.GetDescription();
 
         // Assert
-        result.Should().Be("Read Only, W");
+        result.Should().Be(expected: "Read Only, W");
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class EnumExtensionsTests
         var result = ((Enum)sut).GetDescription();
 
         // Assert
-        result.Should().Be("Alpha A");
+        result.Should().Be(expected: "Alpha A");
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public sealed class EnumExtensionsTests
         var nongenericResult = ((Enum)sut).GetDescription(); // non-generic overload
 
         // Assert
-        genericResult.Should().Be(nongenericResult);
-        genericResult.Should().Be("Read Only");
+        genericResult.Should().Be(expected: nongenericResult);
+        genericResult.Should().Be(expected: "Read Only");
     }
 }

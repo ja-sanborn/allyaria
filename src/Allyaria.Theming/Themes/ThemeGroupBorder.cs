@@ -23,12 +23,12 @@ public sealed partial record ThemeGroupBorder(
     }
 
     public ThemeGroupBorder Merge(ThemeGroupBorder other)
-        => SetBorderRadius(other.BorderRadius ?? BorderRadius)
-            .SetBorderStyle(other.BorderStyle ?? BorderStyle)
-            .SetBorderWidth(other.BorderWidth ?? BorderWidth)
-            .SetOutlineOffset(other.OutlineOffset ?? OutlineOffset)
-            .SetOutlineStyle(other.OutlineStyle ?? OutlineStyle)
-            .SetOutlineWidth(other.OutlineWidth ?? OutlineWidth);
+        => SetBorderRadius(value: other.BorderRadius ?? BorderRadius)
+            .SetBorderStyle(value: other.BorderStyle ?? BorderStyle)
+            .SetBorderWidth(value: other.BorderWidth ?? BorderWidth)
+            .SetOutlineOffset(value: other.OutlineOffset ?? OutlineOffset)
+            .SetOutlineStyle(value: other.OutlineStyle ?? OutlineStyle)
+            .SetOutlineWidth(value: other.OutlineWidth ?? OutlineWidth);
 
     public ThemeGroupBorder SetBorderRadius(StyleGroupBorderRadius? value)
         => value is not null
@@ -65,10 +65,10 @@ public sealed partial record ThemeGroupBorder(
                     startStart: startStart, startEnd: startEnd, endStart: endStart, endEnd: endEnd
                 )
                 : BorderRadius.Value
-                    .SetEndEnd(endEnd)
-                    .SetEndStart(endStart)
-                    .SetStartEnd(startEnd)
-                    .SetStartStart(startStart)
+                    .SetEndEnd(value: endEnd)
+                    .SetEndStart(value: endStart)
+                    .SetStartEnd(value: startEnd)
+                    .SetStartStart(value: startStart)
         };
 
     public ThemeGroupBorder SetBorderStyle(StyleGroupBorderStyle? value)
@@ -106,10 +106,10 @@ public sealed partial record ThemeGroupBorder(
                     blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
                 )
                 : BorderStyle.Value
-                    .SetBlockEnd(blockEnd)
-                    .SetBlockStart(blockStart)
-                    .SetInlineEnd(inlineEnd)
-                    .SetInlineStart(inlineStart)
+                    .SetBlockEnd(value: blockEnd)
+                    .SetBlockStart(value: blockStart)
+                    .SetInlineEnd(value: inlineEnd)
+                    .SetInlineStart(value: inlineStart)
         };
 
     public ThemeGroupBorder SetBorderWidth(StyleGroupBorderWidth? value)
@@ -147,10 +147,10 @@ public sealed partial record ThemeGroupBorder(
                     blockStart: blockStart, blockEnd: blockEnd, inlineStart: inlineStart, inlineEnd: inlineEnd
                 )
                 : BorderWidth.Value
-                    .SetBlockEnd(blockEnd)
-                    .SetBlockStart(blockStart)
-                    .SetInlineEnd(inlineEnd)
-                    .SetInlineStart(inlineStart)
+                    .SetBlockEnd(value: blockEnd)
+                    .SetBlockStart(value: blockStart)
+                    .SetInlineEnd(value: inlineEnd)
+                    .SetInlineStart(value: inlineStart)
         };
 
     public ThemeGroupBorder SetOutlineOffset(StyleValueNumber? value)

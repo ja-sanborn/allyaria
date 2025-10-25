@@ -50,19 +50,19 @@ public readonly record struct StyleGroupBorderColor : IStyleGroup
 
     public StyleGroupBorderColor EnsureContrast(StyleValueColor backgroundColor)
     {
-        if (BlockStart.Equals(BlockEnd) && BlockStart.Equals(InlineStart) &&
-            BlockStart.Equals(InlineEnd))
+        if (BlockStart.Equals(other: BlockEnd) && BlockStart.Equals(other: InlineStart) &&
+            BlockStart.Equals(other: InlineEnd))
         {
-            var contrasted = BlockStart.EnsureContrast(backgroundColor);
+            var contrasted = BlockStart.EnsureContrast(surface: backgroundColor);
 
-            return new StyleGroupBorderColor(contrasted);
+            return new StyleGroupBorderColor(value: contrasted);
         }
 
         return new StyleGroupBorderColor(
-            blockStart: BlockStart.EnsureContrast(backgroundColor),
-            blockEnd: BlockEnd.EnsureContrast(backgroundColor),
-            inlineStart: InlineStart.EnsureContrast(backgroundColor),
-            inlineEnd: InlineEnd.EnsureContrast(backgroundColor)
+            blockStart: BlockStart.EnsureContrast(surface: backgroundColor),
+            blockEnd: BlockEnd.EnsureContrast(surface: backgroundColor),
+            inlineStart: InlineStart.EnsureContrast(surface: backgroundColor),
+            inlineEnd: InlineEnd.EnsureContrast(surface: backgroundColor)
         );
     }
 

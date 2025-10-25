@@ -26,7 +26,7 @@ public sealed record Theme(
     {
         var prefix = varPrefix.ToCssName();
 
-        if (!string.IsNullOrWhiteSpace(prefix))
+        if (!string.IsNullOrWhiteSpace(value: prefix))
         {
             prefix = $"{prefix}-{type}";
         }
@@ -66,23 +66,13 @@ public sealed record Theme(
         return builder;
     }
 
-    public Theme FromDefault(PaletteType paletteType, FontType fontType)
-        => new(
-            Body: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
-            BodyVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
-            Link: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
-            LinkVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
-            Surface: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType),
-            SurfaceVariant: ThemeComponent.FromDefault(paletteType: paletteType, fontType: fontType)
-        );
-
     public Theme Merge(Theme other)
-        => SetBody(Body.Merge(other.Body))
-            .SetBodyVariant(BodyVariant.Merge(other.BodyVariant))
-            .SetLink(Link.Merge(other.Link))
-            .SetLinkVariant(LinkVariant.Merge(other.LinkVariant))
-            .SetSurface(Surface.Merge(other.Surface))
-            .SetSurfaceVariant(SurfaceVariant.Merge(other.SurfaceVariant));
+        => SetBody(value: Body.Merge(other: other.Body))
+            .SetBodyVariant(value: BodyVariant.Merge(other: other.BodyVariant))
+            .SetLink(value: Link.Merge(other: other.Link))
+            .SetLinkVariant(value: LinkVariant.Merge(other: other.LinkVariant))
+            .SetSurface(value: Surface.Merge(other: other.Surface))
+            .SetSurfaceVariant(value: SurfaceVariant.Merge(other: other.SurfaceVariant));
 
     public Theme SetBody(ThemeComponent value)
         => this with
@@ -143,20 +133,4 @@ public sealed record Theme(
 
         return builder.ToString();
     }
-
-    public Theme UpdateFontFamily(FontDefinition fontDefinition)
-        => SetBody(Body.UpdateFontFamily(fontDefinition))
-            .SetBodyVariant(BodyVariant.UpdateFontFamily(fontDefinition))
-            .SetLink(Link.UpdateFontFamily(fontDefinition))
-            .SetLinkVariant(LinkVariant.UpdateFontFamily(fontDefinition))
-            .SetSurface(Surface.UpdateFontFamily(fontDefinition))
-            .SetSurfaceVariant(SurfaceVariant.UpdateFontFamily(fontDefinition));
-
-    public Theme UpdatePalette(ColorPalette colorPalette)
-        => SetBody(Body.UpdatePalette(colorPalette))
-            .SetBodyVariant(BodyVariant.UpdatePalette(colorPalette))
-            .SetLink(Link.UpdatePalette(colorPalette))
-            .SetLinkVariant(LinkVariant.UpdatePalette(colorPalette))
-            .SetSurface(Surface.UpdatePalette(colorPalette))
-            .SetSurfaceVariant(SurfaceVariant.UpdatePalette(colorPalette));
 }

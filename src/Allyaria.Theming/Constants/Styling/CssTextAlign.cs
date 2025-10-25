@@ -5,17 +5,17 @@ namespace Allyaria.Theming.Constants.Styling;
 public static class CssTextAlign
 {
     /// <summary>Represents center-aligned text.</summary>
-    public static readonly StyleValueString Center = new("center");
+    public static readonly StyleValueString Center = new(value: "center");
 
     /// <summary>Represents alignment at the end of the inline direction (depends on writing mode and direction).</summary>
-    public static readonly StyleValueString End = new("end");
+    public static readonly StyleValueString End = new(value: "end");
 
     /// <summary>Represents justified text alignment.</summary>
-    public static readonly StyleValueString Justify = new("justify");
+    public static readonly StyleValueString Justify = new(value: "justify");
 
     /// <summary>Represents alignment inherited from the parent element (match-parent).</summary>
-    public static readonly StyleValueString Match = new("match-parent");
+    public static readonly StyleValueString Match = new(value: "match-parent");
 
     /// <summary>Represents alignment at the start of the inline direction (depends on writing mode and direction).</summary>
-    public static readonly StyleValueString Start = new("start");
+    public static readonly StyleValueString Start = new(value: "start");
 }

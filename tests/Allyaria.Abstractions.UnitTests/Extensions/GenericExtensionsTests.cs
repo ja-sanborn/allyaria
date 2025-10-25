@@ -46,8 +46,8 @@ public sealed class GenericExtensionsTests
 
         yield return new object[]
         {
-            Guid.Parse("11111111-1111-1111-1111-111111111111"),
-            Guid.Parse("22222222-2222-2222-2222-222222222222")
+            Guid.Parse(input: "11111111-1111-1111-1111-111111111111"),
+            Guid.Parse(input: "22222222-2222-2222-2222-222222222222")
         };
     }
 
@@ -61,7 +61,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(bool));
+        result.Should().Be(expected: default(bool));
     }
 
     [Theory]
@@ -73,10 +73,10 @@ public sealed class GenericExtensionsTests
         bool? input = null;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(defaultValue);
+        result.Should().Be(expected: defaultValue);
     }
 
     [Theory]
@@ -88,10 +88,10 @@ public sealed class GenericExtensionsTests
         bool? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(DateTime));
+        result.Should().Be(expected: default(DateTime));
     }
 
     [Fact]
@@ -118,24 +118,24 @@ public sealed class GenericExtensionsTests
         );
 
         // Act
-        var result = input.OrDefault(fallback);
+        var result = input.OrDefault(defaultValue: fallback);
 
         // Assert
-        result.Should().Be(fallback);
+        result.Should().Be(expected: fallback);
     }
 
     [Theory]
-    [MemberData(nameof(DateTime_HasValue_Cases))]
+    [MemberData(memberName: nameof(DateTime_HasValue_Cases))]
     public void OrDefault_DateTime_Should_ReturnValue_When_ValueHasValue(DateTime value, DateTime defaultValue)
     {
         // Arrange
         DateTime? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(value);
+        result.Should().Be(expected: value);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(decimal));
+        result.Should().Be(expected: default(decimal));
     }
 
     [Theory]
@@ -161,10 +161,10 @@ public sealed class GenericExtensionsTests
         decimal? input = null;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(defaultValue);
+        result.Should().Be(expected: defaultValue);
     }
 
     [Theory]
@@ -178,10 +178,10 @@ public sealed class GenericExtensionsTests
         decimal? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Fact]
@@ -194,7 +194,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(double));
+        result.Should().Be(expected: default(double));
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(double.NaN);
+        result.Should().Be(expected: double.NaN);
     }
 
     [Theory]
@@ -220,10 +220,10 @@ public sealed class GenericExtensionsTests
         double? input = null;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(defaultValue);
+        result.Should().Be(expected: defaultValue);
     }
 
     [Theory]
@@ -239,10 +239,10 @@ public sealed class GenericExtensionsTests
         double? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Fact]
@@ -252,10 +252,10 @@ public sealed class GenericExtensionsTests
         Color? input = null;
 
         // Act
-        var result = input.OrDefault(Color.Blue);
+        var result = input.OrDefault(defaultValue: Color.Blue);
 
         // Assert
-        result.Should().Be(Color.Blue);
+        result.Should().Be(expected: Color.Blue);
     }
 
     [Fact]
@@ -268,7 +268,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(Color)); // zero => Color.Red
+        result.Should().Be(expected: default(Color)); // zero => Color.Red
     }
 
     [Fact]
@@ -278,10 +278,10 @@ public sealed class GenericExtensionsTests
         Color? input = Color.Green;
 
         // Act
-        var result = input.OrDefault(Color.Blue);
+        var result = input.OrDefault(defaultValue: Color.Blue);
 
         // Assert
-        result.Should().Be(Color.Green);
+        result.Should().Be(expected: Color.Green);
     }
 
     [Fact]
@@ -294,7 +294,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(Guid.Empty);
+        result.Should().Be(expected: Guid.Empty);
     }
 
     [Fact]
@@ -302,27 +302,27 @@ public sealed class GenericExtensionsTests
     {
         // Arrange
         Guid? input = null;
-        var fallback = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var fallback = Guid.Parse(input: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
         // Act
-        var result = input.OrDefault(fallback);
+        var result = input.OrDefault(defaultValue: fallback);
 
         // Assert
-        result.Should().Be(fallback);
+        result.Should().Be(expected: fallback);
     }
 
     [Theory]
-    [MemberData(nameof(Guid_HasValue_Cases))]
+    [MemberData(memberName: nameof(Guid_HasValue_Cases))]
     public void OrDefault_Guid_Should_ReturnValue_When_ValueHasValue(Guid value, Guid defaultValue)
     {
         // Arrange
         Guid? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(value);
+        result.Should().Be(expected: value);
     }
 
     [Fact]
@@ -335,7 +335,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(int));
+        result.Should().Be(expected: default(int));
     }
 
     [Theory]
@@ -349,10 +349,10 @@ public sealed class GenericExtensionsTests
         int? input = null;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(defaultValue);
+        result.Should().Be(expected: defaultValue);
     }
 
     [Theory]
@@ -366,10 +366,10 @@ public sealed class GenericExtensionsTests
         int? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected);
+        result.Should().Be(expected: expected);
     }
 
     [Fact]
@@ -382,7 +382,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(default(TimeSpan));
+        result.Should().Be(expected: default(TimeSpan));
     }
 
     [Fact]
@@ -390,27 +390,27 @@ public sealed class GenericExtensionsTests
     {
         // Arrange
         TimeSpan? input = null;
-        var fallback = TimeSpan.FromSeconds(42);
+        var fallback = TimeSpan.FromSeconds(value: 42);
 
         // Act
-        var result = input.OrDefault(fallback);
+        var result = input.OrDefault(defaultValue: fallback);
 
         // Assert
-        result.Should().Be(fallback);
+        result.Should().Be(expected: fallback);
     }
 
     [Theory]
-    [MemberData(nameof(TimeSpan_HasValue_Cases))]
+    [MemberData(memberName: nameof(TimeSpan_HasValue_Cases))]
     public void OrDefault_TimeSpan_Should_ReturnValue_When_ValueHasValue(TimeSpan value, TimeSpan defaultValue)
     {
         // Arrange
         TimeSpan? input = value;
 
         // Act
-        var result = input.OrDefault(defaultValue);
+        var result = input.OrDefault(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(value);
+        result.Should().Be(expected: value);
     }
 
     public static IEnumerable<object[]> TimeSpan_HasValue_Cases()
@@ -418,13 +418,13 @@ public sealed class GenericExtensionsTests
         yield return new object[]
         {
             TimeSpan.Zero,
-            TimeSpan.FromDays(1)
+            TimeSpan.FromDays(value: 1)
         };
 
         yield return new object[]
         {
-            TimeSpan.FromMilliseconds(1),
-            TimeSpan.FromMilliseconds(2)
+            TimeSpan.FromMilliseconds(value: 1),
+            TimeSpan.FromMilliseconds(value: 2)
         };
 
         yield return new object[]

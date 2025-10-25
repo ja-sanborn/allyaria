@@ -37,19 +37,19 @@ public sealed partial record ThemeGroupPosition(
     }
 
     public ThemeGroupPosition Merge(ThemeGroupPosition other)
-        => SetAlignContent(other.AlignContent ?? AlignContent)
-            .SetAlignItems(other.AlignItems ?? AlignItems)
-            .SetAlignSelf(other.AlignSelf ?? AlignSelf)
-            .SetBoxSizing(other.BoxSizing ?? BoxSizing)
-            .SetDisplay(other.Display ?? Display)
-            .SetJustifyContent(other.JustifyContent ?? JustifyContent)
-            .SetJustifyItems(other.JustifyItems ?? JustifyItems)
-            .SetJustifySelf(other.JustifySelf ?? JustifySelf)
-            .SetPosition(other.Position ?? Position)
-            .SetTextOrientation(other.TextOrientation ?? TextOrientation)
-            .SetUnicodeBidi(other.UnicodeBidi ?? UnicodeBidi)
-            .SetWritingMode(other.WritingMode ?? WritingMode)
-            .SetZIndex(other.ZIndex ?? ZIndex);
+        => SetAlignContent(value: other.AlignContent ?? AlignContent)
+            .SetAlignItems(value: other.AlignItems ?? AlignItems)
+            .SetAlignSelf(value: other.AlignSelf ?? AlignSelf)
+            .SetBoxSizing(value: other.BoxSizing ?? BoxSizing)
+            .SetDisplay(value: other.Display ?? Display)
+            .SetJustifyContent(value: other.JustifyContent ?? JustifyContent)
+            .SetJustifyItems(value: other.JustifyItems ?? JustifyItems)
+            .SetJustifySelf(value: other.JustifySelf ?? JustifySelf)
+            .SetPosition(value: other.Position ?? Position)
+            .SetTextOrientation(value: other.TextOrientation ?? TextOrientation)
+            .SetUnicodeBidi(value: other.UnicodeBidi ?? UnicodeBidi)
+            .SetWritingMode(value: other.WritingMode ?? WritingMode)
+            .SetZIndex(value: other.ZIndex ?? ZIndex);
 
     public ThemeGroupPosition SetAlignContent(StyleValueString? value)
         => this with

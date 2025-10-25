@@ -14,8 +14,8 @@ public sealed class AryExceptionTests
         var after = DateTimeOffset.UtcNow;
 
         // Assert
-        sut.Timestamp.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
-        sut.Timestamp.Offset.Should().Be(TimeSpan.Zero);
+        sut.Timestamp.Should().BeOnOrAfter(expected: before).And.BeOnOrBefore(expected: after);
+        sut.Timestamp.Offset.Should().Be(expected: TimeSpan.Zero);
         sut.InnerException.Should().BeNull();
         sut.Message.Should().NotBeNullOrWhiteSpace();
     }
@@ -27,25 +27,25 @@ public sealed class AryExceptionTests
         var message = "Something went boom";
 
         // Act
-        var sut = new AryException(message);
+        var sut = new AryException(message: message);
 
         // Assert
-        sut.Message.Should().Be(message);
+        sut.Message.Should().Be(expected: message);
     }
 
     [Fact]
     public void Ctor_WithMessageAndInner_Should_SetMessageAndInner_When_Provided()
     {
         // Arrange
-        var inner = new InvalidOperationException("inner failure");
+        var inner = new InvalidOperationException(message: "inner failure");
         var message = "Top-level failure";
 
         // Act
         var sut = new AryException(message: message, innerException: inner);
 
         // Assert
-        sut.Message.Should().Be(message);
-        sut.InnerException.Should().BeSameAs(inner);
+        sut.Message.Should().Be(expected: message);
+        sut.InnerException.Should().BeSameAs(expected: inner);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class AryExceptionTests
         string? message = null;
 
         // Act
-        var sut = new AryException(message);
+        var sut = new AryException(message: message);
 
         // Assert
         sut.Message.Should().NotBeNullOrWhiteSpace();
@@ -71,7 +71,7 @@ public sealed class AryExceptionTests
         var second = new AryException();
 
         // Assert
-        second.Timestamp.Should().BeOnOrAfter(first.Timestamp);
+        second.Timestamp.Should().BeOnOrAfter(expected: first.Timestamp);
     }
 
     [Fact]
@@ -85,6 +85,6 @@ public sealed class AryExceptionTests
         var t2 = sut.Timestamp;
 
         // Assert
-        t2.Should().Be(t1);
+        t2.Should().Be(expected: t1);
     }
 }

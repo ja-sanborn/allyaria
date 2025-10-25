@@ -13,7 +13,7 @@ public class AryException : Exception
     /// </summary>
     /// <param name="message">The error message that explains the reason for the exception.</param>
     public AryException(string? message)
-        : base(message) { }
+        : base(message: message) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AryException" /> class with a specified error message and a reference to

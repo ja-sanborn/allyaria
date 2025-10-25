@@ -8,7 +8,9 @@ public sealed record ThemeComponent(
 )
 {
     public static readonly ThemeComponent Empty = new(
-        Light: ThemeStyle.Empty, Dark: ThemeStyle.Empty, HighContrastLight: ThemeStyle.Empty,
+        Light: ThemeStyle.Empty,
+        Dark: ThemeStyle.Empty,
+        HighContrastLight: ThemeStyle.Empty,
         HighContrastDark: ThemeStyle.Empty
     );
 
@@ -19,7 +21,7 @@ public sealed record ThemeComponent(
     {
         var prefix = varPrefix.ToCssName();
 
-        if (!string.IsNullOrWhiteSpace(prefix))
+        if (!string.IsNullOrWhiteSpace(value: prefix))
         {
             prefix = $"{prefix}-{themeType}";
         }
@@ -50,23 +52,11 @@ public sealed record ThemeComponent(
         return builder;
     }
 
-    public static ThemeComponent FromDefault(PaletteType paletteType, FontType fontType)
-        => new(
-            Light: ThemeStyle.FromDefault(themeType: ThemeType.Light, paletteType: paletteType, fontType: fontType),
-            Dark: ThemeStyle.FromDefault(themeType: ThemeType.Dark, paletteType: paletteType, fontType: fontType),
-            HighContrastLight: ThemeStyle.FromDefault(
-                themeType: ThemeType.HighContrastLight, paletteType: paletteType, fontType: fontType
-            ),
-            HighContrastDark: ThemeStyle.FromDefault(
-                themeType: ThemeType.HighContrastDark, paletteType: paletteType, fontType: fontType
-            )
-        );
-
     public ThemeComponent Merge(ThemeComponent other)
-        => SetDark(Dark.Merge(other.Dark))
-            .SetHighContrastDark(HighContrastDark.Merge(other.HighContrastDark))
-            .SetHighContrastLight(HighContrastLight.Merge(other.HighContrastLight))
-            .SetLight(Light.Merge(other.Light));
+        => SetDark(value: Dark.Merge(other: other.Dark))
+            .SetHighContrastDark(value: HighContrastDark.Merge(other: other.HighContrastDark))
+            .SetHighContrastLight(value: HighContrastLight.Merge(other: other.HighContrastLight))
+            .SetLight(value: Light.Merge(other: other.Light));
 
     public ThemeComponent SetDark(ThemeStyle value)
         => this with
@@ -94,16 +84,4 @@ public sealed record ThemeComponent(
 
     public string ToCss(ThemeType themeType, ComponentState state, string? varPrefix = "")
         => BuildCss(builder: new CssBuilder(), themeType: themeType, state: state, varPrefix: varPrefix).ToString();
-
-    public ThemeComponent UpdateFontFamily(FontDefinition fontDefinition)
-        => SetDark(Dark.UpdateFontFamily(fontDefinition))
-            .SetHighContrastDark(HighContrastDark.UpdateFontFamily(fontDefinition))
-            .SetHighContrastLight(HighContrastLight.UpdateFontFamily(fontDefinition))
-            .SetLight(Light.UpdateFontFamily(fontDefinition));
-
-    public ThemeComponent UpdatePalette(ColorPalette colorPalette)
-        => SetDark(Dark.UpdatePalette(colorPalette))
-            .SetHighContrastDark(HighContrastDark.UpdatePalette(colorPalette))
-            .SetHighContrastLight(HighContrastLight.UpdatePalette(colorPalette))
-            .SetLight(Light.UpdatePalette(colorPalette));
 }

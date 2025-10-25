@@ -10,11 +10,11 @@ public sealed class HexByteTests
         const byte input = 173;
 
         // Act
-        var sut = new HexByte(input);
+        var sut = new HexByte(value: input);
 
         // Assert
-        sut.Value.Should().Be(173);
-        sut.ToString().Should().Be("AD");
+        sut.Value.Should().Be(expected: 173);
+        sut.ToString().Should().Be(expected: "AD");
     }
 
     [Theory]
@@ -23,17 +23,17 @@ public sealed class HexByteTests
     public void ClampAlpha_Should_ClampAndConvert_OutOfRange_To_Ends(double input, int expectedByte)
     {
         // Arrange & Act
-        var sut = HexByte.ClampAlpha(input);
+        var sut = HexByte.ClampAlpha(value: input);
 
         // Assert
-        sut.Value.Should().Be((byte)expectedByte);
+        sut.Value.Should().Be(expected: (byte)expectedByte);
     }
 
     [Fact]
     public void ClampAlpha_Should_Throw_When_InputIsNaN()
     {
         // Arrange
-        var act = () => HexByte.ClampAlpha(double.NaN);
+        var act = () => HexByte.ClampAlpha(value: double.NaN);
 
         // Assert
         act.Should().Throw<AryArgumentException>();
@@ -43,18 +43,18 @@ public sealed class HexByteTests
     public void ComparisonOperators_Should_BeConsistentWithValue()
     {
         // Arrange
-        var low = new HexByte(10);
-        var high = new HexByte(20);
+        var low = new HexByte(value: 10);
+        var high = new HexByte(value: 20);
 
         // Act & Assert
         (high > low).Should().BeTrue();
         (high >= low).Should().BeTrue();
         (low < high).Should().BeTrue();
         (low <= high).Should().BeTrue();
-        (low <= new HexByte(10)).Should().BeTrue();
-        (high >= new HexByte(20)).Should().BeTrue();
-        low.CompareTo(high).Should().BeLessThan(0);
-        high.CompareTo(low).Should().BeGreaterThan(0);
+        (low <= new HexByte(value: 10)).Should().BeTrue();
+        (high >= new HexByte(value: 20)).Should().BeTrue();
+        low.CompareTo(other: high).Should().BeLessThan(expected: 0);
+        high.CompareTo(other: low).Should().BeGreaterThan(expected: 0);
     }
 
     [Fact]
@@ -64,21 +64,21 @@ public sealed class HexByteTests
         var sut = new HexByte();
 
         // Assert
-        ((byte)sut).Should().Be(0);
-        sut.ToString().Should().Be("00");
+        ((byte)sut).Should().Be(expected: 0);
+        sut.ToString().Should().Be(expected: "00");
     }
 
     [Fact]
     public void Equality_Should_Fail_For_DifferentValues_AndDifferentTypes()
     {
         // Arrange
-        var a = new HexByte(1);
-        var b = new HexByte(2);
+        var a = new HexByte(value: 1);
+        var b = new HexByte(value: 2);
         object otherType = 1;
 
         // Act & Assert
-        a.Equals(b).Should().BeFalse();
-        a.Equals(otherType).Should().BeFalse();
+        a.Equals(other: b).Should().BeFalse();
+        a.Equals(obj: otherType).Should().BeFalse();
         (a == b).Should().BeFalse();
         (a != b).Should().BeTrue();
     }
@@ -87,14 +87,14 @@ public sealed class HexByteTests
     public void Equality_Should_Work_For_SameValue()
     {
         // Arrange
-        var a = new HexByte(123);
-        var b = new HexByte(123);
+        var a = new HexByte(value: 123);
+        var b = new HexByte(value: 123);
 
         // Act & Assert
-        a.Equals(b).Should().BeTrue();
+        a.Equals(other: b).Should().BeTrue();
         (a == b).Should().BeTrue();
         (a != b).Should().BeFalse();
-        a.GetHashCode().Should().Be(b.GetHashCode());
+        a.GetHashCode().Should().Be(expected: b.GetHashCode());
         a.Equals(obj: b).Should().BeTrue();
     }
 
@@ -105,23 +105,23 @@ public sealed class HexByteTests
     public void FromNormalized_Should_MapToByte_With_BankersRounding(double normalized, int expectedByte)
     {
         // Arrange & Act
-        var sut = HexByte.FromNormalized(normalized);
+        var sut = HexByte.FromNormalized(value: normalized);
 
         // Assert
-        sut.Value.Should().Be((byte)expectedByte);
+        sut.Value.Should().Be(expected: (byte)expectedByte);
     }
 
     [Fact]
     public void FromNormalized_Should_Throw_When_NotFinite()
     {
         // Arrange
-        var actNaN = () => HexByte.FromNormalized(double.NaN);
-        var actPosInf = () => HexByte.FromNormalized(double.PositiveInfinity);
-        var actNegInf = () => HexByte.FromNormalized(double.NegativeInfinity);
+        var actNaN = () => HexByte.FromNormalized(value: double.NaN);
+        var actPosInf = () => HexByte.FromNormalized(value: double.PositiveInfinity);
+        var actNegInf = () => HexByte.FromNormalized(value: double.NegativeInfinity);
 
         // Assert
         actNaN.Should().Throw<AryArgumentException>()
-            .WithMessage("Normalized theme must be a finite number.");
+            .WithMessage(expectedWildcardPattern: "Normalized theme must be a finite number.");
 
         actPosInf.Should().Throw<AryArgumentException>();
         actNegInf.Should().Throw<AryArgumentException>();
@@ -133,7 +133,7 @@ public sealed class HexByteTests
     public void FromNormalized_Should_Throw_When_OutOfRange(double value)
     {
         // Arrange
-        var act = () => HexByte.FromNormalized(value);
+        var act = () => HexByte.FromNormalized(value: value);
 
         // Assert
         act.Should().Throw<AryArgumentException>();
@@ -151,20 +151,20 @@ public sealed class HexByteTests
         string toStringFromHex = fromByte;
 
         // Assert
-        fromByte.Value.Should().Be(200);
-        fromString.Value.Should().Be(15);
-        backToByte.Should().Be(15);
-        toStringFromHex.Should().Be("C8");
+        fromByte.Value.Should().Be(expected: 200);
+        fromString.Value.Should().Be(expected: 15);
+        backToByte.Should().Be(expected: 15);
+        toStringFromHex.Should().Be(expected: "C8");
     }
 
     [Fact]
     public void Parse_Should_ReturnHexByte_When_Valid()
     {
         // Arrange & Act
-        var result = HexByte.Parse("7f");
+        var result = HexByte.Parse(value: "7f");
 
         // Assert
-        result.Value.Should().Be(0x7F);
+        result.Value.Should().Be(expected: 0x7F);
     }
 
     [Theory]
@@ -177,11 +177,11 @@ public sealed class HexByteTests
         string expectedUpper)
     {
         // Arrange & Act
-        var sut = new HexByte(input);
+        var sut = new HexByte(value: input);
 
         // Assert
-        sut.Value.Should().Be((byte)expectedByte);
-        sut.ToString().Should().Be(expectedUpper);
+        sut.Value.Should().Be(expected: (byte)expectedByte);
+        sut.ToString().Should().Be(expected: expectedUpper);
     }
 
     [Theory]
@@ -191,23 +191,26 @@ public sealed class HexByteTests
     public void StringCtor_Should_ThrowAryArgumentException_When_NotValidHex(string input)
     {
         // Arrange
-        var act = () => _ = new HexByte(input);
+        var act = () => _ = new HexByte(value: input);
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .Where(ex => ex.Message.Contains("Invalid hexadecimal string", StringComparison.OrdinalIgnoreCase) ||
-                ex.Message.Length > 0
+            .Where(
+                exceptionExpression: ex => ex.Message.Contains(
+                        "Invalid hexadecimal string", StringComparison.OrdinalIgnoreCase
+                    ) ||
+                    ex.Message.Length > 0
             );
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(data: null)]
     [InlineData("")]
     [InlineData("   ")]
     public void StringCtor_Should_ThrowAryArgumentException_When_NullOrWhitespace(string? input)
     {
         // Arrange
-        var act = () => _ = new HexByte(input!);
+        var act = () => _ = new HexByte(value: input!);
 
         // Assert
         act.Should().Throw<AryArgumentException>();
@@ -219,13 +222,13 @@ public sealed class HexByteTests
     public void ToLerpByte_Should_ClampFactor_When_OutOfRange(double start, double end, double t, int expected)
     {
         // Arrange
-        var sut = new HexByte((byte)start);
+        var sut = new HexByte(value: (byte)start);
 
         // Act
         var actual = sut.ToLerpByte(end: (byte)end, factor: t);
 
         // Assert
-        actual.Should().Be((byte)expected);
+        actual.Should().Be(expected: (byte)expected);
     }
 
     [Theory]
@@ -240,40 +243,40 @@ public sealed class HexByteTests
         int expected)
     {
         // Arrange
-        var sut = new HexByte((byte)start);
+        var sut = new HexByte(value: (byte)start);
 
         // Act
         var actual = sut.ToLerpByte(end: (byte)end, factor: t);
 
         // Assert
-        actual.Should().Be((byte)expected);
+        actual.Should().Be(expected: (byte)expected);
     }
 
     [Fact]
     public void ToLerpByte_Should_TreatNonFiniteFactor_AsZero()
     {
         // Arrange
-        var sut = new HexByte(77);
+        var sut = new HexByte(value: 77);
 
         // Act
         var actual = sut.ToLerpByte(end: 200, factor: double.NaN);
 
         // Assert
-        actual.Should().Be(77);
+        actual.Should().Be(expected: 77);
     }
 
     [Fact]
     public void ToLerpHexByte_Should_WrapToLerpByte_Result()
     {
         // Arrange
-        var sut = new HexByte(10);
+        var sut = new HexByte(value: 10);
 
         // Act
         var hex = sut.ToLerpHexByte(end: 20, factor: 0.25);
 
         // Assert
-        ((byte)hex).Should().Be(12);
-        hex.ToString().Should().Be("0C");
+        ((byte)hex).Should().Be(expected: 12);
+        hex.ToString().Should().Be(expected: "0C");
     }
 
     [Theory]
@@ -283,47 +286,47 @@ public sealed class HexByteTests
     public void ToLerpLinearByte_Should_InterpolateInLinearLight(int start, int end, double t, int expected)
     {
         // Arrange
-        var sut = new HexByte((byte)start);
+        var sut = new HexByte(value: (byte)start);
 
         // Act
         var actual = sut.ToLerpLinearByte(end: (byte)end, factor: t);
 
         // Assert
-        actual.Should().Be((byte)expected);
+        actual.Should().Be(expected: (byte)expected);
     }
 
     [Fact]
     public void ToLerpLinearByte_Should_TreatNonFiniteFactor_AsZero()
     {
         // Arrange
-        var sut = new HexByte(100);
+        var sut = new HexByte(value: 100);
 
         // Act
         var actual = sut.ToLerpLinearByte(end: 200, factor: double.PositiveInfinity);
 
         // Assert
-        actual.Should().Be(100);
+        actual.Should().Be(expected: 100);
     }
 
     [Fact]
     public void ToLerpLinearHexByte_Should_WrapToLerpLinearByte_Result()
     {
         // Arrange
-        var sut = new HexByte(0);
+        var sut = new HexByte(value: 0);
 
         // Act
-        var hex = sut.ToLerpLinearHexByte(end: new HexByte(255), factor: 0.5);
+        var hex = sut.ToLerpLinearHexByte(end: new HexByte(value: 255), factor: 0.5);
 
         // Assert
-        ((byte)hex).Should().Be(188);
-        hex.ToString().Should().Be("BC");
+        ((byte)hex).Should().Be(expected: 188);
+        hex.ToString().Should().Be(expected: "BC");
     }
 
     [Fact]
     public void ToNormalized_Should_ReturnValueDividedBy255()
     {
         // Arrange
-        var sut = new HexByte(128);
+        var sut = new HexByte(value: 128);
 
         // Act
         var actual = sut.ToNormalized();
@@ -338,7 +341,7 @@ public sealed class HexByteTests
     public void ToSrgbLinearValue_Should_MapExtremes(int input, double expected)
     {
         // Arrange
-        var sut = new HexByte((byte)input);
+        var sut = new HexByte(value: (byte)input);
 
         // Act
         var linear = sut.ToSrgbLinearValue();
@@ -351,7 +354,7 @@ public sealed class HexByteTests
     public void ToSrgbLinearValue_Should_UseSrgbEotf_For_MiddleValues()
     {
         // Arrange
-        var sut = new HexByte(12); // below 0.04045*255 threshold (≈10.33) is false; 12 -> pow branch
+        var sut = new HexByte(value: 12); // below 0.04045*255 threshold (≈10.33) is false; 12 -> pow branch
 
         // Act
         var linear = sut.ToSrgbLinearValue();
@@ -367,13 +370,13 @@ public sealed class HexByteTests
     public void ToString_Should_ReturnTwoUppercaseHexDigits()
     {
         // Arrange
-        var sut = new HexByte(15);
+        var sut = new HexByte(value: 15);
 
         // Act
         var s = sut.ToString();
 
         // Assert
-        s.Should().Be("0F");
+        s.Should().Be(expected: "0F");
     }
 
     [Theory]
@@ -386,7 +389,7 @@ public sealed class HexByteTests
 
         // Assert
         ok.Should().BeFalse();
-        result.Value.Should().Be(0);
+        result.Value.Should().Be(expected: 0);
     }
 
     [Fact]
@@ -402,9 +405,9 @@ public sealed class HexByteTests
         okEmpty.Should().BeFalse();
         okWs.Should().BeFalse();
 
-        r1.Value.Should().Be(0);
-        r2.Value.Should().Be(0);
-        r3.Value.Should().Be(0);
+        r1.Value.Should().Be(expected: 0);
+        r2.Value.Should().Be(expected: 0);
+        r3.Value.Should().Be(expected: 0);
     }
 
     [Theory]
@@ -417,6 +420,6 @@ public sealed class HexByteTests
 
         // Assert
         ok.Should().BeTrue();
-        result.Value.Should().Be((byte)expected);
+        result.Value.Should().Be(expected: (byte)expected);
     }
 }
