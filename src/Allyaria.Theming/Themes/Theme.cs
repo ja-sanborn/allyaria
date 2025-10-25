@@ -144,14 +144,6 @@ public sealed record Theme(
         return builder.ToString();
     }
 
-    public Theme Update(ColorPalette colorPalette, FontDefinition fontDefinition)
-        => SetBody(Body.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetBodyVariant(BodyVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetLink(Link.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetLinkVariant(LinkVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetSurface(Surface.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetSurfaceVariant(SurfaceVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition));
-
     public Theme UpdateFontFamily(FontDefinition fontDefinition)
         => SetBody(Body.UpdateFontFamily(fontDefinition))
             .SetBodyVariant(BodyVariant.UpdateFontFamily(fontDefinition))

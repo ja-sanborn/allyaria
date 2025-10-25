@@ -95,12 +95,6 @@ public sealed record ThemeComponent(
     public string ToCss(ThemeType themeType, ComponentState state, string? varPrefix = "")
         => BuildCss(builder: new CssBuilder(), themeType: themeType, state: state, varPrefix: varPrefix).ToString();
 
-    public ThemeComponent Update(ColorPalette colorPalette, FontDefinition fontDefinition)
-        => SetDark(Dark.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetHighContrastDark(HighContrastDark.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetHighContrastLight(HighContrastLight.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
-            .SetLight(Light.Update(colorPalette: colorPalette, fontDefinition: fontDefinition));
-
     public ThemeComponent UpdateFontFamily(FontDefinition fontDefinition)
         => SetDark(Dark.UpdateFontFamily(fontDefinition))
             .SetHighContrastDark(HighContrastDark.UpdateFontFamily(fontDefinition))

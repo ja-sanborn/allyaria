@@ -150,9 +150,6 @@ public sealed record ThemeStyle
     public string ToCss(ComponentState state, string? varPrefix = "")
         => BuildCss(builder: new CssBuilder(), state: state, varPrefix: varPrefix).ToString();
 
-    public ThemeStyle Update(ColorPalette colorPalette, FontDefinition fontDefinition)
-        => UpdateFontFamily(fontDefinition).UpdatePalette(colorPalette);
-
     public ThemeStyle UpdateFontFamily(FontDefinition fontDefinition)
     {
         var themeType = Default.Typography.ThemeType;
