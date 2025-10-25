@@ -150,14 +150,14 @@ public sealed record ThemeStyle
     public string ToCss(ComponentState state, string? varPrefix = "")
         => BuildCss(builder: new CssBuilder(), state: state, varPrefix: varPrefix).ToString();
 
-    public ThemeStyle Update(ColorPalette colorPalette, FontDefinition fontDefinion)
-        => UpdateFontFamily(fontDefinion).UpdatePalette(colorPalette);
+    public ThemeStyle Update(ColorPalette colorPalette, FontDefinition fontDefinition)
+        => UpdateFontFamily(fontDefinition).UpdatePalette(colorPalette);
 
-    public ThemeStyle UpdateFontFamily(FontDefinition fontDefinion)
+    public ThemeStyle UpdateFontFamily(FontDefinition fontDefinition)
     {
         var themeType = Default.Typography.ThemeType;
         var fontType = Default.Typography.FontType;
-        var fontFamily = fontDefinion.GetFontFamily(themeType: themeType, fontType: fontType);
+        var fontFamily = fontDefinition.GetFontFamily(themeType: themeType, fontType: fontType);
 
         return SetDefault(Default.SetTypography(Default.Typography.SetFontFamily(fontFamily)))
             .SetDisabled(Disabled.SetTypography(Disabled.Typography.SetFontFamily(fontFamily)))

@@ -95,17 +95,17 @@ public sealed record ThemeComponent(
     public string ToCss(ThemeType themeType, ComponentState state, string? varPrefix = "")
         => BuildCss(builder: new CssBuilder(), themeType: themeType, state: state, varPrefix: varPrefix).ToString();
 
-    public ThemeComponent Update(ColorPalette colorPalette, FontDefinition fontDefinion)
-        => SetDark(Dark.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetHighContrastDark(HighContrastDark.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetHighContrastLight(HighContrastLight.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetLight(Light.Update(colorPalette: colorPalette, fontDefinion: fontDefinion));
+    public ThemeComponent Update(ColorPalette colorPalette, FontDefinition fontDefinition)
+        => SetDark(Dark.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetHighContrastDark(HighContrastDark.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetHighContrastLight(HighContrastLight.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetLight(Light.Update(colorPalette: colorPalette, fontDefinition: fontDefinition));
 
-    public ThemeComponent UpdateFontFamily(FontDefinition fontDefinion)
-        => SetDark(Dark.UpdateFontFamily(fontDefinion))
-            .SetHighContrastDark(HighContrastDark.UpdateFontFamily(fontDefinion))
-            .SetHighContrastLight(HighContrastLight.UpdateFontFamily(fontDefinion))
-            .SetLight(Light.UpdateFontFamily(fontDefinion));
+    public ThemeComponent UpdateFontFamily(FontDefinition fontDefinition)
+        => SetDark(Dark.UpdateFontFamily(fontDefinition))
+            .SetHighContrastDark(HighContrastDark.UpdateFontFamily(fontDefinition))
+            .SetHighContrastLight(HighContrastLight.UpdateFontFamily(fontDefinition))
+            .SetLight(Light.UpdateFontFamily(fontDefinition));
 
     public ThemeComponent UpdatePalette(ColorPalette colorPalette)
         => SetDark(Dark.UpdatePalette(colorPalette))

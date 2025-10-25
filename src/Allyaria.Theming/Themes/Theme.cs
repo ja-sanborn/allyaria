@@ -144,21 +144,21 @@ public sealed record Theme(
         return builder.ToString();
     }
 
-    public Theme Update(ColorPalette colorPalette, FontDefinition fontDefinion)
-        => SetBody(Body.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetBodyVariant(BodyVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetLink(Link.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetLinkVariant(LinkVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetSurface(Surface.Update(colorPalette: colorPalette, fontDefinion: fontDefinion))
-            .SetSurfaceVariant(SurfaceVariant.Update(colorPalette: colorPalette, fontDefinion: fontDefinion));
+    public Theme Update(ColorPalette colorPalette, FontDefinition fontDefinition)
+        => SetBody(Body.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetBodyVariant(BodyVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetLink(Link.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetLinkVariant(LinkVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetSurface(Surface.Update(colorPalette: colorPalette, fontDefinition: fontDefinition))
+            .SetSurfaceVariant(SurfaceVariant.Update(colorPalette: colorPalette, fontDefinition: fontDefinition));
 
-    public Theme UpdateFontFamily(FontDefinition fontDefinion)
-        => SetBody(Body.UpdateFontFamily(fontDefinion))
-            .SetBodyVariant(BodyVariant.UpdateFontFamily(fontDefinion))
-            .SetLink(Link.UpdateFontFamily(fontDefinion))
-            .SetLinkVariant(LinkVariant.UpdateFontFamily(fontDefinion))
-            .SetSurface(Surface.UpdateFontFamily(fontDefinion))
-            .SetSurfaceVariant(SurfaceVariant.UpdateFontFamily(fontDefinion));
+    public Theme UpdateFontFamily(FontDefinition fontDefinition)
+        => SetBody(Body.UpdateFontFamily(fontDefinition))
+            .SetBodyVariant(BodyVariant.UpdateFontFamily(fontDefinition))
+            .SetLink(Link.UpdateFontFamily(fontDefinition))
+            .SetLinkVariant(LinkVariant.UpdateFontFamily(fontDefinition))
+            .SetSurface(Surface.UpdateFontFamily(fontDefinition))
+            .SetSurfaceVariant(SurfaceVariant.UpdateFontFamily(fontDefinition));
 
     public Theme UpdatePalette(ColorPalette colorPalette)
         => SetBody(Body.UpdatePalette(colorPalette))
