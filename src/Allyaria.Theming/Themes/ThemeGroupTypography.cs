@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupTypography(
+public sealed record ThemeGroupTypography(
     ThemeType ThemeType = ThemeType.Light,
     FontType FontType = FontType.SansSerif,
     StyleValueString? FontFamily = null,
@@ -13,6 +13,8 @@ public sealed partial record ThemeGroupTypography(
     StyleValueString? TextTransform = null
 )
 {
+    public static readonly ThemeGroupTypography Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder

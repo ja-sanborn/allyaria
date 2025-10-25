@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupBorder(
+public sealed record ThemeGroupBorder(
     StyleGroupBorderRadius? BorderRadius = null,
     StyleGroupBorderStyle? BorderStyle = null,
     StyleGroupBorderWidth? BorderWidth = null,
@@ -9,6 +9,8 @@ public sealed partial record ThemeGroupBorder(
     StyleValueNumber? OutlineWidth = null
 )
 {
+    public static readonly ThemeGroupBorder Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder.Add(propertyName: "outline-offset", value: OutlineOffset, varPrefix: varPrefix);

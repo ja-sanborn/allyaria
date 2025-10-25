@@ -1,10 +1,8 @@
 namespace Allyaria.Theming.Themes;
 
-/// <summary>These are for static default constants for <see cref="ThemeGroupTypography" />.</summary>
-public sealed partial record ThemeGroupTypography
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
+public static class ThemeTypography
 {
-    public static readonly ThemeGroupTypography Empty = new();
-
     public static readonly ThemeGroupTypography Monospace = FromFontDefinition(
         fontDefinitions: new FontDefinitions(), themeType: ThemeType.Light, fontType: FontType.Monospace
     );

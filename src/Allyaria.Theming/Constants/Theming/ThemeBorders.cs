@@ -1,7 +1,7 @@
-namespace Allyaria.Theming.Themes;
+﻿namespace Allyaria.Theming.Constants.Theming;
 
-/// <summary>These are for static default constants for <see cref="ThemeGroupBorder" />.</summary>
-public sealed partial record ThemeGroupBorder
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
+public static class ThemeBorders
 {
     public static readonly ThemeGroupBorder BorderThick = new(
         BorderRadius: new StyleGroupBorderRadius(value: CssSize.Size2),
@@ -15,18 +15,16 @@ public sealed partial record ThemeGroupBorder
         BorderWidth: new StyleGroupBorderWidth(value: CssSize.Thin)
     );
 
-    public static readonly ThemeGroupBorder Empty = new();
-
     public static readonly ThemeGroupBorder OutlineThick = new(
-        OutlineOffset: new StyleValueNumber(value: CssSize.Thick),
-        OutlineStyle: new StyleValueString(value: CssBorderStyle.Solid),
-        OutlineWidth: new StyleValueNumber(value: CssSize.Thick)
+        OutlineOffset: CssSize.Thick,
+        OutlineStyle: CssBorderStyle.Solid,
+        OutlineWidth: CssSize.Thick
     );
 
     public static readonly ThemeGroupBorder OutlineThin = new(
-        OutlineOffset: new StyleValueNumber(value: CssSize.Thick),
-        OutlineStyle: new StyleValueString(value: CssBorderStyle.Solid),
-        OutlineWidth: new StyleValueNumber(value: CssSize.Thin)
+        OutlineOffset: CssSize.Thick,
+        OutlineStyle: CssBorderStyle.Solid,
+        OutlineWidth: CssSize.Thin
     );
 
     public static readonly ThemeGroupBorder ThickThick = BorderThick.Merge(other: OutlineThick);

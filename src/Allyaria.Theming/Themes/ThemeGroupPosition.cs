@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupPosition(
+public sealed record ThemeGroupPosition(
     StyleValueString? AlignContent = null,
     StyleValueString? AlignItems = null,
     StyleValueString? AlignSelf = null,
@@ -16,6 +16,8 @@ public sealed partial record ThemeGroupPosition(
     StyleValueNumber? ZIndex = null
 )
 {
+    public static readonly ThemeGroupPosition Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder

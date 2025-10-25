@@ -1,10 +1,8 @@
 namespace Allyaria.Theming.Themes;
 
-/// <summary>These are for static default constants for <see cref="ThemeGroupSizing" />.</summary>
-public sealed partial record ThemeGroupSizing
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
+public static class ThemeSizing
 {
-    public static readonly ThemeGroupSizing Empty = new();
-
     public static readonly ThemeGroupSizing FullHeight = new(Height: new StyleValueNumber(value: "100%"));
 
     public static readonly ThemeGroupSizing FullSize = new(

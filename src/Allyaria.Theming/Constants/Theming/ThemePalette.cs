@@ -1,7 +1,7 @@
-namespace Allyaria.Theming.Themes;
+namespace Allyaria.Theming.Constants.Theming;
 
-/// <summary>These are for static default constants for <see cref="ThemeGroupPalette" />.</summary>
-public sealed partial record ThemeGroupPalette
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
+public static class ThemePalette
 {
     public static readonly ThemeGroupPalette DarkPrimary = FromColorPalette(
         colorPalettes: new ColorPalettes(), themeType: ThemeType.Dark, paletteType: PaletteType.Primary
@@ -22,8 +22,6 @@ public sealed partial record ThemeGroupPalette
     public static readonly ThemeGroupPalette DarkTertiary = FromColorPalette(
         colorPalettes: new ColorPalettes(), themeType: ThemeType.Dark, paletteType: PaletteType.Tertiary
     );
-
-    public static readonly ThemeGroupPalette Empty = new();
 
     public static readonly ThemeGroupPalette HighContrastDark = FromColorPalette(
         colorPalettes: new ColorPalettes(), themeType: ThemeType.HighContrastDark, paletteType: PaletteType.Surface

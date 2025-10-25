@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupTypographyDisplay(
+public sealed record ThemeGroupTypographyDisplay(
     StyleValueString? Hyphens = null,
     StyleValueNumber? LetterSpacing = null,
     StyleValueString? LineBreak = null,
@@ -13,6 +13,8 @@ public sealed partial record ThemeGroupTypographyDisplay(
     StyleValueNumber? WordSpacing = null
 )
 {
+    public static readonly ThemeGroupTypographyDisplay Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder

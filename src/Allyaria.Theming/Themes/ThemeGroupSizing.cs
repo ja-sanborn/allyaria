@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupSizing(
+public sealed record ThemeGroupSizing(
     StyleValueNumber? Height = null,
     StyleGroupMargin? Margin = null,
     StyleValueNumber? MaxHeight = null,
@@ -9,6 +9,8 @@ public sealed partial record ThemeGroupSizing(
     StyleValueNumber? Width = null
 )
 {
+    public static readonly ThemeGroupSizing Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder

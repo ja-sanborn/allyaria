@@ -1,10 +1,8 @@
-namespace Allyaria.Theming.Themes;
+namespace Allyaria.Theming.Constants.Theming;
 
-/// <summary>These are for static default constants for <see cref="ThemeGroupPosition" />.</summary>
-public sealed partial record ThemeGroupPosition
+[ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
+public static class ThemePosition
 {
-    public static readonly ThemeGroupPosition Empty = new();
-
     public static readonly ThemeGroupPosition VerticalDown = new(
         TextOrientation: CssTextOrientation.Mixed,
         WritingMode: CssWritingMode.VerticalLr

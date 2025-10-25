@@ -1,7 +1,9 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupPalette
+public sealed record ThemeGroupPalette
 {
+    public static readonly ThemeGroupPalette Empty = new();
+
     public ThemeGroupPalette(StyleValueColor? accentColor = null,
         StyleValueColor? backgroundColor = null,
         StyleGroupBorderColor? borderColor = null,

@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
-public sealed partial record ThemeGroupOverflow(
+public sealed record ThemeGroupOverflow(
     StyleValueString? OverflowWrap = null,
     StyleValueString? OverflowX = null,
     StyleValueString? OverflowY = null,
@@ -8,6 +8,8 @@ public sealed partial record ThemeGroupOverflow(
     StyleValueString? OverscrollBehaviorY = null
 )
 {
+    public static readonly ThemeGroupOverflow Empty = new();
+
     public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = null)
     {
         builder
