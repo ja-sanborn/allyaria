@@ -62,6 +62,12 @@ public sealed record ThemeGroupPalette
         return builder;
     }
 
+    public static ThemeGroupPalette FromBrand(BrandPalette brand,
+        ThemeType themeType,
+        PaletteType paletteType,
+        ComponentState state)
+        => brand.GetPalette(themeType: themeType, paletteType: paletteType, state: state);
+
     public ThemeGroupPalette Merge(ThemeGroupPalette other)
         => SetAccentColor(value: other.AccentColor ?? AccentColor)
             .SetBackgroundColor(value: other.BackgroundColor ?? BackgroundColor)

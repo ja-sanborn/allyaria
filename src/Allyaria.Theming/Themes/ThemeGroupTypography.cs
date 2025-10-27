@@ -28,6 +28,18 @@ public sealed record ThemeGroupTypography(
         return builder;
     }
 
+    public static ThemeGroupTypography FromBrand(BrandFont brand, ThemeType themeType, FontType fontType)
+        => new(
+            FontFamily: brand.GetFont(themeType: themeType, fontType: fontType),
+            FontSize: CssSize.Size2,
+            FontWeight: CssFontWeight.Normal,
+            FontStyle: CssFontStyle.Normal,
+            TextDecorationLine: CssTextDecorationLine.None,
+            TextDecorationStyle: CssTextDecorationStyle.Solid,
+            TextDecorationThickness: CssSize.Thin,
+            TextTransform: CssTextTransform.None
+        );
+
     public ThemeGroupTypography Merge(ThemeGroupTypography other)
         => SetFontFamily(value: other.FontFamily ?? FontFamily)
             .SetFontSize(value: other.FontSize ?? FontSize)

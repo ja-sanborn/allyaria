@@ -8,7 +8,7 @@ public sealed class ThemingService : IThemingService
 
     public ThemeType StoredType { get; private set; } = ThemeType.System;
 
-    public Theme Theme { get; private set; } = Theme.FromDefault();
+    public Theme Theme { get; private set; } = Theme.Empty;
 
     private void OnThemeChanged() => ThemeChanged?.Invoke(sender: this, e: EventArgs.Empty);
 
@@ -45,7 +45,7 @@ public sealed class ThemingService : IThemingService
     public void SetTheme(Theme theme)
     {
         var effectiveTheme = theme == Theme.Empty
-            ? Theme.FromDefault()
+            ? Theme.Empty
             : theme;
 
         if (Theme == effectiveTheme)

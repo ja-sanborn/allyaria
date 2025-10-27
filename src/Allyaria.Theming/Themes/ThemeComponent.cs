@@ -52,6 +52,34 @@ public sealed record ThemeComponent(
         return builder;
     }
 
+    public static ThemeComponent FromBrand(BrandTheme brand,
+        FontType fontType,
+        PaletteType paletteType)
+    {
+        var dark = ThemeStyle.FromBrand(
+            brand: brand, themeType: ThemeType.Dark, fontType: fontType, paletteType: paletteType
+        );
+
+        var highContrastLight = ThemeStyle.FromBrand(
+            brand: brand, themeType: ThemeType.HighContrastLight, fontType: fontType, paletteType: paletteType
+        );
+
+        var highContrastDark = ThemeStyle.FromBrand(
+            brand: brand, themeType: ThemeType.HighContrastDark, fontType: fontType, paletteType: paletteType
+        );
+
+        var light = ThemeStyle.FromBrand(
+            brand: brand, themeType: ThemeType.Light, fontType: fontType, paletteType: paletteType
+        );
+
+        return new ThemeComponent(
+            Light: light,
+            Dark: dark,
+            HighContrastLight: highContrastLight,
+            HighContrastDark: highContrastDark
+        );
+    }
+
     public ThemeComponent Merge(ThemeComponent other)
         => SetDark(value: Dark.Merge(other: other.Dark))
             .SetHighContrastDark(value: HighContrastDark.Merge(other: other.HighContrastDark))

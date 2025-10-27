@@ -66,6 +66,29 @@ public sealed record Theme(
         return builder;
     }
 
+    public static Theme FromBrand(BrandTheme brand,
+        FontType fontType,
+        PaletteType paletteType)
+    {
+        var body = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+        var bodyVariant = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+        var link = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+        var linkVariant = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+        var surface = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+        var surfaceVariant = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
+
+        TODO remove background color (cascade down) - Replace instead of Merge, to cascade down?
+
+        return new Theme(
+            Body: body,
+            BodyVariant: bodyVariant,
+            Link: link,
+            LinkVariant: linkVariant,
+            Surface: surface,
+            SurfaceVariant: surfaceVariant
+        );
+    }
+
     public Theme Merge(Theme other)
         => SetBody(value: Body.Merge(other: other.Body))
             .SetBodyVariant(value: BodyVariant.Merge(other: other.BodyVariant))

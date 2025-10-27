@@ -93,6 +93,57 @@ public sealed record ThemeStyle
         return builder;
     }
 
+    public static ThemeStyle FromBrand(BrandTheme brand,
+        ThemeType themeType,
+        FontType fontType,
+        PaletteType paletteType)
+    {
+        var defaultState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Default
+        );
+
+        var disabledState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Disabled
+        );
+
+        var draggedState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Dragged
+        );
+
+        var focusedState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Focused
+        );
+
+        var hoveredState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Hovered
+        );
+
+        var pressedState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Pressed
+        );
+
+        var visitedState = ThemeState.FromBrand(
+            brand: brand, themeType: themeType, fontType: fontType, paletteType: paletteType,
+            state: ComponentState.Visited
+        );
+
+        return new ThemeStyle(
+            defaultState: defaultState,
+            disabledState: disabledState,
+            draggedState: draggedState,
+            focusedState: focusedState,
+            hoveredState: hoveredState,
+            pressedState: pressedState,
+            visitedState: visitedState
+        );
+    }
+
     public ThemeStyle Merge(ThemeStyle other)
         => SetDefault(value: Default.Merge(other: other.Default))
             .SetDisabled(value: Disabled.Merge(other: other.Disabled))

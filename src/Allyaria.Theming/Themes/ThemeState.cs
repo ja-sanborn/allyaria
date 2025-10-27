@@ -33,6 +33,21 @@ public sealed record ThemeState(
         return builder;
     }
 
+    public static ThemeState FromBrand(BrandTheme brand,
+        ThemeType themeType,
+        FontType fontType,
+        PaletteType paletteType,
+        ComponentState state)
+        => new(
+            Border: ThemeBorders.BorderNone,
+            Overflow: ThemeGroupOverflow.Empty,
+            Palette: brand.GetPalette(themeType: themeType, paletteType: paletteType, state: state),
+            Position: ThemeGroupPosition.Empty,
+            Sizing: ThemeSizing.MarginPadding,
+            Typography: ThemeGroupTypography.FromBrand(brand: brand.Font, themeType: themeType, fontType: fontType),
+            TypographyDisplay: ThemeGroupTypographyDisplay.Empty
+        );
+
     public ThemeState Merge(ThemeState other)
         => SetBorder(value: Border.Merge(other: other.Border))
             .SetOverflow(value: Overflow.Merge(other: other.Overflow))
