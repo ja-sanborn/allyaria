@@ -1,8 +1,6 @@
 namespace Allyaria.Theming.Themes;
 
 public sealed record ThemeGroupTypography(
-    ThemeType ThemeType = ThemeType.Light,
-    FontType FontType = FontType.SansSerif,
     StyleValueString? FontFamily = null,
     StyleValueNumber? FontSize = null,
     StyleValueString? FontStyle = null,
