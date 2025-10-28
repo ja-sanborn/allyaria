@@ -9,9 +9,13 @@ public static class ThemeBorders
         BorderWidth: new StyleGroupBorderWidth(value: CssSize.Size0)
     );
 
-    public static readonly ThemeGroupBorder BorderThick = BorderNone.SetBorderWidth(value: CssSize.Thick);
+    public static readonly ThemeGroupBorder BorderThick = BorderNone.SetBorderWidth(
+        value: new StyleGroupBorderWidth(value: CssSize.Thick)
+    );
 
-    public static readonly ThemeGroupBorder BorderThin = BorderNone.SetBorderWidth(value: CssSize.Thin);
+    public static readonly ThemeGroupBorder BorderThin = BorderNone.SetBorderWidth(
+        value: new StyleGroupBorderWidth(value: CssSize.Thin)
+    );
 
     public static readonly ThemeGroupBorder OutlineNone = new(
         OutlineOffset: CssSize.Thick,

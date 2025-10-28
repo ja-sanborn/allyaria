@@ -77,8 +77,6 @@ public sealed record Theme(
         var surface = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
         var surfaceVariant = ThemeComponent.FromBrand(brand: brand, fontType: fontType, paletteType: paletteType);
 
-        TODO remove background color (cascade down) - Replace instead of Merge, to cascade down?
-
         return new Theme(
             Body: body,
             BodyVariant: bodyVariant,
