@@ -2,6 +2,8 @@
 
 public sealed record StyleString : StyleBase
 {
+    public static StyleString Empty = new(name: string.Empty, value: string.Empty);
+
     public StyleString(string? name, string? value)
         : base(name: name, value: value) { }
 
