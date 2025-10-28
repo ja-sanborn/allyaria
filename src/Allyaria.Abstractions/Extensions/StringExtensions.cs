@@ -376,6 +376,15 @@ public static class StringExtensions
         return sb.ToString();
     }
 
+    /// <summary>Converts the current string into a normalized CSS-compatible name.</summary>
+    /// <param name="name">The string to normalize into a CSS-compatible identifier.</param>
+    /// <returns>A lowercase, hyphenated CSS-friendly name (e.g., <c>"Font_Size"</c> → <c>"font-size"</c>).</returns>
+    public static string ToCssName(this string? name)
+        => Regex.Replace(
+                input: (name ?? string.Empty).Replace(oldChar: '_', newChar: '-'), pattern: @"[\s-]+", replacement: "-"
+            ).Trim(trimChar: '-')
+            .ToLowerInvariant();
+
     /// <summary>Converts a string into kebab-case form (words separated by hyphens, lowercased).</summary>
     public static string ToKebabCase(this string? value)
     {
