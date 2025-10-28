@@ -12,7 +12,7 @@ public abstract record StyleBase : IStyle
         options: RegexOptions.Compiled | RegexOptions.CultureInvariant
     );
 
-    protected StyleBase(string? name = "", string? value = "")
+    protected StyleBase(string name, string value)
     {
         var newName = ValidateInput(value: name);
         var newValue = ValidateInput(value: value);
@@ -20,12 +20,12 @@ public abstract record StyleBase : IStyle
         if (TrySplitName(input: newName, name: out var splitName, value: out var splitValue))
         {
             Name = splitName.ToCssName();
-            Value = splitValue;
+            Value = splitValue.Trim();
         }
         else
         {
             Name = ValidateInput(value: newName).ToCssName();
-            Value = ValidateInput(value: newValue);
+            Value = ValidateInput(value: newValue).Trim();
         }
     }
 
@@ -39,7 +39,7 @@ public abstract record StyleBase : IStyle
     public string Name { get; }
 
     /// <summary>The raw CSS value (e.g., "600", "\"Times New Roman\"").</summary>
-    public virtual string Value { get; }
+    public string Value { get; }
 
     private static bool IsEscaped(string s, int i)
     {

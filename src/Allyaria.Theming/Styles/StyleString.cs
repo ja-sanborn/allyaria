@@ -2,12 +2,15 @@
 
 public sealed record StyleString : StyleBase
 {
-    public static StyleString Empty = new(name: string.Empty, value: string.Empty);
+    public static readonly StyleString Empty = new(name: string.Empty, value: string.Empty);
 
-    public StyleString(string? name, string? value)
-        : base(name: name, value: value) { }
+    public StyleString(string? name = "", string? value = "")
+        : base(name: name ?? string.Empty, value: value ?? string.Empty) { }
 
-    public static StyleString Parse(string? value) => new(name: value ?? string.Empty, value: string.Empty);
+    public StyleString(string name, StyleString value)
+        : base(name: name, value: value.Value) { }
+
+    public static StyleString Parse(string? value) => new(name: value);
 
     public static bool TryParse(string? value, out StyleString? result)
     {
