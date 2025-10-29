@@ -123,9 +123,7 @@
         <Compile Remove="Archive\Contracts\IStyleValue.cs"/>
         <None Include="Archive\Contracts\IStyleValue.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentState.cs"/>
-        <None Include="Archive\Enumerations\ComponentState.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentType.cs"/>
-        <None Include="Archive\Enumerations\ComponentType.cs"/>
         <Compile Remove="Archive\Enumerations\FontType.cs"/>
         <None Include="Archive\Enumerations\FontType.cs"/>
         <Compile Remove="Archive\Enumerations\LengthUnits.cs"/>
@@ -139,14 +137,10 @@
         <None Include="Archive\Styling\CssBorderStyle.cs"/>
         <Compile Remove="Archive\Styling\CssBoxSizing.cs"/>
         <None Include="Archive\Styling\CssBoxSizing.cs"/>
-        <Compile Remove="Archive\Styling\CssColors.cs"/>
-        <None Include="Archive\Styling\CssColors.cs"/>
         <Compile Remove="Archive\Styling\CssDirection.cs"/>
         <None Include="Archive\Styling\CssDirection.cs"/>
         <Compile Remove="Archive\Styling\CssDisplay.cs"/>
         <None Include="Archive\Styling\CssDisplay.cs"/>
-        <Compile Remove="Archive\Styling\CssFontFamily.cs"/>
-        <None Include="Archive\Styling\CssFontFamily.cs"/>
         <Compile Remove="Archive\Styling\CssFontStyle.cs"/>
         <None Include="Archive\Styling\CssFontStyle.cs"/>
         <Compile Remove="Archive\Styling\CssFontWeight.cs"/>

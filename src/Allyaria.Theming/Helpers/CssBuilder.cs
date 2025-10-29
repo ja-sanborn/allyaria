@@ -2,10 +2,9 @@ namespace Allyaria.Theming.Helpers;
 
 public sealed class CssBuilder
 {
-    private readonly SortedDictionary<string, string> _styles =
-        [];
+    private readonly SortedDictionary<string, string> _styles = new();
 
-    public CssBuilder Add(string name, string value, string? varPrefix = "")
+    public CssBuilder Add(string? name, string? value, string? varPrefix = "")
     {
         if (string.IsNullOrWhiteSpace(value: name) || string.IsNullOrWhiteSpace(value: value))
         {
