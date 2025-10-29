@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types;
 
 /// <summary>
 /// Represents a single 8-bit color channel theme (0–255) used in RGBA color models. Provides parsing, formatting,

@@ -1,17 +1,9 @@
-﻿namespace Allyaria.Theming.Styles;
+namespace Allyaria.Theming.Types;
 
-public sealed record StyleNumber : StyleBase
+public sealed record StyleNumber : StyleValueBase
 {
-    public static readonly StyleNumber Empty = new(value: string.Empty);
-
     public StyleNumber(string value)
-        : this(name: value, value: string.Empty) { }
-
-    public StyleNumber(string name, StyleBase value)
-        : this(name: name, value: value.Value) { }
-
-    public StyleNumber(string name, string value)
-        : base(name: name, value: value)
+        : base(value: value)
     {
         if (string.IsNullOrWhiteSpace(value: Value))
         {
@@ -27,10 +19,6 @@ public sealed record StyleNumber : StyleBase
             throw new ArgumentException(message: $"Invalid number: {Value}");
         }
     }
-
-    public StyleNumber(string name, int number)
-        : base(name: name, value: number.ToString(provider: CultureInfo.InvariantCulture))
-        => Number = number;
 
     public int Number { get; }
 
@@ -64,5 +52,5 @@ public sealed record StyleNumber : StyleBase
 
     public static implicit operator StyleNumber(string? value) => Parse(value: value);
 
-    public static implicit operator string(StyleNumber? value) => value?.ToCss() ?? string.Empty;
+    public static implicit operator string(StyleNumber? value) => value?.Value ?? string.Empty;
 }

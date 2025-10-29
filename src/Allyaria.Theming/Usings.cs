@@ -10,3 +10,4 @@ global using Allyaria.Theming.Helpers;
 global using Allyaria.Theming.Styles;
 global using Allyaria.Theming.Themes;
 global using Allyaria.Theming.Types;
+global using System.ComponentModel;

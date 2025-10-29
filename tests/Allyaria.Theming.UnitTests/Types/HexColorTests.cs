@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.UnitTests.Types;
+namespace Allyaria.Theming.UnitTests.Types;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class HexColorTests
@@ -247,7 +247,7 @@ public sealed class HexColorTests
         fg.ContrastRatio(background: bg).Should().BeApproximately(expectedValue: 1.0, precision: 1e-12);
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg);
+        var resolved = fg.EnsureContrast(background: bg);
 
         // Assert
         // 1) It must change (can't meet 3:1 while identical to background)
@@ -285,7 +285,7 @@ public sealed class HexColorTests
             .BeLessThan(expected: 3.0);
 
         // Act
-        var resolved = sut.EnsureMinimumContrast(surfaceColor: bg);
+        var resolved = sut.EnsureContrast(background: bg);
 
         // Assert
         resolved.Should().NotBe(unexpected: sut);
@@ -302,7 +302,7 @@ public sealed class HexColorTests
         const double minRatio = 21.0; // maximum allowed, unreachable vs mid-gray
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg, minimumRatio: minRatio);
+        var resolved = fg.EnsureContrast(background: bg, minimumRatio: minRatio);
 
         // Assert
         // We can't meet 21:1 vs Grey500, so result must be a "best effort" (contrast < 21)
@@ -324,7 +324,7 @@ public sealed class HexColorTests
         fg.ContrastRatio(background: bg).Should().BeLessThan(expected: minRatio);
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg, minimumRatio: minRatio);
+        var resolved = fg.EnsureContrast(background: bg, minimumRatio: minRatio);
 
         // Assert
         resolved.Should().NotBe(unexpected: fg);
@@ -342,7 +342,7 @@ public sealed class HexColorTests
         var bg = Colors.White;
 
         // Act
-        var resolved = fg.EnsureMinimumContrast(surfaceColor: bg);
+        var resolved = fg.EnsureContrast(background: bg);
 
         // Assert
         resolved.Should().BeEquivalentTo(expectation: fg);

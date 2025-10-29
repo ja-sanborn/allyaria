@@ -328,27 +328,27 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// (even at V = 0 or 1), the method mixes toward black and white and returns the closest solution that meets—or
     /// best-approaches—the target.
     /// </summary>
-    /// <param name="surfaceColor">Background color (opaque).</param>
+    /// <param name="background">Background color (opaque).</param>
     /// <param name="minimumRatio">Required minimum contrast ratio (1–21, e.g., <c>4.5</c> for body text).</param>
     /// <exception cref="AryArgumentException">Thrown when the minimum ratio is less than 1 or greater than 21.</exception>
     /// <returns>The resolved color.</returns>
-    public HexColor EnsureMinimumContrast(HexColor surfaceColor, double minimumRatio = 3.0)
+    public HexColor EnsureContrast(HexColor background, double minimumRatio = 3.0)
     {
         AryArgumentException.ThrowIfOutOfRange<double>(
             argValue: minimumRatio, min: 1.0, max: 21.0, argName: nameof(minimumRatio)
         );
 
-        var startRatio = ContrastRatio(background: surfaceColor);
+        var startRatio = ContrastRatio(background: background);
 
         if (startRatio >= minimumRatio)
         {
             return this;
         }
 
-        var direction = ValueDirection(background: surfaceColor);
+        var direction = ValueDirection(background: background);
 
         // 1) Preferred theme-rail attempt
-        var first = SearchValueRail(direction: direction, background: surfaceColor, minimumRatio: minimumRatio);
+        var first = SearchValueRail(direction: direction, background: background, minimumRatio: minimumRatio);
 
         if (first.IsMinimumMet)
         {
@@ -357,11 +357,11 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
         // 2) Poles
         var towardWhite = SearchTowardPole(
-            pole: Colors.White.SetAlpha(alpha: A.Value), background: surfaceColor, minimumRatio: minimumRatio
+            pole: Colors.White.SetAlpha(alpha: A.Value), background: background, minimumRatio: minimumRatio
         );
 
         var towardBlack = SearchTowardPole(
-            pole: Colors.Black.SetAlpha(alpha: A.Value), background: surfaceColor, minimumRatio: minimumRatio
+            pole: Colors.Black.SetAlpha(alpha: A.Value), background: background, minimumRatio: minimumRatio
         );
 
         if (towardWhite.IsMinimumMet)
@@ -1069,6 +1069,28 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         );
     }
 
+    public HexColor ToAccent() => ShiftLightness(delta: 0.6);
+
+    public HexColor ToDisabled() => Desaturate(desaturateBy: 0.6);
+
+    public HexColor ToDragged() => ShiftLightness(delta: 0.18);
+
+    public HexColor ToElevation1() => ShiftLightness(delta: 0.02);
+
+    public HexColor ToElevation2() => ShiftLightness(delta: 0.04);
+
+    public HexColor ToElevation3() => ShiftLightness(delta: 0.06);
+
+    public HexColor ToElevation4() => ShiftLightness(delta: 0.08);
+
+    public HexColor ToElevation5() => ShiftLightness(delta: 0.1);
+
+    public HexColor ToFocused() => ShiftLightness(delta: 0.1);
+
+    public HexColor ToForeground() => ShiftLightness(delta: 0.9);
+
+    public HexColor ToHovered() => ShiftLightness(delta: 0.06);
+
     /// <summary>
     /// Gamma-correct (linear-light) interpolation between two colors, including alpha. Uses linearization via
     /// <see cref="HexByte.ToLerpLinearHexByte" /> for perceptually better blends than plain sRGB lerp.
@@ -1099,6 +1121,8 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             alpha: A
         );
 
+    public HexColor ToPressed() => ShiftLightness(delta: 0.14);
+
     /// <summary>Computes WCAG relative luminance from an opaque sRGB color.</summary>
     /// <returns>Relative luminance in <c>[0, 1]</c>.</returns>
     /// <remarks>
@@ -1116,6 +1140,8 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <summary>Returns a hexadecimal string representation of the color in the form <c>#RRGGBBAA</c>.</summary>
     /// <returns>The string representation.</returns>
     public override string ToString() => $"#{R}{G}{B}{A}";
+
+    public HexColor ToVisited() => Desaturate(desaturateBy: 0.3);
 
     /// <summary>Attempts to parse the specified color string.</summary>
     /// <param name="value">The color string to parse.</param>

@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Allyaria.Theming.Enumerations;
 
 /// <summary>Defines units of length measurement for styling and layout.</summary>
