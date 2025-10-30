@@ -2,8 +2,9 @@ namespace Allyaria.Theming.Types;
 
 public readonly record struct ThemeUpdater(
     ThemeNavigator Navigator,
-    ThemeVariant? Variant,
-    ThemeState? State,
+    IStyleValue? Value,
     ThemeStyle? Style,
-    IStyleValue? Value
+    ThemeState? State,
+    ThemeVariant? Variant,
+    ThemeComponent? Component
 );

@@ -28,10 +28,9 @@ public sealed record StyleNumber : StyleValueBase
     {
         number = 0;
 
-        return input.Equals(value: "auto", comparisonType: StringComparison.OrdinalIgnoreCase) ||
-            string.IsNullOrWhiteSpace(value: input) || int.TryParse(
-                s: input, style: NumberStyles.Integer, provider: CultureInfo.InvariantCulture, result: out number
-            );
+        return string.IsNullOrWhiteSpace(value: input) || int.TryParse(
+            s: input, style: NumberStyles.Integer, provider: CultureInfo.InvariantCulture, result: out number
+        );
     }
 
     public static bool TryParse(string? value, out StyleNumber? result)

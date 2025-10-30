@@ -20,6 +20,12 @@ public enum StyleType
     [Description(description: "outline-color")]
     OutlineColor,
 
+    [Description(description: "outline-style")]
+    OutlineStyle,
+
+    [Description(description: "outline-width")]
+    OutlineWidth,
+
     [Description(description: "text-decoration-color")]
     TextDecorationColor
 }

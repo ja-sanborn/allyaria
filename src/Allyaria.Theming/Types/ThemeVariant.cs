@@ -42,6 +42,11 @@ public sealed class ThemeVariant
     {
         foreach (var key in updater.Navigator.ThemeTypes)
         {
+            if (key is not ThemeType.Dark and not ThemeType.Light)
+            {
+                continue;
+            }
+
             if (updater.State is null)
             {
                 if (!_children.ContainsKey(key: key))

@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types;
 
 public readonly record struct BrandTheme
 {

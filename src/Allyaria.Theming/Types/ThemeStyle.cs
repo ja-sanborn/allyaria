@@ -64,9 +64,11 @@ public sealed class ThemeStyle
 
     public IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
 
-    public ThemeStyle Set(ThemeUpdater updater)
+    public ThemeStyle Set(ThemeUpdater updater, bool isFocused = false)
     {
         var isColor = false;
+        var isOutlineStyle = false;
+        var isOutlineWidth = false;
 
         foreach (var key in updater.Navigator.StyleTypes)
         {
@@ -76,11 +78,32 @@ public sealed class ThemeStyle
             {
                 isColor = true;
             }
+
+            if (isFocused && !isOutlineStyle && key is StyleType.OutlineStyle &&
+                updater.Value?.Value == CssOutlineStyle.None)
+            {
+                isOutlineStyle = true;
+            }
+
+            if (isFocused && !isOutlineWidth && key is StyleType.OutlineWidth && updater.Value?.Value != Sizing.Thick)
+            {
+                isOutlineWidth = true;
+            }
         }
 
         if (isColor)
         {
             EnsureContrast();
+        }
+
+        if (isOutlineStyle)
+        {
+            SetValue(key: StyleType.OutlineStyle, value: new StyleString(value: CssOutlineStyle.Solid));
+        }
+
+        if (isOutlineWidth)
+        {
+            SetValue(key: StyleType.OutlineWidth, value: new StyleNumber(value: Sizing.Thick));
         }
 
         return this;

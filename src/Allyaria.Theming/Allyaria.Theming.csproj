@@ -63,6 +63,17 @@
         <Compile Remove="Archives\Types\ThemePadding.cs"/>
         <Compile Remove="Archives\Types\ThemePalette.cs"/>
         <Compile Remove="Archives\Types\ThemeTypography.cs"/>
+        <Compile Remove="Archive\Themes\Theme.cs"/>
+        <Compile Remove="Archive\Themes\ThemeComponent.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupBorder.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupOverflow.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupPalette.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupPosition.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupSizing.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupTypography.cs"/>
+        <Compile Remove="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
+        <Compile Remove="Archive\Themes\ThemeState.cs"/>
+        <Compile Remove="Archive\Themes\ThemeStyle.cs"/>
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Allyaria.Theming.UnitTests"/>
@@ -81,6 +92,17 @@
         <Compile Remove="Archive\Branding\BrandTheme.cs"/>
         <Compile Remove="Archive\Branding\BrandVariant.cs"/>
         <Compile Remove="Archive\Theming\ThemeBorders.cs"/>
+        <None Include="Archive\Themes\Theme.cs"/>
+        <None Include="Archive\Themes\ThemeComponent.cs"/>
+        <None Include="Archive\Themes\ThemeGroupBorder.cs"/>
+        <None Include="Archive\Themes\ThemeGroupOverflow.cs"/>
+        <None Include="Archive\Themes\ThemeGroupPalette.cs"/>
+        <None Include="Archive\Themes\ThemeGroupPosition.cs"/>
+        <None Include="Archive\Themes\ThemeGroupSizing.cs"/>
+        <None Include="Archive\Themes\ThemeGroupTypography.cs"/>
+        <None Include="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
+        <None Include="Archive\Themes\ThemeState.cs"/>
+        <None Include="Archive\Themes\ThemeStyle.cs"/>
         <None Include="Archive\Theming\ThemeBorders.cs"/>
         <Compile Remove="Archive\Theming\ThemePalette.cs"/>
         <None Include="Archive\Theming\ThemePalette.cs"/>
@@ -90,17 +112,6 @@
         <None Include="Archive\Theming\ThemeSizing.cs"/>
         <Compile Remove="Archive\Theming\ThemeTypography.cs"/>
         <None Include="Archive\Theming\ThemeTypography.cs"/>
-        <Compile Remove="Archive\Themes\Theme.cs"/>
-        <Compile Remove="Archive\Themes\ThemeComponent.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupBorder.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupOverflow.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupPalette.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupPosition.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupSizing.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupTypography.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
-        <Compile Remove="Archive\Themes\ThemeState.cs"/>
-        <Compile Remove="Archive\Themes\ThemeStyle.cs"/>
         <Compile Remove="Archive\Contracts\IStyleGroup.cs"/>
         <Compile Remove="Archive\Contracts\IStyleValue.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentState.cs"/>
@@ -130,7 +141,6 @@
         <Compile Remove="Archive\Styling\CssLineBreak.cs"/>
         <None Include="Archive\Styling\CssLineBreak.cs"/>
         <Compile Remove="Archive\Styling\CssOutlineStyle.cs"/>
-        <None Include="Archive\Styling\CssOutlineStyle.cs"/>
         <Compile Remove="Archive\Styling\CssOverflow.cs"/>
         <None Include="Archive\Styling\CssOverflow.cs"/>
         <Compile Remove="Archive\Styling\CssOverflowWrapp.cs"/>
@@ -140,7 +150,6 @@
         <Compile Remove="Archive\Styling\CssPosition.cs"/>
         <None Include="Archive\Styling\CssPosition.cs"/>
         <Compile Remove="Archive\Styling\CssSize.cs"/>
-        <None Include="Archive\Styling\CssSize.cs"/>
         <Compile Remove="Archive\Styling\CssTextAlign.cs"/>
         <None Include="Archive\Styling\CssTextAlign.cs"/>
         <Compile Remove="Archive\Styling\CssTextDecorationLine.cs"/>
@@ -163,13 +172,7 @@
         <None Include="Archive\Styling\CssWordBreak.cs"/>
         <Compile Remove="Archive\Styling\CssWritingMode.cs"/>
         <None Include="Archive\Styling\CssWritingMode.cs"/>
-        <Compile Include="Types\BrandFont.cs"/>
         <Compile Include="Enumerations\FontType.cs"/>
         <Compile Include="Enumerations\PaletteType.cs"/>
-        <Compile Include="Types\BrandPalette.cs"/>
-        <Compile Include="Types\BrandState.cs"/>
-        <Compile Include="Types\Brand.cs"/>
-        <Compile Include="Types\BrandTheme.cs"/>
-        <Compile Include="Types\BrandVariant.cs"/>
     </ItemGroup>
 </Project>

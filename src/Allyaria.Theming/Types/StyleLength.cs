@@ -72,14 +72,6 @@ public sealed record StyleLength : StyleValueBase
         number = 0.0;
         unit = null;
 
-        if (input.Equals(value: "auto", comparisonType: StringComparison.OrdinalIgnoreCase) ||
-            input.Equals(value: "normal", comparisonType: StringComparison.OrdinalIgnoreCase))
-        {
-            input = input.ToLowerInvariant();
-
-            return true;
-        }
-
         var match = LengthWithUnitRegex.Match(input: input);
 
         if (!match.Success)

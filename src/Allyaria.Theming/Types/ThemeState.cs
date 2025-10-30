@@ -43,8 +43,6 @@ public sealed class ThemeState
 
     public ThemeState Set(ThemeUpdater updater)
     {
-        // TODO: Cascade Focused to Style, and in Style check to see if the Outline Style is NONE or the Outline Width is 0
-        // TODO: If either are true, set the Outline Style and Outline Width.
         foreach (var key in updater.Navigator.ComponentStates)
         {
             if (updater.Style is null)
@@ -54,7 +52,7 @@ public sealed class ThemeState
                     _children.Add(key: key, value: new ThemeStyle());
                 }
 
-                Get(key: key)?.Set(updater: updater);
+                Get(key: key)?.Set(updater: updater, isFocused: key is ComponentState.Focused);
             }
             else
             {
@@ -62,7 +60,7 @@ public sealed class ThemeState
 
                 if (updater.Value is not null)
                 {
-                    Get(key: key)?.Set(updater: updater);
+                    Get(key: key)?.Set(updater: updater, isFocused: key is ComponentState.Focused);
                 }
             }
         }
