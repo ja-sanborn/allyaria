@@ -7,35 +7,35 @@ public readonly record struct BrandFont
         string? monospace = null)
     {
         var setMonospace = string.IsNullOrWhiteSpace(value: monospace)
-            ? CssFontFamily.Monospace.Value
+            ? StyleDefaults.MonospaceFont
             : monospace.Trim();
 
         var setSansSerif = string.IsNullOrWhiteSpace(value: sansSerif)
-            ? CssFontFamily.SansSerif.Value
+            ? StyleDefaults.SansSerifFont
             : sansSerif.Trim();
 
         var setSerif = string.IsNullOrWhiteSpace(value: serif)
-            ? CssFontFamily.Serif.Value
+            ? StyleDefaults.SerifFont
             : serif.Trim();
 
-        Monospace = new StyleValueString(value: setMonospace);
-        SansSerif = new StyleValueString(value: setSansSerif);
-        Serif = new StyleValueString(value: setSerif);
+        Monospace = setMonospace;
+        SansSerif = setSansSerif;
+        Serif = setSerif;
     }
 
-    public StyleValueString HighContrastMonospace => CssFontFamily.Monospace;
+    public string HighContrastMonospace => StyleDefaults.MonospaceFont;
 
-    public StyleValueString HighContrastSansSerif => CssFontFamily.SansSerif;
+    public string HighContrastSansSerif => StyleDefaults.SansSerifFont;
 
-    public StyleValueString HighContrastSerif => CssFontFamily.Serif;
+    public string HighContrastSerif => StyleDefaults.SerifFont;
 
-    public StyleValueString Monospace { get; }
+    public string Monospace { get; }
 
-    public StyleValueString SansSerif { get; }
+    public string SansSerif { get; }
 
-    public StyleValueString Serif { get; }
+    public string Serif { get; }
 
-    public StyleValueString GetFont(ThemeType themeType, FontType fontType)
+    public string GetFont(ThemeType themeType, FontType fontType)
         => themeType is ThemeType.HighContrastDark or ThemeType.HighContrastLight
             ? fontType switch
             {

@@ -75,17 +75,11 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="Archive\Branding\BrandColor.cs"/>
-        <None Include="Archive\Branding\BrandColor.cs"/>
         <Compile Remove="Archive\Branding\BrandFont.cs"/>
-        <None Include="Archive\Branding\BrandFont.cs"/>
         <Compile Remove="Archive\Branding\BrandPalette.cs"/>
-        <None Include="Archive\Branding\BrandPalette.cs"/>
         <Compile Remove="Archive\Branding\BrandStyle.cs"/>
-        <None Include="Archive\Branding\BrandStyle.cs"/>
         <Compile Remove="Archive\Branding\BrandTheme.cs"/>
-        <None Include="Archive\Branding\BrandTheme.cs"/>
         <Compile Remove="Archive\Branding\BrandVariant.cs"/>
-        <None Include="Archive\Branding\BrandVariant.cs"/>
         <Compile Remove="Archive\Theming\ThemeBorders.cs"/>
         <None Include="Archive\Theming\ThemeBorders.cs"/>
         <Compile Remove="Archive\Theming\ThemePalette.cs"/>
@@ -97,40 +91,24 @@
         <Compile Remove="Archive\Theming\ThemeTypography.cs"/>
         <None Include="Archive\Theming\ThemeTypography.cs"/>
         <Compile Remove="Archive\Themes\Theme.cs"/>
-        <None Include="Archive\Themes\Theme.cs"/>
         <Compile Remove="Archive\Themes\ThemeComponent.cs"/>
-        <None Include="Archive\Themes\ThemeComponent.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupBorder.cs"/>
-        <None Include="Archive\Themes\ThemeGroupBorder.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupOverflow.cs"/>
-        <None Include="Archive\Themes\ThemeGroupOverflow.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupPalette.cs"/>
-        <None Include="Archive\Themes\ThemeGroupPalette.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupPosition.cs"/>
-        <None Include="Archive\Themes\ThemeGroupPosition.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupSizing.cs"/>
-        <None Include="Archive\Themes\ThemeGroupSizing.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupTypography.cs"/>
-        <None Include="Archive\Themes\ThemeGroupTypography.cs"/>
         <Compile Remove="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
-        <None Include="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
         <Compile Remove="Archive\Themes\ThemeState.cs"/>
-        <None Include="Archive\Themes\ThemeState.cs"/>
         <Compile Remove="Archive\Themes\ThemeStyle.cs"/>
-        <None Include="Archive\Themes\ThemeStyle.cs"/>
         <Compile Remove="Archive\Contracts\IStyleGroup.cs"/>
-        <None Include="Archive\Contracts\IStyleGroup.cs"/>
         <Compile Remove="Archive\Contracts\IStyleValue.cs"/>
-        <None Include="Archive\Contracts\IStyleValue.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentState.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentType.cs"/>
         <Compile Remove="Archive\Enumerations\FontType.cs"/>
-        <None Include="Archive\Enumerations\FontType.cs"/>
         <Compile Remove="Archive\Enumerations\LengthUnits.cs"/>
         <Compile Remove="Archive\Enumerations\PaletteType.cs"/>
-        <None Include="Archive\Enumerations\PaletteType.cs"/>
         <Compile Remove="Archive\Enumerations\ThemeType.cs"/>
-        <None Include="Archive\Enumerations\ThemeType.cs"/>
         <Compile Remove="Archive\Styling\CssAlign.cs"/>
         <None Include="Archive\Styling\CssAlign.cs"/>
         <Compile Remove="Archive\Styling\CssBorderStyle.cs"/>
@@ -185,5 +163,13 @@
         <None Include="Archive\Styling\CssWordBreak.cs"/>
         <Compile Remove="Archive\Styling\CssWritingMode.cs"/>
         <None Include="Archive\Styling\CssWritingMode.cs"/>
+        <Compile Include="Types\BrandFont.cs"/>
+        <Compile Include="Enumerations\FontType.cs"/>
+        <Compile Include="Enumerations\PaletteType.cs"/>
+        <Compile Include="Types\BrandPalette.cs"/>
+        <Compile Include="Types\BrandState.cs"/>
+        <Compile Include="Types\Brand.cs"/>
+        <Compile Include="Types\BrandTheme.cs"/>
+        <Compile Include="Types\BrandVariant.cs"/>
     </ItemGroup>
 </Project>

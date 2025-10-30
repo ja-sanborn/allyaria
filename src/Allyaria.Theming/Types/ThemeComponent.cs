@@ -4,6 +4,16 @@ public sealed class ThemeComponent
 {
     private readonly Dictionary<ComponentType, ThemeVariant> _children = new();
 
+    public ThemeComponent()
+    {
+        _children.Add(key: ComponentType.Body, value: new ThemeVariant());
+        _children.Add(key: ComponentType.BodyVariant, value: new ThemeVariant());
+        _children.Add(key: ComponentType.Link, value: new ThemeVariant());
+        _children.Add(key: ComponentType.LinkVariant, value: new ThemeVariant());
+        _children.Add(key: ComponentType.Surface, value: new ThemeVariant());
+        _children.Add(key: ComponentType.SurfaceVariant, value: new ThemeVariant());
+    }
+
     public CssBuilder BuildCss(CssBuilder builder, ThemeNavigator navigator, string? varPrefix = "")
     {
         if (navigator.ComponentTypes.Count is 0)
@@ -28,10 +38,7 @@ public sealed class ThemeComponent
         return builder;
     }
 
-    public ThemeVariant? Get(ComponentType key)
-        => _children.TryGetValue(key: key, value: out var value)
-            ? value
-            : null;
+    public ThemeVariant? Get(ComponentType key) => _children.GetValueOrDefault(key: key);
 
     public ThemeComponent Set(ThemeUpdater updater)
     {
@@ -48,14 +55,7 @@ public sealed class ThemeComponent
             }
             else
             {
-                if (_children.ContainsKey(key: key))
-                {
-                    _children[key: key] = updater.Variant;
-                }
-                else
-                {
-                    _children.Add(key: key, value: updater.Variant);
-                }
+                _children[key: key] = updater.Variant;
 
                 if (updater.Value is not null)
                 {
@@ -67,7 +67,7 @@ public sealed class ThemeComponent
         return this;
     }
 
-    private string SetPrefix(string? varPrefix, ComponentType type)
+    private static string SetPrefix(string? varPrefix, ComponentType type)
     {
         var prefix = varPrefix?.ToCssName() ?? string.Empty;
 

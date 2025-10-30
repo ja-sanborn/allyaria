@@ -67,6 +67,9 @@ public static class StyleDefaults
 
     public static readonly HexColor TertiaryColorLight = Colors.Teal600;
 
+    /// <summary>Default CSS var prefix.</summary>
+    public static readonly string VarPrefix = "ary";
+
     public static readonly HexColor WarningColorDark = Colors.Amber300;
 
     public static readonly HexColor WarningColorHighContrastDark = Colors.YellowA400;

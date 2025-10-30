@@ -24,7 +24,7 @@ public sealed class ThemeStyle
         return builder;
     }
 
-    private CssBuilder BuildCssValue(CssBuilder builder, StyleType key, IStyleValue? value, string? varPrefix)
+    private static CssBuilder BuildCssValue(CssBuilder builder, StyleType key, IStyleValue? value, string? varPrefix)
         => value is null
             ? builder
             : value is StyleGroup group
@@ -62,10 +62,7 @@ public sealed class ThemeStyle
             .SetColor(key: StyleType.TextDecorationColor, color: textDecorationColor);
     }
 
-    public IStyleValue? Get(StyleType key)
-        => _children.TryGetValue(key: key, value: out var value)
-            ? value
-            : null;
+    public IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
 
     public ThemeStyle Set(ThemeUpdater updater)
     {

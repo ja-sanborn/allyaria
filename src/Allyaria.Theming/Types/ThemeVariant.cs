@@ -4,6 +4,14 @@ public sealed class ThemeVariant
 {
     private readonly Dictionary<ThemeType, ThemeState> _children = new();
 
+    public ThemeVariant()
+    {
+        _children.Add(key: ThemeType.Dark, value: new ThemeState());
+        _children.Add(key: ThemeType.HighContrastDark, value: new ThemeState());
+        _children.Add(key: ThemeType.HighContrastLight, value: new ThemeState());
+        _children.Add(key: ThemeType.Light, value: new ThemeState());
+    }
+
     public CssBuilder BuildCss(CssBuilder builder, ThemeNavigator navigator, string? varPrefix = "")
     {
         if (navigator.ThemeTypes.Count is 0)
@@ -28,10 +36,7 @@ public sealed class ThemeVariant
         return builder;
     }
 
-    public ThemeState? Get(ThemeType key)
-        => _children.TryGetValue(key: key, value: out var value)
-            ? value
-            : null;
+    public ThemeState? Get(ThemeType key) => _children.GetValueOrDefault(key: key);
 
     public ThemeVariant Set(ThemeUpdater updater)
     {
@@ -48,14 +53,7 @@ public sealed class ThemeVariant
             }
             else
             {
-                if (_children.ContainsKey(key: key))
-                {
-                    _children[key: key] = updater.State;
-                }
-                else
-                {
-                    _children.Add(key: key, value: updater.State);
-                }
+                _children[key: key] = updater.State;
 
                 if (updater.Value is not null)
                 {
@@ -67,7 +65,7 @@ public sealed class ThemeVariant
         return this;
     }
 
-    private string SetPrefix(string? varPrefix, ThemeType type)
+    private static string SetPrefix(string? varPrefix, ThemeType type)
     {
         var prefix = varPrefix?.ToCssName() ?? string.Empty;
 

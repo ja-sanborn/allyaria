@@ -1,4 +1,3 @@
-using Allyaria.Theming.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Allyaria.Theming.Blazor.Extensions;

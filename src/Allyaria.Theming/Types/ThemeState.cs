@@ -4,6 +4,17 @@ public sealed class ThemeState
 {
     private readonly Dictionary<ComponentState, ThemeStyle> _children = new();
 
+    public ThemeState()
+    {
+        _children.Add(key: ComponentState.Default, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Disabled, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Dragged, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Focused, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Hovered, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Pressed, value: new ThemeStyle());
+        _children.Add(key: ComponentState.Visited, value: new ThemeStyle());
+    }
+
     public CssBuilder BuildCss(CssBuilder builder, ThemeNavigator navigator, string? varPrefix = "")
     {
         if (navigator.ComponentStates.Count is 0)
@@ -28,10 +39,7 @@ public sealed class ThemeState
         return builder;
     }
 
-    public ThemeStyle? Get(ComponentState key)
-        => _children.TryGetValue(key: key, value: out var value)
-            ? value
-            : null;
+    public ThemeStyle? Get(ComponentState key) => _children.GetValueOrDefault(key: key);
 
     public ThemeState Set(ThemeUpdater updater)
     {
@@ -48,14 +56,7 @@ public sealed class ThemeState
             }
             else
             {
-                if (_children.ContainsKey(key: key))
-                {
-                    _children[key: key] = updater.Style;
-                }
-                else
-                {
-                    _children.Add(key: key, value: updater.Style);
-                }
+                _children[key: key] = updater.Style;
 
                 if (updater.Value is not null)
                 {
@@ -67,7 +68,7 @@ public sealed class ThemeState
         return this;
     }
 
-    private string SetPrefix(string? varPrefix, ComponentState type)
+    private static string SetPrefix(string? varPrefix, ComponentState type)
     {
         var prefix = varPrefix?.ToCssName() ?? string.Empty;
 
