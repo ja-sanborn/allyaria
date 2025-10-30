@@ -2,12 +2,19 @@
 
 public sealed class Theme
 {
-    private readonly ThemeComponent _component = new();
+    private ThemeComponent _component = new();
+
+    public Theme Set(ThemeUpdater updater)
+    {
+        _component = _component.Set(updater: updater);
+
+        return this;
+    }
 
     public string ToCss(ComponentType componentType, ThemeType themeType, ComponentState componentState)
         => _component.BuildCss(
                 builder: new CssBuilder(),
-                navigator: ThemeNavigator.Empty
+                navigator: ThemeNavigator.Initialize
                     .SetComponentTypes(componentType)
                     .SetThemeTypes(themeType)
                     .SetComponentStates(componentState)
@@ -16,6 +23,8 @@ public sealed class Theme
 
     public string ToCssVars()
         => _component
-            .BuildCss(builder: new CssBuilder(), navigator: ThemeNavigator.Empty, varPrefix: StyleDefaults.VarPrefix)
+            .BuildCss(
+                builder: new CssBuilder(), navigator: ThemeNavigator.Initialize, varPrefix: StyleDefaults.VarPrefix
+            )
             .ToString();
 }

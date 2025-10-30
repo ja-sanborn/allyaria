@@ -7,7 +7,7 @@ public readonly record struct ThemeNavigator(
     IReadOnlyList<StyleType> StyleTypes
 )
 {
-    public static readonly ThemeNavigator Empty = new(
+    public static readonly ThemeNavigator Initialize = new(
         ComponentTypes: BuildList<ComponentType>(),
         ThemeTypes: BuildList<ThemeType>(),
         ComponentStates: BuildList<ComponentState>(),
