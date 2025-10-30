@@ -8,7 +8,7 @@ public enum StyleGroupType
     BorderColor,
 
     [Description(
-        description: "border-end-end-radius,border-end-start-radius,border-end-end-radius,border-end-start-radius"
+        description: "border-end-end-radius,border-end-start-radius,border-start-end-radius,border-start-start-radius"
     )]
     BorderRadius,
 
