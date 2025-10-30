@@ -4,6 +4,18 @@ public sealed class Theme
 {
     private ThemeComponent _component = new();
 
+    public static Theme Build(Brand brand)
+    {
+        var theme = new Theme();
+
+        // TODO: Cascade Brand to Theme
+
+        return theme;
+    }
+
+    public static Theme Build(BrandFont? font = null, BrandTheme? lightTheme = null, BrandTheme? darkTheme = null)
+        => Build(brand: new Brand(font: font, lightTheme: lightTheme, darkTheme: darkTheme));
+
     public Theme Set(ThemeUpdater updater)
     {
         _component = _component.Set(updater: updater);

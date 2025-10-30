@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Branding;
+﻿namespace Allyaria.Theming.Types;
 
 public readonly record struct BrandState
 {
