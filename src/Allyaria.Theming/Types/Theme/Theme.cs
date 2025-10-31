@@ -1,10 +1,10 @@
-namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types.Theme;
 
 public sealed class Theme
 {
     private ThemeComponent _component = new();
 
-    public static Theme Build(Brand brand)
+    public static Theme Build(Brand.Brand brand)
     {
         var theme = new Theme();
 
@@ -12,9 +12,6 @@ public sealed class Theme
 
         return theme;
     }
-
-    public static Theme Build(BrandFont? font = null, BrandTheme? lightTheme = null, BrandTheme? darkTheme = null)
-        => Build(brand: new Brand(font: font, lightTheme: lightTheme, darkTheme: darkTheme));
 
     public Theme Set(ThemeUpdater updater)
     {

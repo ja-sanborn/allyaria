@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types.Theme;
 
 public readonly record struct ThemeNavigator(
     IReadOnlyList<ComponentType> ComponentTypes,

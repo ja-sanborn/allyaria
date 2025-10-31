@@ -5,4 +5,8 @@ global using Allyaria.Theming.Contracts;
 global using Allyaria.Theming.Enumerations;
 global using Allyaria.Theming.Helpers;
 global using Allyaria.Theming.Types;
+global using Allyaria.Theming.Types.Brand;
+global using Allyaria.Theming.Types.Css;
+global using Allyaria.Theming.Types.Style;
+global using Allyaria.Theming.Types.Theme;
 global using System.ComponentModel;

@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Types.Theme;
 
 public sealed class ThemeStyle
 {
@@ -79,13 +79,20 @@ public sealed class ThemeStyle
                 isColor = true;
             }
 
-            if (isFocused && !isOutlineStyle && key is StyleType.OutlineStyle &&
-                updater.Value?.Value == CssOutlineStyle.None)
+            if (isFocused &&
+                !isOutlineStyle &&
+                key is StyleType.OutlineStyle &&
+                CssOutlineStyle.Kind.None.GetDescription().Equals(
+                    value: updater.Value?.Value, comparisonType: StringComparison.OrdinalIgnoreCase
+                ))
             {
                 isOutlineStyle = true;
             }
 
-            if (isFocused && !isOutlineWidth && key is StyleType.OutlineWidth && updater.Value?.Value != Sizing.Thick)
+            if (isFocused &&
+                !isOutlineWidth &&
+                key is StyleType.OutlineWidth &&
+                Sizing.Thick.Equals(value: updater.Value?.Value, comparisonType: StringComparison.OrdinalIgnoreCase))
             {
                 isOutlineWidth = true;
             }
@@ -98,7 +105,7 @@ public sealed class ThemeStyle
 
         if (isOutlineStyle)
         {
-            SetValue(key: StyleType.OutlineStyle, value: new StyleString(value: CssOutlineStyle.Solid));
+            SetValue(key: StyleType.OutlineStyle, value: new CssOutlineStyle(kind: CssOutlineStyle.Kind.Solid));
         }
 
         if (isOutlineWidth)
