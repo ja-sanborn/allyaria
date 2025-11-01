@@ -5,6 +5,7 @@ public enum ComponentType
 {
     Body,
     BodyVariant,
+    Global,
     Link,
     LinkVariant,
     Surface,

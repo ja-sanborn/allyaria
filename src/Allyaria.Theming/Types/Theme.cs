@@ -1,19 +1,10 @@
-namespace Allyaria.Theming.Types.Theme;
+namespace Allyaria.Theming.Types;
 
 public sealed class Theme
 {
     private ThemeComponent _component = new();
 
-    public static Theme Build(Brand.Brand brand)
-    {
-        var theme = new Theme();
-
-        // TODO: Cascade Brand to Theme
-
-        return theme;
-    }
-
-    public Theme Set(ThemeUpdater updater)
+    internal Theme Set(ThemeUpdater updater)
     {
         _component = _component.Set(updater: updater);
 

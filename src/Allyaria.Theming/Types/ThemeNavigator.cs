@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Types.Theme;
+namespace Allyaria.Theming.Types;
 
 public readonly record struct ThemeNavigator(
     IReadOnlyList<ComponentType> ComponentTypes,
@@ -32,6 +32,14 @@ public readonly record struct ThemeNavigator(
 
         return list;
     }
+
+    public ThemeNavigator SetAllComponentStates() => SetComponentStates(items: Enum.GetValues<ComponentState>());
+
+    public ThemeNavigator SetAllComponentTypes() => SetComponentTypes(items: Enum.GetValues<ComponentType>());
+
+    public ThemeNavigator SetAllStyleTypes() => SetStyleTypes(items: Enum.GetValues<StyleType>());
+
+    public ThemeNavigator SetAllThemeTypes() => SetThemeTypes(items: Enum.GetValues<ThemeType>());
 
     public ThemeNavigator SetComponentStates(params ComponentState[] items)
         => this with

@@ -172,7 +172,5 @@
         <None Include="Archive\Styling\CssWordBreak.cs"/>
         <Compile Remove="Archive\Styling\CssWritingMode.cs"/>
         <None Include="Archive\Styling\CssWritingMode.cs"/>
-        <Compile Include="Enumerations\FontType.cs"/>
-        <Compile Include="Enumerations\PaletteType.cs"/>
     </ItemGroup>
 </Project>

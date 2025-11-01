@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Types.Style;
+namespace Allyaria.Theming.Types;
 
 public sealed record StyleColor : StyleValueBase
 {

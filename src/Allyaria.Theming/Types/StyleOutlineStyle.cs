@@ -1,8 +1,8 @@
-namespace Allyaria.Theming.Types.Css;
+namespace Allyaria.Theming.Types;
 
-public sealed record CssOutlineStyle : StyleValueBase
+public sealed record StyleOutlineStyle : StyleValueBase
 {
-    public CssOutlineStyle(Kind kind)
+    public StyleOutlineStyle(Kind kind)
         : base(value: kind.GetDescription()) { }
 
     public enum Kind
@@ -38,12 +38,12 @@ public sealed record CssOutlineStyle : StyleValueBase
         Solid
     }
 
-    public static CssOutlineStyle Parse(string? value)
+    public static StyleOutlineStyle Parse(string? value)
         => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
-            ? new CssOutlineStyle(kind: kind)
+            ? new StyleOutlineStyle(kind: kind)
             : throw new AryArgumentException(message: $"Invalid outline style: {value}", argName: nameof(value));
 
-    public static bool TryParse(string? value, out CssOutlineStyle? result)
+    public static bool TryParse(string? value, out StyleOutlineStyle? result)
     {
         try
         {
@@ -59,7 +59,7 @@ public sealed record CssOutlineStyle : StyleValueBase
         }
     }
 
-    public static implicit operator CssOutlineStyle(string? value) => Parse(value: value);
+    public static implicit operator StyleOutlineStyle(string? value) => Parse(value: value);
 
-    public static implicit operator string(CssOutlineStyle? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleOutlineStyle? value) => value?.Value ?? string.Empty;
 }

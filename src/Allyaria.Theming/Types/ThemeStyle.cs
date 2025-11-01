@@ -1,10 +1,10 @@
-namespace Allyaria.Theming.Types.Theme;
+namespace Allyaria.Theming.Types;
 
-public sealed class ThemeStyle
+internal sealed class ThemeStyle
 {
     private readonly Dictionary<StyleType, IStyleValue> _children = new();
 
-    public CssBuilder BuildCss(CssBuilder builder, ThemeNavigator navigator, string? varPrefix = "")
+    internal CssBuilder BuildCss(CssBuilder builder, ThemeNavigator navigator, string? varPrefix = "")
     {
         if (navigator.StyleTypes.Count is 0)
         {
@@ -31,7 +31,7 @@ public sealed class ThemeStyle
                 ? group.BuildCss(builder: builder, varPrefix: varPrefix)
                 : builder.Add(name: key.GetDescription(), value: value?.Value, varPrefix: varPrefix);
 
-    public ThemeStyle EnsureContrast()
+    private ThemeStyle EnsureContrast()
     {
         var accentColor = ((StyleColor?)Get(key: StyleType.AccentColor))?.Color;
         var backgroundColor = ((StyleColor?)Get(key: StyleType.BackgroundColor))?.Color;
@@ -62,39 +62,19 @@ public sealed class ThemeStyle
             .SetColor(key: StyleType.TextDecorationColor, color: textDecorationColor);
     }
 
-    public IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
+    private IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
 
-    public ThemeStyle Set(ThemeUpdater updater, bool isFocused = false)
+    internal ThemeStyle Set(ThemeUpdater updater, bool isFocused = false)
     {
         var isColor = false;
-        var isOutlineStyle = false;
-        var isOutlineWidth = false;
 
         foreach (var key in updater.Navigator.StyleTypes)
         {
-            SetValue(key: key, value: updater.Value);
+            SetValue(key: key, value: updater.Value, isFocused: isFocused);
 
             if (!isColor && updater.Value is StyleColor)
             {
                 isColor = true;
-            }
-
-            if (isFocused &&
-                !isOutlineStyle &&
-                key is StyleType.OutlineStyle &&
-                CssOutlineStyle.Kind.None.GetDescription().Equals(
-                    value: updater.Value?.Value, comparisonType: StringComparison.OrdinalIgnoreCase
-                ))
-            {
-                isOutlineStyle = true;
-            }
-
-            if (isFocused &&
-                !isOutlineWidth &&
-                key is StyleType.OutlineWidth &&
-                Sizing.Thick.Equals(value: updater.Value?.Value, comparisonType: StringComparison.OrdinalIgnoreCase))
-            {
-                isOutlineWidth = true;
             }
         }
 
@@ -103,45 +83,44 @@ public sealed class ThemeStyle
             EnsureContrast();
         }
 
-        if (isOutlineStyle)
-        {
-            SetValue(key: StyleType.OutlineStyle, value: new CssOutlineStyle(kind: CssOutlineStyle.Kind.Solid));
-        }
-
-        if (isOutlineWidth)
-        {
-            SetValue(key: StyleType.OutlineWidth, value: new StyleNumber(value: Sizing.Thick));
-        }
-
         return this;
     }
 
     private ThemeStyle SetColor(StyleType key, HexColor? color)
         => color is null
             ? this
-            : SetValue(key: key, value: new StyleColor(value: color));
+            : SetValue(key: key, value: new StyleColor(value: color), isFocused: false);
 
-    private ThemeStyle SetValue(StyleType key, IStyleValue? value)
+    private ThemeStyle SetValue(StyleType key, IStyleValue? value, bool isFocused)
     {
-        if (_children.ContainsKey(key: key))
+        if (string.IsNullOrWhiteSpace(value: value?.Value))
         {
-            if (string.IsNullOrWhiteSpace(value: value?.Value))
-            {
-                _children.Remove(key: key);
-            }
-            else
-            {
-                _children[key: key] = value;
-            }
+            _children.Remove(key: key);
         }
         else
         {
-            if (!string.IsNullOrWhiteSpace(value: value?.Value))
-            {
-                _children.Add(key: key, value: value);
-            }
+            var newValue = value;
+
+            newValue = ValidateOutlineStyle(key: key, value: newValue, isFocused: isFocused);
+            newValue = ValidateOutlineWidth(key: key, value: newValue, isFocused: isFocused);
+
+            _children[key: key] = newValue;
         }
 
         return this;
     }
+
+    private IStyleValue ValidateOutlineStyle(StyleType key, IStyleValue value, bool isFocused)
+        => isFocused && key is StyleType.OutlineStyle &&
+            StyleOutlineStyle.Kind.None.GetDescription().Equals(
+                value: value.Value, comparisonType: StringComparison.OrdinalIgnoreCase
+            )
+                ? new StyleOutlineStyle(kind: StyleOutlineStyle.Kind.Solid)
+                : value;
+
+    private IStyleValue ValidateOutlineWidth(StyleType key, IStyleValue value, bool isFocused)
+        => isFocused && key is StyleType.OutlineWidth &&
+            !Sizing.Thick.Equals(value: value.Value, comparisonType: StringComparison.OrdinalIgnoreCase)
+                ? new StyleNumber(value: Sizing.Thick)
+                : value;
 }
