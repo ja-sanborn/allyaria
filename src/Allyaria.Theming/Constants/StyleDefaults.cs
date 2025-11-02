@@ -31,10 +31,6 @@ public static class StyleDefaults
 
     public static readonly HexColor HighContrastSurfaceColorLight = Colors.White;
 
-    public static readonly HexColor HighContrastSurfaceVariantColorDark = Colors.Grey800;
-
-    public static readonly HexColor HighContrastSurfaceVariantColorLight = Colors.Grey100;
-
     public static readonly HexColor HighContrastTertiaryColorDark = Colors.Fuchsia;
 
     public static readonly HexColor HighContrastTertiaryColorLight = Colors.Purple800;
@@ -70,10 +66,6 @@ public static class StyleDefaults
     public static readonly HexColor SurfaceColorDark = Colors.Grey900;
 
     public static readonly HexColor SurfaceColorLight = Colors.Grey50;
-
-    public static readonly HexColor SurfaceVariantColorDark = Colors.BlueGrey700;
-
-    public static readonly HexColor SurfaceVariantColorLight = Colors.BlueGrey100;
 
     public static readonly HexColor TertiaryColorDark = Colors.Teal300;
 

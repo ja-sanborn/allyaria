@@ -9,11 +9,14 @@ public sealed class ThemeBuilder
 
     private void ApplyFromBrand(Brand brand,
         PaletteType paletteType,
+        bool isVariant,
         ComponentType componentType,
         StyleType styleType,
         Func<BrandPalette, HexColor?> getColor)
     {
-        var themeMap = BuildThemeMap(brand: brand);
+        var themeMap = isVariant
+            ? BuildThemeVariantMap(brand: brand)
+            : BuildThemeMap(brand: brand);
 
         foreach ((var theme, var themeType) in themeMap)
         {
@@ -74,6 +77,13 @@ public sealed class ThemeBuilder
             (brand.Variant.Light, ThemeType.Light)
         ];
 
+    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeVariantMap(Brand brand)
+        =>
+        [
+            (brand.Variant.DarkVariant, ThemeType.Dark),
+            (brand.Variant.LightVariant, ThemeType.Light)
+        ];
+
     public ThemeBuilder Create(Brand? brand = null)
     {
         _brand = brand ?? new Brand();
@@ -82,6 +92,7 @@ public sealed class ThemeBuilder
         ApplyFromBrand(
             brand: _brand,
             paletteType: PaletteType.Surface,
+            isVariant: false,
             componentType: ComponentType.Global,
             styleType: StyleType.BackgroundColor,
             getColor: palette => palette.BackgroundColor
@@ -90,6 +101,7 @@ public sealed class ThemeBuilder
         ApplyFromBrand(
             brand: _highContrast,
             paletteType: PaletteType.Surface,
+            isVariant: false,
             componentType: ComponentType.Global,
             styleType: StyleType.BackgroundColor,
             getColor: palette => palette.BackgroundColor
@@ -114,7 +126,6 @@ public sealed class ThemeBuilder
             PaletteType.Secondary => theme.Secondary,
             PaletteType.Success => theme.Success,
             PaletteType.Surface => theme.Surface,
-            PaletteType.SurfaceVariant => theme.SurfaceVariant,
             PaletteType.Tertiary => theme.Tertiary,
             PaletteType.Warning => theme.Warning,
             _ => theme.Surface

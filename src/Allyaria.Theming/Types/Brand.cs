@@ -17,7 +17,6 @@ public readonly record struct Brand
             font: new BrandFont(),
             lightTheme: new BrandTheme(
                 surface: StyleDefaults.HighContrastSurfaceColorLight,
-                surfaceVariant: StyleDefaults.HighContrastSurfaceVariantColorLight,
                 primary: StyleDefaults.HighContrastPrimaryColorLight,
                 secondary: StyleDefaults.HighContrastSecondaryColorLight,
                 tertiary: StyleDefaults.HighContrastTertiaryColorLight,
@@ -28,7 +27,6 @@ public readonly record struct Brand
             ),
             darkTheme: new BrandTheme(
                 surface: StyleDefaults.HighContrastSurfaceColorDark,
-                surfaceVariant: StyleDefaults.HighContrastSurfaceVariantColorDark,
                 primary: StyleDefaults.HighContrastPrimaryColorDark,
                 secondary: StyleDefaults.HighContrastSecondaryColorDark,
                 tertiary: StyleDefaults.HighContrastTertiaryColorDark,
