@@ -16,26 +16,26 @@ public readonly record struct Brand
         => new(
             font: new BrandFont(),
             lightTheme: new BrandTheme(
-                surface: StyleDefaults.SurfaceColorLight,
-                surfaceVariant: StyleDefaults.SurfaceVariantColorLight,
-                primary: StyleDefaults.PrimaryColorLight,
-                secondary: StyleDefaults.SecondaryColorLight,
-                tertiary: StyleDefaults.TertiaryColorLight,
-                error: StyleDefaults.ErrorColorLight,
-                warning: StyleDefaults.WarningColorLight,
-                success: StyleDefaults.SuccessColorLight,
-                info: StyleDefaults.InfoColorLight
+                surface: StyleDefaults.HighContrastSurfaceColorLight,
+                surfaceVariant: StyleDefaults.HighContrastSurfaceVariantColorLight,
+                primary: StyleDefaults.HighContrastPrimaryColorLight,
+                secondary: StyleDefaults.HighContrastSecondaryColorLight,
+                tertiary: StyleDefaults.HighContrastTertiaryColorLight,
+                error: StyleDefaults.HighContrastErrorColorLight,
+                warning: StyleDefaults.HighContrastWarningColorLight,
+                success: StyleDefaults.HighContrastSuccessColorLight,
+                info: StyleDefaults.HighContrastInfoColorLight
             ),
             darkTheme: new BrandTheme(
-                surface: StyleDefaults.SurfaceColorDark,
-                surfaceVariant: StyleDefaults.SurfaceVariantColorDark,
-                primary: StyleDefaults.PrimaryColorDark,
-                secondary: StyleDefaults.SecondaryColorDark,
-                tertiary: StyleDefaults.TertiaryColorDark,
-                error: StyleDefaults.ErrorColorDark,
-                warning: StyleDefaults.WarningColorDark,
-                success: StyleDefaults.SuccessColorDark,
-                info: StyleDefaults.InfoColorDark
+                surface: StyleDefaults.HighContrastSurfaceColorDark,
+                surfaceVariant: StyleDefaults.HighContrastSurfaceVariantColorDark,
+                primary: StyleDefaults.HighContrastPrimaryColorDark,
+                secondary: StyleDefaults.HighContrastSecondaryColorDark,
+                tertiary: StyleDefaults.HighContrastTertiaryColorDark,
+                error: StyleDefaults.HighContrastErrorColorDark,
+                warning: StyleDefaults.HighContrastWarningColorDark,
+                success: StyleDefaults.HighContrastSuccessColorDark,
+                info: StyleDefaults.HighContrastInfoColorDark
             )
         );
 }
