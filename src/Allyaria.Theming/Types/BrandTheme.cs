@@ -12,16 +12,31 @@ public readonly record struct BrandTheme
         HexColor? success = null,
         HexColor? info = null)
     {
-        Error = new BrandState(color: error ?? StyleDefaults.ErrorColorLight);
-        Info = new BrandState(color: info ?? StyleDefaults.InfoColorLight);
-        Primary = new BrandState(color: primary ?? StyleDefaults.PrimaryColorLight);
-        Success = new BrandState(color: success ?? StyleDefaults.SuccessColorLight);
-        Secondary = new BrandState(color: secondary ?? StyleDefaults.SecondaryColorLight);
-        Surface = new BrandState(color: surface ?? StyleDefaults.SurfaceColorLight);
-        SurfaceVariant = new BrandState(color: surfaceVariant ?? StyleDefaults.SurfaceVariantColorLight);
-        Tertiary = new BrandState(color: tertiary ?? StyleDefaults.TertiaryColorLight);
-        Warning = new BrandState(color: warning ?? StyleDefaults.WarningColorLight);
+        Elevation1 = new BrandState(color: (surface ?? StyleDefaults.HighContrastSurfaceColorLight).ToElevation1());
+        Elevation2 = new BrandState(color: (surface ?? StyleDefaults.HighContrastSurfaceColorLight).ToElevation2());
+        Elevation3 = new BrandState(color: (surface ?? StyleDefaults.HighContrastSurfaceColorLight).ToElevation3());
+        Elevation4 = new BrandState(color: (surface ?? StyleDefaults.HighContrastSurfaceColorLight).ToElevation4());
+        Elevation5 = new BrandState(color: (surface ?? StyleDefaults.HighContrastSurfaceColorLight).ToElevation5());
+        Error = new BrandState(color: error ?? StyleDefaults.HighContrastErrorColorLight);
+        Info = new BrandState(color: info ?? StyleDefaults.HighContrastInfoColorLight);
+        Primary = new BrandState(color: primary ?? StyleDefaults.HighContrastPrimaryColorLight);
+        Success = new BrandState(color: success ?? StyleDefaults.HighContrastSuccessColorLight);
+        Secondary = new BrandState(color: secondary ?? StyleDefaults.HighContrastSecondaryColorLight);
+        Surface = new BrandState(color: surface ?? StyleDefaults.HighContrastSurfaceColorLight);
+        SurfaceVariant = new BrandState(color: surfaceVariant ?? StyleDefaults.HighContrastSurfaceVariantColorLight);
+        Tertiary = new BrandState(color: tertiary ?? StyleDefaults.HighContrastTertiaryColorLight);
+        Warning = new BrandState(color: warning ?? StyleDefaults.HighContrastWarningColorLight);
     }
+
+    public BrandState Elevation1 { get; }
+
+    public BrandState Elevation2 { get; }
+
+    public BrandState Elevation3 { get; }
+
+    public BrandState Elevation4 { get; }
+
+    public BrandState Elevation5 { get; }
 
     public BrandState Error { get; }
 

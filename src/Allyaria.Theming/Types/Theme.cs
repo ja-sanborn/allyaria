@@ -4,9 +4,9 @@ public sealed class Theme
 {
     private ThemeComponent _component = new();
 
-    internal Theme Set(ThemeUpdater updater)
+    internal Theme Set(ThemeNavigator navigator, IStyleValue? value)
     {
-        _component = _component.Set(updater: updater);
+        _component = _component.Set(navigator: navigator, value: value);
 
         return this;
     }

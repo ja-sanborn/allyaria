@@ -64,15 +64,15 @@ internal sealed class ThemeStyle
 
     private IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
 
-    internal ThemeStyle Set(ThemeUpdater updater, bool isFocused = false)
+    internal ThemeStyle Set(ThemeNavigator navigator, IStyleValue? value)
     {
         var isColor = false;
 
-        foreach (var key in updater.Navigator.StyleTypes)
+        foreach (var key in navigator.StyleTypes)
         {
-            SetValue(key: key, value: updater.Value, isFocused: isFocused);
+            SetValue(key: key, value: value);
 
-            if (!isColor && updater.Value is StyleColor)
+            if (!isColor && value is StyleColor)
             {
                 isColor = true;
             }
@@ -89,9 +89,9 @@ internal sealed class ThemeStyle
     private ThemeStyle SetColor(StyleType key, HexColor? color)
         => color is null
             ? this
-            : SetValue(key: key, value: new StyleColor(value: color), isFocused: false);
+            : SetValue(key: key, value: new StyleColor(value: color));
 
-    private ThemeStyle SetValue(StyleType key, IStyleValue? value, bool isFocused)
+    private ThemeStyle SetValue(StyleType key, IStyleValue? value)
     {
         if (string.IsNullOrWhiteSpace(value: value?.Value))
         {
@@ -99,28 +99,9 @@ internal sealed class ThemeStyle
         }
         else
         {
-            var newValue = value;
-
-            newValue = ValidateOutlineStyle(key: key, value: newValue, isFocused: isFocused);
-            newValue = ValidateOutlineWidth(key: key, value: newValue, isFocused: isFocused);
-
-            _children[key: key] = newValue;
+            _children[key: key] = value;
         }
 
         return this;
     }
-
-    private IStyleValue ValidateOutlineStyle(StyleType key, IStyleValue value, bool isFocused)
-        => isFocused && key is StyleType.OutlineStyle &&
-            StyleOutlineStyle.Kind.None.GetDescription().Equals(
-                value: value.Value, comparisonType: StringComparison.OrdinalIgnoreCase
-            )
-                ? new StyleOutlineStyle(kind: StyleOutlineStyle.Kind.Solid)
-                : value;
-
-    private IStyleValue ValidateOutlineWidth(StyleType key, IStyleValue value, bool isFocused)
-        => isFocused && key is StyleType.OutlineWidth &&
-            !Sizing.Thick.Equals(value: value.Value, comparisonType: StringComparison.OrdinalIgnoreCase)
-                ? new StyleNumber(value: Sizing.Thick)
-                : value;
 }

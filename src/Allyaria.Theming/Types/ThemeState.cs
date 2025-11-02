@@ -30,16 +30,16 @@ internal sealed class ThemeState
 
     private ThemeStyle? Get(ComponentState key) => _children.GetValueOrDefault(key: key);
 
-    internal ThemeState Set(ThemeUpdater updater)
+    internal ThemeState Set(ThemeNavigator navigator, IStyleValue? value)
     {
-        foreach (var key in updater.Navigator.ComponentStates)
+        foreach (var key in navigator.ComponentStates)
         {
             if (!_children.ContainsKey(key: key))
             {
                 _children.Add(key: key, value: new ThemeStyle());
             }
 
-            Get(key: key)?.Set(updater: updater, isFocused: key is ComponentState.Focused);
+            Get(key: key)?.Set(navigator: navigator, value: value);
         }
 
         return this;

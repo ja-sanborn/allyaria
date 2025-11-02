@@ -3,31 +3,47 @@ namespace Allyaria.Theming.Constants;
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class StyleDefaults
 {
-    public static readonly HexColor AccentColorHighContrastDark = Colors.YellowA400;
-
-    public static readonly HexColor AccentColorHighContrastLight = Colors.BlueA700;
-
-    public static readonly HexColor BackgroundColorHighContrastDark = Colors.Black;
-
-    public static readonly HexColor BackgroundColorHighContrastLight = Colors.White;
-
     public static readonly HexColor ErrorColorDark = Colors.Red300;
-
-    public static readonly HexColor ErrorColorHighContrastDark = Colors.RedA200;
-
-    public static readonly HexColor ErrorColorHighContrastLight = Colors.Red700;
 
     public static readonly HexColor ErrorColorLight = Colors.RedA700;
 
-    public static readonly HexColor ForegroundColorHighContrastDark = Colors.White;
+    public static readonly HexColor HighContrastErrorColorDark = Colors.RedA400;
 
-    public static readonly HexColor ForegroundColorHighContrastLight = Colors.Black;
+    public static readonly HexColor HighContrastErrorColorLight = Colors.RedA700;
+
+    public static readonly HexColor HighContrastInfoColorDark = Colors.Aqua;
+
+    public static readonly HexColor HighContrastInfoColorLight = Colors.Blue700;
+
+    public static readonly HexColor HighContrastPrimaryColorDark = Colors.Aqua;
+
+    public static readonly HexColor HighContrastPrimaryColorLight = Colors.Black;
+
+    public static readonly HexColor HighContrastSecondaryColorDark = Colors.YellowA400;
+
+    public static readonly HexColor HighContrastSecondaryColorLight = Colors.Blue700;
+
+    public static readonly HexColor HighContrastSuccessColorDark = Colors.LimeA200;
+
+    public static readonly HexColor HighContrastSuccessColorLight = Colors.Green800;
+
+    public static readonly HexColor HighContrastSurfaceColorDark = Colors.Black;
+
+    public static readonly HexColor HighContrastSurfaceColorLight = Colors.White;
+
+    public static readonly HexColor HighContrastSurfaceVariantColorDark = Colors.Grey800;
+
+    public static readonly HexColor HighContrastSurfaceVariantColorLight = Colors.Grey100;
+
+    public static readonly HexColor HighContrastTertiaryColorDark = Colors.Fuchsia;
+
+    public static readonly HexColor HighContrastTertiaryColorLight = Colors.Purple800;
+
+    public static readonly HexColor HighContrastWarningColorDark = Colors.YellowA400;
+
+    public static readonly HexColor HighContrastWarningColorLight = Colors.Black;
 
     public static readonly HexColor InfoColorDark = Colors.Lightblue300;
-
-    public static readonly HexColor InfoColorHighContrastDark = Colors.LightblueA200;
-
-    public static readonly HexColor InfoColorHighContrastLight = Colors.Lightblue700;
 
     public static readonly HexColor InfoColorLight = Colors.LightblueA700;
 
@@ -49,10 +65,6 @@ public static class StyleDefaults
 
     public static readonly HexColor SuccessColorDark = Colors.Green300;
 
-    public static readonly HexColor SuccessColorHighContrastDark = Colors.GreenA400;
-
-    public static readonly HexColor SuccessColorHighContrastLight = Colors.Green800;
-
     public static readonly HexColor SuccessColorLight = Colors.Green600;
 
     public static readonly HexColor SurfaceColorDark = Colors.Grey900;
@@ -71,10 +83,6 @@ public static class StyleDefaults
     public static readonly string VarPrefix = "ary";
 
     public static readonly HexColor WarningColorDark = Colors.Amber300;
-
-    public static readonly HexColor WarningColorHighContrastDark = Colors.YellowA400;
-
-    public static readonly HexColor WarningColorHighContrastLight = Colors.Amber800;
 
     public static readonly HexColor WarningColorLight = Colors.Amber700;
 }
