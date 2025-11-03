@@ -5,7 +5,8 @@ public enum ComponentType
 {
     Body,
     BodyVariant,
-    Global,
+    GlobalBody,
+    GlobalHtml,
     Link,
     LinkVariant,
     Surface,

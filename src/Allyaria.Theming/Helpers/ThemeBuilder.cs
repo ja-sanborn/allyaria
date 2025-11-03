@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Helpers;
+namespace Allyaria.Theming.Helpers;
 
 public sealed partial class ThemeBuilder
 {
@@ -101,8 +101,13 @@ public sealed partial class ThemeBuilder
         _brand = brand ?? new Brand();
         _theme = new Theme();
 
-        CreateGlobal(isHighContrast: false);
-        CreateGlobal(isHighContrast: true);
+        for (var hc = 0; hc < 2; hc++)
+        {
+            var isHighContrast = hc is 1;
+
+            CreateGlobalBody(isHighContrast: isHighContrast);
+            CreateGlobalHtml(isHighContrast: isHighContrast);
+        }
 
         _isReady = true;
 

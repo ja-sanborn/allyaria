@@ -120,14 +120,6 @@
         <Compile Remove="Archive\Enumerations\LengthUnits.cs"/>
         <Compile Remove="Archive\Enumerations\PaletteType.cs"/>
         <Compile Remove="Archive\Enumerations\ThemeType.cs"/>
-        <Compile Remove="Archive\Styling\CssAlign.cs"/>
-        <None Include="Archive\Styling\CssAlign.cs"/>
-        <Compile Remove="Archive\Styling\CssBorderStyle.cs"/>
-        <None Include="Archive\Styling\CssBorderStyle.cs"/>
-        <Compile Remove="Archive\Styling\CssBoxSizing.cs"/>
-        <None Include="Archive\Styling\CssBoxSizing.cs"/>
-        <Compile Remove="Archive\Styling\CssDirection.cs"/>
-        <None Include="Archive\Styling\CssDirection.cs"/>
         <Compile Remove="Archive\Styling\CssDisplay.cs"/>
         <None Include="Archive\Styling\CssDisplay.cs"/>
         <Compile Remove="Archive\Styling\CssFontStyle.cs"/>
@@ -141,8 +133,6 @@
         <Compile Remove="Archive\Styling\CssLineBreak.cs"/>
         <None Include="Archive\Styling\CssLineBreak.cs"/>
         <Compile Remove="Archive\Styling\CssOutlineStyle.cs"/>
-        <Compile Remove="Archive\Styling\CssOverflow.cs"/>
-        <None Include="Archive\Styling\CssOverflow.cs"/>
         <Compile Remove="Archive\Styling\CssOverflowWrapp.cs"/>
         <None Include="Archive\Styling\CssOverflowWrapp.cs"/>
         <Compile Remove="Archive\Styling\CssOverscrollBehavior.cs"/>

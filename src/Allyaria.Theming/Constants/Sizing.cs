@@ -7,6 +7,15 @@ namespace Allyaria.Theming.Constants;
 [ExcludeFromCodeCoverage(Justification = "This class is a library of constant values.")]
 public static class Sizing
 {
+    /// <summary>100% - full size.</summary>
+    public static readonly string Full = "100%";
+
+    /// <summary>50% - half size.</summary>
+    public static readonly string Half = "50%";
+
+    /// <summary>25% - quarter size.</summary>
+    public static readonly string Quarter = "25%";
+
     /// <summary>0px — no size.</summary>
     public static readonly string Size0 = "0px";
 
@@ -48,4 +57,7 @@ public static class Sizing
 
     /// <summary>1px — single pixel spacing, usually used for borders.</summary>
     public static readonly string Thin = "1px";
+
+    /// <summary>75% - three quarter size.</summary>
+    public static readonly string ThreeQuarter = "75%";
 }

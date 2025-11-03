@@ -4,6 +4,8 @@ public sealed class Theme
 {
     private ThemeComponent _component = new();
 
+    public static string BoxSizingCss() => "*,*::before,*::after{box-sizing:inherit;}";
+
     public string PrefixCss(string prefix,
         ComponentType componentType,
         ThemeType themeType,
@@ -15,6 +17,11 @@ public sealed class Theme
             ? css
             : $"{prefix.Trim()}{{{css}}}";
     }
+
+    public static string ReducedMotion()
+        => "@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}html,body{scroll-behavior:auto !important;}}";
+
+    public string RootCss() => $":root{{{ToCssVars()}}}";
 
     internal Theme Set(ThemeNavigator navigator, IStyleValue? value)
     {
