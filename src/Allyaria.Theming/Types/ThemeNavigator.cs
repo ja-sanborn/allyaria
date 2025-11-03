@@ -33,13 +33,26 @@ public readonly record struct ThemeNavigator(
         return list;
     }
 
-    public ThemeNavigator SetAllComponentStates() => SetComponentStates(items: Enum.GetValues<ComponentState>());
+    public ThemeNavigator SetAllComponentStates()
+    {
+        var states = Enum.GetValues<ComponentState>().ToList();
+        states.Remove(item: ComponentState.Hidden);
+        states.Remove(item: ComponentState.ReadOnly);
+
+        return SetComponentStates(items: states.ToArray());
+    }
 
     public ThemeNavigator SetAllComponentTypes() => SetComponentTypes(items: Enum.GetValues<ComponentType>());
 
     public ThemeNavigator SetAllStyleTypes() => SetStyleTypes(items: Enum.GetValues<StyleType>());
 
-    public ThemeNavigator SetAllThemeTypes() => SetThemeTypes(items: Enum.GetValues<ThemeType>());
+    public ThemeNavigator SetAllThemeTypes()
+    {
+        var types = Enum.GetValues<ThemeType>().ToList();
+        types.Remove(item: ThemeType.System);
+
+        return SetThemeTypes(items: types.ToArray());
+    }
 
     public ThemeNavigator SetComponentStates(params ComponentState[] items)
         => this with
@@ -52,6 +65,11 @@ public readonly record struct ThemeNavigator(
         {
             ComponentTypes = BuildList(items: items)
         };
+
+    public ThemeNavigator SetContrastThemeTypes(bool isHighContrast)
+        => isHighContrast
+            ? SetThemeTypes(ThemeType.HighContrastLight, ThemeType.HighContrastDark)
+            : SetThemeTypes(ThemeType.Light, ThemeType.Dark);
 
     public ThemeNavigator SetStyleTypes(params StyleType[] items)
         => this with

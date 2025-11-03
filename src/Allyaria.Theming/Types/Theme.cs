@@ -4,6 +4,18 @@ public sealed class Theme
 {
     private ThemeComponent _component = new();
 
+    public string PrefixCss(string prefix,
+        ComponentType componentType,
+        ThemeType themeType,
+        ComponentState componentState)
+    {
+        var css = ToCss(componentType: componentType, themeType: themeType, componentState: componentState);
+
+        return string.IsNullOrWhiteSpace(value: prefix)
+            ? css
+            : $"{prefix.Trim()}{{{css}}}";
+    }
+
     internal Theme Set(ThemeNavigator navigator, IStyleValue? value)
     {
         _component = _component.Set(navigator: navigator, value: value);

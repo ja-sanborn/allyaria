@@ -17,6 +17,9 @@ public enum StyleType
     [Description(description: "color")]
     Color,
 
+    [Description(description: "font-family")]
+    FontFamily,
+
     [Description(description: "outline-color")]
     OutlineColor,
 

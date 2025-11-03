@@ -1,22 +1,26 @@
 ﻿namespace Allyaria.Theming.Helpers;
 
-public sealed class ThemeBuilder
+public sealed partial class ThemeBuilder
 {
     private Brand _brand;
     private readonly Brand _highContrast = Brand.CreateHighContrastBrand();
     private bool _isReady;
     private Theme _theme = new();
 
-    private void ApplyFromBrand(Brand brand,
-        PaletteType paletteType,
+    private void ApplyFromBrand(PaletteType paletteType,
+        bool isHighContrast,
         bool isVariant,
         ComponentType componentType,
         StyleType styleType,
         Func<BrandPalette, HexColor?> getColor)
     {
+        var brand = isHighContrast
+            ? _highContrast
+            : _brand;
+
         var themeMap = isVariant
-            ? BuildThemeVariantMap(brand: brand)
-            : BuildThemeMap(brand: brand);
+            ? BuildThemeVariantMap(brand: brand, isHighContrast: isHighContrast)
+            : BuildThemeMap(brand: brand, isHighContrast: isHighContrast);
 
         foreach ((var theme, var themeType) in themeMap)
         {
@@ -70,18 +74,26 @@ public sealed class ThemeBuilder
             (state.Visited, ComponentState.Visited)
         ];
 
-    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeMap(Brand brand)
+    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeMap(Brand brand, bool isHighContrast)
         =>
         [
-            (brand.Variant.Dark, ThemeType.Dark),
-            (brand.Variant.Light, ThemeType.Light)
+            (brand.Variant.Dark, isHighContrast
+                ? ThemeType.HighContrastDark
+                : ThemeType.Dark),
+            (brand.Variant.Light, isHighContrast
+                ? ThemeType.HighContrastLight
+                : ThemeType.Light)
         ];
 
-    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeVariantMap(Brand brand)
+    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeVariantMap(Brand brand, bool isHighContrast)
         =>
         [
-            (brand.Variant.DarkVariant, ThemeType.Dark),
-            (brand.Variant.LightVariant, ThemeType.Light)
+            (brand.Variant.DarkVariant, isHighContrast
+                ? ThemeType.HighContrastDark
+                : ThemeType.Dark),
+            (brand.Variant.LightVariant, isHighContrast
+                ? ThemeType.HighContrastLight
+                : ThemeType.Light)
         ];
 
     public ThemeBuilder Create(Brand? brand = null)
@@ -89,23 +101,8 @@ public sealed class ThemeBuilder
         _brand = brand ?? new Brand();
         _theme = new Theme();
 
-        ApplyFromBrand(
-            brand: _brand,
-            paletteType: PaletteType.Surface,
-            isVariant: false,
-            componentType: ComponentType.Global,
-            styleType: StyleType.BackgroundColor,
-            getColor: palette => palette.BackgroundColor
-        );
-
-        ApplyFromBrand(
-            brand: _highContrast,
-            paletteType: PaletteType.Surface,
-            isVariant: false,
-            componentType: ComponentType.Global,
-            styleType: StyleType.BackgroundColor,
-            getColor: palette => palette.BackgroundColor
-        );
+        CreateGlobal(isHighContrast: false);
+        CreateGlobal(isHighContrast: true);
 
         _isReady = true;
 
