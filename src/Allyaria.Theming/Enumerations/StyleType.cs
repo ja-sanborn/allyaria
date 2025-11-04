@@ -35,6 +35,9 @@ public enum StyleType
     [Description(description: "font-size")]
     FontSize,
 
+    [Description(description: "font-weight")]
+    FontWeight,
+
     [Description(description: "margin")]
     Margin,
 
@@ -82,6 +85,15 @@ public enum StyleType
 
     [Description(description: "text-decoration-color")]
     TextDecorationColor,
+
+    [Description(description: "text-decoration-line")]
+    TextDecorationLine,
+
+    [Description(description: "text-decoration-style")]
+    TextDecorationStyle,
+
+    [Description(description: "text-decoration-thickness")]
+    TextDecorationThickness,
 
     [Description(description: "text-size-adjust")]
     TextSizeAdjust,

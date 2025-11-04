@@ -32,6 +32,71 @@ public sealed class Theme
         builder.Append(value: GetFocusCss(themeType: themeType));
         builder.Append(value: GetReducedMotionCss());
 
+        builder.Append(
+            value: GetCss(
+                prefix: "p",
+                componentType: ComponentType.Text,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h1",
+                componentType: ComponentType.Heading1,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h2",
+                componentType: ComponentType.Heading2,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h3",
+                componentType: ComponentType.Heading3,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h4",
+                componentType: ComponentType.Heading4,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h5",
+                componentType: ComponentType.Heading5,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "h6",
+                componentType: ComponentType.Heading6,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(value: GetLinkCss(themeType: themeType));
+
         return builder.ToString();
     }
 
@@ -66,6 +131,39 @@ public sealed class Theme
         );
 
         return $"{globalFocus}{whereFocus}";
+    }
+
+    public string GetLinkCss(ThemeType themeType)
+    {
+        var link = GetCss(
+            prefix: "a",
+            componentType: ComponentType.Link,
+            themeType: themeType,
+            componentState: ComponentState.Default
+        );
+
+        var focused = GetCss(
+            prefix: "a:focus-visible",
+            componentType: ComponentType.Link,
+            themeType: themeType,
+            componentState: ComponentState.Focused
+        );
+
+        var active = GetCss(
+            prefix: "a:active",
+            componentType: ComponentType.Link,
+            themeType: themeType,
+            componentState: ComponentState.Pressed
+        );
+
+        var visited = GetCss(
+            prefix: "a:visited",
+            componentType: ComponentType.Link,
+            themeType: themeType,
+            componentState: ComponentState.Visited
+        );
+
+        return $"{link}{focused}{active}{visited}";
     }
 
     public static string GetReducedMotionCss()

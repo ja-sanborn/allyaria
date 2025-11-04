@@ -143,9 +143,7 @@
         <Compile Remove="Archive\Styling\CssTextAlign.cs"/>
         <None Include="Archive\Styling\CssTextAlign.cs"/>
         <Compile Remove="Archive\Styling\CssTextDecorationLine.cs"/>
-        <None Include="Archive\Styling\CssTextDecorationLine.cs"/>
         <Compile Remove="Archive\Styling\CssTextDecorationStyle.cs"/>
-        <None Include="Archive\Styling\CssTextDecorationStyle.cs"/>
         <Compile Remove="Archive\Styling\CssTextOrientation.cs"/>
         <None Include="Archive\Styling\CssTextOrientation.cs"/>
         <Compile Remove="Archive\Styling\CssTextOverflow.cs"/>

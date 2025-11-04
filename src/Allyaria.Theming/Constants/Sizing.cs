@@ -16,6 +16,33 @@ public static class Sizing
     /// <summary>25% - quarter size.</summary>
     public static readonly string Quarter = "25%";
 
+    /// <summary>1rem - Same relative size.</summary>
+    public static readonly string Relative = "1rem";
+
+    /// <summary>1.25rem - Large relative size.</summary>
+    public static readonly string RelativeLarge1 = "1.25rem";
+
+    /// <summary>1.5rem - Larger relative size.</summary>
+    public static readonly string RelativeLarge2 = "1.5rem";
+
+    /// <summary>1.75rem - Extra Large relative size.</summary>
+    public static readonly string RelativeLarge3 = "1.75rem";
+
+    /// <summary>2rem - Largest relative size.</summary>
+    public static readonly string RelativeLarge4 = "2rem";
+
+    /// <summary>0.875rem - Small relative size.</summary>
+    public static readonly string RelativeSmall1 = "0.875rem";
+
+    /// <summary>0.75rem - Smaller relative size.</summary>
+    public static readonly string RelativeSmall2 = "0.75rem";
+
+    /// <summary>0.625rem - Extra small relative size.</summary>
+    public static readonly string RelativeSmall3 = "0.625rem";
+
+    /// <summary>0.5rem - Smallest relative size.</summary>
+    public static readonly string RelativeSmall4 = "0.5rem";
+
     /// <summary>0px — no size.</summary>
     public static readonly string Size0 = "0px";
 

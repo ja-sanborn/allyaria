@@ -88,6 +88,16 @@ public sealed partial class ThemeBuilder
             value: new StyleString(value: brand.Font.SansSerif)
         );
 
+        // Font size
+        _theme.Set(
+            navigator: ThemeNavigator.Initialize
+                .SetComponentTypes(ComponentType.GlobalHtml)
+                .SetContrastThemeTypes(isHighContrast: isHighContrast)
+                .SetAllComponentStates()
+                .SetStyleTypes(StyleType.FontSize),
+            value: new StyleLength(value: Sizing.Relative)
+        );
+
         // Line Height
         _theme.Set(
             navigator: ThemeNavigator.Initialize
@@ -202,6 +212,16 @@ public sealed partial class ThemeBuilder
                 .SetAllComponentStates()
                 .SetStyleTypes(StyleType.FontSize),
             value: new StyleLength(value: Sizing.Size3)
+        );
+
+        // Line Height
+        _theme.Set(
+            navigator: ThemeNavigator.Initialize
+                .SetComponentTypes(ComponentType.GlobalBody)
+                .SetContrastThemeTypes(isHighContrast: isHighContrast)
+                .SetAllComponentStates()
+                .SetStyleTypes(StyleType.LineHeight),
+            value: new StyleLength(value: "1.5")
         );
 
         // Margin
