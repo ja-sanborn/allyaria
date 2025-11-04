@@ -125,7 +125,6 @@
         <Compile Remove="Archive\Styling\CssFontStyle.cs"/>
         <None Include="Archive\Styling\CssFontStyle.cs"/>
         <Compile Remove="Archive\Styling\CssFontWeight.cs"/>
-        <None Include="Archive\Styling\CssFontWeight.cs"/>
         <Compile Remove="Archive\Styling\CssHyphens.cs"/>
         <None Include="Archive\Styling\CssHyphens.cs"/>
         <Compile Remove="Archive\Styling\CssJustify.cs"/>
