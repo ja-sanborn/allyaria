@@ -6,6 +6,7 @@ public enum ComponentType
     Body,
     BodyVariant,
     GlobalBody,
+    GlobalFocus,
     GlobalHtml,
     Link,
     LinkVariant,

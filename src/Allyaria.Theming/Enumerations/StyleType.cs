@@ -59,6 +59,9 @@ public enum StyleType
     [Description(description: "outline-color")]
     OutlineColor,
 
+    [Description(description: "outline-offset")]
+    OutlineOffset,
+
     [Description(description: "outline-style")]
     OutlineStyle,
 

@@ -4,9 +4,40 @@ public sealed class Theme
 {
     private ThemeComponent _component = new();
 
-    public static string BoxSizingCss() => "*,*::before,*::after{box-sizing:inherit;}";
+    public string BuildCss(ThemeType themeType)
+    {
+        var builder = new StringBuilder();
 
-    public string PrefixCss(string prefix,
+        builder.Append(value: GetRootCss());
+
+        builder.Append(
+            value: GetCss(
+                prefix: "html",
+                componentType: ComponentType.GlobalHtml,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(
+            value: GetCss(
+                prefix: "body",
+                componentType: ComponentType.GlobalBody,
+                themeType: themeType,
+                componentState: ComponentState.Default
+            )
+        );
+
+        builder.Append(value: GetBoxSizingCss());
+        builder.Append(value: GetFocusCss(themeType: themeType));
+        builder.Append(value: GetReducedMotionCss());
+
+        return builder.ToString();
+    }
+
+    public static string GetBoxSizingCss() => "*,*::before,*::after{box-sizing:inherit;}";
+
+    public string GetCss(string prefix,
         ComponentType componentType,
         ThemeType themeType,
         ComponentState componentState)
@@ -18,10 +49,29 @@ public sealed class Theme
             : $"{prefix.Trim()}{{{css}}}";
     }
 
-    public static string ReducedMotion()
+    public string GetFocusCss(ThemeType themeType)
+    {
+        var globalFocus = GetCss(
+            prefix: ":focus-visible",
+            componentType: ComponentType.GlobalFocus,
+            themeType: themeType,
+            componentState: ComponentState.Focused
+        );
+
+        var whereFocus = GetCss(
+            prefix: ":where(a,button,input,textarea,select,[tabindex]):focus-visible",
+            componentType: ComponentType.GlobalFocus,
+            themeType: themeType,
+            componentState: ComponentState.Focused
+        );
+
+        return $"{globalFocus}{whereFocus}";
+    }
+
+    public static string GetReducedMotionCss()
         => "@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}html,body{scroll-behavior:auto !important;}}";
 
-    public string RootCss() => $":root{{{ToCssVars()}}}";
+    public string GetRootCss() => $":root{{{ToCssVars()}}}";
 
     internal Theme Set(ThemeNavigator navigator, IStyleValue? value)
     {

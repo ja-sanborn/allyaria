@@ -106,6 +106,7 @@ public sealed partial class ThemeBuilder
             var isHighContrast = hc is 1;
 
             CreateGlobalBody(isHighContrast: isHighContrast);
+            CreateGlobalFocus(isHighContrast: isHighContrast);
             CreateGlobalHtml(isHighContrast: isHighContrast);
         }
 
@@ -155,11 +156,12 @@ public sealed partial class ThemeBuilder
         }
 
         if (navigator.ComponentStates.Contains(value: ComponentState.Focused) &&
-            (navigator.StyleTypes.Contains(value: StyleType.OutlineStyle) ||
+            (navigator.StyleTypes.Contains(value: StyleType.OutlineOffset) ||
+                navigator.StyleTypes.Contains(value: StyleType.OutlineStyle) ||
                 navigator.StyleTypes.Contains(value: StyleType.OutlineWidth)))
         {
             throw new AryArgumentException(
-                message: "Cannot change focused outline style or width.", argName: nameof(value)
+                message: "Cannot change focused outline offset, style or width.", argName: nameof(value)
             );
         }
 
