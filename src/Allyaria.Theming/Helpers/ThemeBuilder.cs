@@ -101,13 +101,14 @@ public sealed partial class ThemeBuilder
         _brand = brand ?? new Brand();
         _theme = new Theme();
 
-        for (var hc = 0; hc < 2; hc++)
+        for (var contrast = 0; contrast < 2; contrast++)
         {
-            var isHighContrast = hc is 1;
+            var isHighContrast = contrast is 1;
 
             CreateGlobalBody(isHighContrast: isHighContrast);
             CreateGlobalFocus(isHighContrast: isHighContrast);
             CreateGlobalHtml(isHighContrast: isHighContrast);
+            CreateSurface(isHighContrast: isHighContrast);
         }
 
         _isReady = true;

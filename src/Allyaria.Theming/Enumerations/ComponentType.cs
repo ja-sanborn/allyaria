@@ -4,12 +4,9 @@ namespace Allyaria.Theming.Enumerations;
 public enum ComponentType
 {
     Body,
-    BodyVariant,
     GlobalBody,
     GlobalFocus,
     GlobalHtml,
     Link,
-    LinkVariant,
-    Surface,
-    SurfaceVariant
+    Surface
 }
