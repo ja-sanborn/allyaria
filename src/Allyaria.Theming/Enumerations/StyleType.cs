@@ -334,8 +334,9 @@ public enum StyleType
     TextDecorationStyle,
 
     /// <summary>
-    /// The text-decoration-thickness CSS property sets the stroke thickness of the decoration line that is used on
-    /// text in an element, such as a line-through, underline, or overline./summary>
+    /// The text-decoration-thickness CSS property sets the stroke thickness of the decoration line that is used on text in an
+    /// element, such as a line-through, underline, or overline.
+    /// </summary>
     [Description(description: "text-decoration-thickness")]
     TextDecorationThickness,
 
