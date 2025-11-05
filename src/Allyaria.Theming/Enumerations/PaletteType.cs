@@ -13,7 +13,6 @@ public enum PaletteType
     Success,
     Secondary,
     Surface,
-    SurfaceVariant,
     Tertiary,
     Warning
 }
