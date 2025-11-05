@@ -144,7 +144,7 @@ public sealed partial class ThemeBuilder
                 .SetComponentTypes(ComponentType.GlobalBody)
                 .SetContrastThemeTypes(isHighContrast: isHighContrast)
                 .SetAllComponentStates()
-                .SetStyleTypes(StyleType.OverflowX),
+                .SetStyleTypes(StyleType.OverflowBlock),
             value: new StyleOverflow(kind: StyleOverflow.Kind.Clip)
         );
     }
@@ -271,26 +271,6 @@ public sealed partial class ThemeBuilder
                 .SetContrastThemeTypes(isHighContrast: isHighContrast)
                 .SetAllComponentStates()
                 .SetStyleTypes(StyleType.TextSizeAdjust),
-            value: new StyleLength(value: Sizing.Full)
-        );
-
-        // Webkit Tab Highlight Color
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.WebkitTapHighlightColor),
-            value: new StyleColor(color: Colors.Transparent)
-        );
-
-        // Webkit Text Size Adjust
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.WebkitTextSizeAdjust),
             value: new StyleLength(value: Sizing.Full)
         );
     }
