@@ -30,16 +30,16 @@ internal sealed class ThemeComponent
 
     private ThemeVariant? Get(ComponentType key) => _children.GetValueOrDefault(key: key);
 
-    internal ThemeComponent Set(ThemeNavigator navigator, IStyleValue? value)
+    internal ThemeComponent Set(ThemeUpdater updater)
     {
-        foreach (var key in navigator.ComponentTypes)
+        foreach (var key in updater.Navigator.ComponentTypes)
         {
             if (!_children.ContainsKey(key: key))
             {
                 _children.Add(key: key, value: new ThemeVariant());
             }
 
-            Get(key: key)?.Set(navigator: navigator, value: value);
+            Get(key: key)?.Set(updater: updater);
         }
 
         return this;

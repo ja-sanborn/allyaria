@@ -1,6 +1,6 @@
 namespace Allyaria.Theming.ThemeTypes;
 
-public sealed class Theme
+internal sealed class Theme
 {
     private ThemeComponent _component = new();
 
@@ -171,9 +171,9 @@ public sealed class Theme
 
     public string GetRootCss() => $":root{{{ToCssVars()}}}";
 
-    internal Theme Set(ThemeNavigator navigator, IStyleValue? value)
+    internal Theme Set(ThemeUpdater updater)
     {
-        _component = _component.Set(navigator: navigator, value: value);
+        _component = _component.Set(updater: updater);
 
         return this;
     }

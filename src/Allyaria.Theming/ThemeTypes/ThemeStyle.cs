@@ -64,15 +64,15 @@ internal sealed class ThemeStyle
 
     private IStyleValue? Get(StyleType key) => _children.GetValueOrDefault(key: key);
 
-    internal ThemeStyle Set(ThemeNavigator navigator, IStyleValue? value)
+    internal ThemeStyle Set(ThemeUpdater updater)
     {
         var isColor = false;
 
-        foreach (var key in navigator.StyleTypes)
+        foreach (var key in updater.Navigator.StyleTypes)
         {
-            SetValue(key: key, value: value);
+            SetValue(key: key, value: updater.Value);
 
-            if (!isColor && value is StyleColor)
+            if (!isColor && updater.Value is StyleColor)
             {
                 isColor = true;
             }

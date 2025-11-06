@@ -12,7 +12,7 @@ namespace Allyaria.Theming.Helpers;
 /// This class is central to how Allyaria generates serialized CSS from the strongly-typed <see cref="IStyleValue" /> and
 /// <see cref="StyleGroup" /> abstractions.
 /// </remarks>
-public sealed class CssBuilder
+internal sealed class CssBuilder
 {
     /// <summary>
     /// The underlying collection of CSS property/value pairs. The use of <see cref="SortedDictionary{TKey,TValue}" /> ensures

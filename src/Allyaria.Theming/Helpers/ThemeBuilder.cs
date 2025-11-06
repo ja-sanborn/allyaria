@@ -1,48 +1,16 @@
 namespace Allyaria.Theming.Helpers;
 
-public sealed partial class ThemeBuilder
+internal sealed partial class ThemeBuilder
 {
-    private Brand _brand;
-    private readonly Brand _highContrast = Brand.CreateHighContrastBrand();
     private bool _isReady;
+    private ThemeMapper _mapper = new();
     private Theme _theme = new();
 
-    private void ApplyFromBrand(PaletteType paletteType,
-        bool isHighContrast,
-        bool isVariant,
-        ComponentType componentType,
-        StyleType styleType,
-        Func<BrandPalette, HexColor?> getColor)
+    private void ApplyTheme(ThemeApplierBase applier)
     {
-        var brand = isHighContrast
-            ? _highContrast
-            : _brand;
-
-        var themeMap = isVariant
-            ? BuildThemeVariantMap(brand: brand, isHighContrast: isHighContrast)
-            : BuildThemeMap(brand: brand, isHighContrast: isHighContrast);
-
-        foreach ((var theme, var themeType) in themeMap)
+        foreach (var updater in applier)
         {
-            var brandState = GetBrandState(theme: theme, paletteType: paletteType);
-            var paletteMap = BuildPaletteMap(state: brandState);
-
-            foreach ((var palette, var state) in paletteMap)
-            {
-                var color = getColor(arg: palette);
-
-                if (color is not null)
-                {
-                    _theme.Set(
-                        navigator: ThemeNavigator.Initialize
-                            .SetComponentTypes(componentType)
-                            .SetThemeTypes(themeType)
-                            .SetComponentStates(state)
-                            .SetStyleTypes(styleType),
-                        value: new StyleColor(color: color.Value)
-                    );
-                }
-            }
+            Set(updater: updater);
         }
     }
 
@@ -55,50 +23,16 @@ public sealed partial class ThemeBuilder
 
         var theme = _theme;
 
-        _brand = new Brand();
+        _mapper = new ThemeMapper();
         _theme = new Theme();
         _isReady = false;
 
         return theme;
     }
 
-    private static (BrandPalette Palette, ComponentState ComponentState)[] BuildPaletteMap(BrandState state)
-        =>
-        [
-            (state.Default, ComponentState.Default),
-            (state.Disabled, ComponentState.Disabled),
-            (state.Dragged, ComponentState.Dragged),
-            (state.Focused, ComponentState.Focused),
-            (state.Hovered, ComponentState.Hovered),
-            (state.Pressed, ComponentState.Pressed),
-            (state.Visited, ComponentState.Visited)
-        ];
-
-    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeMap(Brand brand, bool isHighContrast)
-        =>
-        [
-            (brand.Variant.Dark, isHighContrast
-                ? ThemeType.HighContrastDark
-                : ThemeType.Dark),
-            (brand.Variant.Light, isHighContrast
-                ? ThemeType.HighContrastLight
-                : ThemeType.Light)
-        ];
-
-    private static (BrandTheme Theme, ThemeType ThemeType)[] BuildThemeVariantMap(Brand brand, bool isHighContrast)
-        =>
-        [
-            (brand.Variant.DarkVariant, isHighContrast
-                ? ThemeType.HighContrastDark
-                : ThemeType.Dark),
-            (brand.Variant.LightVariant, isHighContrast
-                ? ThemeType.HighContrastLight
-                : ThemeType.Light)
-        ];
-
     public ThemeBuilder Create(Brand? brand = null)
     {
-        _brand = brand ?? new Brand();
+        _mapper = new ThemeMapper(brand: brand);
         _theme = new Theme();
 
         for (var contrast = 0; contrast < 2; contrast++)
@@ -108,7 +42,17 @@ public sealed partial class ThemeBuilder
             CreateGlobalBody(isHighContrast: isHighContrast);
             CreateGlobalFocus(isHighContrast: isHighContrast);
             CreateGlobalHtml(isHighContrast: isHighContrast);
+
+            CreateHeading1(isHighContrast: isHighContrast);
+            CreateHeading2(isHighContrast: isHighContrast);
+            CreateHeading3(isHighContrast: isHighContrast);
+            CreateHeading4(isHighContrast: isHighContrast);
+            CreateHeading5(isHighContrast: isHighContrast);
+            CreateHeading6(isHighContrast: isHighContrast);
+
+            CreateLink(isHighContrast: isHighContrast);
             CreateSurface(isHighContrast: isHighContrast);
+            CreateText(isHighContrast: isHighContrast);
         }
 
         _isReady = true;
@@ -116,57 +60,42 @@ public sealed partial class ThemeBuilder
         return this;
     }
 
-    private static BrandState GetBrandState(BrandTheme theme, PaletteType paletteType)
-        => paletteType switch
-        {
-            PaletteType.Elevation1 => theme.Elevation1,
-            PaletteType.Elevation2 => theme.Elevation2,
-            PaletteType.Elevation3 => theme.Elevation3,
-            PaletteType.Elevation4 => theme.Elevation4,
-            PaletteType.Elevation5 => theme.Elevation5,
-            PaletteType.Error => theme.Error,
-            PaletteType.Info => theme.Info,
-            PaletteType.Primary => theme.Primary,
-            PaletteType.Secondary => theme.Secondary,
-            PaletteType.Success => theme.Success,
-            PaletteType.Surface => theme.Surface,
-            PaletteType.Tertiary => theme.Tertiary,
-            PaletteType.Warning => theme.Warning,
-            _ => theme.Surface
-        };
-
-    public ThemeBuilder Set(ThemeNavigator navigator, IStyleValue? value)
+    public ThemeBuilder Set(ThemeUpdater updater)
     {
-        if (navigator.ThemeTypes.Contains(value: ThemeType.System))
-        {
-            throw new AryArgumentException(message: "System theme cannot be set directly.", argName: nameof(value));
-        }
-
-        if (navigator.ComponentStates.Contains(value: ComponentState.Hidden) ||
-            navigator.ComponentStates.Contains(value: ComponentState.ReadOnly))
+        if (updater.Navigator.ThemeTypes.Contains(value: ThemeType.System))
         {
             throw new AryArgumentException(
-                message: "Hidden and read-only states cannot be set directly.", argName: nameof(value)
+                message: "System theme cannot be set directly.", argName: nameof(updater.Value)
             );
         }
 
-        if (navigator.ThemeTypes.Contains(value: ThemeType.HighContrastDark) ||
-            navigator.ThemeTypes.Contains(value: ThemeType.HighContrastLight))
-        {
-            throw new AryArgumentException(message: "Cannot alter High Contrast themes.", argName: nameof(value));
-        }
-
-        if (navigator.ComponentStates.Contains(value: ComponentState.Focused) &&
-            (navigator.StyleTypes.Contains(value: StyleType.OutlineOffset) ||
-                navigator.StyleTypes.Contains(value: StyleType.OutlineStyle) ||
-                navigator.StyleTypes.Contains(value: StyleType.OutlineWidth)))
+        if (updater.Navigator.ComponentStates.Contains(value: ComponentState.Hidden) ||
+            updater.Navigator.ComponentStates.Contains(value: ComponentState.ReadOnly))
         {
             throw new AryArgumentException(
-                message: "Cannot change focused outline offset, style or width.", argName: nameof(value)
+                message: "Hidden and read-only states cannot be set directly.", argName: nameof(updater.Value)
             );
         }
 
-        _theme = _theme.Set(navigator: navigator, value: value);
+        if (updater.Navigator.ThemeTypes.Contains(value: ThemeType.HighContrastDark) ||
+            updater.Navigator.ThemeTypes.Contains(value: ThemeType.HighContrastLight))
+        {
+            throw new AryArgumentException(
+                message: "Cannot alter High Contrast themes.", argName: nameof(updater.Value)
+            );
+        }
+
+        if (updater.Navigator.ComponentStates.Contains(value: ComponentState.Focused) &&
+            (updater.Navigator.StyleTypes.Contains(value: StyleType.OutlineOffset) ||
+                updater.Navigator.StyleTypes.Contains(value: StyleType.OutlineStyle) ||
+                updater.Navigator.StyleTypes.Contains(value: StyleType.OutlineWidth)))
+        {
+            throw new AryArgumentException(
+                message: "Cannot change focused outline offset, style or width.", argName: nameof(updater.Value)
+            );
+        }
+
+        _theme = _theme.Set(updater: updater);
 
         return this;
     }

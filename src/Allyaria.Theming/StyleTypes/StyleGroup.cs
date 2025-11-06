@@ -101,7 +101,7 @@ public sealed record StyleGroup : IStyleValue
     /// prefix is applied.
     /// </param>
     /// <returns>The same <see cref="CssBuilder" /> instance passed in, allowing fluent chaining of method calls.</returns>
-    public CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
+    internal CssBuilder BuildCss(CssBuilder builder, string? varPrefix = "")
     {
         var typeDescription = Type.GetDescription();
         var typeList = typeDescription.Split(separator: ',');

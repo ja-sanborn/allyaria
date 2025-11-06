@@ -1,277 +1,153 @@
 namespace Allyaria.Theming.Helpers;
 
-public sealed partial class ThemeBuilder
+internal sealed partial class ThemeBuilder
 {
     private void CreateGlobalBody(bool isHighContrast)
     {
-        // Accent color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.AccentColor,
-            getColor: palette => palette.AccentColor
+        ApplyTheme(
+            applier: new ThemeColorApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                paletteType: PaletteType.Surface,
+                isVariant: false,
+                hasBackground: true,
+                isOutline: false
+            )
         );
 
-        // Background color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.BackgroundColor,
-            getColor: palette => palette.BackgroundColor
+        ApplyTheme(
+            applier: new ThemeFontApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                fontFace: FontFaceType.SansSerif,
+                fontSize: Sizing.Relative,
+                lineHeight: "1.5"
+            )
         );
 
-        // Border color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.BorderColor,
-            getColor: palette => palette.BorderColor
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                styleType: StyleType.Margin,
+                value: new StyleLength(value: Sizing.Size0)
+            )
         );
 
-        // Caret color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.CaretColor,
-            getColor: palette => palette.CaretColor
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                styleType: StyleType.Padding,
+                value: new StyleLength(value: Sizing.Size0)
+            )
         );
 
-        // Color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.Color,
-            getColor: palette => palette.ForegroundColor
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                styleType: StyleType.MinHeight,
+                value: new StyleLength(value: Sizing.Full)
+            )
         );
 
-        // Outline color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.OutlineColor,
-            getColor: palette => palette.OutlineColor
-        );
-
-        // Text decoration color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalBody,
-            styleType: StyleType.TextDecorationColor,
-            getColor: palette => palette.TextDecorationColor
-        );
-
-        // Font family
-        var brand = isHighContrast
-            ? _highContrast
-            : _brand;
-
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.FontFamily),
-            value: new StyleString(value: brand.Font.SansSerif)
-        );
-
-        // Font size
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.FontSize),
-            value: new StyleLength(value: Sizing.Relative)
-        );
-
-        // Line Height
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.LineHeight),
-            value: new StyleLength(value: "1.5")
-        );
-
-        // Margin
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.Margin),
-            value: new StyleGroup(type: StyleGroupType.Margin, value: new StyleLength(value: Sizing.Size0))
-        );
-
-        // Min-Height
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.MinHeight),
-            value: new StyleLength(value: Sizing.Full)
-        );
-
-        // Padding
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.Padding),
-            value: new StyleGroup(type: StyleGroupType.Padding, value: new StyleLength(value: Sizing.Size0))
-        );
-
-        // Overflow-x
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.OverflowBlock),
-            value: new StyleOverflow(kind: StyleOverflow.Kind.Clip)
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalBody,
+                styleType: StyleType.OverflowBlock,
+                value: new StyleOverflow(kind: StyleOverflow.Kind.Clip)
+            )
         );
     }
 
     private void CreateGlobalFocus(bool isHighContrast)
-    {
-        // Outline color
-        ApplyFromBrand(
-            paletteType: PaletteType.Surface,
-            isHighContrast: isHighContrast,
-            isVariant: false,
-            componentType: ComponentType.GlobalFocus,
-            styleType: StyleType.OutlineColor,
-            getColor: palette => palette.AccentColor
+        => ApplyTheme(
+            applier: new ThemeOutlineApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalFocus,
+                paletteType: PaletteType.Surface
+            )
         );
-
-        // Outline offset
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalFocus)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.OutlineOffset),
-            value: new StyleNumber(value: Sizing.Size1)
-        );
-
-        // Outline style
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalFocus)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.OutlineStyle),
-            value: new StyleBorderOutlineStyle(kind: StyleBorderOutlineStyle.Kind.Solid)
-        );
-
-        // Outline width
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalFocus)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.OutlineWidth),
-            value: new StyleNumber(value: Sizing.Thick)
-        );
-    }
 
     private void CreateGlobalHtml(bool isHighContrast)
     {
-        // Box sizing
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.BoxSizing),
-            value: new StyleBoxSizing(kind: StyleBoxSizing.Kind.BorderBox)
+        ApplyTheme(
+            applier: new ThemeFontApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                fontSize: Sizing.Size3,
+                lineHeight: "1.5"
+            )
         );
 
-        // Font size
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.FontSize),
-            value: new StyleLength(value: Sizing.Size3)
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.Margin,
+                value: new StyleLength(value: Sizing.Size0)
+            )
         );
 
-        // Line Height
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalBody)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.LineHeight),
-            value: new StyleLength(value: "1.5")
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.Padding,
+                value: new StyleLength(value: Sizing.Size0)
+            )
         );
 
-        // Margin
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.Margin),
-            value: new StyleGroup(type: StyleGroupType.Margin, value: new StyleLength(value: Sizing.Size0))
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.BoxSizing,
+                value: new StyleBoxSizing(kind: StyleBoxSizing.Kind.BorderBox)
+            )
         );
 
-        // Min-Height
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.MinHeight),
-            value: new StyleLength(value: Sizing.Full)
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.MinHeight,
+                value: new StyleLength(value: Sizing.Full)
+            )
         );
 
-        // Padding
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.Padding),
-            value: new StyleGroup(type: StyleGroupType.Padding, value: new StyleLength(value: Sizing.Size0))
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.ScrollBehavior,
+                value: new StyleScrollBehavior(kind: StyleScrollBehavior.Kind.Smooth)
+            )
         );
 
-        // Scroll Behavior
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.ScrollBehavior),
-            value: new StyleScrollBehavior(kind: StyleScrollBehavior.Kind.Smooth)
-        );
-
-        // Text Size Adjust
-        _theme.Set(
-            navigator: ThemeNavigator.Initialize
-                .SetComponentTypes(ComponentType.GlobalHtml)
-                .SetContrastThemeTypes(isHighContrast: isHighContrast)
-                .SetAllComponentStates()
-                .SetStyleTypes(StyleType.TextSizeAdjust),
-            value: new StyleLength(value: Sizing.Full)
+        ApplyTheme(
+            applier: new ThemeApplier(
+                themeMapper: _mapper,
+                isHighContrast: isHighContrast,
+                componentType: ComponentType.GlobalHtml,
+                styleType: StyleType.TextSizeAdjust,
+                value: new StyleLength(value: Sizing.Full)
+            )
         );
     }
 }
