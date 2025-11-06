@@ -92,15 +92,10 @@
         <Compile Remove="Archive\Branding\BrandTheme.cs"/>
         <Compile Remove="Archive\Branding\BrandVariant.cs"/>
         <Compile Remove="Archive\Theming\ThemeBorders.cs"/>
-        <None Include="Archive\Theming\ThemeBorders.cs"/>
         <Compile Remove="Archive\Theming\ThemePalette.cs"/>
-        <None Include="Archive\Theming\ThemePalette.cs"/>
         <Compile Remove="Archive\Theming\ThemePosition.cs"/>
-        <None Include="Archive\Theming\ThemePosition.cs"/>
         <Compile Remove="Archive\Theming\ThemeSizing.cs"/>
-        <None Include="Archive\Theming\ThemeSizing.cs"/>
         <Compile Remove="Archive\Theming\ThemeTypography.cs"/>
-        <None Include="Archive\Theming\ThemeTypography.cs"/>
         <Compile Remove="Archive\Contracts\IStyleGroup.cs"/>
         <Compile Remove="Archive\Contracts\IStyleValue.cs"/>
         <Compile Remove="Archive\Enumerations\ComponentState.cs"/>
