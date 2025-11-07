@@ -1,8 +1,6 @@
 <div @ref="_host" hidden aria-hidden="true"></div>
-<style id="ary-theme-style">@_css</style>
+<style id="ary-theme-style">@GlobalCss</style>
 
-<CascadingValue Name="Theme" Value="@_theme">
-    <CascadingValue Name="ThemeType" Value="@_effectiveType">
-        @ChildContent
-    </CascadingValue>
+<CascadingValue Name="ThemeType" Value="@_effectiveType">
+    @ChildContent
 </CascadingValue>
