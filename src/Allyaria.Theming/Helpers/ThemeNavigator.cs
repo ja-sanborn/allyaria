@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Types;
+namespace Allyaria.Theming.Helpers;
 
 /// <summary>
 /// Represents a navigational context for resolving theming relationships across components, states, and style types in the

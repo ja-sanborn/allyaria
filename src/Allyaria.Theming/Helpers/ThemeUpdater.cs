@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Theming.Types;
+﻿namespace Allyaria.Theming.Helpers;
 
 /// <summary>
 /// Represents a single theming update instruction that pairs a <see cref="ThemeNavigator" /> with a corresponding
