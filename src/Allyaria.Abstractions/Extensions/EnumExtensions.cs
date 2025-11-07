@@ -34,7 +34,7 @@ public static class EnumExtensions
     /// <exception cref="AryArgumentException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
     public static string GetDescription(this Enum value)
     {
-        AryArgumentException.ThrowIfNull(argValue: value, argName: nameof(value));
+        AryGuard.NotNull(value: value, argName: nameof(value));
 
         var type = value.GetType();
         var name = value.ToString(); // May be "A" or "A, B" for [Flags].

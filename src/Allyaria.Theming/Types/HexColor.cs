@@ -164,7 +164,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// </remarks>
     public HexColor(string value)
     {
-        AryArgumentException.ThrowIfNullOrWhiteSpace(argValue: value, argName: nameof(value));
+        AryGuard.NotNullOrWhiteSpace(value: value, argName: nameof(value));
 
         HexByte red;
         HexByte green;
@@ -334,9 +334,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>The resolved color.</returns>
     public HexColor EnsureContrast(HexColor background, double minimumRatio = 3.0)
     {
-        AryArgumentException.ThrowIfOutOfRange<double>(
-            argValue: minimumRatio, min: 1.0, max: 21.0, argName: nameof(minimumRatio)
-        );
+        AryGuard.InRange(value: minimumRatio, min: 1.0, max: 21.0, argName: nameof(minimumRatio));
 
         var startRatio = ContrastRatio(background: background);
 
@@ -584,7 +582,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             throw new AryArgumentException(message: $"Invalid alpha value: {value}", argName: nameof(value));
         }
 
-        AryArgumentException.ThrowIfOutOfRange<double>(argValue: alpha, min: 0.0, max: 1.0, argName: nameof(value));
+        AryGuard.InRange(value: alpha, min: 0.0, max: 1.0, argName: nameof(value));
 
         return HexByte.FromNormalized(value: alpha);
     }
@@ -637,7 +635,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             throw new AryArgumentException(message: $"Invalid channel percentage: {value}", argName: nameof(value));
         }
 
-        AryArgumentException.ThrowIfOutOfRange<double>(argValue: channel, min: 0.0, max: 100.0, argName: nameof(value));
+        AryGuard.InRange(value: channel, min: 0.0, max: 100.0, argName: nameof(value));
 
         return HexByte.FromNormalized(value: channel);
     }
@@ -819,7 +817,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
                 ? number * 100.0
                 : number;
 
-        AryArgumentException.ThrowIfOutOfRange<double>(argValue: percent, min: 0.0, max: 100.0, argName: nameof(value));
+        AryGuard.InRange(value: percent, min: 0.0, max: 100.0, argName: nameof(value));
 
         return percent / 100.0;
     }

@@ -1,5 +1,6 @@
 global using Allyaria.Abstractions.Exceptions;
 global using Allyaria.Abstractions.Extensions;
+global using Allyaria.Abstractions.Validation;
 global using Allyaria.Theming.BrandTypes;
 global using Allyaria.Theming.Constants;
 global using Allyaria.Theming.Contracts;

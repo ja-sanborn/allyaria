@@ -28,10 +28,10 @@ public readonly struct HexByte : IComparable<HexByte>, IEquatable<HexByte>
     /// </exception>
     public HexByte(string value)
     {
-        AryArgumentException.ThrowIfNullOrWhiteSpace(argValue: value, argName: nameof(value));
+        AryGuard.NotNullOrWhiteSpace(value: value, argName: nameof(value));
 
         var span = value.AsSpan().Trim();
-        AryArgumentException.ThrowIfOutOfRange<int>(argValue: span.Length, min: 1, max: 2, argName: nameof(value));
+        AryGuard.InRange(value: span.Length, min: 1, max: 2, argName: nameof(value));
 
         Value = byte.TryParse(
             s: span, style: NumberStyles.HexNumber, provider: CultureInfo.InvariantCulture, result: out var parsed
@@ -88,7 +88,7 @@ public readonly struct HexByte : IComparable<HexByte>, IEquatable<HexByte>
             );
         }
 
-        AryArgumentException.ThrowIfOutOfRange<double>(argValue: value, min: 0.0, max: 1.0, argName: nameof(value));
+        AryGuard.InRange(value: value, min: 0.0, max: 1.0, argName: nameof(value));
 
         var b = (byte)Math.Clamp(
             value: Math.Round(value: value * 255.0, mode: MidpointRounding.ToEven), min: 0, max: 255
