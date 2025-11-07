@@ -46,14 +46,6 @@ public readonly record struct ThemeNavigator(
 
     public ThemeNavigator SetAllStyleTypes() => SetStyleTypes(items: Enum.GetValues<StyleType>());
 
-    public ThemeNavigator SetAllThemeTypes()
-    {
-        var types = Enum.GetValues<ThemeType>().ToList();
-        types.Remove(item: ThemeType.System);
-
-        return SetThemeTypes(items: types.ToArray());
-    }
-
     public ThemeNavigator SetComponentStates(params ComponentState[] items)
         => this with
         {
@@ -66,7 +58,7 @@ public readonly record struct ThemeNavigator(
             ComponentTypes = BuildList(items: items)
         };
 
-    public ThemeNavigator SetContrastThemeTypes(bool isHighContrast)
+    internal ThemeNavigator SetContrastThemeTypes(bool isHighContrast)
         => isHighContrast
             ? SetThemeTypes(ThemeType.HighContrastLight, ThemeType.HighContrastDark)
             : SetThemeTypes(ThemeType.Light, ThemeType.Dark);
@@ -77,7 +69,12 @@ public readonly record struct ThemeNavigator(
             StyleTypes = BuildList(items: items)
         };
 
-    public ThemeNavigator SetThemeTypes(params ThemeType[] items)
+    public ThemeNavigator SetThemeType(ThemeType themeType)
+        => themeType is ThemeType.System or ThemeType.HighContrastDark or ThemeType.HighContrastLight
+            ? throw new AryArgumentException(message: "Invalid theme type", argName: nameof(themeType))
+            : SetThemeTypes(items: themeType);
+
+    internal ThemeNavigator SetThemeTypes(params ThemeType[] items)
         => this with
         {
             ThemeTypes = BuildList(items: items)

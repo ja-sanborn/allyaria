@@ -12,117 +12,12 @@
         <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Remove="Archives\Constants\AlignPositioning.cs"/>
-        <Compile Remove="Archives\Constants\BorderStyle.cs"/>
-        <Compile Remove="Archives\Constants\BoxSizing.cs"/>
-        <Compile Remove="Archives\Constants\Colors.cs"/>
-        <Compile Remove="Archives\Constants\Display.cs"/>
-        <Compile Remove="Archives\Constants\FloatAlignment.cs"/>
-        <Compile Remove="Archives\Constants\FontStyle.cs"/>
-        <Compile Remove="Archives\Constants\FontWeight.cs"/>
-        <Compile Remove="Archives\Constants\JustifyPositioning.cs"/>
-        <Compile Remove="Archives\Constants\OverflowScrolling.cs"/>
-        <Compile Remove="Archives\Constants\OverflowWrapping.cs"/>
-        <Compile Remove="Archives\Constants\Positioning.cs"/>
-        <Compile Remove="Archives\Constants\Sizing.cs"/>
-        <Compile Remove="Archives\Constants\TextAlignment.cs"/>
-        <Compile Remove="Archives\Constants\TextDecorationLine.cs"/>
-        <Compile Remove="Archives\Constants\TextDecorationStyle.cs"/>
-        <Compile Remove="Archives\Constants\TextOverflow.cs"/>
-        <Compile Remove="Archives\Constants\TextTransformation.cs"/>
-        <Compile Remove="Archives\Constants\ThemingDefaults.cs"/>
-        <Compile Remove="Archives\Constants\VerticalAlignment.cs"/>
-        <Compile Remove="Archives\Constants\WhiteSpacing.cs"/>
-        <Compile Remove="Archives\Constants\WritingMode.cs"/>
-        <Compile Remove="Archives\Contracts\IThemePersistence.cs"/>
-        <Compile Remove="Archives\Contracts\IThemeProvider.cs"/>
-        <Compile Remove="Archives\Contracts\IThemeWatcher.cs"/>
-        <Compile Remove="Archives\Helpers\StyleHelper.cs"/>
-        <Compile Remove="Archives\Services\ThemePersistence.cs"/>
-        <Compile Remove="Archives\Services\ThemeProvider.cs"/>
-        <Compile Remove="Archives\Services\ThemeWatcher.cs"/>
-        <Compile Remove="Archives\Types\ContrastResult.cs"/>
-        <Compile Remove="Archives\Types\HexByte.cs"/>
-        <Compile Remove="Archives\Types\HexColor.cs"/>
-        <Compile Remove="Archives\Types\StyleColor.cs"/>
-        <Compile Remove="Archives\Types\StyleNumber.cs"/>
-        <Compile Remove="Archives\Types\StyleString.cs"/>
-        <Compile Remove="Archives\Types\Theme.Minimal.cs"/>
-        <Compile Remove="Archives\Types\ThemeBorderColor.cs"/>
-        <Compile Remove="Archives\Types\ThemeBorderRadius.cs"/>
-        <Compile Remove="Archives\Types\ThemeBorderStyle.cs"/>
-        <Compile Remove="Archives\Types\ThemeBorderWidth.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayout.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayoutAlignment.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayoutBorder.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayoutOverflow.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayoutPosition.cs"/>
-        <Compile Remove="Archives\Types\ThemeLayoutSize.cs"/>
-        <Compile Remove="Archives\Types\ThemeMargin.cs"/>
-        <Compile Remove="Archives\Types\ThemeOld.cs"/>
-        <Compile Remove="Archives\Types\ThemePadding.cs"/>
-        <Compile Remove="Archives\Types\ThemePalette.cs"/>
-        <Compile Remove="Archives\Types\ThemeTypography.cs"/>
-        <Compile Remove="Archive\Themes\Theme.cs"/>
-        <Compile Remove="Archive\Themes\ThemeComponent.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupBorder.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupOverflow.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupPalette.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupPosition.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupSizing.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupTypography.cs"/>
-        <Compile Remove="Archive\Themes\ThemeGroupTypographyDisplay.cs"/>
-        <Compile Remove="Archive\Themes\ThemeState.cs"/>
-        <Compile Remove="Archive\Themes\ThemeStyle.cs"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Allyaria.Theming.UnitTests"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Constants\Colors.cs"/>
-    </ItemGroup>
-    <ItemGroup>
         <ProjectReference Include="..\Allyaria.Abstractions\Allyaria.Abstractions.csproj"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Remove="Archive\Branding\BrandColor.cs"/>
-        <Compile Remove="Archive\Branding\BrandFont.cs"/>
-        <Compile Remove="Archive\Branding\BrandPalette.cs"/>
-        <Compile Remove="Archive\Branding\BrandStyle.cs"/>
-        <Compile Remove="Archive\Branding\BrandTheme.cs"/>
-        <Compile Remove="Archive\Branding\BrandVariant.cs"/>
-        <Compile Remove="Archive\Theming\ThemeBorders.cs"/>
-        <Compile Remove="Archive\Theming\ThemePalette.cs"/>
-        <Compile Remove="Archive\Theming\ThemePosition.cs"/>
-        <Compile Remove="Archive\Theming\ThemeSizing.cs"/>
-        <Compile Remove="Archive\Theming\ThemeTypography.cs"/>
-        <Compile Remove="Archive\Contracts\IStyleGroup.cs"/>
-        <Compile Remove="Archive\Contracts\IStyleValue.cs"/>
-        <Compile Remove="Archive\Enumerations\ComponentState.cs"/>
-        <Compile Remove="Archive\Enumerations\ComponentType.cs"/>
-        <Compile Remove="Archive\Enumerations\FontType.cs"/>
-        <Compile Remove="Archive\Enumerations\LengthUnits.cs"/>
-        <Compile Remove="Archive\Enumerations\PaletteType.cs"/>
-        <Compile Remove="Archive\Enumerations\ThemeType.cs"/>
-        <Compile Remove="Archive\Styling\CssFontWeight.cs"/>
-        <Compile Remove="Archive\Styling\CssHyphens.cs"/>
-        <Compile Remove="Archive\Styling\CssJustify.cs"/>
-        <Compile Remove="Archive\Styling\CssLineBreak.cs"/>
-        <Compile Remove="Archive\Styling\CssOutlineStyle.cs"/>
-        <Compile Remove="Archive\Styling\CssOverflowWrapp.cs"/>
-        <Compile Remove="Archive\Styling\CssOverscrollBehavior.cs"/>
-        <Compile Remove="Archive\Styling\CssPosition.cs"/>
-        <Compile Remove="Archive\Styling\CssSize.cs"/>
-        <Compile Remove="Archive\Styling\CssTextAlign.cs"/>
-        <Compile Remove="Archive\Styling\CssTextDecorationLine.cs"/>
-        <Compile Remove="Archive\Styling\CssTextDecorationStyle.cs"/>
-        <Compile Remove="Archive\Styling\CssTextOrientation.cs"/>
-        <Compile Remove="Archive\Styling\CssTextOverflow.cs"/>
-        <Compile Remove="Archive\Styling\CssTextTransform.cs"/>
-        <Compile Remove="Archive\Styling\CssUnicodeBidi.cs"/>
-        <Compile Remove="Archive\Styling\CssVerticalAlign.cs"/>
-        <Compile Remove="Archive\Styling\CssWhiteSpace.cs"/>
-        <Compile Remove="Archive\Styling\CssWordBreak.cs"/>
-        <Compile Remove="Archive\Styling\CssWritingMode.cs"/>
     </ItemGroup>
 </Project>
