@@ -559,6 +559,19 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>A new <see cref="HexColor" />.</returns>
     public static HexColor Parse(string value) => new(value: value);
 
+    /// <summary>
+    /// Parses a normalized alpha component from a string value in the range [0, 1] and converts it to a <see cref="HexByte" />
+    /// representation.
+    /// </summary>
+    /// <param name="value">
+    /// The string containing the alpha value to parse. Leading and trailing whitespace are ignored. The value must represent a
+    /// finite number within the inclusive range [0, 1].
+    /// </param>
+    /// <returns>A <see cref="HexByte" /> corresponding to the parsed and clamped alpha value.</returns>
+    /// <exception cref="AryArgumentException">
+    /// Thrown when <paramref name="value" /> cannot be parsed as a finite <see cref="double" /> or is outside the [0, 1]
+    /// range.
+    /// </exception>
     private static HexByte ParseAlpha(string value)
     {
         var trimmed = value.Trim();
@@ -576,6 +589,15 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         return HexByte.FromNormalized(value: alpha);
     }
 
+    /// <summary>
+    /// Parses an integer channel value from a string and returns it as a <see cref="HexByte" />. The value is expected to
+    /// represent an 8-bit channel in the range [0, 255].
+    /// </summary>
+    /// <param name="value">The string containing the channel value to parse.</param>
+    /// <returns>A <see cref="HexByte" /> corresponding to the parsed channel value.</returns>
+    /// <exception cref="AryArgumentException">
+    /// Thrown when <paramref name="value" /> cannot be parsed as a byte or is outside the valid 0–255 range.
+    /// </exception>
     private static HexByte ParseByte(string value)
         => byte.TryParse(
             s: value, style: NumberStyles.Integer, provider: CultureInfo.InvariantCulture, result: out var byteValue
@@ -583,6 +605,19 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ? new HexByte(value: byteValue)
             : throw new AryArgumentException(message: $"Byte theme is out of range: {value}", argName: nameof(value));
 
+    /// <summary>
+    /// Parses a color channel from a string that may be expressed either as an absolute value or as a percentage. Percentage
+    /// values are normalized to the range [0, 1] before being converted to a <see cref="HexByte" />.
+    /// </summary>
+    /// <param name="value">
+    /// The channel string to parse. If it ends with <c>'%'</c>, it is interpreted as a percentage in the range [0, 100];
+    /// otherwise, it is parsed as an integer channel value in the range [0, 255].
+    /// </param>
+    /// <returns>A <see cref="HexByte" /> representing the parsed channel value.</returns>
+    /// <exception cref="AryArgumentException">
+    /// Thrown when <paramref name="value" /> cannot be parsed as a valid channel value or percentage, or when the numeric
+    /// percentage is outside the 0–100 range.
+    /// </exception>
     private static HexByte ParseChannel(string value)
     {
         var trimmed = value.Trim();
@@ -747,6 +782,19 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
                 ? throw new AryArgumentException(message: $"Invalid hue theme: {value}", argName: nameof(value))
                 : hue;
 
+    /// <summary>
+    /// Parses a percentage-like string into a fractional value in the range [0, 1]. Inputs may be given either as a raw
+    /// fraction (e.g., <c>0.5</c>) or as a percentage (e.g., <c>50</c> or <c>50%</c>).
+    /// </summary>
+    /// <param name="value">
+    /// The string containing the percentage. If it ends with <c>'%'</c>, it is treated as a percentage between 0 and 100;
+    /// otherwise values ≤ 1 are interpreted as fractions and larger values as percentages.
+    /// </param>
+    /// <returns>The parsed percentage expressed as a normalized fraction in the range [0, 1].</returns>
+    /// <exception cref="AryArgumentException">
+    /// Thrown when <paramref name="value" /> cannot be parsed as a finite <see cref="double" /> or when the resulting
+    /// percentage is outside the 0–100 range.
+    /// </exception>
     private static double ParsePercent(string value)
     {
         var trimmed = value.Trim();
@@ -1069,26 +1117,77 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
         );
     }
 
+    /// <summary>
+    /// Converts the current color into an accent variant suitable for emphasizing interactive or highlighted UI elements.
+    /// Internally adjusts perceived lightness using <see cref="ShiftLightness(double)" /> with a stronger delta.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the accent variant of the current color.</returns>
     public HexColor ToAccent() => ShiftLightness(delta: 0.6);
 
+    /// <summary>
+    /// Produces a disabled-state variant of the current color by reducing saturation and slightly flattening perceived
+    /// contrast. Intended for controls that are present but not interactive.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the disabled-state color.</returns>
     public HexColor ToDisabled() => Desaturate(desaturateBy: 0.6);
 
+    /// <summary>
+    /// Produces a dragged-state variant of the current color by adjusting lightness for improved visual feedback while a
+    /// draggable element is being moved.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the dragged-state color.</returns>
     public HexColor ToDragged() => ShiftLightness(delta: 0.18);
 
+    /// <summary>
+    /// Produces a slightly elevated variant of the current color corresponding to the first elevation level in layered UI
+    /// surfaces.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the elevation 1 color.</returns>
     public HexColor ToElevation1() => ShiftLightness(delta: 0.02);
 
+    /// <summary>
+    /// Produces an elevated variant of the current color corresponding to the second elevation level in layered UI surfaces.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the elevation 2 color.</returns>
     public HexColor ToElevation2() => ShiftLightness(delta: 0.04);
 
+    /// <summary>
+    /// Produces an elevated variant of the current color corresponding to the third elevation level in layered UI surfaces.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the elevation 3 color.</returns>
     public HexColor ToElevation3() => ShiftLightness(delta: 0.06);
 
+    /// <summary>
+    /// Produces an elevated variant of the current color corresponding to the fourth elevation level in layered UI surfaces.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the elevation 4 color.</returns>
     public HexColor ToElevation4() => ShiftLightness(delta: 0.08);
 
+    /// <summary>
+    /// Produces an elevated variant of the current color corresponding to the fifth elevation level in layered UI surfaces.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the elevation 5 color.</returns>
     public HexColor ToElevation5() => ShiftLightness(delta: 0.1);
 
+    /// <summary>
+    /// Produces a focused-state variant of the current color, typically used to render focus rings or outlines with enhanced
+    /// prominence relative to the base color.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the focused-state color.</returns>
     public HexColor ToFocused() => ShiftLightness(delta: 0.1);
 
+    /// <summary>
+    /// Derives a high-contrast foreground variant from the current color by strongly adjusting lightness. Intended for text or
+    /// iconography rendered on top of the base color.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> suitable for use as a foreground color.</returns>
     public HexColor ToForeground() => ShiftLightness(delta: 0.9);
 
+    /// <summary>
+    /// Produces a hover-state variant of the current color by slightly adjusting lightness to provide visual feedback when a
+    /// pointer hovers over an interactive element.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the hovered-state color.</returns>
     public HexColor ToHovered() => ShiftLightness(delta: 0.06);
 
     /// <summary>
@@ -1121,6 +1220,11 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             alpha: A
         );
 
+    /// <summary>
+    /// Produces a pressed-state variant of the current color by adjusting lightness to convey a deeper interaction state when
+    /// a control is actively pressed or engaged.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the pressed-state color.</returns>
     public HexColor ToPressed() => ShiftLightness(delta: 0.14);
 
     /// <summary>Computes WCAG relative luminance from an opaque sRGB color.</summary>
@@ -1141,6 +1245,11 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>The string representation.</returns>
     public override string ToString() => $"#{R}{G}{B}{A}";
 
+    /// <summary>
+    /// Produces a visited-state variant of the current color by modestly reducing saturation while preserving general hue and
+    /// brightness, making it suitable for indicating visited links or previously activated actions.
+    /// </summary>
+    /// <returns>A new <see cref="HexColor" /> representing the visited-state color.</returns>
     public HexColor ToVisited() => Desaturate(desaturateBy: 0.3);
 
     /// <summary>Attempts to parse the specified color string.</summary>

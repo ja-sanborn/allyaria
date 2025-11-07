@@ -104,7 +104,7 @@ public enum StyleType
 
     /// <summary>
     /// The font-size CSS property sets the size of the font. Changing the font size also updates the sizes of the font
-    /// size-relative <length> units, such as em, ex, and so forth.
+    /// size-relative &lt;length&gt; units, such as em, ex, and so forth.
     /// </summary>
     [Description(description: "font-size")]
     FontSize,
