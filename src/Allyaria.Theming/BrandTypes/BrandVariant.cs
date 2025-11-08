@@ -4,7 +4,7 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents a set of brand theme variants supporting both light and dark modes, as well as their derived inverse color
 /// variants for adaptive contrast and visual harmony.
 /// </summary>
-public struct BrandVariant
+public sealed record BrandVariant
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrandVariant" /> struct using optional light and dark themes. If none are

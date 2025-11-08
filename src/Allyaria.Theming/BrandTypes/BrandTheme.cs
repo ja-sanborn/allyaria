@@ -4,7 +4,7 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents a comprehensive theme configuration for a brand, containing multiple color states across different tonal
 /// elevations and semantic categories such as primary, secondary, error, success, and warning.
 /// </summary>
-public readonly record struct BrandTheme
+public sealed record BrandTheme
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrandTheme" /> struct using the provided color parameters.

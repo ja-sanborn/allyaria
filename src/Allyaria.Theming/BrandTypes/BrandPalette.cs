@@ -4,22 +4,21 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents a complete color palette for a brand theme, including background, foreground, accent, border, and decoration
 /// colors derived from a base background color.
 /// </summary>
-public readonly record struct BrandPalette
+public sealed record BrandPalette
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrandPalette" /> struct using the specified background color.
     /// </summary>
-    /// <param name="backgroundColor">
-    /// The base background <see cref="HexColor" /> from which all related palette colors are
-    /// derived.
-    /// </param>
-    public BrandPalette(HexColor backgroundColor)
+    /// <param name="color">The base background <see cref="HexColor" /> from which all related palette colors are derived.</param>
+    public BrandPalette(HexColor color)
     {
+        var backgroundColor = color.SetAlpha(alpha: 255);
+
         BackgroundColor = backgroundColor;
         ForegroundColor = BackgroundColor.ToForeground().EnsureContrast(background: BackgroundColor);
         CaretColor = ForegroundColor;
         AccentColor = ForegroundColor.ToAccent().EnsureContrast(background: BackgroundColor);
-        BorderColor = BackgroundColor.ToAccent();
+        BorderColor = BackgroundColor.ToAccent().EnsureContrast(background: BackgroundColor);
         OutlineColor = AccentColor;
         TextDecorationColor = AccentColor;
     }

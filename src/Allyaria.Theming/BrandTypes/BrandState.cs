@@ -4,21 +4,19 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents a collection of brand color palettes corresponding to different UI interaction states. Each state derives
 /// its palette from a base color with adjusted tonal variations for accessibility and visual feedback.
 /// </summary>
-public readonly record struct BrandState
+public sealed record BrandState
 {
     /// <summary>Initializes a new instance of the <see cref="BrandState" /> struct using the specified base color.</summary>
     /// <param name="color">The base <see cref="HexColor" /> used to generate state-specific palettes.</param>
     public BrandState(HexColor color)
     {
-        var backgroundColor = color.SetAlpha(alpha: 255);
-
-        Default = new BrandPalette(backgroundColor: backgroundColor);
-        Disabled = new BrandPalette(backgroundColor: backgroundColor.ToDisabled());
-        Dragged = new BrandPalette(backgroundColor: backgroundColor.ToDragged());
-        Focused = new BrandPalette(backgroundColor: backgroundColor.ToFocused());
-        Hovered = new BrandPalette(backgroundColor: backgroundColor.ToHovered());
-        Pressed = new BrandPalette(backgroundColor: backgroundColor.ToPressed());
-        Visited = new BrandPalette(backgroundColor: backgroundColor.ToVisited());
+        Default = new BrandPalette(color: color);
+        Disabled = new BrandPalette(color: color.ToDisabled());
+        Dragged = new BrandPalette(color: color.ToDragged());
+        Focused = new BrandPalette(color: color.ToFocused());
+        Hovered = new BrandPalette(color: color.ToHovered());
+        Pressed = new BrandPalette(color: color.ToPressed());
+        Visited = new BrandPalette(color: color.ToVisited());
     }
 
     /// <summary>Gets the palette for the default (idle) visual state.</summary>

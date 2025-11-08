@@ -4,7 +4,7 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents a brand configuration that encapsulates the font and theme variants (light and dark) used for visual styling
 /// in the Allyaria Theming system.
 /// </summary>
-public readonly record struct Brand
+public sealed record Brand
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Brand" /> struct with optional font and light/dark theme parameters.

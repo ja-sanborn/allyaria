@@ -4,7 +4,7 @@ namespace Allyaria.Theming.BrandTypes;
 /// Represents the font configuration for a brand, providing distinct font families for sans-serif, serif, and monospace
 /// text rendering.
 /// </summary>
-public readonly record struct BrandFont
+public sealed record BrandFont
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrandFont" /> struct with optional sans-serif, serif, and monospace font
