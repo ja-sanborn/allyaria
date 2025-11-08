@@ -30,7 +30,7 @@ public sealed class AryResult
     public bool IsSuccess { get; }
 
     /// <summary>Creates a failure <see cref="AryResult" /> with the specified error information.</summary>
-    /// <param name="error">The <see cref="Exception" /> representing the failure cause. Cannot be <see langword="null" />.</param>
+    /// <param name="error">The <see cref="Exception" /> representing the failure cause.</param>
     /// <returns>An <see cref="AryResult" /> representing a failed operation.</returns>
     public static AryResult Failure(Exception? error)
         => new(isSuccess: false, error: error ?? new AryException(message: "Unknown error"));
