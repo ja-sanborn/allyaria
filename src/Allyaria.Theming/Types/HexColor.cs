@@ -377,6 +377,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
 
         if (towardWhite.ContrastRatio > best.ContrastRatio)
         {
+            // Code Coverage: This is unreachable code.
             best = towardWhite;
         }
 
@@ -579,6 +580,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ) ||
             !double.IsFinite(d: alpha))
         {
+            // Code Coverage: This is unreachable code.
             throw new AryArgumentException(message: $"Invalid alpha value: {value}", argName: nameof(value));
         }
 
@@ -632,12 +634,13 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ) ||
             !double.IsFinite(d: channel))
         {
+            // Code Coverage: This is unreachable code.
             throw new AryArgumentException(message: $"Invalid channel percentage: {value}", argName: nameof(value));
         }
 
         AryGuard.InRange(value: channel, min: 0.0, max: 100.0, argName: nameof(value));
 
-        return HexByte.FromNormalized(value: channel);
+        return HexByte.FromNormalized(value: channel / 100.0);
     }
 
     /// <summary>
@@ -808,6 +811,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
             ) ||
             !double.IsFinite(d: number))
         {
+            // Code Coverage: This is unreachable code.
             throw new AryArgumentException(message: $"Invalid percentage value: {value}", argName: nameof(value));
         }
 

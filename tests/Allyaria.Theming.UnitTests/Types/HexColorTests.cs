@@ -571,6 +571,160 @@ public sealed class HexColorTests
     }
 
     [Fact]
+    public void ToAccent_Should_Match_ShiftLightness_With_AccentDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var accent = sut.ToAccent();
+        var expected = sut.ShiftLightness(delta: 0.6);
+
+        // Assert
+        accent.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToDisabled_Should_Match_Desaturate_With_DisabledDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var disabled = sut.ToDisabled();
+        var expected = sut.Desaturate(desaturateBy: 0.6);
+
+        // Assert
+        disabled.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToDragged_Should_Match_ShiftLightness_With_DraggedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var dragged = sut.ToDragged();
+        var expected = sut.ShiftLightness(delta: 0.18);
+
+        // Assert
+        dragged.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation1_Should_Match_ShiftLightness_With_Elevation1Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation1();
+        var expected = sut.ShiftLightness(delta: 0.02);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation2_Should_Match_ShiftLightness_With_Elevation2Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation2();
+        var expected = sut.ShiftLightness(delta: 0.04);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation3_Should_Match_ShiftLightness_With_Elevation3Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation3();
+        var expected = sut.ShiftLightness(delta: 0.06);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation4_Should_Match_ShiftLightness_With_Elevation4Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation4();
+        var expected = sut.ShiftLightness(delta: 0.08);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation5_Should_Match_ShiftLightness_With_Elevation5Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation5();
+        var expected = sut.ShiftLightness(delta: 0.10);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToFocused_Should_Match_ShiftLightness_With_FocusedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var focused = sut.ToFocused();
+        var expected = sut.ShiftLightness(delta: 0.10);
+
+        // Assert
+        focused.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToForeground_Should_Match_ShiftLightness_With_ForegroundDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var foreground = sut.ToForeground();
+        var expected = sut.ShiftLightness(delta: 0.90);
+
+        // Assert
+        foreground.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToHovered_Should_Match_ShiftLightness_With_HoveredDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var hovered = sut.ToHovered();
+        var expected = sut.ShiftLightness(delta: 0.06);
+
+        // Assert
+        hovered.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
     public void ToLerpLinear_Should_GammaCorrect_And_Include_Alpha()
     {
         // Arrange
@@ -604,6 +758,20 @@ public sealed class HexColorTests
     }
 
     [Fact]
+    public void ToPressed_Should_Match_ShiftLightness_With_PressedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var pressed = sut.ToPressed();
+        var expected = sut.ShiftLightness(delta: 0.14);
+
+        // Assert
+        pressed.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
     public void ToRelativeLuminance_Should_Match_Known_Values_For_Black_And_White()
     {
         // Arrange
@@ -633,5 +801,19 @@ public sealed class HexColorTests
 
         // Assert
         s.Should().Be(expected: "#0A1B2C3D");
+    }
+
+    [Fact]
+    public void ToVisited_Should_Match_Desaturate_With_VisitedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var visited = sut.ToVisited();
+        var expected = sut.Desaturate(desaturateBy: 0.3);
+
+        // Assert
+        visited.Should().BeEquivalentTo(expectation: expected);
     }
 }
