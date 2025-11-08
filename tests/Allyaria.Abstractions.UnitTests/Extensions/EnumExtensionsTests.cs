@@ -1,5 +1,4 @@
-﻿using Allyaria.Abstractions.Extensions;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Allyaria.Abstractions.UnitTests.Extensions;
 
