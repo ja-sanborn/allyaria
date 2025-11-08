@@ -1,13 +1,15 @@
 ﻿# Allyaria.Abstractions.Extensions.StringExtensions
 
-`StringExtensions` is a static utility class that provides a comprehensive set of string manipulation helpers. It
-includes conversions between naming conventions (PascalCase, camelCase, snake_case, kebab-case), culture-aware
-capitalization, diacritic (accent) normalization, and identifier validation. All methods are null- and whitespace-safe,
-returning empty strings when appropriate.
+`StringExtensions` provides a comprehensive suite of string manipulation and normalization utilities, including
+PascalCase, camelCase, snake_case, and kebab-case conversions; culture-aware capitalization; whitespace and diacritic
+normalization; and safe null handling.
+
+All methods are designed to be **null-, empty-, and whitespace-safe**, returning `string.Empty` when appropriate. They
+are optimized for common developer workflows in naming, text formatting, and UI-friendly label generation.
 
 ## Constructors
 
-*None*
+`StringExtensions` is a static class and cannot be instantiated.
 
 ## Properties
 
@@ -15,20 +17,22 @@ returning empty strings when appropriate.
 
 ## Methods
 
-| Name                                                         | Returns  | Description                                                                                                                                       |
-|--------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Capitalize(this string? word, CultureInfo? culture = null)` | `string` | Converts the first character of a word to uppercase and the remaining characters to lowercase, respecting cultural casing rules.                  |
-| `FromCamelCase(this string? value)`                          | `string` | Converts a camelCase identifier into a human-readable string with spaces. Throws `AryArgumentException` if invalid.                               |
-| `FromKebabCase(this string? value)`                          | `string` | Converts a kebab-case identifier into a human-readable string with spaces. Throws `AryArgumentException` if invalid.                              |
-| `FromPascalCase(this string? value)`                         | `string` | Converts a PascalCase identifier into a human-readable string with spaces. Throws `AryArgumentException` if invalid.                              |
-| `FromPrefixedCase(this string? value)`                       | `string` | Attempts to detect and convert prefixed identifiers (with `_` or `-`) into human-readable strings. Throws `AryArgumentException` if unrecognized. |
-| `FromSnakeCase(this string? value)`                          | `string` | Converts a snake_case identifier into a human-readable string with spaces. Throws `AryArgumentException` if invalid.                              |
-| `NormalizeAccents(this string? value)`                       | `string` | Removes diacritic marks (accents) from a string using Unicode normalization.                                                                      |
-| `OrDefault(this string? value, string defaultValue = "")`    | `string` | Returns the provided string if not `null`; otherwise, returns the specified `defaultValue` or an empty string.                                    |
-| `ToCamelCase(this string? value)`                            | `string` | Converts a string into camelCase form, respecting acronyms and whitespace.                                                                        |
-| `ToKebabCase(this string? value)`                            | `string` | Converts a string into kebab-case (lowercase, words separated by hyphens).                                                                        |
-| `ToPascalCase(this string? value)`                           | `string` | Converts a string into PascalCase, preserving acronyms and capitalization.                                                                        |
-| `ToSnakeCase(this string? value)`                            | `string` | Converts a string into snake_case (lowercase, words separated by underscores).                                                                    |
+| Name                                                             | Returns  | Description                                                                                                                                                                             |
+|------------------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Capitalize(this string? word, CultureInfo? culture = null)`     | `string` | Converts the first character to uppercase and the remaining characters to lowercase, using the specified culture (default is invariant).                                                |
+| `FromCamelCase(this string? value)`                              | `string` | Converts a camelCase identifier into a space-separated human-readable string. Throws `AryArgumentException` if invalid.                                                                 |
+| `FromKebabCase(this string? value)`                              | `string` | Converts a kebab-case identifier into a space-separated human-readable string. Throws `AryArgumentException` if invalid.                                                                |
+| `FromPascalCase(this string? value)`                             | `string` | Converts a PascalCase identifier into a space-separated human-readable string. Throws `AryArgumentException` if invalid.                                                                |
+| `FromPrefixedCase(this string? value)`                           | `string` | Detects the case style (Pascal, camel, snake, or kebab) after trimming leading `_` or `-` and converts it to a human-readable string. Throws `AryArgumentException` if detection fails. |
+| `FromSnakeCase(this string? value)`                              | `string` | Converts a snake_case identifier into a space-separated human-readable string. Throws `AryArgumentException` if invalid.                                                                |
+| `NormalizeAccents(this string? value)`                           | `string` | Removes diacritic marks (accents) from letters using Unicode normalization.                                                                                                             |
+| `OrDefaultIfEmpty(this string? value, string defaultValue = "")` | `string` | Returns the string if non-empty/non-whitespace; otherwise returns the specified default (defaults to `string.Empty`).                                                                   |
+| `OrDefaultIfNull(this string? value, string defaultValue = "")`  | `string` | Returns the string if non-null; otherwise returns the specified default (defaults to `string.Empty`).                                                                                   |
+| `ToCamelCase(this string? value)`                                | `string` | Converts text or concatenated identifiers to camelCase form (lowercase first character, capitalized subsequent words).                                                                  |
+| `ToCssName(this string? name)`                                   | `string` | Converts a string into a CSS-compatible, hyphenated lowercase name (e.g., `"Font_Size"` → `"font-size"`).                                                                               |
+| `ToKebabCase(this string? value)`                                | `string` | Converts text into kebab-case form (words separated by `-`, all lowercase).                                                                                                             |
+| `ToPascalCase(this string? value)`                               | `string` | Converts text into PascalCase form (capitalizing each word while preserving acronyms).                                                                                                  |
+| `ToSnakeCase(this string? value)`                                | `string` | Converts text into snake_case form (words separated by `_`, all lowercase).                                                                                                             |
 
 ## Operators
 
@@ -40,24 +44,36 @@ returning empty strings when appropriate.
 
 ## Exceptions
 
-*None*
+| Exception Type         | Description                                                                                                                    |
+|------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `AryArgumentException` | Thrown by conversion methods (`FromCamelCase`, `FromPascalCase`, etc.) when the input fails to match the expected case format. |
 
 ## Example
 
 ```csharp
+using System;
 using Allyaria.Abstractions.Extensions;
 
-string pascal = "UserAccountInfo";
-string readable = pascal.FromPascalCase(); // "User Account Info"
+public class Example
+{
+    public void DemonstrateStringConversions()
+    {
+        Console.WriteLine("helloWorld".FromCamelCase());   // Output: "Hello World"
+        Console.WriteLine("MyExampleValue".FromPascalCase()); // Output: "My Example Value"
+        Console.WriteLine("user_name".FromSnakeCase());     // Output: "User Name"
+        Console.WriteLine("font-size".FromKebabCase());     // Output: "Font Size"
 
-string kebab = readable.ToKebabCase(); // "user-account-info"
-string snake = readable.ToSnakeCase(); // "user_account_info"
-string camel = readable.ToCamelCase(); // "userAccountInfo"
+        Console.WriteLine("Hello world".ToKebabCase());     // Output: "hello-world"
+        Console.WriteLine("hello world".ToSnakeCase());     // Output: "hello_world"
+        Console.WriteLine("example text".ToPascalCase());   // Output: "ExampleText"
+        Console.WriteLine("Another Example".ToCamelCase()); // Output: "anotherExample"
 
-string accented = "Café Déjà Vu";
-string normalized = accented.NormalizeAccents(); // "Cafe Deja Vu"
+        Console.WriteLine(" Café ".NormalizeAccents());     // Output: "Cafe"
+        Console.WriteLine(((string?)null).OrDefaultIfEmpty("default")); // Output: "default"
+    }
+}
 ```
 
 ---
 
-*Revision Date: 2025-10-17*
+*Revision Date: 2025-11-08*

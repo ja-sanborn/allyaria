@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.1-alpha] 2025-10-18
+## [0.0.1-alpha] 2025-11-08
 
 ### Added
 
@@ -9,11 +9,14 @@
 
 * `Allyaria.Abstractions` project with:
 
-    * Foundational interfaces and base contracts for component lifecycle, dependency resolution, and resource
-      propagation.
-    * Core abstractions for theming, localization, and accessibility behaviors shared across Allyaria components.
-    * Dependency injection–friendly architecture enabling loose coupling, testability, and extensibility.
-    * API documentation for all public abstractions and contracts.
+    * Core exception hierarchy (`AryException`, `AryArgumentException`, `AryInvalidOperationException`) for structured
+      error handling.
+    * `AryResult` and `AryResult<T>` types for functional-style success/failure result modeling.
+    * Validation utilities including `AryGuard`, `AryChecks`, `AryValidation<T>`, and fluent `AryValidationExtensions`.
+    * `EnumExtensions` for description and `[Flags]` enum formatting with caching.
+    * `StringExtensions` for case conversion, normalization, and human-readable formatting.
+    * `GenericExtensions` for simplified nullable value handling (`OrDefault`).
+    * Full API documentation templates for all public types.
 
 * `Allyaria.Theming` project with:
 

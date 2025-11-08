@@ -1,6 +1,6 @@
 # Allyaria
 
-> *Version 1: 2025-10-18*
+> *Version 1: 2025-11-08*
 >
 > [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
 >
@@ -9,27 +9,51 @@
 **Allyaria** is a *Blazor Component Library* for modern .NET apps, built with accessibility and localization at its
 core. It is flexible, customizable, and extensible, written entirely in Blazor with minimal JavaScript interop.
 
-## Abstractions Features
+---
 
-The **Allyaria.Abstractions** project defines the foundational contracts, interfaces, and base types that make all
-Allyaria components interoperable and extensible. It establishes a consistent architectural layer for dependency
-injection, event handling, and state communication between components without requiring concrete implementations. This
-ensures that core behaviors like theming, localization, and accessibility can be customized or replaced by developers
-while maintaining a unified API surface.
+## Allyaria.Abstractions
 
-At its core, the Abstractions layer includes interfaces for component lifecycle coordination, dependency resolution, and
-style or resource propagation. These abstractions standardize how Allyaria components exchange data, manage parameters,
-and respond to user interactions or accessibility states. By separating contracts from implementation, the library
-enables third-party extensions and testing scenarios with minimal coupling.
+**Allyaria.Abstractions** defines the foundational contracts, validation utilities, and result-handling primitives for
+the Allyaria framework.
+It provides lightweight, dependency-free base components intended for consistent error management, input validation, and
+functional-style operation results across the entire Allyaria ecosystem.
 
-The abstraction model promotes **clean architecture**, **testability**, and **composition-first design**. Developers can
-use the provided base contracts (such as for rendering, configuration, or state binding) to build new
-Allyaria-compatible components, services, or themes. Because all higher-level features — including Theming and Editor
-integrations — depend on these abstractions, projects can evolve independently while sharing a reliable, versioned
-foundation.
+### Key Features
 
-For additional details on available types and interfaces, see the
+* **Structured Exception Model**  
+  Includes core exception types like `AryException`, `AryArgumentException`, and `AryInvalidOperationException` that
+  introduce structured error codes and standardized error handling semantics.
+
+* **Result-Oriented Operations**  
+  Implements the `AryResult` and `AryResult<T>` types for modeling success and failure outcomes without relying on
+  exceptions for control flow.
+
+* **Validation Framework**  
+  Offers fluent and guard-based validation through `AryGuard`, `AryChecks`, `AryValidation<T>`, and
+  `AryValidationExtensions`, enabling both declarative and imperative argument validation patterns.
+
+* **Enum and String Extensions**  
+  Provides `EnumExtensions` and `StringExtensions` for transforming identifiers, formatting names, and retrieving
+  user-friendly descriptions from enums and text.
+
+* **Generic Helpers**  
+  Includes concise extension methods like `GenericExtensions.OrDefault()` for simplifying nullable value handling.
+
+### Design Principles
+
+* **Framework-Agnostic**  
+  Works seamlessly across .NET applications, libraries, and services.
+* **Zero External Dependencies**  
+  Fully self-contained to ensure minimal footprint.
+* **Consistency & Safety:**  
+  Promotes predictable validation, consistent exception handling, and readable naming conventions.
+* **Performance-Oriented:**  
+  Uses caching and compiled expressions to reduce reflection and regex overhead.
+
+> For additional details on available types and interfaces, see:
 *[Abstractions API documentation](./docs/references/Abstractions)*.
+
+---
 
 ## Theming Features
 
@@ -68,13 +92,19 @@ enforce contrast, legibility, and color safety even under custom overrides.
 For additional details on available tokens, styles, and composition patterns,, see the
 *[Theming API documentation](./docs/references/Theming)*.
 
+---
+
 ## License
 
 **Allyaria** is licensed under the *[Mozilla Public License Version 2.0](./LICENSE)*.
 
+---
+
 ## Installation
 
 *Pending*
+
+---
 
 ## Contributing
 

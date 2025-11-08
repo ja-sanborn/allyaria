@@ -1,13 +1,12 @@
 ﻿# Allyaria.Abstractions.Extensions.GenericExtensions
 
-`GenericExtensions` is a static utility class that provides generic extension methods for nullable value types. It
-simplifies working with `Nullable<T>` by enabling concise syntax for returning default values when a nullable variable
-has no assigned value. This helps eliminate common null-checking patterns in value-type operations across the Allyaria
-SDK.
+`GenericExtensions` provides utility extensions for working with nullable value types.
+These methods enable concise handling of default values when nullable structs (`T?`) are not assigned, helping to reduce
+boilerplate and improve code readability in value initialization and configuration patterns.
 
 ## Constructors
 
-*None*
+`GenericExtensions` is a static class and cannot be instantiated.
 
 ## Properties
 
@@ -15,9 +14,9 @@ SDK.
 
 ## Methods
 
-| Name                                                    | Returns | Description                                                                                                                                        |
-|---------------------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `OrDefault<T>(this T? value, T defaultValue = default)` | `T`     | Returns the provided nullable value if it has a value; otherwise, returns the specified `defaultValue`, or the default of `T` if none is provided. |
+| Name                                                    | Returns | Description                                                                                                                                                                                                      |
+|---------------------------------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `OrDefault<T>(this T? value, T defaultValue = default)` | `T`     | Returns the provided nullable value if it is not `null`; otherwise, returns the specified `defaultValue` or the default for `T` when omitted. Useful for simplifying null-coalescing logic for nullable structs. |
 
 ## Operators
 
@@ -34,15 +33,31 @@ SDK.
 ## Example
 
 ```csharp
+using System;
 using Allyaria.Abstractions.Extensions;
 
-int? count = null;
-int result = count.OrDefault(10); // Returns 10
+public class Example
+{
+    public void ShowOrDefaultUsage()
+    {
+        int? number = null;
 
-double? value = 3.14;
-double safeValue = value.OrDefault(); // Returns 3.14
+        // Returns the provided default value (42)
+        int result1 = number.OrDefault(42);
+        Console.WriteLine(result1); // Output: 42
+
+        // Returns the type’s default (0) because no defaultValue is specified
+        int result2 = number.OrDefault();
+        Console.WriteLine(result2); // Output: 0
+
+        // Returns the original value since it's not null
+        number = 7;
+        int result3 = number.OrDefault(99);
+        Console.WriteLine(result3); // Output: 7
+    }
+}
 ```
 
 ---
 
-*Revision Date: 2025-10-17*
+*Revision Date: 2025-11-08*

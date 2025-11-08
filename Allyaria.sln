@@ -71,6 +71,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exceptions", "Exceptions", 
 	ProjectSection(SolutionItems) = preProject
 		docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryException.md = docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryException.md
 		docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryArgumentException.md = docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryArgumentException.md
+		docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryInvalidOperationException.md = docs\references\Abstractions\Exceptions\Allyaria.Abstractions.Exceptions.AryInvalidOperationException.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{46EEB09A-BADE-45D8-B05A-E2D0CFCA36A0}"
@@ -78,6 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 		docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.GenericExtensions.md = docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.GenericExtensions.md
 		docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.EnumExtensions.md = docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.EnumExtensions.md
 		docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.StringExtensions.md = docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.StringExtensions.md
+		docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.AryValidationExtensions.md = docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.AryValidationExtensions.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constants", "Constants", "{3AD6361E-E018-4F87-A678-597B8FF3258F}"
@@ -136,6 +138,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{
 	ProjectSection(SolutionItems) = preProject
 		docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeProvider.md = docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeProvider.md
 		docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeWatcher.md = docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeWatcher.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Results", "Results", "{2A9812A7-E529-45DA-BE1C-12E695830EC9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Abstractions\Results\Allyaria.Abstractions.Results.AryResult.md = docs\references\Abstractions\Results\Allyaria.Abstractions.Results.AryResult.md
+		docs\references\Abstractions\Results\Allyaria.Abstractions.Results.AryResultT.md = docs\references\Abstractions\Results\Allyaria.Abstractions.Results.AryResultT.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation", "Validation", "{C2AF6076-4457-4FEB-90F3-5BD4B7887C63}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryChecks.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryChecks.md
+		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryValidation.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryValidation.md
+		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryGuard.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryGuard.md
 	EndProjectSection
 EndProject
 Global
@@ -202,6 +217,8 @@ Global
 		{18856467-B99F-4B83-BD58-818D71F9D2F5} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
 		{4C84ECF0-510D-460B-9303-013881C04C17} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
 		{49C880FA-4E5D-4E97-B5A0-3BAAA2D23572} = {96DF5FAE-0244-456C-B280-825769704835}
+		{2A9812A7-E529-45DA-BE1C-12E695830EC9} = {1EA105EA-332E-4753-8920-E08F75E4810B}
+		{C2AF6076-4457-4FEB-90F3-5BD4B7887C63} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
