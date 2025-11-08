@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Allyaria.Abstractions.UnitTests.Extensions;
+﻿namespace Allyaria.Abstractions.UnitTests.Extensions;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class EnumExtensionsTests

@@ -476,4 +476,88 @@ public static class StringExtensions
 
         return collapsed.ToLowerInvariant();
     }
+
+    /// <summary>
+    /// Attempts to parse the specified string into an enumeration value of type <typeparamref name="TEnum" />.
+    /// </summary>
+    /// <typeparam name="TEnum">
+    /// The target enumeration type to parse. Must be a struct that implements
+    /// <see cref="System.Enum" />.
+    /// </typeparam>
+    /// <param name="value">
+    /// The input string value to parse into an enumeration constant. May be <see langword="null" /> or whitespace.
+    /// </param>
+    /// <param name="result">
+    /// When this method returns, contains the parsed enumeration value if successful; otherwise the default value for
+    /// <typeparamref name="TEnum" />.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if the input string could be parsed into a valid enumeration value; otherwise,
+    /// <see langword="false" />.
+    /// </returns>
+    /// <remarks>
+    ///     <para>Parsing occurs in multiple passes:</para>
+    ///     <list type="number">
+    ///         <item>Trims and checks for null or whitespace.</item>
+    ///         <item>
+    ///         Attempts a direct parse using <see cref="Enum.TryParse{TEnum}(string, bool, out TEnum)" /> with
+    ///         case-insensitive comparison.
+    ///         </item>
+    ///         <item>Normalizes the value by converting from kebab-case to PascalCase and attempts to parse again.</item>
+    ///         <item>
+    ///         Matches against any <see cref="System.ComponentModel.DescriptionAttribute" /> description values defined on
+    ///         enumeration members.
+    ///         </item>
+    ///     </list>
+    ///     <para>
+    ///     This method never throws exceptions; it provides a safe way to attempt parsing user or external input to an enum.
+    ///     </para>
+    /// </remarks>
+    public static bool TryParseEnum<TEnum>(this string? value, out TEnum result)
+        where TEnum : struct, Enum
+    {
+        if (string.IsNullOrWhiteSpace(value: value))
+        {
+            result = default(TEnum);
+
+            return false;
+        }
+
+        var trimmed = value.Trim();
+
+        if (Enum.TryParse(value: trimmed, ignoreCase: true, result: out result))
+        {
+            return true;
+        }
+
+        try
+        {
+            // Attempt to normalize the enum.
+            // Could fail on the FromKebabCase() call, but that's okay.
+            var normalized = trimmed.FromKebabCase().ToPascalCase();
+
+            if (Enum.TryParse(value: normalized, ignoreCase: true, result: out result))
+            {
+                return true;
+            }
+        }
+        catch
+        {
+            // Ignore error.
+        }
+
+        foreach (var item in Enum.GetValues(enumType: typeof(TEnum)).Cast<TEnum>())
+        {
+            if (string.Equals(a: item.GetDescription(), b: trimmed, comparisonType: StringComparison.OrdinalIgnoreCase))
+            {
+                result = item;
+
+                return true;
+            }
+        }
+
+        result = default(TEnum);
+
+        return false;
+    }
 }

@@ -33,6 +33,7 @@ are optimized for common developer workflows in naming, text formatting, and UI-
 | `ToKebabCase(this string? value)`                                | `string` | Converts text into kebab-case form (words separated by `-`, all lowercase).                                                                                                             |
 | `ToPascalCase(this string? value)`                               | `string` | Converts text into PascalCase form (capitalizing each word while preserving acronyms).                                                                                                  |
 | `ToSnakeCase(this string? value)`                                | `string` | Converts text into snake_case form (words separated by `_`, all lowercase).                                                                                                             |
+| `TryParseEnum<TEnum>(this string? value, out TEnum result)`      | `bool`   | Attempts to parse the specified string into an enumeration value of type                                                                                                                |
 
 ## Operators
 

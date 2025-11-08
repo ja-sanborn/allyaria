@@ -3,6 +3,17 @@
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class StringExtensionsTests
 {
+    public enum DescribedEnum
+    {
+        [Description(description: "background-color")]
+        BackgroundColor,
+
+        [Description(description: "Some random description")]
+        RandomDescription,
+
+        RandomValue
+    }
+
     [Theory]
     [InlineData(null, "", "")]
     [InlineData("", "", "")]
@@ -445,5 +456,89 @@ public sealed class StringExtensionsTests
 
         // Assert
         result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData("background-color", DescribedEnum.BackgroundColor)]
+    [InlineData("background-COLOR", DescribedEnum.BackgroundColor)]
+    public void TryParseEnum_Should_Parse_When_InputMatchesDescriptionWithCssStyle(string input, DescribedEnum expected)
+    {
+        // Act
+        var success = input.TryParseEnum<DescribedEnum>(result: out var result);
+
+        // Assert
+        success.Should().BeTrue();
+        result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData("Some random description", DescribedEnum.RandomDescription)]
+    [InlineData("SOME RANDOM DESCRIPTION", DescribedEnum.RandomDescription)]
+    public void TryParseEnum_Should_Parse_When_InputMatchesGenericDescriptionIgnoringCase(string input,
+        DescribedEnum expected)
+    {
+        // Act
+        var success = input.TryParseEnum<DescribedEnum>(result: out var result);
+
+        // Assert
+        success.Should().BeTrue();
+        result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData("RandomValue", DescribedEnum.RandomValue)]
+    [InlineData("randomvalue", DescribedEnum.RandomValue)]
+    [InlineData("random-value", DescribedEnum.RandomValue)]
+    public void TryParseEnum_Should_Parse_When_InputMatchesPascalCaseOrKebabCaseName(string input,
+        DescribedEnum expected)
+    {
+        // Act
+        var success = input.TryParseEnum<DescribedEnum>(result: out var result);
+
+        // Assert
+        success.Should().BeTrue();
+        result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData("Monday", DayOfWeek.Monday)]
+    [InlineData("monday", DayOfWeek.Monday)]
+    [InlineData("  Friday  ", DayOfWeek.Friday)]
+    public void TryParseEnum_Should_ParseByName_IgnoringCase_AndWhitespace_When_ValueIsValidEnumName(string input,
+        DayOfWeek expected)
+    {
+        // Act
+        var success = input.TryParseEnum<DayOfWeek>(result: out var result);
+
+        // Assert
+        success.Should().BeTrue();
+        result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData("not-an-enum-value")]
+    [InlineData("definitely-not-a-day")]
+    public void TryParseEnum_Should_ReturnFalse_AndDefault_When_ValueDoesNotMatchNameOrDescription(string input)
+    {
+        // Act
+        var success = input.TryParseEnum<DayOfWeek>(result: out var result);
+
+        // Assert
+        success.Should().BeFalse();
+        result.Should().Be(expected: default(DayOfWeek));
+    }
+
+    [Theory]
+    [InlineData(data: null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void TryParseEnum_Should_ReturnFalse_AndDefault_When_ValueIsNullOrWhitespace(string? input)
+    {
+        // Act
+        var success = input.TryParseEnum<DayOfWeek>(result: out var result);
+
+        // Assert
+        success.Should().BeFalse();
+        result.Should().Be(expected: default(DayOfWeek));
     }
 }
