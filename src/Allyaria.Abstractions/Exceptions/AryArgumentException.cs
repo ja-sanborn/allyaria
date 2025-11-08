@@ -1,9 +1,6 @@
 namespace Allyaria.Abstractions.Exceptions;
 
-/// <summary>
-/// Represents errors related to invalid or unexpected argument values. Provides static guard methods to validate arguments
-/// consistently.
-/// </summary>
+/// <summary>Represents errors related to invalid or unexpected argument values.</summary>
 public sealed class AryArgumentException : AryException
 {
     /// <summary>Initializes a new instance of the <see cref="AryArgumentException" /> class.</summary>
