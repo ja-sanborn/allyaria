@@ -84,8 +84,8 @@ public static class StringExtensions
         var text = value.Trim();
         var argName = nameof(value);
 
-        AryGuard.When(
-            condition: !CamelCaseIdentifierRegex.IsMatch(input: text),
+        AryGuard.Check(
+            condition: CamelCaseIdentifierRegex.IsMatch(input: text),
             argName: argName,
             message:
             $"{argName} must be a camelCase identifier (start with a lowercase letter; letters and digits only)"
@@ -106,8 +106,8 @@ public static class StringExtensions
         var text = value.Trim();
         var argName = nameof(value);
 
-        AryGuard.When(
-            condition: !KebabCaseIdentifierRegex.IsMatch(input: text),
+        AryGuard.Check(
+            condition: KebabCaseIdentifierRegex.IsMatch(input: text),
             argName: argName,
             message:
             $"{argName} must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)"
@@ -128,8 +128,8 @@ public static class StringExtensions
         var text = value.Trim();
         var argName = nameof(value);
 
-        AryGuard.When(
-            condition: !PascalCaseIdentifierRegex.IsMatch(input: text),
+        AryGuard.Check(
+            condition: PascalCaseIdentifierRegex.IsMatch(input: text),
             argName: argName,
             message:
             $"{argName} must be a PascalCase identifier (start with an uppercase letter; letters and digits only)"
@@ -155,8 +155,8 @@ public static class StringExtensions
         var core = value.Trim().TrimStart('_', '-');
         var argName = nameof(value);
 
-        AryGuard.When(
-            condition: core.Length is 0,
+        AryGuard.Check(
+            condition: core.Length is not 0,
             argName: argName,
             message: $"{argName} cannot be reduced to a valid identifier."
         );
@@ -201,8 +201,8 @@ public static class StringExtensions
         var text = value.Trim();
         var argName = nameof(value);
 
-        AryGuard.When(
-            condition: !SnakeCaseIdentifierRegex.IsMatch(input: text),
+        AryGuard.Check(
+            condition: SnakeCaseIdentifierRegex.IsMatch(input: text),
             argName: argName,
             message:
             $"{argName} must be a snake_case identifier (start with a letter; letters, digits, and underscores only)"

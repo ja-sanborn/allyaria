@@ -172,8 +172,8 @@ public sealed class StringExtensionsTests
     }
 
     [Theory]
-    [InlineData("-", "Input cannot be reduced to a valid identifier.")]
-    [InlineData("_", "Input cannot be reduced to a valid identifier.")]
+    [InlineData("-", "*cannot be reduced to a valid identifier*")]
+    [InlineData("_", "*cannot be reduced to a valid identifier*")]
     [InlineData(
         "invalid value",
         "Input must be PascalCase, camelCase, snake_case, or kebab-case (with optional leading '_' or '-')."
@@ -185,7 +185,7 @@ public sealed class StringExtensionsTests
 
         // Assert
         act.Should().Throw<AryArgumentException>()
-            .WithMessage(expectedWildcardPattern: expectedMessage + "*");
+            .WithMessage(expectedWildcardPattern: expectedMessage);
     }
 
     [Theory]
@@ -242,17 +242,84 @@ public sealed class StringExtensionsTests
         result.Should().Be(expected: expected);
     }
 
-    [Theory]
-    [InlineData(null, "default", "default")]
-    [InlineData("", "default", "")]
-    [InlineData("value", "default", "value")]
-    public void OrDefault_Should_ReturnExpectedResult(string? input, string defaultValue, string expected)
+    [Fact]
+    public void OrDefaultIfEmpty_Should_ReturnEmptyString_When_ValueIsNull_And_DefaultNotProvided()
     {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.OrDefaultIfEmpty();
+
+        // Assert
+        result.Should().Be(expected: string.Empty);
+    }
+
+    [Fact]
+    public void OrDefaultIfEmpty_Should_ReturnOriginalValue_When_ValueIsNotNullOrWhitespace()
+    {
+        // Arrange
+        var input = "hello";
+
+        // Act
+        var result = input.OrDefaultIfEmpty(defaultValue: "ignored");
+
+        // Assert
+        result.Should().Be(expected: input);
+    }
+
+    [Fact]
+    public void OrDefaultIfEmpty_Should_ReturnProvidedDefault_When_ValueIsWhitespace()
+    {
+        // Arrange
+        var input = "   ";
+        var defaultValue = "fallback";
+
         // Act
         var result = input.OrDefaultIfEmpty(defaultValue: defaultValue);
 
         // Assert
-        result.Should().Be(expected: expected);
+        result.Should().Be(expected: defaultValue);
+    }
+
+    [Fact]
+    public void OrDefaultIfNull_Should_ReturnEmptyString_When_ValueIsNull_And_DefaultNotProvided()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        var result = input.OrDefaultIfNull();
+
+        // Assert
+        result.Should().Be(expected: string.Empty);
+    }
+
+    [Fact]
+    public void OrDefaultIfNull_Should_ReturnOriginalValue_When_ValueIsNotNull()
+    {
+        // Arrange
+        var input = "hello";
+
+        // Act
+        var result = input.OrDefaultIfNull(defaultValue: "ignored");
+
+        // Assert
+        result.Should().Be(expected: input);
+    }
+
+    [Fact]
+    public void OrDefaultIfNull_Should_ReturnProvidedDefault_When_ValueIsNull()
+    {
+        // Arrange
+        string? input = null;
+        var defaultValue = "fallback";
+
+        // Act
+        var result = input.OrDefaultIfNull(defaultValue: defaultValue);
+
+        // Assert
+        result.Should().Be(expected: defaultValue);
     }
 
     [Theory]
@@ -294,6 +361,34 @@ public sealed class StringExtensionsTests
 
         // Assert
         result.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("Font_Size", "font-size")]
+    [InlineData("font-size", "font-size")]
+    [InlineData("Font   Size", "font-size")]
+    [InlineData("  Font  Size--Primary  ", "font-size-primary")]
+    [InlineData("__Font--Size__", "font-size")]
+    public void ToCssName_Should_NormalizeToLowercaseHyphenatedForm(string? input, string expected)
+    {
+        // Act
+        var result = input.ToCssName();
+
+        // Assert
+        result.Should().Be(expected: expected);
+    }
+
+    [Theory]
+    [InlineData(null, "")]
+    [InlineData("", "")]
+    [InlineData("   ", "")]
+    public void ToCssName_Should_ReturnEmpty_When_InputIsNullOrWhitespace(string? input, string expected)
+    {
+        // Act
+        var result = input.ToCssName();
+
+        // Assert
+        result.Should().Be(expected: expected);
     }
 
     [Theory]

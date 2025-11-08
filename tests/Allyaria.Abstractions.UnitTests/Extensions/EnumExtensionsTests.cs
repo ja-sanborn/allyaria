@@ -149,6 +149,25 @@ public sealed class EnumExtensionsTests
     }
 
     [Fact]
+    public void GetDescription_Should_ThrowAryArgumentException_When_MemberInfoNotFoundAndNameIsNotPascalCase()
+    {
+        // Arrange
+        // 999 is not defined on the enum, so .ToString() = "999"
+        var invalidValue = (Enum)(MixedDescriptionEnum)999;
+
+        // Act
+        var act = () => invalidValue.GetDescription();
+
+        // Assert
+        act.Should().Throw<AryArgumentException>()
+            .WithMessage(
+                expectedWildcardPattern:
+                "value must be a PascalCase identifier (start with an uppercase letter; letters and digits only)"
+            )
+            .And.ArgName.Should().Be(expected: "value");
+    }
+
+    [Fact]
     public void GetDescriptionTEnum_Should_ReturnSameAsNonGeneric_When_UsingStronglyTypedOverload()
     {
         // Arrange

@@ -21,6 +21,16 @@ internal static class AryChecks
             )
             : null;
 
+    /// <summary>Validates a condition and throws a custom message if it fails.</summary>
+    /// <param name="condition">The condition to test.</param>
+    /// <param name="argName">The argument name.</param>
+    /// <param name="message">The failure message.</param>
+    /// <returns>An exception if condition is false; otherwise, <c>null</c>.</returns>
+    public static AryArgumentException? Check(bool condition, string argName, string message)
+        => !condition
+            ? new AryArgumentException(message: message, argName: argName)
+            : null;
+
     /// <summary>Validates that the specified enumeration value is defined within its type.</summary>
     /// <typeparam name="TEnum">The enumeration type.</typeparam>
     /// <param name="value">The value to check.</param>
@@ -240,15 +250,5 @@ internal static class AryChecks
     public static AryArgumentException? True(bool condition, string argName)
         => !condition
             ? new AryArgumentException(message: $"{argName} must be true.", argName: argName)
-            : null;
-
-    /// <summary>Validates a condition and throws a custom message if it fails.</summary>
-    /// <param name="condition">The condition to test.</param>
-    /// <param name="argName">The argument name.</param>
-    /// <param name="message">The failure message.</param>
-    /// <returns>An exception if condition is false; otherwise, <c>null</c>.</returns>
-    public static AryArgumentException? When(bool condition, string argName, string message)
-        => !condition
-            ? new AryArgumentException(message: message, argName: argName)
             : null;
 }

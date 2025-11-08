@@ -59,7 +59,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(expected: default(bool));
+        result.Should().Be(expected: false);
     }
 
     [Theory]
@@ -146,7 +146,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(expected: default(decimal));
+        result.Should().Be(expected: 0);
     }
 
     [Theory]
@@ -192,7 +192,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(expected: default(double));
+        result.Should().Be(expected: 0);
     }
 
     [Fact]
@@ -333,7 +333,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(expected: default(int));
+        result.Should().Be(expected: 0);
     }
 
     [Theory]
@@ -380,7 +380,7 @@ public sealed class GenericExtensionsTests
         var result = input.OrDefault();
 
         // Assert
-        result.Should().Be(expected: default(TimeSpan));
+        result.Should().Be(expected: TimeSpan.Zero);
     }
 
     [Fact]

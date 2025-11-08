@@ -11,4 +11,7 @@
         <Title>Allyaria Theming</Title>
         <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     </PropertyGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Allyaria.Abstractions.UnitTests"/>
+    </ItemGroup>
 </Project>

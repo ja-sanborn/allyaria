@@ -22,6 +22,19 @@ public static class AryValidationExtensions
         return validation;
     }
 
+    /// <summary>Validates a custom condition and associates a custom message when it fails.</summary>
+    /// <typeparam name="T">The argument type.</typeparam>
+    /// <param name="validation">The current validation context.</param>
+    /// <param name="condition">The boolean condition to evaluate.</param>
+    /// <param name="message">The error message to associate with the failure.</param>
+    /// <returns>The same validation context.</returns>
+    public static AryValidation<T> Check<T>(this AryValidation<T> validation, bool condition, string message)
+    {
+        validation.Add(ex: AryChecks.Check(condition: condition, argName: validation.ArgName, message: message));
+
+        return validation;
+    }
+
     /// <summary>Validates that the current argument value is a defined enumeration constant.</summary>
     /// <typeparam name="T">The enumeration type.</typeparam>
     /// <param name="validation">The current validation context.</param>
@@ -246,19 +259,6 @@ public static class AryValidationExtensions
     public static AryValidation<T> True<T>(this AryValidation<T> validation, bool condition)
     {
         validation.Add(ex: AryChecks.True(condition: condition, argName: validation.ArgName));
-
-        return validation;
-    }
-
-    /// <summary>Validates a custom condition and associates a custom message when it fails.</summary>
-    /// <typeparam name="T">The argument type.</typeparam>
-    /// <param name="validation">The current validation context.</param>
-    /// <param name="condition">The boolean condition to evaluate.</param>
-    /// <param name="message">The error message to associate with the failure.</param>
-    /// <returns>The same validation context.</returns>
-    public static AryValidation<T> When<T>(this AryValidation<T> validation, bool condition, string message)
-    {
-        validation.Add(ex: AryChecks.When(condition: condition, argName: validation.ArgName, message: message));
 
         return validation;
     }
