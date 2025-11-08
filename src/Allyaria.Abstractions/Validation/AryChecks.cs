@@ -218,16 +218,6 @@ internal static class AryChecks
             : null;
     }
 
-    /// <summary>Validates a condition and throws a custom message if it fails.</summary>
-    /// <param name="condition">The condition to test.</param>
-    /// <param name="argName">The argument name.</param>
-    /// <param name="message">The failure message.</param>
-    /// <returns>An exception if condition is false; otherwise, <c>null</c>.</returns>
-    public static AryArgumentException? That(bool condition, string argName, string message)
-        => !condition
-            ? new AryArgumentException(message: message, argName: argName)
-            : null;
-
     /// <summary>Validates that a condition is <c>true</c>.</summary>
     /// <param name="condition">The boolean condition to evaluate.</param>
     /// <param name="argName">The name of the argument being validated.</param>
@@ -235,5 +225,15 @@ internal static class AryChecks
     public static AryArgumentException? True(bool condition, string argName)
         => !condition
             ? new AryArgumentException(message: $"{argName} must be true.", argName: argName)
+            : null;
+
+    /// <summary>Validates a condition and throws a custom message if it fails.</summary>
+    /// <param name="condition">The condition to test.</param>
+    /// <param name="argName">The argument name.</param>
+    /// <param name="message">The failure message.</param>
+    /// <returns>An exception if condition is false; otherwise, <c>null</c>.</returns>
+    public static AryArgumentException? When(bool condition, string argName, string message)
+        => !condition
+            ? new AryArgumentException(message: message, argName: argName)
             : null;
 }

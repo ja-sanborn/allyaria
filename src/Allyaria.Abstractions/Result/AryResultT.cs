@@ -6,10 +6,10 @@
 /// </summary>
 /// <typeparam name="T">The type of the value returned on success.</typeparam>
 /// <remarks>
-/// This struct provides a lightweight, immutable result abstraction without heap allocations, following the functional
+/// This class provides a lightweight, immutable result abstraction without heap allocations, following the functional
 /// result pattern. For non-generic operations, use <see cref="AryResult" />.
 /// </remarks>
-public readonly struct AryResult<T>
+public sealed class AryResult<T>
 {
     /// <summary>Initializes a new instance of the <see cref="AryResult{T}" /> struct.</summary>
     /// <param name="isSuccess">Indicates whether the operation succeeded.</param>
@@ -67,10 +67,6 @@ public readonly struct AryResult<T>
     /// <param name="errorCode">An optional machine-readable error code string.</param>
     /// <param name="errorMessage">An optional localized or descriptive message.</param>
     /// <returns>A failed <see cref="AryResult{T}" /> containing the provided error details.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when both <paramref name="error" /> and <paramref name="errorMessage" />
-    /// are null.
-    /// </exception>
     public static AryResult<T> Failure(Exception? error, string? errorCode = null, string? errorMessage = null)
         => new(
             isSuccess: false,
@@ -93,16 +89,4 @@ public readonly struct AryResult<T>
                 message: "Cannot convert a successful AryResult<T> to AryResult failure."
             )
             : AryResult.Failure(error: Error, errorCode: ErrorCode, errorMessage: ErrorMessage);
-
-    /// <summary>
-    /// Implicitly converts a value of type <typeparamref name="T" /> into a successful <see cref="AryResult{T}" />.
-    /// </summary>
-    /// <param name="value">The value to wrap in a successful result.</param>
-    /// <returns>A successful <see cref="AryResult{T}" /> containing the specified value.</returns>
-    public static implicit operator AryResult<T>(T value) => Success(value: value);
-
-    /// <summary>Implicitly converts an <see cref="Exception" /> into a failed <see cref="AryResult{T}" />.</summary>
-    /// <param name="error">The exception to convert.</param>
-    /// <returns>A failed <see cref="AryResult{T}" /> representing the specified exception.</returns>
-    public static implicit operator AryResult<T>(Exception error) => Failure(error: error);
 }

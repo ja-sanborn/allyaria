@@ -37,7 +37,7 @@ public static class EnumExtensions
         AryGuard.NotNull(value: value, argName: nameof(value));
 
         var type = value.GetType();
-        var name = value.ToString(); // May be "A" or "A, B" for [Flags].
+        var name = value.ToString();
 
         return DescriptionCache.GetOrAdd(
             key: (type, name),
@@ -45,7 +45,6 @@ public static class EnumExtensions
             {
                 (var t, var n) = key;
 
-                // Handle [Flags] combined names like "Read, Write".
                 if (!n.Contains(value: ','))
                 {
                     return GetSingleDescription(enumType: t, memberName: n);
@@ -80,20 +79,21 @@ public static class EnumExtensions
     {
         var mi = enumType.GetMember(name: memberName);
 
-        if (mi.Length > 0)
+        if (mi.Length <= 0)
         {
-            var attr = mi[0]
-                .GetCustomAttributes(attributeType: typeof(DescriptionAttribute), inherit: false)
-                .OfType<DescriptionAttribute>()
-                .FirstOrDefault();
-
-            if (attr is not null && !string.IsNullOrWhiteSpace(value: attr.Description))
-            {
-                return attr.Description;
-            }
+            return memberName.FromPascalCase();
         }
 
-        // Fallback: humanize the single member name.
+        var attr = mi[0]
+            .GetCustomAttributes(attributeType: typeof(DescriptionAttribute), inherit: false)
+            .OfType<DescriptionAttribute>()
+            .FirstOrDefault();
+
+        if (attr is not null && !string.IsNullOrWhiteSpace(value: attr.Description))
+        {
+            return attr.Description;
+        }
+
         return memberName.FromPascalCase();
     }
 }

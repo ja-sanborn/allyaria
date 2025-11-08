@@ -51,7 +51,7 @@ public static class StringExtensions
     {
         if (string.IsNullOrEmpty(value: word))
         {
-            return word ?? string.Empty;
+            return string.Empty;
         }
 
         var ci = culture ?? CultureInfo.InvariantCulture;
@@ -82,15 +82,14 @@ public static class StringExtensions
         }
 
         var text = value.Trim();
+        var argName = nameof(value);
 
-        if (!CamelCaseIdentifierRegex.IsMatch(input: text))
-        {
-            throw new AryArgumentException(
-                message: "must be a camelCase identifier (start with a lowercase letter; letters and digits only)",
-                argName: nameof(value),
-                argValue: value
-            );
-        }
+        AryGuard.When(
+            condition: !CamelCaseIdentifierRegex.IsMatch(input: text),
+            argName: argName,
+            message:
+            $"{argName} must be a camelCase identifier (start with a lowercase letter; letters and digits only)"
+        );
 
         return SplitConcatenated(value: text);
     }
@@ -105,17 +104,15 @@ public static class StringExtensions
         }
 
         var text = value.Trim();
+        var argName = nameof(value);
 
-        if (!KebabCaseIdentifierRegex.IsMatch(input: text))
-        {
-            throw new AryArgumentException(
-                message: "must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)",
-                argName: nameof(value),
-                argValue: value
-            );
-        }
+        AryGuard.When(
+            condition: !KebabCaseIdentifierRegex.IsMatch(input: text),
+            argName: argName,
+            message:
+            $"{argName} must be a kebab-case identifier (start with a letter; letters, digits, and hyphens only)"
+        );
 
-        // Replace hyphens with single spaces (consecutive hyphens collapse to one space)
         return ReplaceAndCollapseSeparators(value: text, replaceChar: '-');
     }
 
@@ -129,15 +126,14 @@ public static class StringExtensions
         }
 
         var text = value.Trim();
+        var argName = nameof(value);
 
-        if (!PascalCaseIdentifierRegex.IsMatch(input: text))
-        {
-            throw new AryArgumentException(
-                message: "must be a PascalCase identifier (start with an uppercase letter; letters and digits only)",
-                argName: nameof(value),
-                argValue: value
-            );
-        }
+        AryGuard.When(
+            condition: !PascalCaseIdentifierRegex.IsMatch(input: text),
+            argName: argName,
+            message:
+            $"{argName} must be a PascalCase identifier (start with an uppercase letter; letters and digits only)"
+        );
 
         return SplitConcatenated(value: text);
     }
@@ -156,17 +152,14 @@ public static class StringExtensions
             return string.Empty;
         }
 
-        // Trim whitespace and leading prefix chars
         var core = value.Trim().TrimStart('_', '-');
+        var argName = nameof(value);
 
-        if (core.Length == 0)
-        {
-            throw new AryArgumentException(
-                message: "Input cannot be reduced to a valid identifier.",
-                argName: nameof(value),
-                argValue: value
-            );
-        }
+        AryGuard.When(
+            condition: core.Length is 0,
+            argName: argName,
+            message: $"{argName} cannot be reduced to a valid identifier."
+        );
 
         if (PascalCaseIdentifierRegex.IsMatch(input: core))
         {
@@ -206,17 +199,15 @@ public static class StringExtensions
         }
 
         var text = value.Trim();
+        var argName = nameof(value);
 
-        if (!SnakeCaseIdentifierRegex.IsMatch(input: text))
-        {
-            throw new AryArgumentException(
-                message: "must be a snake_case identifier (start with a letter; letters, digits, and underscores only)",
-                argName: nameof(value),
-                argValue: value
-            );
-        }
+        AryGuard.When(
+            condition: !SnakeCaseIdentifierRegex.IsMatch(input: text),
+            argName: argName,
+            message:
+            $"{argName} must be a snake_case identifier (start with a letter; letters, digits, and underscores only)"
+        );
 
-        // Replace underscores with single spaces (consecutive underscores collapse to one space)
         return ReplaceAndCollapseSeparators(value: text, replaceChar: '_');
     }
 
@@ -395,9 +386,11 @@ public static class StringExtensions
 
         var cleaned = value.Trim().NormalizeAccents();
 
-        // Convert any whitespace to hyphens, then collapse runs of hyphens.
         var withHyphens = Regex.Replace(
-            input: cleaned, pattern: "\\s+", replacement: "-", options: RegexOptions.CultureInvariant
+            input: cleaned,
+            pattern: "\\s+",
+            replacement: "-",
+            options: RegexOptions.CultureInvariant
         );
 
         var collapsed = CollapseSeparatorRegex(replaceChar: '-').Replace(input: withHyphens, replacement: "-");
@@ -454,9 +447,11 @@ public static class StringExtensions
 
         var cleaned = value.Trim().NormalizeAccents();
 
-        // Convert any whitespace to underscores, then collapse runs of underscores.
         var withUnderscores = Regex.Replace(
-            input: cleaned, pattern: "\\s+", replacement: "_", options: RegexOptions.CultureInvariant
+            input: cleaned,
+            pattern: "\\s+",
+            replacement: "_",
+            options: RegexOptions.CultureInvariant
         );
 
         var collapsed = CollapseSeparatorRegex(replaceChar: '_').Replace(input: withUnderscores, replacement: "_");

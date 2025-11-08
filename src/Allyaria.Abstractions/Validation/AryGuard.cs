@@ -257,14 +257,6 @@ public static class AryGuard
             )
         );
 
-    /// <summary>Ensures that a condition is true; throws otherwise.</summary>
-    /// <param name="condition">The condition to evaluate.</param>
-    /// <param name="argName">The argument name.</param>
-    /// <param name="message">The message describing the violation.</param>
-    /// <exception cref="AryArgumentException">Thrown if the condition is false.</exception>
-    public static void That(bool condition, string argName, string message)
-        => CheckError(ex: AryChecks.That(condition: condition, argName: argName, message: message));
-
     /// <summary>Ensures that the specified condition is true.</summary>
     /// <param name="condition">The condition to check.</param>
     /// <param name="argName">The argument name, automatically captured.</param>
@@ -275,4 +267,12 @@ public static class AryGuard
         => CheckError(
             ex: AryChecks.True(condition: condition, argName: argName.OrDefault(defaultValue: nameof(condition)))
         );
+
+    /// <summary>Ensures that a condition is true; throws otherwise.</summary>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <param name="argName">The argument name.</param>
+    /// <param name="message">The message describing the violation.</param>
+    /// <exception cref="AryArgumentException">Thrown if the condition is false.</exception>
+    public static void When(bool condition, string argName, string message)
+        => CheckError(ex: AryChecks.When(condition: condition, argName: argName, message: message));
 }

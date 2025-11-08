@@ -5,10 +5,10 @@
 /// associated metadata.
 /// </summary>
 /// <remarks>
-/// This struct provides a lightweight, allocation-free result abstraction for non-generic operations. For operations that
+/// This class provides a lightweight, allocation-free result abstraction for non-generic operations. For operations that
 /// produce a return value, use <see cref="AryResult{T}" />.
 /// </remarks>
-public readonly struct AryResult
+public sealed class AryResult
 {
     /// <summary>Initializes a new instance of the <see cref="AryResult" /> struct.</summary>
     /// <param name="isSuccess">Indicates whether the operation succeeded.</param>
@@ -56,10 +56,6 @@ public readonly struct AryResult
     /// <param name="errorCode">An optional machine-readable error code string.</param>
     /// <param name="errorMessage">An optional human-readable message describing the failure.</param>
     /// <returns>An <see cref="AryResult" /> representing a failed operation.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="error" /> is <see langword="null" /> and no message
-    /// is provided.
-    /// </exception>
     public static AryResult Failure(Exception? error, string? errorCode = null, string? errorMessage = null)
         => new(
             isSuccess: false,
@@ -82,9 +78,4 @@ public readonly struct AryResult
                 message: "Cannot convert a successful AryResult to AryResult<T> failure."
             )
             : AryResult<T>.Failure(error: Error, errorCode: ErrorCode, errorMessage: ErrorMessage);
-
-    /// <summary>Implicitly converts an <see cref="Exception" /> into a failed <see cref="AryResult" />.</summary>
-    /// <param name="error">The exception to convert.</param>
-    /// <returns>A failed <see cref="AryResult" /> representing the specified <paramref name="error" />.</returns>
-    public static implicit operator AryResult(Exception error) => Failure(error: error);
 }
