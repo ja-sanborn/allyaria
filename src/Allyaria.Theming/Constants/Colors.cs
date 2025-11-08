@@ -1194,25 +1194,11 @@ public static class Colors
     /// <summary>Represents the <see cref="HexColor" /> for <see cref="Yellowgreen" />: <c>#9ACD32FF</c></summary>
     public static readonly HexColor Yellowgreen = new(value: "#9ACD32FF");
 
-    /// <summary>
-    /// Lazily initialized collection of all public <see cref="HexColor" /> members on <see cref="Colors" />. Built once, in a
-    /// thread-safe manner, when first accessed.
-    /// </summary>
     private static readonly Lazy<IReadOnlyDictionary<string, HexColor>> AllColors = new(
-        valueFactory: BuildDictionary, isThreadSafe: true
+        valueFactory: BuildDictionary,
+        isThreadSafe: true
     );
 
-    /// <summary>
-    /// Uses reflection to build an immutable dictionary of all public static members of <see cref="Colors" /> whose type is
-    /// <see cref="HexColor" />.
-    /// </summary>
-    /// <remarks>
-    /// Both fields and parameterless properties are included. Duplicate names are overwritten in favor of the later
-    /// declaration order (fields first, then properties).
-    /// </remarks>
-    /// <returns>
-    /// An immutable, case-insensitive dictionary mapping color names to their corresponding <see cref="HexColor" /> instances.
-    /// </returns>
     private static IReadOnlyDictionary<string, HexColor> BuildDictionary()
     {
         var type = typeof(Colors);
@@ -1231,32 +1217,15 @@ public static class Colors
         return builder.ToImmutable();
     }
 
-    /// <summary>Determines whether a color with the specified name exists in the global <c>Colors</c> registry.</summary>
-    /// <param name="name">
-    /// The color name to check for existence. Comparison is case-insensitive according to the <see cref="StringComparer" />
-    /// used when building the dictionary (typically <see cref="StringComparer.InvariantCultureIgnoreCase" />).
-    /// </param>
-    /// <returns>
-    /// <see langword="true" /> if a color with the given name is defined in the registry; otherwise, <see langword="false" />.
-    /// </returns>
-    /// <remarks>
-    /// This method performs a key lookup only and does not allocate or return the color theme itself. It is useful for
-    /// validating user input or verifying palette token names efficiently.
-    /// </remarks>
-    public static bool Contains(string name) => AllColors.Value.ContainsKey(key: name);
+    public static bool Contains(string name)
+    {
+        AryGuard.NotNullOrWhiteSpace(value: name);
+        return AllColors.Value.ContainsKey(key: name);
+    }
 
-    /// <summary>
-    /// Attempts to retrieve a <see cref="HexColor" /> from the <see cref="Colors" /> class by its member name
-    /// (case-insensitive).
-    /// </summary>
-    /// <param name="name">
-    /// The name of the color field or property (e.g., <c>"red500"</c> or <c>"aliceblue"</c>). Comparison is case-insensitive.
-    /// </param>
-    /// <param name="value">
-    /// When this method returns <see langword="true" />, contains the corresponding <see cref="HexColor" /> theme; otherwise,
-    /// <see langword="default" />.
-    /// </param>
-    /// <returns><see langword="true" /> if a matching color name was found; otherwise, <see langword="false" />.</returns>
     public static bool TryGet(string name, out HexColor value)
-        => AllColors.Value.TryGetValue(key: name, value: out value);
+    {
+        AryGuard.NotNullOrWhiteSpace(value: name);
+        return AllColors.Value.TryGetValue(key: name, value: out value);
+    }
 }

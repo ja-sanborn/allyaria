@@ -84,8 +84,7 @@ public sealed class ColorsLookupTests
         var act = () => Colors.Contains(name: name!);
 
         // Assert
-        act.Should()
-            .Throw<ArgumentNullException>(because: "contains on a case-insensitive dictionary throws for null key");
+        act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
     }
 
     [Fact]
@@ -131,6 +130,38 @@ public sealed class ColorsLookupTests
         var act = () => Colors.TryGet(name: name!, value: out _);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>(because: "the underlying dictionary lookup throws when key is null");
+        act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
+    }
+
+    [Theory]
+    [InlineData(data: null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Contains_Should_Throw_AryArgumentException_When_Name_Is_NullOrWhitespace(string? name)
+    {
+        // Arrange
+        var invalidName = name;
+
+        // Act
+        var act = () => Colors.Contains(name: invalidName!);
+
+        // Assert
+        act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
+    }
+
+    [Theory]
+    [InlineData(data: null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void TryGet_Should_Throw_AryArgumentException_When_Name_Is_NullOrWhitespace(string? name)
+    {
+        // Arrange
+        var invalidName = name;
+
+        // Act
+        var act = () => Colors.TryGet(name: invalidName!, value: out _);
+
+        // Assert
+        act.Should().Throw<AryArgumentException>();
     }
 }
