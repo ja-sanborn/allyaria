@@ -39,7 +39,7 @@ public static class AryGuard
         T compare,
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
         => CheckError(
             ex: AryChecks.EqualTo(
                 value: value, compare: compare, argName: argName.OrDefault(defaultValue: nameof(value))
@@ -187,7 +187,7 @@ public static class AryGuard
         T compare,
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
         => CheckError(
             ex: AryChecks.NotEqualTo(
                 value: value, compare: compare, argName: argName.OrDefault(defaultValue: nameof(value))

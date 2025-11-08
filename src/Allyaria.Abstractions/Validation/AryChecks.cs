@@ -26,7 +26,7 @@ internal static class AryChecks
     /// <param name="argName">The name of the argument being validated.</param>
     /// <returns>An <see cref="AryArgumentException" /> if the values are not equal; otherwise, <c>null</c>.</returns>
     public static AryArgumentException? EqualTo<T>(T value, T compare, string argName)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
         => !value.Equals(other: compare)
             ? new AryArgumentException(
                 message: $"{argName} must be equal to {compare}.", argName: argName, argValue: value
@@ -145,7 +145,7 @@ internal static class AryChecks
     /// <param name="argName">The argument name.</param>
     /// <returns>An exception if values are equal; otherwise, <c>null</c>.</returns>
     public static AryArgumentException? NotEqualTo<T>(T value, T compare, string argName)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
         => value.Equals(other: compare)
             ? new AryArgumentException(
                 message: $"{argName} must not be equal to {compare}.", argName: argName, argValue: value

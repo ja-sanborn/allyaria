@@ -77,14 +77,14 @@ public static class EnumExtensions
     /// </returns>
     private static string GetSingleDescription(Type enumType, string memberName)
     {
-        var mi = enumType.GetMember(name: memberName);
+        var memberInfos = enumType.GetMember(name: memberName);
 
-        if (mi.Length <= 0)
+        if (memberInfos.Length <= 0)
         {
             return memberName.FromPascalCase();
         }
 
-        var attr = mi[0]
+        var attr = memberInfos[0]
             .GetCustomAttributes(attributeType: typeof(DescriptionAttribute), inherit: false)
             .OfType<DescriptionAttribute>()
             .FirstOrDefault();

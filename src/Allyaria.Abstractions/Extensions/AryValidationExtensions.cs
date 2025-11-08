@@ -24,7 +24,7 @@ public static class AryValidationExtensions
     /// <param name="compare">The value to compare against.</param>
     /// <returns>The same <see cref="AryValidation{T}" /> for chaining.</returns>
     public static AryValidation<T> EqualTo<T>(this AryValidation<T> validation, T compare)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
     {
         validation.Add(
             ex: AryChecks.EqualTo(value: validation.ArgValue, compare: compare, argName: validation.ArgName)
@@ -157,7 +157,7 @@ public static class AryValidationExtensions
     /// <param name="compare">The value to compare against.</param>
     /// <returns>The same validation context.</returns>
     public static AryValidation<T> NotEqualTo<T>(this AryValidation<T> validation, T compare)
-        where T : struct, IEquatable<T>
+        where T : IEquatable<T>
     {
         validation.Add(
             ex: AryChecks.NotEqualTo(value: validation.ArgValue, compare: compare, argName: validation.ArgName)

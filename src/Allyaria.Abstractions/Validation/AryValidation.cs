@@ -59,7 +59,8 @@ public sealed class AryValidation<T>
         }
 
         var combinedMessage = string.Join(
-            separator: Environment.NewLine, values: Errors.Select(selector: e => e.Message)
+            separator: Environment.NewLine,
+            values: Errors.Select(selector: e => e.Message)
         );
 
         throw new AryArgumentException(message: combinedMessage, argName: ArgName, argValue: ArgValue);
