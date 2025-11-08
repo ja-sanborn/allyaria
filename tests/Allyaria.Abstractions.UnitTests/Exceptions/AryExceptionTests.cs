@@ -21,6 +21,34 @@ public sealed class AryExceptionTests
     }
 
     [Fact]
+    public void Ctor_WithEmptyErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsEmpty()
+    {
+        // Arrange
+        var message = "Something went boom";
+        var errorCode = string.Empty;
+
+        // Act
+        var sut = new AryException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.UNKNOWN");
+    }
+
+    [Fact]
+    public void Ctor_WithErrorCode_Should_SetErrorCode_When_Provided()
+    {
+        // Arrange
+        var message = "Something went boom";
+        var errorCode = "ARY.SPECIFIC_ERROR";
+
+        // Act
+        var sut = new AryException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: errorCode);
+    }
+
+    [Fact]
     public void Ctor_WithMessage_Should_SetMessage_When_MessageProvided()
     {
         // Arrange
@@ -49,6 +77,20 @@ public sealed class AryExceptionTests
     }
 
     [Fact]
+    public void Ctor_WithNullErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsNull()
+    {
+        // Arrange
+        var message = "Something went boom";
+        string? errorCode = null;
+
+        // Act
+        var sut = new AryException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.UNKNOWN");
+    }
+
+    [Fact]
     public void Ctor_WithNullMessage_Should_ProvideNonEmptyDefaultMessage_When_MessageIsNull()
     {
         // Arrange
@@ -59,6 +101,20 @@ public sealed class AryExceptionTests
 
         // Assert
         sut.Message.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public void Ctor_WithWhitespaceErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsWhitespace()
+    {
+        // Arrange
+        var message = "Something went boom";
+        var errorCode = "   ";
+
+        // Act
+        var sut = new AryException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.UNKNOWN");
     }
 
     [Fact]

@@ -15,6 +15,34 @@ public sealed class AryArgumentExceptionTests
     }
 
     [Fact]
+    public void Ctor_WithEmptyErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsEmpty()
+    {
+        // Arrange
+        var message = "Argument issue";
+        var errorCode = string.Empty;
+
+        // Act
+        var sut = new AryArgumentException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.ARGUMENT");
+    }
+
+    [Fact]
+    public void Ctor_WithErrorCode_Should_SetErrorCode_When_Provided()
+    {
+        // Arrange
+        var message = "Argument issue";
+        var errorCode = "ARY.CUSTOM_ARGUMENT";
+
+        // Act
+        var sut = new AryArgumentException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: errorCode);
+    }
+
+    [Fact]
     public void Ctor_WithMessage_Should_SetMessage()
     {
         // Act
@@ -128,5 +156,33 @@ public sealed class AryArgumentExceptionTests
         sut.ArgName.Should().Be(expected: name);
         sut.ArgValue.Should().Be(expected: value);
         sut.InnerException.Should().Be(expected: inner);
+    }
+
+    [Fact]
+    public void Ctor_WithNullErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsNull()
+    {
+        // Arrange
+        var message = "Argument issue";
+        string? errorCode = null;
+
+        // Act
+        var sut = new AryArgumentException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.ARGUMENT");
+    }
+
+    [Fact]
+    public void Ctor_WithWhitespaceErrorCode_Should_DefaultErrorCode_When_ErrorCodeIsWhitespace()
+    {
+        // Arrange
+        var message = "Argument issue";
+        var errorCode = "   ";
+
+        // Act
+        var sut = new AryArgumentException(message: message, errorCode: errorCode);
+
+        // Assert
+        sut.ErrorCode.Should().Be(expected: "ARY.ARGUMENT");
     }
 }

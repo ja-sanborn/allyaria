@@ -251,7 +251,7 @@ public sealed class StringExtensionsTests
     public void OrDefault_Should_ReturnExpectedResult(string? input, string defaultValue, string expected)
     {
         // Act
-        var result = input.OrDefault(defaultValue: defaultValue);
+        var result = input.OrDefaultIfEmpty(defaultValue: defaultValue);
 
         // Assert
         result.Should().Be(expected: expected);

@@ -25,7 +25,7 @@ public sealed class AryInvalidOperationException : AryException
         Exception? innerException = null)
         : base(
             message: message,
-            errorCode: errorCode.OrDefault(defaultValue: "ARY.INVALID_OPERATION"),
+            errorCode: errorCode.OrDefaultIfEmpty(defaultValue: "ARY.INVALID_OPERATION"),
             innerException: innerException
         ) { }
 }

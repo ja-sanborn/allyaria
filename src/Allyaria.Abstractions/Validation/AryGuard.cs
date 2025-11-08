@@ -23,7 +23,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.Between(
-                value: value, min: min, max: max, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, min: min, max: max, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -46,7 +46,9 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
         where TEnum : struct, Enum
-        => CheckError(ex: AryChecks.EnumDefined(value: value, argName: argName.OrDefault(defaultValue: nameof(value))));
+        => CheckError(
+            ex: AryChecks.EnumDefined(value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value)))
+        );
 
     /// <summary>Ensures that the specified value is equal to another value.</summary>
     /// <typeparam name="T">The value type.</typeparam>
@@ -61,7 +63,7 @@ public static class AryGuard
         where T : IEquatable<T>
         => CheckError(
             ex: AryChecks.EqualTo(
-                value: value, compare: compare, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, compare: compare, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -73,7 +75,9 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(condition))]
         string? argName = null)
         => CheckError(
-            ex: AryChecks.False(condition: condition, argName: argName.OrDefault(defaultValue: nameof(condition)))
+            ex: AryChecks.False(
+                condition: condition, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(condition))
+            )
         );
 
     /// <summary>Creates a new <see cref="AryValidation{T}" /> context for the specified value.</summary>
@@ -84,7 +88,7 @@ public static class AryGuard
     public static AryValidation<T> For<T>(T value,
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
-        => new(argValue: value, argName: argName.OrDefault(defaultValue: nameof(value)));
+        => new(argValue: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value)));
 
     /// <summary>Ensures that the specified value is greater than the given minimum (exclusive).</summary>
     /// <typeparam name="T">A comparable type.</typeparam>
@@ -99,7 +103,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.GreaterThan(
-                value: value, minExclusive: minExclusive, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, minExclusive: minExclusive, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -116,7 +120,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.GreaterThanOrEqualTo(
-                value: value, minInclusive: minInclusive, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, minInclusive: minInclusive, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -135,7 +139,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.InRange(
-                value: value, min: min, max: max, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, min: min, max: max, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -148,7 +152,9 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
         => CheckError(
-            ex: AryChecks.IsAssignableTo<TTarget>(value: value, argName: argName.OrDefault(defaultValue: nameof(value)))
+            ex: AryChecks.IsAssignableTo<TTarget>(
+                value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
+            )
         );
 
     /// <summary>Ensures that the specified value is less than the given maximum (exclusive).</summary>
@@ -164,7 +170,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.LessThan(
-                value: value, maxExclusive: maxExclusive, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, maxExclusive: maxExclusive, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -181,7 +187,7 @@ public static class AryGuard
         where T : IComparable<T>
         => CheckError(
             ex: AryChecks.LessThanOrEqualTo(
-                value: value, maxInclusive: maxInclusive, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, maxInclusive: maxInclusive, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -194,7 +200,9 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
         where T : struct, IEquatable<T>
-        => CheckError(ex: AryChecks.NotDefault(value: value, argName: argName.OrDefault(defaultValue: nameof(value))));
+        => CheckError(
+            ex: AryChecks.NotDefault(value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value)))
+        );
 
     /// <summary>Ensures that the specified value is not equal to another value.</summary>
     /// <typeparam name="T">The value type.</typeparam>
@@ -209,7 +217,7 @@ public static class AryGuard
         where T : IEquatable<T>
         => CheckError(
             ex: AryChecks.NotEqualTo(
-                value: value, compare: compare, argName: argName.OrDefault(defaultValue: nameof(value))
+                value: value, compare: compare, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
             )
         );
 
@@ -221,7 +229,9 @@ public static class AryGuard
     public static void NotNull<T>(T? value,
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
-        => CheckError(ex: AryChecks.NotNull(value: value, argName: argName.OrDefault(defaultValue: nameof(value))));
+        => CheckError(
+            ex: AryChecks.NotNull(value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value)))
+        );
 
     /// <summary>Ensures that the specified string is not null or empty.</summary>
     /// <param name="value">The string to validate.</param>
@@ -231,7 +241,7 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
         => CheckError(
-            ex: AryChecks.NotNullOrEmpty(value: value, argName: argName.OrDefault(defaultValue: nameof(value)))
+            ex: AryChecks.NotNullOrEmpty(value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value)))
         );
 
     /// <summary>Ensures that the specified collection is not null or empty.</summary>
@@ -244,7 +254,7 @@ public static class AryGuard
         string? argName = null)
         => CheckError(
             ex: AryChecks.NotNullOrEmpty(
-                collection: collection, argName: argName.OrDefault(defaultValue: nameof(collection))
+                collection: collection, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(collection))
             )
         );
 
@@ -256,7 +266,9 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(value))]
         string? argName = null)
         => CheckError(
-            ex: AryChecks.NotNullOrWhiteSpace(value: value, argName: argName.OrDefault(defaultValue: nameof(value)))
+            ex: AryChecks.NotNullOrWhiteSpace(
+                value: value, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value))
+            )
         );
 
     /// <summary>Ensures that the two provided values are of the same type.</summary>
@@ -272,7 +284,7 @@ public static class AryGuard
         string? argName = null)
         => CheckError(
             ex: AryChecks.SameType(
-                value1: value1, value2: value2, argName: argName.OrDefault(defaultValue: nameof(value1))
+                value1: value1, value2: value2, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(value1))
             )
         );
 
@@ -284,7 +296,7 @@ public static class AryGuard
         [CallerArgumentExpression(parameterName: nameof(condition))]
         string? argName = null)
         => CheckError(
-            ex: AryChecks.True(condition: condition, argName: argName.OrDefault(defaultValue: nameof(condition)))
+            ex: AryChecks.True(condition: condition, argName: argName.OrDefaultIfEmpty(defaultValue: nameof(condition)))
         );
 
     /// <summary>Ensures that a condition is true; throws otherwise.</summary>

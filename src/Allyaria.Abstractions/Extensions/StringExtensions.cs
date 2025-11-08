@@ -234,6 +234,24 @@ public static class StringExtensions
     }
 
     /// <summary>
+    /// Returns the provided string if it is not <c>null</c>, empty, or white space; otherwise, returns the specified default
+    /// value, or <see cref="string.Empty" /> if no default is provided.
+    /// </summary>
+    /// <param name="value">The string to evaluate.</param>
+    /// <param name="defaultValue">
+    /// The value to return when <paramref name="value" /> is <c>null</c>, empty, or white space. If omitted,
+    /// <see cref="string.Empty" /> is used.
+    /// </param>
+    /// <returns>
+    /// <paramref name="value" /> when it is not <c>null</c>, empty, or white space; otherwise,
+    /// <paramref name="defaultValue" />.
+    /// </returns>
+    public static string OrDefaultIfEmpty(this string? value, string defaultValue = "")
+        => string.IsNullOrWhiteSpace(value: value)
+            ? defaultValue
+            : value;
+
+    /// <summary>
     /// Returns the provided string if it is not <c>null</c>; otherwise, returns the specified default value, or
     /// <see cref="string.Empty" /> if no default is provided.
     /// </summary>
@@ -242,7 +260,7 @@ public static class StringExtensions
     /// The value to return when <paramref name="value" /> is <c>null</c>. If omitted, <see cref="string.Empty" /> is used.
     /// </param>
     /// <returns><paramref name="value" /> when it is not <c>null</c>; otherwise, <paramref name="defaultValue" />.</returns>
-    public static string OrDefault(this string? value, string defaultValue = "") => value ?? defaultValue;
+    public static string OrDefaultIfNull(this string? value, string defaultValue = "") => value ?? defaultValue;
 
     /// <summary>
     /// Replaces all occurrences of a specified separator character in the input string with spaces, collapsing multiple

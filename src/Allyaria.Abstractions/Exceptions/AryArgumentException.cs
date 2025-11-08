@@ -29,7 +29,7 @@ public sealed class AryArgumentException : AryException
         Exception? innerException = null)
         : base(
             message: message,
-            errorCode: errorCode.OrDefault(defaultValue: "ARY.ARGUMENT"),
+            errorCode: errorCode.OrDefaultIfEmpty(defaultValue: "ARY.ARGUMENT"),
             innerException: innerException
         )
     {

@@ -24,7 +24,7 @@ public class AryException : Exception
     /// </param>
     public AryException(string? message = null, string? errorCode = null, Exception? innerException = null)
         : base(message: message, innerException: innerException)
-        => ErrorCode = errorCode.OrDefault(defaultValue: "ARY.UNKNOWN");
+        => ErrorCode = errorCode.OrDefaultIfEmpty(defaultValue: "ARY.UNKNOWN");
 
     /// <summary>Gets the structured error code associated with this exception instance.</summary>
     /// <remarks>
