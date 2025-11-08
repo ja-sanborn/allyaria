@@ -8,6 +8,25 @@ namespace Allyaria.Abstractions.Validation;
 /// </summary>
 public static class AryGuard
 {
+    /// <summary>Ensures that the specified value lies within the given exclusive range.</summary>
+    /// <typeparam name="T">A comparable type.</typeparam>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The exclusive lower bound.</param>
+    /// <param name="max">The exclusive upper bound.</param>
+    /// <param name="argName">The argument name, automatically captured.</param>
+    /// <exception cref="AryArgumentException">Thrown if the value is outside the range.</exception>
+    public static void Between<T>(T value,
+        T min,
+        T max,
+        [CallerArgumentExpression(parameterName: nameof(value))]
+        string? argName = null)
+        where T : IComparable<T>
+        => CheckError(
+            ex: AryChecks.Between(
+                value: value, min: min, max: max, argName: argName.OrDefault(defaultValue: nameof(value))
+            )
+        );
+
     /// <summary>Throws the specified <see cref="AryArgumentException" /> if it is not null.</summary>
     /// <param name="ex">The exception to check and potentially throw.</param>
     private static void CheckError(AryArgumentException? ex)

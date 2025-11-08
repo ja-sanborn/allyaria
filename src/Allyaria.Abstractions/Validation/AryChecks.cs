@@ -6,6 +6,21 @@ namespace Allyaria.Abstractions.Validation;
 /// </summary>
 internal static class AryChecks
 {
+    /// <summary>Validates that a value lies within a specified exclusive range.</summary>
+    /// <typeparam name="T">The comparable type.</typeparam>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum value (exclusive).</param>
+    /// <param name="max">The maximum value (exclusive).</param>
+    /// <param name="argName">The argument name.</param>
+    /// <returns>An exception if out of range; otherwise, <c>null</c>.</returns>
+    public static AryArgumentException? Between<T>(T value, T min, T max, string argName)
+        where T : IComparable<T>
+        => value.CompareTo(other: min) <= 0 || value.CompareTo(other: max) >= 0
+            ? new AryArgumentException(
+                message: $"{argName} must be between {min} and {max} (exclusive).", argName: argName, argValue: value
+            )
+            : null;
+
     /// <summary>Validates that the specified enumeration value is defined within its type.</summary>
     /// <typeparam name="TEnum">The enumeration type.</typeparam>
     /// <param name="value">The value to check.</param>

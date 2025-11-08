@@ -6,6 +6,22 @@
 /// </summary>
 public static class AryValidationExtensions
 {
+    /// <summary>Validates that the current value is within the specified exclusive range.</summary>
+    /// <typeparam name="T">A comparable type.</typeparam>
+    /// <param name="validation">The current validation context.</param>
+    /// <param name="min">The minimum exclusive bound.</param>
+    /// <param name="max">The maximum exclusive bound.</param>
+    /// <returns>The same validation context.</returns>
+    public static AryValidation<T> Between<T>(this AryValidation<T> validation, T min, T max)
+        where T : IComparable<T>
+    {
+        validation.Add(
+            ex: AryChecks.Between(value: validation.ArgValue, min: min, max: max, argName: validation.ArgName)
+        );
+
+        return validation;
+    }
+
     /// <summary>Validates that the current argument value is a defined enumeration constant.</summary>
     /// <typeparam name="T">The enumeration type.</typeparam>
     /// <param name="validation">The current validation context.</param>
