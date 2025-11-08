@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Abstractions.Result;
+﻿namespace Allyaria.Abstractions.Results;
 
 /// <summary>
 /// Represents the outcome of an operation that may return a value of type <typeparamref name="T" />. Encapsulates success

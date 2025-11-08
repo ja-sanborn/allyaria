@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Abstractions.Result;
+﻿namespace Allyaria.Abstractions.Results;
 
 /// <summary>
 /// Represents the outcome of an operation that can either succeed or fail, encapsulating success state, error details, and

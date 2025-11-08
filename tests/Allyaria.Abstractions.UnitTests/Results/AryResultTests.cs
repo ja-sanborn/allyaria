@@ -1,4 +1,4 @@
-﻿namespace Allyaria.Abstractions.UnitTests.Result;
+﻿namespace Allyaria.Abstractions.UnitTests.Results;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AryResultTests
