@@ -47,7 +47,16 @@ internal sealed class CssBuilder
             return this;
         }
 
-        var property = name.ToCssName();
+        string property;
+
+        try
+        {
+            property = name.FromPrefixedCase().ToCssName();
+        }
+        catch
+        {
+            property = string.Empty;
+        }
 
         if (string.IsNullOrWhiteSpace(value: property))
         {
