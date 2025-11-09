@@ -58,7 +58,7 @@ public sealed record StylePosition : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StylePosition Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StylePosition(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -100,5 +100,5 @@ public sealed record StylePosition : StyleValueBase
     /// The underlying CSS <c>position</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StylePosition? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StylePosition? value) => (value?.Value).OrDefaultIfEmpty();
 }

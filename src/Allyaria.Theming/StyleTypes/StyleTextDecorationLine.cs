@@ -65,7 +65,7 @@ public sealed record StyleTextDecorationLine : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleTextDecorationLine Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleTextDecorationLine(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -107,5 +107,5 @@ public sealed record StyleTextDecorationLine : StyleValueBase
     /// The underlying CSS <c>text-decoration-line</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleTextDecorationLine? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleTextDecorationLine? value) => (value?.Value).OrDefaultIfEmpty();
 }

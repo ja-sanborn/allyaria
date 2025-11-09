@@ -64,7 +64,7 @@ public sealed record StyleBorderOutlineStyle : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleBorderOutlineStyle Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleBorderOutlineStyle(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -106,5 +106,5 @@ public sealed record StyleBorderOutlineStyle : StyleValueBase
     /// The underlying CSS border or outline style string, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleBorderOutlineStyle? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleBorderOutlineStyle? value) => (value?.Value).OrDefaultIfEmpty();
 }

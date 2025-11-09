@@ -77,7 +77,7 @@ public sealed record StyleJustify : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleJustify Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleJustify(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 

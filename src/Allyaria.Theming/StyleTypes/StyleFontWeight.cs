@@ -78,7 +78,7 @@ public sealed record StyleFontWeight : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleFontWeight Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleFontWeight(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -120,5 +120,5 @@ public sealed record StyleFontWeight : StyleValueBase
     /// The underlying CSS <c>font-weight</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleFontWeight? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleFontWeight? value) => (value?.Value).OrDefaultIfEmpty();
 }

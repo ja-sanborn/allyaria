@@ -52,7 +52,7 @@ public sealed record StyleLineBreak : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleLineBreak Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleLineBreak(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -94,5 +94,5 @@ public sealed record StyleLineBreak : StyleValueBase
     /// The underlying CSS <c>line-break</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleLineBreak? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleLineBreak? value) => (value?.Value).OrDefaultIfEmpty();
 }

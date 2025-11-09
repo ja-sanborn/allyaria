@@ -56,7 +56,7 @@ public sealed record StyleOverflow : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleOverflow Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleOverflow(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -98,5 +98,5 @@ public sealed record StyleOverflow : StyleValueBase
     /// The underlying CSS <c>overflow</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleOverflow? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleOverflow? value) => (value?.Value).OrDefaultIfEmpty();
 }

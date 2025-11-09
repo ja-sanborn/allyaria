@@ -11,7 +11,7 @@ public sealed record StyleNumber : StyleValueBase
     /// numeric value.
     /// </summary>
     /// <param name="value">The string representation of a numeric value.</param>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="AryArgumentException">
     /// Thrown when the provided <paramref name="value" /> cannot be parsed as a valid
     /// integer.
     /// </exception>
@@ -23,14 +23,13 @@ public sealed record StyleNumber : StyleValueBase
             return;
         }
 
-        if (TryNormalizeInteger(input: Value, number: out var number))
-        {
-            Number = number;
-        }
-        else
-        {
-            throw new ArgumentException(message: $"Invalid number: {Value}");
-        }
+        AryGuard.Check(
+            condition: TryNormalizeInteger(input: Value, number: out var number),
+            argName: nameof(value),
+            message: $"Invalid number: {Value}"
+        );
+
+        Number = number;
     }
 
     /// <summary>Gets the parsed integer value represented by this style number.</summary>
@@ -39,7 +38,7 @@ public sealed record StyleNumber : StyleValueBase
     /// <summary>Parses the specified string into a <see cref="StyleNumber" /> instance.</summary>
     /// <param name="value">The string representation of the numeric value to parse.</param>
     /// <returns>A new <see cref="StyleNumber" /> instance representing the parsed value.</returns>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="AryArgumentException">
     /// Thrown when the provided <paramref name="value" /> cannot be parsed as a valid
     /// integer.
     /// </exception>
@@ -98,5 +97,5 @@ public sealed record StyleNumber : StyleValueBase
     /// The original string value represented by the <see cref="StyleNumber" />, or an empty string if
     /// <paramref name="value" /> is <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleNumber? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleNumber? value) => (value?.Value).OrDefaultIfEmpty();
 }

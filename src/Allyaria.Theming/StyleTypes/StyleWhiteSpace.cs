@@ -69,7 +69,7 @@ public sealed record StyleWhiteSpace : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleWhiteSpace Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleWhiteSpace(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -111,5 +111,5 @@ public sealed record StyleWhiteSpace : StyleValueBase
     /// The underlying CSS <c>white-space</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleWhiteSpace? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleWhiteSpace? value) => (value?.Value).OrDefaultIfEmpty();
 }

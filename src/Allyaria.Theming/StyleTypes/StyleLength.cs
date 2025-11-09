@@ -40,15 +40,14 @@ public sealed record StyleLength : StyleValueBase
             return;
         }
 
-        if (TryNormalizeLength(input: Value, number: out var number, unit: out var unit))
-        {
-            LengthUnit = unit;
-            Number = number;
-        }
-        else
-        {
-            throw new ArgumentException(message: $"Invalid length: {Value}");
-        }
+        AryGuard.Check(
+            condition: TryNormalizeLength(input: Value, number: out var number, unit: out var unit),
+            argName: nameof(value),
+            message: $"Invalid length: {Value}"
+        );
+
+        LengthUnit = unit;
+        Number = number;
     }
 
     /// <summary>
@@ -211,5 +210,5 @@ public sealed record StyleLength : StyleValueBase
     /// The original CSS length string stored in <see cref="StyleValueBase.Value" />, or an empty string if
     /// <paramref name="value" /> is <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleLength? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleLength? value) => (value?.Value).OrDefaultIfEmpty();
 }

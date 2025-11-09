@@ -36,7 +36,7 @@ public sealed record StyleScrollBehavior : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleScrollBehavior Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleScrollBehavior(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -78,5 +78,5 @@ public sealed record StyleScrollBehavior : StyleValueBase
     /// The underlying CSS <c>scroll-behavior</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleScrollBehavior? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleScrollBehavior? value) => (value?.Value).OrDefaultIfEmpty();
 }

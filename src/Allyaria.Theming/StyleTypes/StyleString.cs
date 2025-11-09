@@ -49,5 +49,5 @@ public sealed record StyleString : StyleValueBase
     /// <returns>
     /// The contained string value, or an empty string if <paramref name="value" /> is <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleString? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleString? value) => (value?.Value).OrDefaultIfEmpty();
 }

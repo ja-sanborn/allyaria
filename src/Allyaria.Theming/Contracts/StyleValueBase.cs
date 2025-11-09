@@ -31,7 +31,7 @@ public abstract record StyleValueBase : IStyleValue
     /// <see langword="true" /> if the input contains no invalid control characters and is suitable for use as a style value;
     /// otherwise, <see langword="false" />.
     /// </returns>
-    protected bool TryValidateInput(string? value, out string result)
+    private static bool TryValidateInput(string? value, out string result)
     {
         result = value?.Trim() ?? string.Empty;
 
@@ -45,8 +45,14 @@ public abstract record StyleValueBase : IStyleValue
     /// Thrown when the provided <paramref name="value" /> contains control characters or is otherwise deemed invalid for use
     /// as a CSS value.
     /// </exception>
-    protected string ValidateInput(string? value)
-        => TryValidateInput(value: value, result: out var result)
-            ? result
-            : throw new AryArgumentException(message: "Invalid value", argName: nameof(value), argValue: value);
+    private static string ValidateInput(string? value)
+    {
+        AryGuard.Check(
+            condition: TryValidateInput(value: value, result: out var result),
+            argName: nameof(value),
+            message: $"Invalid value: {value}"
+        );
+
+        return result;
+    }
 }

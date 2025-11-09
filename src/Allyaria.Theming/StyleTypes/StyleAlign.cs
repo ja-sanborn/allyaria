@@ -85,7 +85,7 @@ public sealed record StyleAlign : StyleValueBase
     /// <see cref="Kind" />.
     /// </exception>
     public static StyleAlign Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleAlign(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -123,5 +123,5 @@ public sealed record StyleAlign : StyleValueBase
     /// <returns>
     /// The underlying CSS alignment string or an empty string if <paramref name="value" /> is <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleAlign? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleAlign? value) => (value?.Value).OrDefaultIfEmpty();
 }

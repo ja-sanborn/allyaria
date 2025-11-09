@@ -108,7 +108,7 @@ public sealed record StyleDisplay : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleDisplay Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleDisplay(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -150,5 +150,5 @@ public sealed record StyleDisplay : StyleValueBase
     /// The underlying CSS <c>display</c> string value, or an empty string if <paramref name="value" /> is
     /// <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleDisplay? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleDisplay? value) => (value?.Value).OrDefaultIfEmpty();
 }

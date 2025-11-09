@@ -69,5 +69,5 @@ public sealed record StyleColor : StyleValueBase
     /// The CSS string representation of the color (typically in hex format), or an empty string if <paramref name="value" />
     /// is <see langword="null" />.
     /// </returns>
-    public static implicit operator string(StyleColor? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleColor? value) => (value?.Value).OrDefaultIfEmpty();
 }

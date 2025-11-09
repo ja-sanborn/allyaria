@@ -38,7 +38,7 @@ public sealed record StyleBoxSizing : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleBoxSizing Parse(string? value)
-        => Enum.TryParse(value: value, ignoreCase: true, result: out Kind kind)
+        => value.TryParseEnum<Kind>(result: out var kind)
             ? new StyleBoxSizing(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
 
@@ -80,5 +80,5 @@ public sealed record StyleBoxSizing : StyleValueBase
     /// The underlying CSS <c>box-sizing</c> string, or an empty string if <paramref name="value" /> is <see langword="null" />
     /// .
     /// </returns>
-    public static implicit operator string(StyleBoxSizing? value) => value?.Value ?? string.Empty;
+    public static implicit operator string(StyleBoxSizing? value) => (value?.Value).OrDefaultIfEmpty();
 }
