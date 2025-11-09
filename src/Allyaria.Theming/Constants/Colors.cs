@@ -1194,11 +1194,31 @@ public static class Colors
     /// <summary>Represents the <see cref="HexColor" /> for <see cref="Yellowgreen" />: <c>#9ACD32FF</c></summary>
     public static readonly HexColor Yellowgreen = new(value: "#9ACD32FF");
 
+    /// <summary>
+    /// Lazily initialized dictionary that provides read-only access to all named colors keyed by their constant name, using a
+    /// case-insensitive string comparer.
+    /// </summary>
+    /// <remarks>
+    /// The underlying dictionary is constructed on first access by reflecting over the public static <see cref="HexColor" />
+    /// fields declared on the <see cref="Colors" /> type and materializing them into an immutable dictionary.
+    /// </remarks>
     private static readonly Lazy<IReadOnlyDictionary<string, HexColor>> AllColors = new(
         valueFactory: BuildDictionary,
         isThreadSafe: true
     );
 
+    /// <summary>
+    /// Builds an immutable, case-insensitive dictionary that maps color names to their corresponding <see cref="HexColor" />
+    /// values.
+    /// </summary>
+    /// <returns>
+    /// A read-only dictionary containing all publicly exposed <see cref="HexColor" /> fields defined on the
+    /// <see cref="Colors" /> type, keyed by field name.
+    /// </returns>
+    /// <remarks>
+    /// This method is used as the value factory for the lazily initialized color dictionary and relies on reflection to
+    /// discover the color fields at runtime.
+    /// </remarks>
     private static IReadOnlyDictionary<string, HexColor> BuildDictionary()
     {
         var type = typeof(Colors);
@@ -1217,15 +1237,50 @@ public static class Colors
         return builder.ToImmutable();
     }
 
+    /// <summary>
+    /// Determines whether a named color with the specified <paramref name="name" /> exists in the color library.
+    /// </summary>
+    /// <param name="name">
+    /// The case-insensitive name of the color to look up. This value must not be null, empty, or consist only of whitespace
+    /// characters.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if a color with the specified name is defined; otherwise, <see langword="false" />.
+    /// </returns>
+    /// <remarks>
+    /// This method validates <paramref name="name" /> using a guard clause before performing the lookup against the lazily
+    /// initialized color dictionary.
+    /// </remarks>
     public static bool Contains(string name)
     {
         AryGuard.NotNullOrWhiteSpace(value: name);
+
         return AllColors.Value.ContainsKey(key: name);
     }
 
+    /// <summary>
+    /// Attempts to retrieve the <see cref="HexColor" /> associated with the specified color <paramref name="name" />.
+    /// </summary>
+    /// <param name="name">
+    /// The case-insensitive name of the color to retrieve. This value must not be null, empty, or consist only of whitespace
+    /// characters.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns, contains the <see cref="HexColor" /> associated with <paramref name="name" /> if it is found;
+    /// otherwise, contains the default <see cref="HexColor" /> value.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if a color with the specified name exists and <paramref name="value" /> was set; otherwise,
+    /// <see langword="false" />.
+    /// </returns>
+    /// <remarks>
+    /// This method validates <paramref name="name" /> using a guard clause before attempting the lookup against the lazily
+    /// initialized color dictionary.
+    /// </remarks>
     public static bool TryGet(string name, out HexColor value)
     {
         AryGuard.NotNullOrWhiteSpace(value: name);
+
         return AllColors.Value.TryGetValue(key: name, value: out value);
     }
 }
