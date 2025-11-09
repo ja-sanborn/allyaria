@@ -31,7 +31,7 @@ internal sealed class ThemeBuilder
     {
         foreach (var updater in applier)
         {
-            Set(updater: updater);
+            _theme.Set(updater: updater);
         }
     }
 

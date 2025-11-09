@@ -11,7 +11,7 @@
 /// </remarks>
 public interface IThemeConfigurator : IReadOnlyList<ThemeUpdater>
 {
-    /// <summary>Adds or replaces a <see cref="ThemeUpdater" /> that modifies the theme configuration.</summary>
+    /// <summary>Adds a <see cref="ThemeUpdater" /> that modifies the theme configuration.</summary>
     /// <param name="updater">The <see cref="ThemeUpdater" /> delegate or object that defines how the theme should be updated.</param>
     /// <returns>
     /// A new <see cref="IThemeConfigurator" /> instance with the specified updater applied, enabling fluent chaining of

@@ -34,19 +34,24 @@ public static class ServiceCollectionExtensions
         ThemeType initialThemeType = ThemeType.System,
         IThemeConfigurator? overrides = null)
     {
-        var builder = new ThemeBuilder().Create(brand: brand ?? new Brand());
-
-        if (overrides is not null)
-        {
-            foreach (var updater in overrides)
+        services.AddScoped<IThemingService>(
+            implementationFactory: _ =>
             {
-                builder.Set(updater: updater);
-            }
-        }
+                var builder = new ThemeBuilder().Create(brand: brand ?? new Brand());
 
-        var theme = builder.Build();
-        var service = new ThemingService(theme: theme, themeType: initialThemeType);
-        services.AddSingleton<IThemingService>(implementationInstance: service);
+                if (overrides is not null)
+                {
+                    foreach (var updater in overrides)
+                    {
+                        builder.Set(updater: updater);
+                    }
+                }
+
+                var theme = builder.Build();
+
+                return new ThemingService(theme: theme, themeType: initialThemeType);
+            }
+        );
 
         return services;
     }
