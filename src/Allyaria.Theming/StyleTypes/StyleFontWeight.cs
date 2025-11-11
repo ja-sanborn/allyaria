@@ -78,9 +78,15 @@ public sealed record StyleFontWeight : StyleValueBase
     /// Thrown when the provided <paramref name="value" /> does not correspond to a valid <see cref="Kind" />.
     /// </exception>
     public static StyleFontWeight Parse(string? value)
-        => value.TryParseEnum<Kind>(result: out var kind)
+    {
+        var valueString = value is "100" or "200" or "300" or "400" or "500" or "600" or "700" or "800" or "900"
+            ? $"Weight{value}"
+            : value?.Trim();
+
+        return valueString.TryParseEnum<Kind>(result: out var kind)
             ? new StyleFontWeight(kind: kind)
             : throw new AryArgumentException(message: $"Invalid style: {value}", argName: nameof(value));
+    }
 
     /// <summary>Attempts to parse a string into a <see cref="StyleFontWeight" /> instance.</summary>
     /// <param name="value">The string representation of the font-weight value to parse.</param>
