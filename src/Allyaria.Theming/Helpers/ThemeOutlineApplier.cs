@@ -47,7 +47,7 @@ internal sealed class ThemeOutlineApplier : ThemeApplierBase
         );
 
         // Apply outline offset (distance between element and outline).
-        Add(item: CreateUpdater(styleType: StyleType.OutlineOffset, value: new StyleNumber(value: Sizing.Size1)));
+        Add(item: CreateUpdater(styleType: StyleType.OutlineOffset, value: new StyleLength(value: Sizing.Size1)));
 
         // Apply outline style (e.g., solid).
         Add(
@@ -58,6 +58,6 @@ internal sealed class ThemeOutlineApplier : ThemeApplierBase
         );
 
         // Apply outline width (thickness of focus ring).
-        Add(item: CreateUpdater(styleType: StyleType.OutlineWidth, value: new StyleNumber(value: Sizing.Thick)));
+        Add(item: CreateUpdater(styleType: StyleType.OutlineWidth, value: new StyleLength(value: Sizing.Thick)));
     }
 }

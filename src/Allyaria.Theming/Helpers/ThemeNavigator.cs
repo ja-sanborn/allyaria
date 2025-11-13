@@ -50,6 +50,7 @@ public readonly record struct ThemeNavigator(
 
         if (!(items[0] is ComponentState or ComponentType or ThemeType or StyleType))
         {
+            // Code Coverage: This is unreachable through all public methods.
             throw new AryArgumentException(message: "Invalid enum type", argName: nameof(items));
         }
 

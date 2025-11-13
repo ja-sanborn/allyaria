@@ -164,7 +164,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// </remarks>
     public HexColor(string value)
     {
-        AryGuard.NotNullOrWhiteSpace(value: value, argName: nameof(value));
+        AryGuard.NotNullOrWhiteSpace(value: value);
 
         HexByte red;
         HexByte green;
@@ -334,7 +334,7 @@ public readonly struct HexColor : IComparable<HexColor>, IEquatable<HexColor>
     /// <returns>The resolved color.</returns>
     public HexColor EnsureContrast(HexColor background, double minimumRatio = 3.0)
     {
-        AryGuard.InRange(value: minimumRatio, min: 1.0, max: 21.0, argName: nameof(minimumRatio));
+        AryGuard.InRange(value: minimumRatio, min: 1.0, max: 21.0);
 
         var startRatio = ContrastRatio(background: background);
 
