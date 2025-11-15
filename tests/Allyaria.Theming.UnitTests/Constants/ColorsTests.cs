@@ -87,6 +87,22 @@ public sealed class ColorsLookupTests
         act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
     }
 
+    [Theory]
+    [InlineData(data: null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Contains_Should_Throw_AryArgumentException_When_Name_Is_NullOrWhitespace(string? name)
+    {
+        // Arrange
+        var invalidName = name;
+
+        // Act
+        var act = () => Colors.Contains(name: invalidName!);
+
+        // Assert
+        act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
+    }
+
     [Fact]
     public void TryGet_Should_ReturnFalse_And_Default_When_ColorName_DoesNot_Exist()
     {
@@ -128,22 +144,6 @@ public sealed class ColorsLookupTests
 
         // Act
         var act = () => Colors.TryGet(name: name!, value: out _);
-
-        // Assert
-        act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
-    }
-
-    [Theory]
-    [InlineData(data: null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void Contains_Should_Throw_AryArgumentException_When_Name_Is_NullOrWhitespace(string? name)
-    {
-        // Arrange
-        var invalidName = name;
-
-        // Act
-        var act = () => Colors.Contains(name: invalidName!);
 
         // Assert
         act.Should().Throw<AryArgumentException>(because: "*name cannot be null, empty or whitespace*");
