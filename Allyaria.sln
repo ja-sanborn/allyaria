@@ -82,63 +82,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 		docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.AryValidationExtensions.md = docs\references\Abstractions\Extensions\Allyaria.Abstractions.Extensions.AryValidationExtensions.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constants", "Constants", "{3AD6361E-E018-4F87-A678-597B8FF3258F}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.BorderStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.BorderStyle.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.FontStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.FontStyle.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.FontWeight.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.FontWeight.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextAlign.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextAlign.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationLine.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationLine.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationStyle.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextDecorationStyle.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.TextTransform.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.TextTransform.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.VerticalAlign.md
-		docs\references\Theming\Constants\Allyaria.Theming.Constants.Colors.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.Colors.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enumerations", "Enumerations", "{5132C91C-658C-4165-A20B-F25DAC380A67}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentElevation.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentElevation.md
-		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md
-		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md
-		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md
-		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styles", "Styles", "{E61CAF49-E3B5-4944-83DB-A7171BC5C5C9}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Styles\Allyaria.Theming.Styles.Borders.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.Borders.md
-		docs\references\Theming\Styles\Allyaria.Theming.Styles.Palette.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.Palette.md
-		docs\references\Theming\Styles\Allyaria.Theming.Styles.Spacing.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.Spacing.md
-		docs\references\Theming\Styles\Allyaria.Theming.Styles.Theme.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.Theme.md
-		docs\references\Theming\Styles\Allyaria.Theming.Styles.Typography.md = docs\references\Theming\Styles\Allyaria.Theming.Styles.Typography.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Types", "Types", "{AB2FC94C-985E-4658-A712-3BC2FE8E693C}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Types\Allyaria.Theming.Types.HexByte.md = docs\references\Theming\Types\Allyaria.Theming.Types.HexByte.md
-		docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md = docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md
-		docs\references\Theming\Types\Allyaria.Theming.Types.ThemeColor.md = docs\references\Theming\Types\Allyaria.Theming.Types.ThemeColor.md
-		docs\references\Theming\Types\Allyaria.Theming.Types.ThemeNumber.md = docs\references\Theming\Types\Allyaria.Theming.Types.ThemeNumber.md
-		docs\references\Theming\Types\Allyaria.Theming.Types.ThemeString.md = docs\references\Theming\Types\Allyaria.Theming.Types.ThemeString.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4286BABF-2EFD-4A3D-851E-E5C6339AD959}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeProvider.md
-		docs\references\Theming\Services\Allyaria.Theming.Services.ThemeWatcher.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemeWatcher.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.Blazor", "src\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj", "{18856467-B99F-4B83-BD58-818D71F9D2F5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allyaria.Theming.Blazor.UnitTests", "tests\Allyaria.Theming.Blazor.UnitTests\Allyaria.Theming.Blazor.UnitTests.csproj", "{4C84ECF0-510D-460B-9303-013881C04C17}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{49C880FA-4E5D-4E97-B5A0-3BAAA2D23572}"
-	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeProvider.md = docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeProvider.md
-		docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeWatcher.md = docs\references\Theming\Contracts\Allyaria.Theming.Interfaces.IThemeWatcher.md
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Results", "Results", "{2A9812A7-E529-45DA-BE1C-12E695830EC9}"
 	ProjectSection(SolutionItems) = preProject
@@ -151,6 +97,100 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation", "Validation", 
 		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryChecks.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryChecks.md
 		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryValidation.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryValidation.md
 		docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryGuard.md = docs\references\Abstractions\Validation\Allyaria.Abstractions.Validation.AryGuard.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Types", "Types", "{22CD9D89-E72F-4A6D-908D-CF7B2D4296FA}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Types\Allyaria.Theming.Types.HexByte.md = docs\references\Theming\Types\Allyaria.Theming.Types.HexByte.md
+		docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md = docs\references\Theming\Types\Allyaria.Theming.Types.HexColor.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enumerations", "Enumerations", "{522CB051-11F5-4F97-86A2-7164988B5B65}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentState.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ComponentType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.FontFaceType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.FontFaceType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.LengthUnits.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.PaletteType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.PaletteType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.StyleGroupType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.StyleGroupType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.StyleType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.StyleType.md
+		docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md = docs\references\Theming\Enumerations\Allyaria.Theming.Enumerations.ThemeType.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constants", "Constants", "{EC6F4946-6162-4C81-9B03-41BA186CCB31}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.Colors.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.Colors.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.Sizing.md
+		docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md = docs\references\Theming\Constants\Allyaria.Theming.Constants.StyleDefaults.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrandTypes", "BrandTypes", "{FF13773D-FCFE-4F90-8ACC-45BE7B3DD83F}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandFont.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandFont.md
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandPalette.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandPalette.md
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandState.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandState.md
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandTheme.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandTheme.md
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandVariant.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.BrandVariant.md
+		docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.Brand.md = docs\references\Theming\BrandTypes\Allyaria.Theming.BrandTypes.Brand.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{F1582F1C-B5D7-4D80-8B63-5D2B5FC6BA9A}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IStyleValue.md = docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IStyleValue.md
+		docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IThemeConfigurator.md = docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IThemeConfigurator.md
+		docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IThemingService.md = docs\references\Theming\Contracts\Allyaria.Theming.Contracts.IThemingService.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StyleTypes", "StyleTypes", "{13A19A5E-2CC4-42A6-96D7-48FEF8769724}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleAlign.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleAlign.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleAlignmentBaseline.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleAlignmentBaseline.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleBorderOutlineStyle.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleBorderOutlineStyle.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleBoxSizing.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleBoxSizing.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleColor.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleColor.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleDisplay.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleDisplay.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleFontStyle.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleFontStyle.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleFontWeight.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleFontWeight.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleGroup.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleGroup.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleHyphens.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleHyphens.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleJustify.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleJustify.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleLength.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleLength.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleLineBreak.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleLineBreak.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleNumber.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleNumber.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverflow.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverflow.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverflowWrap.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverflowWrap.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverscrollBehavior.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleOverscrollBehavior.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StylePosition.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StylePosition.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleScrollBehavior.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleScrollBehavior.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleString.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleString.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextAlign.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextAlign.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextDecorationLine.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextDecorationLine.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextDecorationStyle.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextDecorationStyle.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextOrientation.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextOrientation.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextOverflow.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextOverflow.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextTransform.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextTransform.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextWrapStyle.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleTextWrapStyle.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleVerticalAlign.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleVerticalAlign.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWhiteSpace.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWhiteSpace.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWordBreak.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWordBreak.md
+		docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWritingMode.md = docs\references\Theming\StyleTypes\Allyaria.Theming.StyleTypes.StyleWritingMode.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{42276C23-EC6B-4BE8-B242-23B1678A7154}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeConfigurator.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeConfigurator.md
+		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeNavigator.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeNavigator.md
+		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeUpdater.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeUpdater.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E4CC3AE9-4118-44F1-B9AB-5CF698AF32A6}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Services\Allyaria.Theming.Services.ThemingService.md = docs\references\Theming\Services\Allyaria.Theming.Services.ThemingService.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{5BEC066B-4B27-4BD4-89C2-33517E2F331C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\references\Theming\Extensions\Allyaria.Theming.Extensions.ServiceCollectionExtensions.md = docs\references\Theming\Extensions\Allyaria.Theming.Extensions.ServiceCollectionExtensions.md
 	EndProjectSection
 EndProject
 Global
@@ -209,16 +249,19 @@ Global
 		{1EA105EA-332E-4753-8920-E08F75E4810B} = {87ECEB69-9E94-4136-B906-1322CA050981}
 		{62004155-929B-47BD-A1F7-93A3B084A526} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{46EEB09A-BADE-45D8-B05A-E2D0CFCA36A0} = {1EA105EA-332E-4753-8920-E08F75E4810B}
-		{3AD6361E-E018-4F87-A678-597B8FF3258F} = {96DF5FAE-0244-456C-B280-825769704835}
-		{5132C91C-658C-4165-A20B-F25DAC380A67} = {96DF5FAE-0244-456C-B280-825769704835}
-		{E61CAF49-E3B5-4944-83DB-A7171BC5C5C9} = {96DF5FAE-0244-456C-B280-825769704835}
-		{AB2FC94C-985E-4658-A712-3BC2FE8E693C} = {96DF5FAE-0244-456C-B280-825769704835}
-		{4286BABF-2EFD-4A3D-851E-E5C6339AD959} = {96DF5FAE-0244-456C-B280-825769704835}
 		{18856467-B99F-4B83-BD58-818D71F9D2F5} = {A098DD75-A348-4042-BB1A-360FF4547FAD}
 		{4C84ECF0-510D-460B-9303-013881C04C17} = {D4D16FEF-3BCF-479B-8E33-0E07E40FBFC6}
-		{49C880FA-4E5D-4E97-B5A0-3BAAA2D23572} = {96DF5FAE-0244-456C-B280-825769704835}
 		{2A9812A7-E529-45DA-BE1C-12E695830EC9} = {1EA105EA-332E-4753-8920-E08F75E4810B}
 		{C2AF6076-4457-4FEB-90F3-5BD4B7887C63} = {1EA105EA-332E-4753-8920-E08F75E4810B}
+		{22CD9D89-E72F-4A6D-908D-CF7B2D4296FA} = {96DF5FAE-0244-456C-B280-825769704835}
+		{522CB051-11F5-4F97-86A2-7164988B5B65} = {96DF5FAE-0244-456C-B280-825769704835}
+		{EC6F4946-6162-4C81-9B03-41BA186CCB31} = {96DF5FAE-0244-456C-B280-825769704835}
+		{FF13773D-FCFE-4F90-8ACC-45BE7B3DD83F} = {96DF5FAE-0244-456C-B280-825769704835}
+		{F1582F1C-B5D7-4D80-8B63-5D2B5FC6BA9A} = {96DF5FAE-0244-456C-B280-825769704835}
+		{13A19A5E-2CC4-42A6-96D7-48FEF8769724} = {96DF5FAE-0244-456C-B280-825769704835}
+		{42276C23-EC6B-4BE8-B242-23B1678A7154} = {96DF5FAE-0244-456C-B280-825769704835}
+		{E4CC3AE9-4118-44F1-B9AB-5CF698AF32A6} = {96DF5FAE-0244-456C-B280-825769704835}
+		{5BEC066B-4B27-4BD4-89C2-33517E2F331C} = {96DF5FAE-0244-456C-B280-825769704835}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}

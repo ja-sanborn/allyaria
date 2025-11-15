@@ -10,7 +10,6 @@ multiple validation results.
 
 ## Constructors
 
-*None*
 `AryChecks` is a static class and cannot be instantiated.
 
 ## Properties

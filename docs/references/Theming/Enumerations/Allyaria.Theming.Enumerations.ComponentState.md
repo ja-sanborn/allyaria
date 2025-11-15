@@ -1,8 +1,14 @@
 ﻿# Allyaria.Theming.Enumerations.ComponentState
 
-`ComponentState` is an enumeration that defines the interactive and visual states a UI component may occupy within the
-Allyaria framework. It supports theming, accessibility, and interaction logic to ensure consistent feedback and user
-experience across components.
+`ComponentState` is an enumeration defining the interactive and visual states a UI component can occupy. It is used
+throughout theming, accessibility, and interaction systems to drive consistent styling, feedback, and behavioral
+responses.
+
+## Summary
+
+`ComponentState` is an enum representing component interaction states. UI frameworks use these values to determine
+state-specific visuals (e.g., hover, pressed, disabled) and behavioral rules. This allows centralized styling logic and
+predictable cross-component behavior.
 
 ## Constructors
 
@@ -10,20 +16,25 @@ experience across components.
 
 ## Properties
 
-| Name       | Type             | Description                                                                                         |
-|------------|------------------|-----------------------------------------------------------------------------------------------------|
-| `Default`  | `ComponentState` | Represents the default, neutral state when the component is not focused, hovered, or pressed.       |
-| `Dragged`  | `ComponentState` | Indicates the component is currently being dragged during a drag-and-drop or reordering action.     |
-| `Focused`  | `ComponentState` | Indicates the component has keyboard or programmatic focus and should display a focus indicator.    |
-| `Hovered`  | `ComponentState` | Indicates the pointer or equivalent input device is positioned over the component.                  |
-| `Pressed`  | `ComponentState` | Indicates the component is in an active or pressed state, such as during a click or tap action.     |
-| `ReadOnly` | `ComponentState` | Indicates the component is visible and interactive but does not allow modification of its content.  |
-| `Disabled` | `ComponentState` | Indicates the component is non-interactive and cannot receive focus or input but remains visible.   |
-| `Hidden`   | `ComponentState` | Indicates the component is intentionally hidden from both visual layout and assistive technologies. |
+*None*
 
 ## Methods
 
 *None*
+
+## Fields
+
+| Name       | Type             | Description                                                                 |
+|------------|------------------|-----------------------------------------------------------------------------|
+| `Default`  | `ComponentState` | The neutral state when no interaction is occurring.                         |
+| `Dragged`  | `ComponentState` | The component is being dragged, such as during drag-and-drop or reordering. |
+| `Focused`  | `ComponentState` | The component currently holds keyboard or programmatic focus.               |
+| `Hovered`  | `ComponentState` | The pointer is positioned over the component.                               |
+| `Pressed`  | `ComponentState` | The component is actively engaged (e.g., click, tap, key activation).       |
+| `Visited`  | `ComponentState` | Indicates a visited element, such as a visited link.                        |
+| `ReadOnly` | `ComponentState` | The component is visible and interactive but cannot be modified.            |
+| `Disabled` | `ComponentState` | The component cannot receive focus or input but remains visible.            |
+| `Hidden`   | `ComponentState` | The component is hidden from layout and assistive technologies.             |
 
 ## Operators
 
@@ -40,9 +51,29 @@ experience across components.
 ## Example
 
 ```csharp
-ComponentState state = ComponentState.Focused;
+using Allyaria.Theming.Enumerations;
+
+public class ComponentExample
+{
+    public ComponentState State { get; private set; } = ComponentState.Default;
+
+    public void OnHover()
+    {
+        State = ComponentState.Hovered;
+    }
+
+    public void OnPress()
+    {
+        State = ComponentState.Pressed;
+    }
+
+    public void OnDisable()
+    {
+        State = ComponentState.Disabled;
+    }
+}
 ```
 
 ---
 
-*Revision Date: 2025-10-17*
+*Revision Date: 2025-11-15*

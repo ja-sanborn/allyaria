@@ -342,4 +342,4 @@ if (Colors.Contains("Blue500") && Colors.TryGet("Blue500", out HexColor accent))
 
 ---
 
-*Revision Date: 2025-10-17*
+*Revision Date: 2025-11-15*
