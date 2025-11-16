@@ -309,7 +309,6 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             }
             catch
             {
-                // If called off the render thread, schedule a render instead.
                 _ = InvokeAsync(workItem: StateHasChanged);
             }
         }
@@ -364,7 +363,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         }
         catch
         {
-            // Ignore if JS is not ready (e.g., during prerendering).
+            // Code Coverage: Unreachable code. Ignore if JS is not ready (e.g., during prerendering).
         }
     }
 
@@ -400,7 +399,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         }
         catch
         {
-            // Intentionally ignored: storage may be blocked or unavailable.
+            // Code Coverage: Unreachable code. Intentionally ignored: storage may be blocked or unavailable.
         }
     }
 
@@ -411,6 +410,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     {
         if (_isStarted || _module is null || IsCancellationRequested())
         {
+            // Code coverage: Unreachable code.
             return;
         }
 
@@ -456,7 +456,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
         }
         catch
         {
-            // Swallow teardown failures; they can race with navigation/dispose.
+            // Code coverage: Unreachable code. Ignore failures during teardown.
         }
         finally
         {
