@@ -158,7 +158,7 @@ theme and culture changes.
 
 ```razor
   @using Allyaria.Theming
-  @using Allyaria.Theming.Blazor.Components
+  @using Allyaria.Theming.Blazor
 
   <AryThemeProvider>
       <Router AppAssembly="@typeof(App).Assembly">

@@ -1,6 +1,12 @@
-﻿using System.Reflection;
+﻿using Allyaria.Theming.Contracts;
+using Allyaria.Theming.Enumerations;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using System.Reflection;
 
-namespace Allyaria.Theming.Blazor.UnitTests.Components;
+namespace Allyaria.Theming.Blazor.UnitTests;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public sealed class AryThemeProviderTests : TestContext

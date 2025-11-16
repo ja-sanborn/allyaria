@@ -46,7 +46,7 @@ app reacts consistently to theme and culture changes.
 
 ```csharp
 @using Allyaria.Theming
-@using Allyaria.Theming.Blazor.Components
+@using Allyaria.Theming.Blazor
 
 <AryThemeProvider>
     <Router AppAssembly="@typeof(App).Assembly">

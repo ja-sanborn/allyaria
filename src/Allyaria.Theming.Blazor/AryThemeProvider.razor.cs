@@ -1,4 +1,4 @@
-namespace Allyaria.Theming.Blazor.Components;
+namespace Allyaria.Theming.Blazor;
 
 /// <summary>
 /// Provides a Blazor component that connects the <see cref="IThemingService" /> to the browser, handling system theme

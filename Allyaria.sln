@@ -194,10 +194,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theming_Blazor", "Theming_Blazor", "{6A7FE070-94B8-427C-9FF0-1DD30C3546FE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{33E81DE7-6445-4C69-BC0D-3D21105FAEBF}"
 	ProjectSection(SolutionItems) = preProject
-		docs\references\Theming_Blazor\Components\Allyaria.Theming.Blazor.AryThemeProvider.md = docs\references\Theming_Blazor\Components\Allyaria.Theming.Blazor.AryThemeProvider.md
+		docs\references\Theming_Blazor\Allyaria.Theming.Blazor.AryThemeProvider.md = docs\references\Theming_Blazor\Allyaria.Theming.Blazor.AryThemeProvider.md
 	EndProjectSection
 EndProject
 Global
@@ -270,7 +268,6 @@ Global
 		{E4CC3AE9-4118-44F1-B9AB-5CF698AF32A6} = {96DF5FAE-0244-456C-B280-825769704835}
 		{5BEC066B-4B27-4BD4-89C2-33517E2F331C} = {96DF5FAE-0244-456C-B280-825769704835}
 		{6A7FE070-94B8-427C-9FF0-1DD30C3546FE} = {87ECEB69-9E94-4136-B906-1322CA050981}
-		{33E81DE7-6445-4C69-BC0D-3D21105FAEBF} = {6A7FE070-94B8-427C-9FF0-1DD30C3546FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {973AD75F-ACE7-4101-B3FA-33805184CA0D}
