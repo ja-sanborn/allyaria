@@ -123,6 +123,78 @@ For additional details on available tokens, styles, and composition patterns, se
 
 ---
 
+## Allyaria.Theming.Blazor
+
+**Allyaria.Theming.Blazor** provides Blazor-specific integration for the Allyaria theming system. It exposes the
+`AryThemeProvider` root component that bridges `IThemingService` to the browser, wiring up system theme detection,
+persisted theme preferences, and document `dir`/`lang` attributes so your app reacts correctly to both user and OS-level
+theme and culture changes.
+
+### Key Features
+
+* **Root-Level Theme Provider Component**  
+  `AryThemeProvider` wraps your application UI and injects the effective theme via a Blazor `CascadingValue`, allowing
+  any descendant component to access theme information while keeping all JS interop and state management centralized.
+
+* **System Theme Detection & Sync**  
+  Uses a co-located JavaScript module to read system-level preferences (Dark/Light/High Contrast) and map them to
+  `ThemeType` values, automatically synchronizing the effective theme when `ThemeType.System` is selected.
+
+* **Browser-Persisted Theme Preference**  
+  Persists the stored theme type using safe `localStorage` access, restoring the user’s last choice on reload and
+  keeping `IThemingService.StoredType` in sync with the browser.
+
+* **Document Direction & Language Management**  
+  Reads the Blazor `CultureInfo` (via `Culture` cascading parameter or `CurrentUICulture`) to set `dir` and `lang` on
+  `document.documentElement` and toggle an `rtl` class on `<body>`, ensuring layout and typography respond correctly to
+  RTL and LTR cultures.
+
+* **Resilient, Minimal JS Interop**  
+  Uses targeted, defensive JS interop calls with graceful fallbacks—failures during prerendering, navigation, or storage
+  access are swallowed to avoid breaking the render loop while still keeping theme state consistent where possible.
+
+* **Simple App-Level Integration**  
+  Designed to be dropped into your `App.razor` (or another root component) with a minimal setup surface:
+
+```razor
+  @using Allyaria.Theming
+  @using Allyaria.Theming.Blazor.Components
+
+  <AryThemeProvider>
+      <Router AppAssembly="@typeof(App).Assembly">
+          <Found Context="routeData">
+              <RouteView RouteData="@routeData" />
+          </Found>
+          <NotFound>
+              <p>Sorry, there's nothing at this address.</p>
+          </NotFound>
+      </Router>
+  </AryThemeProvider>
+```
+
+### Design Principles
+
+* **Blazor-First Integration**  
+  Optimized for Blazor Server and WebAssembly hosting models, with lifecycle hooks and event handling tailored
+  specifically to the Blazor render pipeline.
+
+* **Single Source of Theme Truth**  
+  Delegates all core theme logic to `IThemingService`, keeping the Blazor layer thin—its main responsibility is
+  connecting DI, JS interop, and DOM attributes, not duplicating theme rules.
+
+* **Culture-Aware UX**  
+  Treats culture and theme as first-class concerns, ensuring the visual experience (direction, language, contrast)
+  naturally aligns with the user’s locale and accessibility settings.
+
+* **Fail-Safe Behavior**  
+  Interop failures, storage issues, or teardown races are intentionally absorbed to avoid crashing or corrupting the UI;
+  the provider always aims to keep the app usable, even if theme detection is temporarily unavailable.
+
+For additional details on available components and integration patterns, see the
+*[Theming.Blazor API documentation](./docs/references/Theming_Blazor)*.
+
+---
+
 ## License
 
 **Allyaria** is licensed under the *[Mozilla Public License Version 2.0](./LICENSE)*.

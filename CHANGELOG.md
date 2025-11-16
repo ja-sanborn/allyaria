@@ -36,6 +36,19 @@
     * Full API documentation for all public types, including every style value, theme navigation type, theme
       configuration interface, theming service, and DI extension.
 
+* `Allyaria.Theming.Blazor` project with:
+
+    * `AryThemeProvider` root component for Blazor applications, enabling browser-integrated theming with system theme
+      detection, persisted theme preference, and automatic synchronization with `IThemingService`.
+    * JavaScript interop module for OS-level theme detection, safe localStorage access, RTL/LTR direction handling, and
+      `dir` / `lang` attribute updates on `document.documentElement`.
+    * Cascading theme context via Blazor’s `CascadingValue`, allowing components to consume the effective theme without
+      direct service calls.
+    * Automatic RTL support through culture-aware direction detection and a toggled `rtl` CSS class on the document
+      body.
+    * Full API documentation for `AryThemeProvider`, including constructors, parameters, interop behavior, and rendering
+      details.
+
 * Updated documentation:
 
     * Added API documentation for Abstractions and Theming.
