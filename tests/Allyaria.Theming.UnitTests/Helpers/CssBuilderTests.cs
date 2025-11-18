@@ -51,7 +51,6 @@ public sealed class CssBuilderTests
         var sut = new CssBuilder();
 
         // Act
-        // "###" cannot be normalized to a valid CSS name, ToCssName returns empty
         sut.Add(name: "###", value: "red");
 
         // Assert
@@ -88,6 +87,62 @@ public sealed class CssBuilderTests
     }
 
     [Fact]
+    public void AddRange_Should_AddMultipleStyles_When_CssListContainsValidPairs()
+    {
+        // Arrange
+        var sut = new CssBuilder();
+
+        // Act
+        sut.AddRange(cssList: "z-index:10;background-color:red;border-width:2px");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10");
+    }
+
+    [Fact]
+    public void AddRange_Should_IgnoreInvalidPairs_When_CssListContainsMalformedItems()
+    {
+        // Arrange
+        var sut = new CssBuilder();
+
+        // Act
+        sut.AddRange(cssList: "background-color:red;invalid;:;z-index:10;");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "background-color:red;z-index:10");
+    }
+
+    [Fact]
+    public void AddRange_Should_NotChangeStyles_When_CssListIsNullOrWhitespace()
+    {
+        // Arrange
+        var sut = new CssBuilder();
+        sut.Add(name: "BackgroundColor", value: "red");
+
+        // Act
+        sut.AddRange(cssList: null);
+        sut.AddRange(cssList: "");
+        sut.AddRange(cssList: "   ");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "background-color:red");
+    }
+
+    [Fact]
+    public void AddRange_Should_NotOverrideExistingStyles_When_DuplicatePropertiesProvided()
+    {
+        // Arrange
+        var sut = new CssBuilder();
+        sut.Add(name: "BackgroundColor", value: "red");
+
+        // Act
+        sut.AddRange(cssList: "background-color:blue;border-width:1px");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "background-color:red;border-width:1px");
+    }
+
+    [Fact]
     public void ToString_Should_ReturnEmpty_When_NoStylesAdded()
     {
         // Arrange
@@ -112,7 +167,6 @@ public sealed class CssBuilderTests
         sut.Add(name: "BorderWidth", value: "2px");
 
         // Assert
-        // SortedDictionary ensures alphabetical order
         sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10");
     }
 }

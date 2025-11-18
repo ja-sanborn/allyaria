@@ -177,6 +177,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{4227
 		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeConfigurator.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeConfigurator.md
 		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeNavigator.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeNavigator.md
 		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeUpdater.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.ThemeUpdater.md
+		docs\references\Theming\Helpers\Allyaria.Theming.Helpers.CssBuilder.md = docs\references\Theming\Helpers\Allyaria.Theming.Helpers.CssBuilder.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E4CC3AE9-4118-44F1-B9AB-5CF698AF32A6}"

@@ -50,7 +50,6 @@ public sealed class ThemingServiceTests
 
         theme.Set(updater: updater);
 
-        // StoredType is System so EffectiveType falls back to Light
         var sut = new ThemingService(theme: theme, themeType: ThemeType.System);
 
         // Act
@@ -63,9 +62,76 @@ public sealed class ThemingServiceTests
         // Assert
         css.Should().NotBeNullOrWhiteSpace();
         css.Should().Contain(expected: "background-color:red");
+    }
 
-        // If ThemingService were incorrectly using StoredType (System) instead of EffectiveType (Light),
-        // no CSS would be generated for ThemeType.System because we never configured it.
+    [Fact]
+    public void GetComponentCssVars_Should_MapComponentCssPropertiesToCssVariables_When_ComponentCssExists()
+    {
+        // Arrange
+        var theme = new Theme();
+
+        var navigator = ThemeNavigator.Initialize
+            .SetComponentTypes(ComponentType.Surface)
+            .SetThemeType(themeType: ThemeType.Light)
+            .SetComponentStates(ComponentState.Default)
+            .SetStyleTypes(StyleType.BackgroundColor);
+
+        var updater = new ThemeUpdater(
+            Navigator: navigator,
+            Value: new StyleString(value: "red")
+        );
+
+        theme.Set(updater: updater);
+
+        var sut = new ThemingService(theme: theme, themeType: ThemeType.Light);
+
+        // Act
+        var result = sut.GetComponentCssVars(
+            themeType: ThemeType.Light,
+            componentType: ComponentType.Surface,
+            componentState: ComponentState.Default
+        );
+
+        // Assert
+        result.Should().NotBeNullOrWhiteSpace();
+        result.Should().Contain(expected: "background-color:var(--");
+        result.Should().NotContain(unexpected: "background-color:red");
+    }
+
+    [Fact]
+    public void GetComponentCssVars_Should_ReturnEmptyString_When_ComponentCssIsEmpty()
+    {
+        // Arrange
+        var theme = new Theme();
+        var sut = new ThemingService(theme: theme, themeType: ThemeType.Light);
+
+        // Act
+        var result = sut.GetComponentCssVars(
+            themeType: ThemeType.Light,
+            componentType: ComponentType.Surface,
+            componentState: ComponentState.Default
+        );
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetComponentCssVars_Should_ReturnEmptyString_When_ThemeTypeIsSystem()
+    {
+        // Arrange
+        var theme = new Theme();
+        var sut = new ThemingService(theme: theme, themeType: ThemeType.Light);
+
+        // Act
+        var result = sut.GetComponentCssVars(
+            themeType: ThemeType.System,
+            componentType: ComponentType.Surface,
+            componentState: ComponentState.Default
+        );
+
+        // Assert
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -114,9 +180,6 @@ public sealed class ThemingServiceTests
 
         darkCss.Should().Contain(expected: "{background-color:blue}");
         darkCss.Should().NotContain(unexpected: "{background-color:red}");
-
-        // This verifies that GetDocumentCss uses EffectiveType and that changing EffectiveType
-        // changes the generated document-level CSS.
     }
 
     [Fact]
@@ -130,8 +193,8 @@ public sealed class ThemingServiceTests
         sut.ThemeChanged += (_, _) => eventCount++;
 
         // Act
-        sut.SetEffectiveType(themeType: ThemeType.System); // blocked because System
-        sut.SetEffectiveType(themeType: ThemeType.Light); // blocked because same as current
+        sut.SetEffectiveType(themeType: ThemeType.System);
+        sut.SetEffectiveType(themeType: ThemeType.Light);
 
         // Assert
         sut.EffectiveType.Should().Be(expected: ThemeType.Light);
@@ -229,7 +292,7 @@ public sealed class ThemingServiceTests
 
         // Assert
         sut.StoredType.Should().Be(expected: ThemeType.System);
-        sut.EffectiveType.Should().Be(expected: ThemeType.Light); // unchanged
+        sut.EffectiveType.Should().Be(expected: ThemeType.Light);
         eventCount.Should().Be(expected: 1);
         observedEffectiveType.Should().Be(expected: ThemeType.Light);
     }

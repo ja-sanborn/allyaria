@@ -263,6 +263,20 @@ public static class StringExtensions
     public static string OrDefaultIfNull(this string? value, string defaultValue = "") => value ?? defaultValue;
 
     /// <summary>
+    /// Returns <c>null</c> when the specified string is <c>null</c>, empty, or consists only of white-space; otherwise returns
+    /// the original string.
+    /// </summary>
+    /// <param name="value">The input string to evaluate.</param>
+    /// <returns>
+    /// <c>null</c> if <paramref name="value" /> is <c>null</c>, empty, or white-space; otherwise the original
+    /// <paramref name="value" />.
+    /// </returns>
+    public static string? OrNull(this string? value)
+        => string.IsNullOrWhiteSpace(value: value)
+            ? null
+            : value;
+
+    /// <summary>
     /// Replaces all occurrences of a specified separator character in the input string with spaces, collapsing multiple
     /// consecutive separators into a single space.
     /// </summary>

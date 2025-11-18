@@ -60,6 +60,65 @@ public sealed class ThemingService : IThemingService
             componentState: componentState
         );
 
+    /// <summary>
+    /// Generates CSS variable declarations for a specific <see cref="ThemeType" />, <see cref="ComponentType" />, and
+    /// <see cref="ComponentState" /> by transforming computed component CSS into corresponding <c>var(--prefix-property)</c>
+    /// references.
+    /// </summary>
+    /// <param name="themeType">
+    /// The theme from which variables should be generated. If <see cref="ThemeType.System" /> is specified, no variables are
+    /// produced.
+    /// </param>
+    /// <param name="componentType">The component type whose themed styles are being converted into variables.</param>
+    /// <param name="componentState">The visual state of the component whose styles should be mapped.</param>
+    /// <returns>
+    /// A string containing CSS variable references derived from the component’s themed CSS, or an empty string when no
+    /// variables can be generated.
+    /// </returns>
+    public string GetComponentCssVars(ThemeType themeType, ComponentType componentType, ComponentState componentState)
+    {
+        if (themeType is ThemeType.System)
+        {
+            return string.Empty;
+        }
+
+        var cssVars = GetComponentCss(
+            prefix: StyleDefaults.VarPrefix, componentType: componentType, componentState: componentState
+        );
+
+        if (string.IsNullOrWhiteSpace(value: cssVars))
+        {
+            // Code Coverage: Unreachable code path
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder();
+        var prefix = $"{StyleDefaults.VarPrefix}-{componentType}-{themeType}-{componentState}".ToCssName();
+        var split = cssVars.Split(separator: ';', options: StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var item in split)
+        {
+            var pair = item.Split(separator: ':', options: StringSplitOptions.RemoveEmptyEntries);
+
+            if (pair.Length < 2)
+            {
+                continue;
+            }
+
+            var property = pair[0].ToCssName();
+
+            if (string.IsNullOrWhiteSpace(value: property))
+            {
+                // Code Coverage: Unreachable code path
+                continue;
+            }
+
+            builder.Append(handler: $"{property}:var(--{prefix}-{property});");
+        }
+
+        return builder.ToString();
+    }
+
     /// <summary>Generates global document-level CSS reflecting the currently active theme.</summary>
     /// <returns>A string containing CSS rules applicable at the document scope.</returns>
     public string GetDocumentCss() => _theme.GetDocumentCss(themeType: EffectiveType);

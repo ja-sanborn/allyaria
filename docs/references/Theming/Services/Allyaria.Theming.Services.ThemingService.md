@@ -31,12 +31,13 @@ effective and stored types are set to the provided value.
 
 ## Methods
 
-| Name                                                                                         | Returns  | Description                                                                                                              |
-|----------------------------------------------------------------------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
-| `GetComponentCss(string prefix, ComponentType componentType, ComponentState componentState)` | `string` | Generates component-scoped CSS for the given prefix, component type, and state using the current `EffectiveType`.        |
-| `GetDocumentCss()`                                                                           | `string` | Generates global document-level CSS for the current theme.                                                               |
-| `SetEffectiveType(ThemeType themeType)`                                                      | `void`   | Sets a new active theme type unless it is `System` or already effective; raises `ThemeChanged` when the value changes.   |
-| `SetStoredType(ThemeType themeType)`                                                         | `void`   | Updates the stored preference and adjusts the effective theme accordingly; raises `ThemeChanged` for non-system changes. |
+| Name                                                                                                   | Returns  | Description                                                                                                                                                                               |
+|--------------------------------------------------------------------------------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GetComponentCss(string prefix, ComponentType componentType, ComponentState componentState)`           | `string` | Generates component-scoped CSS for the given prefix, component type, and state using the current `EffectiveType`.                                                                         |
+| `GetComponentCssVars(ThemeType themeType, ComponentType componentType, ComponentState componentState)` | `string` | Generates CSS variable declarations the given theme type, component type and component state by transforming computed component CSS into corresponding var(--prefix-property) references. |
+| `GetDocumentCss()`                                                                                     | `string` | Generates global document-level CSS for the current theme.                                                                                                                                |
+| `SetEffectiveType(ThemeType themeType)`                                                                | `void`   | Sets a new active theme type unless it is `System` or already effective; raises `ThemeChanged` when the value changes.                                                                    |
+| `SetStoredType(ThemeType themeType)`                                                                   | `void`   | Updates the stored preference and adjusts the effective theme accordingly; raises `ThemeChanged` for non-system changes.                                                                  |
 
 ## Operators
 
@@ -83,4 +84,4 @@ public class AppTheming
 
 ---
 
-*Revision Date: 2025-11-15*
+*Revision Date: 2025-11-17*

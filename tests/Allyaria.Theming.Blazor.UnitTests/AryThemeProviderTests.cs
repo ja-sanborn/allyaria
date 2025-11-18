@@ -88,7 +88,6 @@ public sealed class AryThemeProviderTests : TestContext
         var jsRuntime = Substitute.For<IJSRuntime>();
         var themingService = Substitute.For<IThemingService>();
 
-        // Custom JS object reference that always throws from InvokeAsync<TValue>
         var throwingModule = new ThrowingJsObjectReference();
 
         var sut = new AryThemeProvider
@@ -97,7 +96,6 @@ public sealed class AryThemeProviderTests : TestContext
             ThemingService = themingService
         };
 
-        // Inject the module via reflection because _module is private.
         typeof(AryThemeProvider)
             .GetField(name: "_module", bindingAttr: BindingFlags.NonPublic | BindingFlags.Instance)!
             .SetValue(obj: sut, value: throwingModule);
@@ -214,11 +212,6 @@ public sealed class AryThemeProviderTests : TestContext
                 args: Arg.Any<object[]?>()
             )
             .Returns(returnThis: new ValueTask<IJSObjectReference>(result: module));
-
-        // NOTE:
-        // We don't need to configure the module's InvokeAsync/InvokeVoidAsync calls here.
-        // Letting them return their default ValueTask / ValueTask<T> avoids the NSubstitute
-        // type-mismatch issue and is sufficient for exercising DisposeAsync.
 
         var cut = RenderComponent<AryThemeProvider>(
             parameterBuilder: p => p
@@ -376,12 +369,9 @@ public sealed class AryThemeProviderTests : TestContext
         Services.AddSingleton(implementationInstance: jsRuntime);
         Services.AddSingleton(implementationInstance: themingService);
 
-        // First read of StoredType -> System, subsequent reads remain System for this scenario.
         themingService.StoredType.Returns(returnThis: ThemeType.System);
         themingService.GetDocumentCss().Returns(returnThis: "body{color:black;}");
 
-        // Only mock the import call to hand back our module; let all module.Invoke* calls use their default
-        // ValueTask / ValueTask<T> behavior.
         jsRuntime
             .InvokeAsync<IJSObjectReference>(
                 identifier: "import",
@@ -405,19 +395,14 @@ public sealed class AryThemeProviderTests : TestContext
         var themeSpan = cut.Find(cssSelector: "#theme-type");
 
         // Assert
-        // Initial render happens before OnAfterRenderAsync updates _effectiveType,
-        // so the cascaded value is still System.
         themeSpan.TextContent.Should().Be(expected: nameof(ThemeType.System));
 
-        // JS import path was hit
         jsRuntime.Received(requiredNumberOfCalls: 1).InvokeAsync<IJSObjectReference>(
             identifier: "import",
             cancellationToken: Arg.Any<CancellationToken>(),
             args: Arg.Any<object?[]?>()
         );
 
-        // OnAfterRenderAsync should still compute effectiveType and push it into the theming service.
-        // With StoredType == System and default JS detection, this falls back to Light.
         themingService.Received(requiredNumberOfCalls: 1).SetEffectiveType(themeType: ThemeType.Light);
     }
 
@@ -455,14 +440,12 @@ public sealed class AryThemeProviderTests : TestContext
         await task;
 
         // Assert
-        // Should not import JS module when firstRender is false.
         await jsRuntime.DidNotReceive().InvokeAsync<IJSObjectReference>(
             identifier: "import",
             cancellationToken: Arg.Any<CancellationToken>(),
             args: Arg.Any<object?[]?>()
         );
 
-        // _cts should remain null because initialization is skipped.
         var ctsField = type.GetField(name: "_cts", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!;
         ctsField.GetValue(obj: sut).Should().BeNull();
     }
@@ -477,7 +460,6 @@ public sealed class AryThemeProviderTests : TestContext
         Services.AddSingleton(implementationInstance: jsRuntime);
         Services.AddSingleton(implementationInstance: themingService);
 
-        // Service reports a non-System stored type so it differs from the value returned by GetStoredTypeAsync (System).
         themingService.StoredType.Returns(returnThis: ThemeType.Dark);
 
         var sut = new AryThemeProvider
@@ -488,9 +470,6 @@ public sealed class AryThemeProviderTests : TestContext
 
         var type = typeof(AryThemeProvider);
 
-        // Pre-populate _module so OnAfterRenderAsync skips JS import and uses our module.
-        // Using the existing ThrowingJsObjectReference, GetStoredTypeAsync will catch and
-        // return ThemeType.System, which differs from StoredType (Dark) and triggers SetStoredType.
         type.GetField(name: "_module", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
             .SetValue(obj: sut, value: new ThrowingJsObjectReference());
 
@@ -510,9 +489,135 @@ public sealed class AryThemeProviderTests : TestContext
         await task;
 
         // Assert
-        // Because storedType (System) != ThemingService.StoredType (Dark), the component
-        // should push the stored value into the theming service.
         themingService.Received(requiredNumberOfCalls: 1).SetStoredType(themeType: ThemeType.System);
+    }
+
+    [Fact]
+    public async Task OnParametersSetAsync_Should_CallSetDirection_When_CultureChangesViaCurrentUICulture()
+    {
+        // Arrange
+        var jsRuntime = new RecordingJsRuntime();
+        var themingService = Substitute.For<IThemingService>();
+
+        var sut = new AryThemeProvider
+        {
+            JsRuntime = jsRuntime,
+            ThemingService = themingService
+        };
+
+        var type = typeof(AryThemeProvider);
+
+        type.GetField(name: "_lastCulture", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(obj: sut, value: new CultureInfo(name: "en-US"));
+
+        var originalCulture = CultureInfo.CurrentUICulture;
+        CultureInfo.CurrentUICulture = new CultureInfo(name: "fr-FR");
+
+        try
+        {
+            var method = type.GetMethod(
+                name: "OnParametersSetAsync",
+                bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic
+            )!;
+
+            // Act
+            var task = (Task)method.Invoke(obj: sut, parameters: Array.Empty<object?>())!;
+            await task;
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = originalCulture;
+        }
+
+        // Assert
+        jsRuntime.Calls.Should().NotBeEmpty(
+            because: "SetDirectionAsync should be invoked when the effective culture (via CurrentUICulture) changes"
+        );
+
+        var lastCulture = (CultureInfo?)type
+            .GetField(name: "_lastCulture", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(obj: sut);
+
+        lastCulture.Should().NotBeNull();
+        lastCulture!.Name.Should().Be(expected: "fr-FR");
+    }
+
+    [Fact]
+    public async Task OnParametersSetAsync_Should_CallSetDirection_When_LastCultureIsNull()
+    {
+        // Arrange
+        var jsRuntime = new RecordingJsRuntime();
+        var themingService = Substitute.For<IThemingService>();
+
+        var sut = new AryThemeProvider
+        {
+            JsRuntime = jsRuntime,
+            ThemingService = themingService,
+            Culture = new CultureInfo(name: "en-US")
+        };
+
+        var type = typeof(AryThemeProvider);
+
+        var method = type.GetMethod(
+            name: "OnParametersSetAsync",
+            bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic
+        )!;
+
+        // Act
+        var task = (Task)method.Invoke(obj: sut, parameters: Array.Empty<object?>())!;
+        await task;
+
+        // Assert
+        jsRuntime.Calls.Should().NotBeEmpty(because: "SetDirectionAsync should be invoked when last culture is unset");
+
+        var lastCulture = (CultureInfo?)type
+            .GetField(name: "_lastCulture", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(obj: sut);
+
+        lastCulture.Should().NotBeNull();
+        lastCulture!.Name.Should().Be(expected: "en-US");
+    }
+
+    [Fact]
+    public async Task OnParametersSetAsync_Should_NotCallSetDirection_When_CultureNameUnchanged()
+    {
+        // Arrange
+        var jsRuntime = new RecordingJsRuntime();
+        var themingService = Substitute.For<IThemingService>();
+        var culture = new CultureInfo(name: "en-US");
+
+        var sut = new AryThemeProvider
+        {
+            JsRuntime = jsRuntime,
+            ThemingService = themingService,
+            Culture = culture
+        };
+
+        var type = typeof(AryThemeProvider);
+
+        type.GetField(name: "_lastCulture", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(obj: sut, value: new CultureInfo(name: culture.Name));
+
+        var method = type.GetMethod(
+            name: "OnParametersSetAsync",
+            bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic
+        )!;
+
+        // Act
+        var task = (Task)method.Invoke(obj: sut, parameters: Array.Empty<object?>())!;
+        await task;
+
+        // Assert
+        jsRuntime.Calls.Should().BeEmpty(
+            because: "SetDirectionAsync should not be called when the culture name has not changed"
+        );
+
+        var lastCulture = (CultureInfo?)type
+            .GetField(name: "_lastCulture", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(obj: sut);
+
+        lastCulture.Should().NotBeNull();
+        lastCulture!.Name.Should().Be(expected: culture.Name);
     }
 
     [Fact]
@@ -564,17 +669,14 @@ public sealed class AryThemeProviderTests : TestContext
             ThemingService = themingService
         };
 
-        // Theme service reports the same stored and effective types as the component already has.
         themingService.StoredType.Returns(returnThis: ThemeType.Dark);
         themingService.EffectiveType.Returns(returnThis: ThemeType.Dark);
 
         var flags = BindingFlags.Instance | BindingFlags.NonPublic;
         var type = typeof(AryThemeProvider);
 
-        // Ensure there is an active, non-cancelled CTS so the method doesn't return at the first guard.
         type.GetField(name: "_cts", bindingAttr: flags)!.SetValue(obj: sut, value: new CancellationTokenSource());
 
-        // Make the component's cached values match the service values so the _effectiveType == EffectiveType branch is taken.
         type.GetField(name: "_storedType", bindingAttr: flags)!.SetValue(obj: sut, value: ThemeType.Dark);
         type.GetField(name: "_effectiveType", bindingAttr: flags)!.SetValue(obj: sut, value: ThemeType.Dark);
 
@@ -595,9 +697,6 @@ public sealed class AryThemeProviderTests : TestContext
         // Assert
         var effectiveAfter = (ThemeType)effectiveField.GetValue(obj: sut)!;
         effectiveAfter.Should().Be(expected: effectiveBefore);
-
-        // If the branch wasn't taken, this test would still pass, but code coverage will confirm
-        // that the _effectiveType == effectiveType return path was executed.
     }
 
     [Fact]
@@ -671,8 +770,6 @@ public sealed class AryThemeProviderTests : TestContext
         themingService.StoredType.Returns(returnThis: ThemeType.System);
         themingService.GetDocumentCss().Returns(returnThis: "body{color:red;}");
 
-        // Only mock the JS import so _module is non-null; let all module.Invoke* calls
-        // use their default behaviour to avoid ValueTask / ValueTask<T> mismatches.
         jsRuntime
             .InvokeAsync<IJSObjectReference>(
                 identifier: "import",
@@ -711,7 +808,6 @@ public sealed class AryThemeProviderTests : TestContext
             Culture = new CultureInfo(name: "en-US")
         };
 
-        // Simulate JS failures by making the underlying InvokeAsync<object> throw.
         jsRuntime
             .InvokeAsync<object>(
                 identifier: Arg.Any<string>(),
@@ -802,9 +898,7 @@ public sealed class AryThemeProviderTests : TestContext
         sut.SetFromJs(raw: raw!);
 
         // Assert
-        // For unknown/System, UpdateEffectiveType will still be called because initial _effectiveType is System (0),
-        // and parsed System (0) equals, so service should not be called in that case.
-        if (expected == ThemeType.System)
+        if (expected is ThemeType.System)
         {
             themingService.DidNotReceive().SetEffectiveType(themeType: Arg.Any<ThemeType>());
         }
@@ -929,10 +1023,6 @@ public sealed class AryThemeProviderTests : TestContext
         var flags = BindingFlags.Instance | BindingFlags.NonPublic;
         var type = typeof(AryThemeProvider);
 
-        // Make StartDetectAsync pass its guard:
-        //  - _isStarted == false
-        //  - _module != null (our throwing JS module)
-        //  - IsCancellationRequested() == false (non-cancelled CTS)
         type.GetField(name: "_module", bindingAttr: flags)!.SetValue(obj: sut, value: new ThrowingJsObjectReference());
         type.GetField(name: "_cts", bindingAttr: flags)!.SetValue(obj: sut, value: new CancellationTokenSource());
         type.GetField(name: "_isStarted", bindingAttr: flags)!.SetValue(obj: sut, value: false);
@@ -953,7 +1043,6 @@ public sealed class AryThemeProviderTests : TestContext
         };
 
         // Assert
-        // The catch should swallow the JS exception and clean up detection state.
         await act.Should().NotThrowAsync();
 
         var dotNetRefField = type.GetField(name: "_dotNetRef", bindingAttr: flags)!;
@@ -1032,7 +1121,6 @@ public sealed class AryThemeProviderTests : TestContext
         )!;
 
         // Act
-        // First: move to System -> StartDetectAsync path.
         var task1 = (Task)method.Invoke(
             obj: sut, parameters: new object?[]
             {
@@ -1043,7 +1131,6 @@ public sealed class AryThemeProviderTests : TestContext
 
         await task1;
 
-        // Then: move to Light -> StopDetectAsync path.
         var task2 = (Task)method.Invoke(
             obj: sut, parameters: new object?[]
             {
@@ -1159,7 +1246,6 @@ public sealed class AryThemeProviderTests : TestContext
                 : new ValueTask<TValue>(result: (TValue)value);
     }
 
-    // Helper component to consume the cascaded ThemeType value.
     private sealed class ThemeConsumer : ComponentBase
     {
         [CascadingParameter(Name = "ThemeType")]
@@ -1174,7 +1260,6 @@ public sealed class AryThemeProviderTests : TestContext
         }
     }
 
-    // You can place this helper type inside your test class (e.g. AryThemeProviderTests)
     private sealed class ThrowingJsObjectReference : IJSObjectReference
     {
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;

@@ -334,6 +334,34 @@ public sealed class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData(data: null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void OrNull_Should_ReturnNull_When_ValueIsNullOrWhitespace(string? input)
+    {
+        // Act
+        var result = input.OrNull();
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("hello")]
+    [InlineData("  hello")]
+    [InlineData("0")]
+    public void OrNull_Should_ReturnOriginalValue_When_ValueIsNotNullOrWhitespace(string input)
+    {
+        // Act
+        var result = input.OrNull();
+
+        // Assert
+        result.Should().BeSameAs(expected: input);
+    }
+
+    [Theory]
     [InlineData("hello world", "helloWorld")]
     [InlineData("HTTP request", "httpRequest")]
     [InlineData("XML HTTP request", "xmlHttpRequest")]

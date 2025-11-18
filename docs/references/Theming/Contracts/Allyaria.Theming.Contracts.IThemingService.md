@@ -17,12 +17,13 @@ provides CSS generation for both component-scoped and document-wide styling.
 
 ## Methods
 
-| Name                                                                                         | Returns  | Description                                                                                       |
-|----------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------------|
-| `GetComponentCss(string prefix, ComponentType componentType, ComponentState componentState)` | `string` | Generates scoped CSS for a component based on its type, state, and assigned prefix.               |
-| `GetDocumentCss()`                                                                           | `string` | Generates global CSS representing the active theme’s document-wide styling.                       |
-| `SetEffectiveType(ThemeType themeType)`                                                      | `void`   | Sets and activates the current effective theme type. Implementations should raise `ThemeChanged`. |
-| `SetStoredType(ThemeType themeType)`                                                         | `void`   | Sets the stored (persisted) theme type remembered across sessions.                                |
+| Name                                                                                                   | Returns  | Description                                                                                                                                                                               |
+|--------------------------------------------------------------------------------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GetComponentCss(string prefix, ComponentType componentType, ComponentState componentState)`           | `string` | Generates scoped CSS for a component based on its type, state, and assigned prefix.                                                                                                       |
+| `GetComponentCssVars(ThemeType themeType, ComponentType componentType, ComponentState componentState)` | `string` | Generates CSS variable declarations the given theme type, component type and component state by transforming computed component CSS into corresponding var(--prefix-property) references. |
+| `GetDocumentCss()`                                                                                     | `string` | Generates global CSS representing the active theme’s document-wide styling.                                                                                                               |
+| `SetEffectiveType(ThemeType themeType)`                                                                | `void`   | Sets and activates the current effective theme type. Implementations should raise `ThemeChanged`.                                                                                         |
+| `SetStoredType(ThemeType themeType)`                                                                   | `void`   | Sets the stored (persisted) theme type remembered across sessions.                                                                                                                        |
 
 ## Operators
 
@@ -74,4 +75,4 @@ public class ThemingExample
 
 ---
 
-*Revision Date: 2025-11-15*
+*Revision Date: 2025-11-17*

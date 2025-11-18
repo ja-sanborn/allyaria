@@ -12,7 +12,7 @@ namespace Allyaria.Theming.Helpers;
 /// This class is central to how Allyaria generates serialized CSS from the strongly-typed <see cref="IStyleValue" /> and
 /// <see cref="StyleGroup" /> abstractions.
 /// </remarks>
-internal sealed class CssBuilder
+public sealed class CssBuilder
 {
     /// <summary>
     /// The underlying collection of CSS property/value pairs. The use of <see cref="SortedDictionary{TKey,TValue}" /> ensures
@@ -70,6 +70,40 @@ internal sealed class CssBuilder
             : $"--{prefix}-{property}";
 
         _ = _styles.TryAdd(key: propertyName, value: value);
+
+        return this;
+    }
+
+    /// <summary>Adds multiple CSS property/value pairs to the builder by parsing a semicolon-delimited list.</summary>
+    /// <param name="cssList">
+    /// A semicolon-separated list of CSS declarations in the form <c>property:value</c>. Entries with missing property or
+    /// value segments are ignored.
+    /// </param>
+    /// <returns>The current <see cref="CssBuilder" /> instance, enabling fluent method chaining.</returns>
+    /// <remarks>
+    /// This method provides a convenience parser for raw CSS fragments and forwards each parsed entry to
+    /// <see cref="Add(string?, string?, string?)" />. Invalid entries are safely skipped.
+    /// </remarks>
+    public CssBuilder AddRange(string? cssList)
+    {
+        if (string.IsNullOrWhiteSpace(value: cssList))
+        {
+            return this;
+        }
+
+        var split = cssList.Split(separator: ';', options: StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var item in split)
+        {
+            var pair = item.Split(separator: ':', options: StringSplitOptions.RemoveEmptyEntries);
+
+            if (pair.Length < 2)
+            {
+                continue;
+            }
+
+            Add(name: pair[0], value: pair[1]);
+        }
 
         return this;
     }

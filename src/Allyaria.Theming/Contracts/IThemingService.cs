@@ -26,6 +26,23 @@ public interface IThemingService
     /// <returns>A CSS string suitable for applying inline or injecting into the component’s style scope.</returns>
     string GetComponentCss(string prefix, ComponentType componentType, ComponentState componentState);
 
+    /// <summary>
+    /// Generates CSS variable declarations for a specific <see cref="ThemeType" />, <see cref="ComponentType" />, and
+    /// <see cref="ComponentState" /> by transforming computed component CSS into corresponding <c>var(--prefix-property)</c>
+    /// references.
+    /// </summary>
+    /// <param name="themeType">
+    /// The theme from which variables should be generated. If <see cref="ThemeType.System" /> is specified, no variables are
+    /// produced.
+    /// </param>
+    /// <param name="componentType">The component type whose themed styles are being converted into variables.</param>
+    /// <param name="componentState">The visual state of the component whose styles should be mapped.</param>
+    /// <returns>
+    /// A string containing CSS variable references derived from the component’s themed CSS, or an empty string when no
+    /// variables can be generated.
+    /// </returns>
+    string GetComponentCssVars(ThemeType themeType, ComponentType componentType, ComponentState componentState);
+
     /// <summary>Generates global or document-level CSS for the current theme.</summary>
     /// <returns>A string containing CSS rules reflecting the active theme’s document-wide styles.</returns>
     string GetDocumentCss();

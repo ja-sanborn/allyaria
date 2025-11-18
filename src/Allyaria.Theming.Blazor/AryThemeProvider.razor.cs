@@ -52,6 +52,12 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     /// <summary>Indicates whether system theme detection is currently initialized and listening for changes.</summary>
     private bool _isStarted;
 
+    /// <summary>
+    /// Tracks the previously applied culture in order to detect when the effective UI culture changes. Used to avoid redundant
+    /// direction and language updates to the document root.
+    /// </summary>
+    private CultureInfo? _lastCulture;
+
     /// <summary>JavaScript module reference for the co-located <c>AryThemeProvider.razor.js</c> file.</summary>
     private IJSObjectReference? _module;
 
@@ -266,6 +272,31 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
+    /// Invoked by the framework when parameter values or cascading values change. Detects whether the effective UI culture has
+    /// changed (either through <see cref="Culture" /> or <see cref="CultureInfo.CurrentUICulture" />) and, when it has,
+    /// updates document direction and language attributes by calling <see cref="SetDirectionAsync" />.
+    /// </summary>
+    /// <remarks>
+    /// This method ensures RTL/LTR changes are applied reactively when the application culture updates via
+    /// <c>CascadingLocalization</c>.
+    /// </remarks>
+    /// <param name="firstRender">Unused. Included for signature consistency.</param>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        var currentCulture = Culture ?? CultureInfo.CurrentUICulture;
+
+        if (_lastCulture?.Name != currentCulture.Name)
+        {
+            _lastCulture = currentCulture;
+
+            await SetDirectionAsync();
+        }
+    }
+
+    /// <summary>
     /// Handles <see cref="IThemingService.ThemeChanged" /> events, synchronizing local state and requesting re-render.
     /// </summary>
     /// <param name="sender">The source of the event (typically the <see cref="IThemingService" /> instance).</param>
@@ -302,15 +333,7 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
             }
 
             _effectiveType = effectiveType;
-
-            try
-            {
-                StateHasChanged();
-            }
-            catch
-            {
-                _ = InvokeAsync(workItem: StateHasChanged);
-            }
+            await InvokeAsync(workItem: StateHasChanged);
         }
         catch
         {
