@@ -44,10 +44,10 @@ var builder = new CssBuilder()
     .AddRange("margin:0;padding:8px");
 
 // Produces a deterministic, semicolon-separated CSS string,
-// e.g. "background-color:#ffffff;font-size:16px;margin:0;padding:8px"
+// e.g. "background-color:#ffffff;font-size:16px;margin:0;padding:8px;"
 string css = builder.ToString();
 ```
 
 ---
 
-*Revision Date: 2025-11-17*
+*Revision Date: 2025-11-18*

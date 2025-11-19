@@ -131,6 +131,6 @@ public sealed class CssBuilder
             list.Add(item: $"{styleValue.Key}:{styleValue.Value}");
         }
 
-        return string.Join(separator: ';', values: list);
+        return string.Join(separator: ';', values: list) + ";";
     }
 }

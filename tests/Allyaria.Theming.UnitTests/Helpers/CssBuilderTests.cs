@@ -13,7 +13,7 @@ public sealed class CssBuilderTests
         sut.Add(name: "BackgroundColor", value: "blue");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:blue");
+        sut.ToString().Should().Be(expected: "background-color:blue;");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class CssBuilderTests
         sut.Add(name: "BackgroundColor", value: "blue", varPrefix: "theme");
 
         // Assert
-        sut.ToString().Should().Be(expected: "--theme-background-color:blue");
+        sut.ToString().Should().Be(expected: "--theme-background-color:blue;");
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public sealed class CssBuilderTests
         sut.Add(name: "BackgroundColor", value: "blue"); // should not replace first value
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red");
+        sut.ToString().Should().Be(expected: "background-color:red;");
     }
 
     [Fact]
@@ -93,10 +93,10 @@ public sealed class CssBuilderTests
         var sut = new CssBuilder();
 
         // Act
-        sut.AddRange(cssList: "z-index:10;background-color:red;border-width:2px");
+        sut.AddRange(cssList: "z-index:10;background-color:red;border-width:2px;");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10");
+        sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10;");
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public sealed class CssBuilderTests
         sut.AddRange(cssList: "background-color:red;invalid;:;z-index:10;");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red;z-index:10");
+        sut.ToString().Should().Be(expected: "background-color:red;z-index:10;");
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public sealed class CssBuilderTests
         sut.AddRange(cssList: "   ");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red");
+        sut.ToString().Should().Be(expected: "background-color:red;");
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public sealed class CssBuilderTests
         sut.AddRange(cssList: "background-color:blue;border-width:1px");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red;border-width:1px");
+        sut.ToString().Should().Be(expected: "background-color:red;border-width:1px;");
     }
 
     [Fact]
@@ -167,6 +167,6 @@ public sealed class CssBuilderTests
         sut.Add(name: "BorderWidth", value: "2px");
 
         // Assert
-        sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10");
+        sut.ToString().Should().Be(expected: "background-color:red;border-width:2px;z-index:10;");
     }
 }

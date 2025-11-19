@@ -1,11 +1,11 @@
 # Change Log
 
-## [0.0.1-alpha] 2025-11-15
+## [0.0.1-alpha] 2025-11-18
 
 ### Added
 
 * Initial repository scaffolding, base solution, core and unit test projects, centralized build and packages, and
-  documentation placeholders.
+  documentation.
 
 * `Allyaria.Abstractions` project with:
 
@@ -49,7 +49,14 @@
     * Full API documentation for `AryThemeProvider`, including constructors, parameters, interop behavior, and rendering
       details.
 
-* Updated documentation:
+* `Allyaria.Components.Blazor` project with:
 
-    * Added API documentation for Abstractions and Theming.
-    * Updated README with Abstractions summary, revised Theming section, and corrected documentation links.
+    * Core component base class (`AryComponentBase`) providing ARIA handling, theming integration, attribute filtering,
+      and unified rendering behavior.
+    * Initial set of theme-aware UI components, including surface and layout primitives built to integrate seamlessly
+      with Allyaria’s theming engine.
+    * Consistent accessibility model across all components, including standardized ARIA parameters, tabindex behavior,
+      and assistive-technology visibility rules.
+    * Automatic merging of developer-supplied classes, inline styles, and additional attributes with Allyaria-managed
+      component output.
+    * Full API documentation for all public component types and parameters.

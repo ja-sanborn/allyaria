@@ -1,6 +1,6 @@
 # Allyaria
 
-> *Version 1: 2025-11-15*
+> *Version 1: 2025-11-18*
 >
 > [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
 >
@@ -192,6 +192,77 @@ theme and culture changes.
 
 For additional details on available components and integration patterns, see the
 *[Theming.Blazor API documentation](./docs/references/Theming_Blazor)*.
+
+---
+
+## Allyaria.Components.Blazor
+
+**Allyaria.Components.Blazor** provides the core UI component set for building accessible, theme-aware interfaces using
+the Allyaria design system. These components integrate directly with the Allyaria theming engine, enabling fully
+reactive styling, consistent ARIA semantics, and predictable behavior across all component states and theme modes.
+
+This library contains the foundational component base class as well as a growing collection of concrete UI
+components—such as surface containers, layout primitives, and interactive elements—all designed to function seamlessly
+with Allyaria’s theming, accessibility, and localization layers.
+
+### Key Features
+
+* **Unified Component Base Class**
+  All Allyaria Blazor components derive from a shared base (`AryComponentBase`), providing consistent ARIA attribute
+  handling, theming integration, attribute filtering, and lifecycle behavior. This ensures every component behaves
+  predictably and adheres to Allyaria accessibility expectations.
+
+* **Theme-Aware Rendering**
+  Components automatically integrate with the Allyaria theming pipeline, receiving effective theme values from
+  `IThemingService` and rendering CSS variables, component-state styles, and theme-driven class names without manual
+  wiring.
+
+* **Accessible by Default**
+  ARIA attributes—such as labels, descriptions, visibility hints, and roles—are first-class component parameters.
+  Developers can augment these attributes while still benefiting from Allyaria's default accessibility guarantees.
+
+* **Extensible, Framework-Native Components**
+  The library includes general-purpose UI elements such as surface containers, wrappers, and layout helpers. These serve
+  as building blocks for higher-level elements while remaining easy to extend in application or RCL projects.
+
+* **Predictable Attribute & Style Merging**
+  Components merge developer-supplied classes, inline styles, and arbitrary HTML attributes with Allyaria-managed
+  values (ensuring required ARIA, class, ID, and style attributes remain consistent).
+
+### Design Principles
+
+* **Blazor-Native Architecture**
+  Components are implemented using standard Razor component patterns with minimal or zero JavaScript interop.
+
+* **Accessibility-Centric**
+  Every component is built to ensure sensible ARIA defaults and predictable keyboard/tab behavior.
+
+* **Fully Theme-Integrated**
+  Style output is driven by theme rules, component state, and resolved theme type—without requiring manual CSS
+  definitions.
+
+* **Composable & Extensible**
+  Components serve as foundational building blocks for app-level or library-level UI development, easily remixed or
+  wrapped into custom controls.
+
+### Example Usage
+
+Below is a minimal example showing how a developer might use a component from this library—such as a themed surface
+container—in a Blazor page:
+
+```razor
+@page "/example"
+@using Allyaria.Components.Blazor
+
+<ArySurface Class="example-surface"
+            AriaLabel="Example surface">
+    <h2>Hello from Allyaria.Components.Blazor</h2>
+    <p>This content is rendered inside a themed Allyaria surface.</p>
+</ArySurface>
+```
+
+For additional details on available components and integration patterns, see the
+*[Components.Blazor API documentation](./docs/references/Components_Blazor)*.
 
 ---
 

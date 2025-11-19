@@ -175,11 +175,11 @@ public sealed class ThemingServiceTests
         var darkCss = sut.GetDocumentCss();
 
         // Assert
-        lightCss.Should().Contain(expected: "{background-color:red}");
-        lightCss.Should().NotContain(unexpected: "{background-color:blue}");
+        lightCss.Should().Contain(expected: "{background-color:red;}");
+        lightCss.Should().NotContain(unexpected: "{background-color:blue;}");
 
-        darkCss.Should().Contain(expected: "{background-color:blue}");
-        darkCss.Should().NotContain(unexpected: "{background-color:red}");
+        darkCss.Should().Contain(expected: "{background-color:blue;}");
+        darkCss.Should().NotContain(unexpected: "{background-color:red;}");
     }
 
     [Fact]
