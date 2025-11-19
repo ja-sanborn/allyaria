@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Allyaria.Theming.Blazor.UnitTests;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public sealed class AryThemeProviderTests : TestContext
+public sealed class AryThemeProviderTests : BunitContext
 {
     [Fact]
     public async Task DetectThemeAsync_Should_ReturnDark_When_ModuleDetectsDark()
@@ -213,7 +213,7 @@ public sealed class AryThemeProviderTests : TestContext
             )
             .Returns(returnThis: new ValueTask<IJSObjectReference>(result: module));
 
-        var cut = RenderComponent<AryThemeProvider>(
+        var cut = Render<AryThemeProvider>(
             parameterBuilder: p => p
                 .AddChildContent(markup: "<p>content</p>")
         );
@@ -380,7 +380,7 @@ public sealed class AryThemeProviderTests : TestContext
             )
             .Returns(returnThis: new ValueTask<IJSObjectReference>(result: module));
 
-        var cut = RenderComponent<AryThemeProvider>(
+        var cut = Render<AryThemeProvider>(
             parameterBuilder: p => p
                 .Add(
                     parameterSelector: c => c.ChildContent, value: builder =>
@@ -539,7 +539,7 @@ public sealed class AryThemeProviderTests : TestContext
             .GetValue(obj: sut);
 
         lastCulture.Should().NotBeNull();
-        lastCulture!.Name.Should().Be(expected: "fr-FR");
+        lastCulture.Name.Should().Be(expected: "fr-FR");
     }
 
     [Fact]
@@ -575,7 +575,7 @@ public sealed class AryThemeProviderTests : TestContext
             .GetValue(obj: sut);
 
         lastCulture.Should().NotBeNull();
-        lastCulture!.Name.Should().Be(expected: "en-US");
+        lastCulture.Name.Should().Be(expected: "en-US");
     }
 
     [Fact]
@@ -617,7 +617,7 @@ public sealed class AryThemeProviderTests : TestContext
             .GetValue(obj: sut);
 
         lastCulture.Should().NotBeNull();
-        lastCulture!.Name.Should().Be(expected: culture.Name);
+        lastCulture.Name.Should().Be(expected: culture.Name);
     }
 
     [Fact]
@@ -778,7 +778,7 @@ public sealed class AryThemeProviderTests : TestContext
             )
             .Returns(returnThis: new ValueTask<IJSObjectReference>(result: module));
 
-        var cut = RenderComponent<AryThemeProvider>(
+        var cut = Render<AryThemeProvider>(
             parameterBuilder: p =>
                 p.AddChildContent(markup: "<p id=\"inner\">Hello</p>")
         );

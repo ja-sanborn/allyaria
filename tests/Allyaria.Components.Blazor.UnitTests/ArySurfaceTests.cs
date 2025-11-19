@@ -4,7 +4,7 @@ namespace Allyaria.Components.Blazor.UnitTests;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [SuppressMessage(category: "Usage", checkId: "BL0005:Component parameter should not be set outside of its component.")]
-public sealed class ArySurfaceTests : TestContext
+public sealed class ArySurfaceTests : BunitContext
 {
     private readonly IThemingService _themingService;
 
@@ -266,7 +266,7 @@ public sealed class ArySurfaceTests : TestContext
     public void Refresh_Should_NotThrow_When_CalledOnRenderedComponent()
     {
         // Arrange
-        var rendered = RenderComponent<ArySurface>(
+        var rendered = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .AddChildContent(markup: "content")
@@ -291,7 +291,7 @@ public sealed class ArySurfaceTests : TestContext
     public async Task RefreshAsync_Should_NotThrowAndReturnTask_When_CalledOnRenderedComponent()
     {
         // Arrange
-        var rendered = RenderComponent<ArySurface>(
+        var rendered = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .AddChildContent(markup: "content")
@@ -327,7 +327,7 @@ public sealed class ArySurfaceTests : TestContext
             )
             .Returns(returnThis: "color:red;");
 
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .Add(parameterSelector: p => p.AriaDescribedBy, value: "desc-id")
@@ -365,7 +365,7 @@ public sealed class ArySurfaceTests : TestContext
             )
             .Returns(returnThis: (string?)null);
 
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .Add(parameterSelector: p => p.Class, value: "custom-class")
@@ -401,7 +401,7 @@ public sealed class ArySurfaceTests : TestContext
             )
             .Returns(returnThis: "color:red;");
 
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .Add(parameterSelector: p => p.AdditionalAttributes, value: additional)
@@ -424,7 +424,7 @@ public sealed class ArySurfaceTests : TestContext
     public void Render_Should_NotRenderDiv_When_ComponentStateIsHidden()
     {
         // Arrange
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Hidden)
                 .AddChildContent(markup: "<span>content</span>")
@@ -448,7 +448,7 @@ public sealed class ArySurfaceTests : TestContext
             )
             .Returns(returnThis: (string?)null);
 
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .AddChildContent(markup: "content")
@@ -478,7 +478,7 @@ public sealed class ArySurfaceTests : TestContext
             )
             .Returns(returnThis: (string?)null);
 
-        var sut = RenderComponent<ArySurface>(
+        var sut = Render<ArySurface>(
             parameterBuilder: parameters => parameters
                 .Add(parameterSelector: p => p.ComponentState, value: ComponentState.Default)
                 .AddChildContent(markup: "<span>content</span>")

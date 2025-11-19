@@ -280,7 +280,6 @@ public sealed partial class AryThemeProvider : ComponentBase, IAsyncDisposable
     /// This method ensures RTL/LTR changes are applied reactively when the application culture updates via
     /// <c>CascadingLocalization</c>.
     /// </remarks>
-    /// <param name="firstRender">Unused. Included for signature consistency.</param>
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     protected override async Task OnParametersSetAsync()
     {
