@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
 
@@ -110,7 +110,7 @@ jobs:
 
       - name: Upload artifacts (TRX + coverage HTML)
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-and-coverage-artifacts
           path: |
@@ -153,7 +153,7 @@ jobs:
 
       - name: Upload site artifact for Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
