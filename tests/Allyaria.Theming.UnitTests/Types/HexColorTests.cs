@@ -1,0 +1,819 @@
+namespace Allyaria.Theming.UnitTests.Types;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+public sealed class HexColorTests
+{
+    [Fact]
+    public void ContrastRatio_Should_Be_21_For_BlackOnWhite()
+    {
+        // Arrange
+        var black = Colors.Black;
+        var white = Colors.White;
+
+        // Act
+        var ratio = black.ContrastRatio(background: white);
+
+        // Assert
+        ratio.Should().BeApproximately(expectedValue: 21.0, precision: 1e-12);
+    }
+
+    [Fact]
+    public void Ctor_Channels_Should_SetRGBA_And_ComputeHSV()
+    {
+        // Arrange
+        var r = new HexByte(value: 10);
+        var g = new HexByte(value: 20);
+        var b = new HexByte(value: 30);
+        var a = new HexByte(value: 40);
+
+        // Act
+        var sut = new HexColor(red: r, green: g, blue: b, alpha: a);
+
+        // Assert
+        sut.R.Value.Should().Be(expected: 10);
+        sut.G.Value.Should().Be(expected: 20);
+        sut.B.Value.Should().Be(expected: 30);
+        sut.A.Value.Should().Be(expected: 40);
+
+        // HSV sanity: V=max/255, S>0, H in [0,360)
+        sut.V.Should().BeApproximately(expectedValue: 30 / 255.0, precision: 1e-12);
+        sut.S.Should().BeGreaterThan(expected: 0);
+        sut.H.Should().BeGreaterThanOrEqualTo(expected: 0).And.BeLessThan(expected: 360);
+    }
+
+    [Fact]
+    public void Ctor_String_Hsv_Should_Normalize_Negative_Hue_In_HsvaToRgba()
+    {
+        // Arrange
+        const string input = "hsv(-60,100%,100%)"; // -60° should normalize to 300° inside HsvaToRgba
+
+        // Act
+        var sut = new HexColor(value: input);
+
+        // Assert
+        // HSV(300°,1,1) -> #FF00FF with default alpha 0xFF
+        sut.ToString().Should().Be(expected: "#FF00FFFF");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_Parse_CSS4_SpaceSlash_Syntax()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "rgb(255 0 0 / .5)");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "#FF000080");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_Parse_NamedColor_From_Colors_Registry_CaseInsensitive()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "red500"); // exists in Colors with exact hex
+
+        // Assert (reference file Colors.Red500 => #F44336FF)
+        sut.ToString().Should().Be(expected: Colors.Red500.ToString());
+    }
+
+    [Theory]
+    [InlineData("#ABC", "#AABBCCFF")]
+    [InlineData("#ABCD", "#AABBCCDD")]
+    [InlineData("#AABBCC", "#AABBCCFF")]
+    [InlineData("#AABBCCDD", "#AABBCCDD")]
+    public void Ctor_String_Should_ParseHex_Variants(string input, string expected)
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: input);
+
+        // Assert
+        sut.ToString().Should().Be(expected: expected);
+    }
+
+    [Fact]
+    public void Ctor_String_Should_ParseHsv_AndHsva()
+    {
+        // Arrange & Act
+        var rgbFromHsv = new HexColor(value: "hsv(0,100%,100%)"); // red
+        var rgbaFromHsva = new HexColor(value: "hsva(120,1,1,0.5)"); // green @ 50% alpha
+
+        // Assert
+        rgbFromHsv.ToString().Should().Be(expected: "#FF0000FF");
+        rgbaFromHsva.ToString().Should().Be(expected: "#00FF0080");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_ParseHsv_WithFractional_SV()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "hsv(0,0.75,0.5)"); // 75% sat, 50% theme
+
+        // Assert (rough shape: red is dominant, theme ~128)
+        sut.R.Value.Should().BeGreaterThan(expected: 100);
+        sut.G.Value.Should().BeLessThan(expected: 128);
+        sut.B.Value.Should().BeLessThan(expected: 128);
+        sut.A.Value.Should().Be(expected: 255);
+    }
+
+    [Fact]
+    public void Ctor_String_Should_ParseRgb_Ints_And_DefaultAlpha()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "rgb(255,0,0)");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "#FF0000FF");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_ParseRgb_Percentages()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "rgb(100%,0%,0%)");
+
+        // Assert
+        sut.ToString().Should().Be(expected: "#FF0000FF");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_ParseRgba_WithFractionAlpha()
+    {
+        // Arrange & Act
+        var sut = new HexColor(value: "rgba(10,20,30,0.5)");
+
+        // Assert
+        sut.R.Value.Should().Be(expected: 10);
+        sut.G.Value.Should().Be(expected: 20);
+        sut.B.Value.Should().Be(expected: 30);
+        sut.A.Value.Should().Be(expected: 128);
+    }
+
+    [Theory]
+    [InlineData("#ZZZ")]
+    [InlineData("#12")]
+    [InlineData("##123456")]
+    public void Ctor_String_Should_Throw_On_InvalidHex(string input)
+    {
+        // Arrange
+        var act = () => new HexColor(value: input);
+
+        // Assert
+        act.Should().Throw<AryArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("hsv(bad,10,10)")]
+    [InlineData("hsv(0,150%,10%)")] // percent out of range
+    [InlineData("hsva(0,0,0,NaN)")] // invalid alpha
+    public void Ctor_String_Should_Throw_On_InvalidHsvInputs(string input)
+    {
+        // Arrange
+        var act = () => new HexColor(value: input);
+
+        // Assert
+        act.Should().Throw<AryArgumentException>();
+    }
+
+    [Fact]
+    public void Ctor_String_Should_Throw_On_InvalidRgbText()
+    {
+        // Arrange
+        var act = () => new HexColor(value: "rgb( , , )");
+
+        // Assert
+        act.Should().Throw<AryArgumentException>()
+            .WithMessage(expectedWildcardPattern: "*Invalid RGB(A) color*");
+    }
+
+    [Fact]
+    public void Ctor_String_Should_Throw_On_UnknownName()
+    {
+        // Arrange
+        var act = () => new HexColor(value: "not-a-real-color-name");
+
+        // Assert
+        act.Should().Throw<AryArgumentException>().WithMessage(expectedWildcardPattern: "*Invalid color string*");
+    }
+
+    [Fact]
+    public void DefaultCtor_Should_ZeroRGBA_AndHSV()
+    {
+        // Arrange & Act
+        var sut = new HexColor();
+
+        // Assert
+        sut.R.Value.Should().Be(expected: 0);
+        sut.G.Value.Should().Be(expected: 0);
+        sut.B.Value.Should().Be(expected: 0);
+        sut.A.Value.Should().Be(expected: 0);
+        sut.S.Should().Be(expected: 0);
+        sut.V.Should().Be(expected: 0);
+        sut.H.Should().Be(expected: 0);
+        sut.ToString().Should().Be(expected: "#00000000");
+    }
+
+    [Fact]
+    public void Desaturate_Should_Reduce_S_And_Optionally_Blend_Value_Toward_Mid_With_ByteQuantization()
+    {
+        // Arrange
+        var saturated = HexColor.FromHsva(hue: 0, saturation: 1, value: 1); // bright red
+
+        // Act
+        var desat = saturated.Desaturate(desaturateBy: 0.6, valueBlendTowardMid: 0.2);
+
+        // Assert
+        // S is reduced by amount: S' = 1 - 0.6 = 0.4
+        desat.S.Should().BeApproximately(expectedValue: 0.4, precision: 1e-12);
+
+        // V is blended toward 0.5: V_target = 1 + (0.5 - 1) * 0.2 = 0.9
+        // BUT after converting back to 8-bit, 0.9 * 255 = 229.5 -> bankers round => 230 => 230/255
+        var expectedQuantizedV = 230.0 / 255.0;
+        desat.V.Should().BeApproximately(expectedValue: expectedQuantizedV, precision: 1e-12);
+
+        // (Optional extra sanity: resulting RGB should reflect the same quantization)
+        // For H=0, S=0.4, V≈0.9 -> RGB ≈ (0.9, 0.54, 0.54) -> bytes (230, 138, 138) with banker’s rounding.
+        desat.R.Value.Should().Be(expected: 230);
+        desat.G.Value.Should().Be(expected: 138);
+        desat.B.Value.Should().Be(expected: 138);
+    }
+
+    [Fact]
+    public void EnsureMinimumContrast_Should_Adjust_ValueRail_To_Reach_Minimum_When_ForegroundEqualsBackground()
+    {
+        // Arrange
+        var fg = Colors.Grey500; // #9E9E9EFF (S = 0, V ≈ 0.6196)
+        var bg = Colors.Grey500;
+
+        // Sanity: starting contrast is 1
+        fg.ContrastRatio(background: bg).Should().BeApproximately(expectedValue: 1.0, precision: 1e-12);
+
+        // Act
+        var resolved = fg.EnsureContrast(background: bg);
+
+        // Assert
+        // 1) It must change (can't meet 3:1 while identical to background)
+        resolved.Should().NotBe(unexpected: fg);
+
+        // 2) It must actually meet the requested minimum
+        resolved.ContrastRatio(background: bg).Should().BeGreaterThanOrEqualTo(expected: 3.0);
+
+        // 3) Preserve hue/saturation (theme rail only) and alpha
+        resolved.S.Should().BeApproximately(expectedValue: fg.S, precision: 1e-12);
+        resolved.H.Should().BeApproximately(expectedValue: fg.H, precision: 1e-12);
+        resolved.A.Should().BeEquivalentTo(expectation: fg.A);
+
+        // 4) Implementation may choose either pole (black or white). Validate it moved away
+        //    and snapped to an extreme (common strategy).
+        var extremes = new[]
+        {
+            0.0,
+            1.0
+        };
+
+        extremes.Should().Contain(expected: resolved.V);
+    }
+
+    [Fact]
+    public void EnsureMinimumContrast_Should_Enter_SearchTowardPole_When_ValueRail_Cannot_Reach_Minimum()
+    {
+        // Arrange
+        var bg = Colors.Black;
+        var sut = HexColor.FromHsva(hue: 240, saturation: 1.0, value: 0.5);
+
+        sut.ContrastRatio(background: bg).Should().BeLessThan(expected: 3.0);
+
+        HexColor.FromHsva(hue: 240, saturation: 1.0, value: 1.0).ContrastRatio(background: bg).Should()
+            .BeLessThan(expected: 3.0);
+
+        // Act
+        var resolved = sut.EnsureContrast(background: bg);
+
+        // Assert
+        resolved.Should().NotBe(unexpected: sut);
+        resolved.ContrastRatio(background: bg).Should().BeGreaterThanOrEqualTo(expected: 3.0);
+        resolved.S.Should().BeLessThan(expected: sut.S);
+    }
+
+    [Fact]
+    public void EnsureMinimumContrast_Should_Keep_Best_Candidate_When_Minimum_Is_Unattainable()
+    {
+        // Arrange
+        var bg = Colors.Grey500;
+        var fg = Colors.Grey500;
+        const double minRatio = 21.0; // maximum allowed, unreachable vs mid-gray
+
+        // Act
+        var resolved = fg.EnsureContrast(background: bg, minimumRatio: minRatio);
+
+        // Assert
+        // We can't meet 21:1 vs Grey500, so result must be a "best effort" (contrast < 21)
+        resolved.ContrastRatio(background: bg).Should().BeLessThan(expected: minRatio);
+
+        // And it should move in the direction that yields the larger contrast vs Grey500 — i.e., darker.
+        resolved.V.Should().BeLessThan(expected: fg.V);
+    }
+
+    [Fact]
+    public void EnsureMinimumContrast_Should_Return_TowardBlack_When_White_Direction_Cannot_Meet_Required_Minimum()
+    {
+        // Arrange
+        var bg = Colors.White;
+        var fg = Colors.Grey400; // relatively light; moving toward white cannot raise contrast enough for 7:1
+        const double minRatio = 7.0;
+
+        // Sanity: starting contrast is below target
+        fg.ContrastRatio(background: bg).Should().BeLessThan(expected: minRatio);
+
+        // Act
+        var resolved = fg.EnsureContrast(background: bg, minimumRatio: minRatio);
+
+        // Assert
+        resolved.Should().NotBe(unexpected: fg);
+        resolved.ContrastRatio(background: bg).Should().BeGreaterThanOrEqualTo(expected: minRatio);
+
+        // Must have gone darker (toward black direction)
+        resolved.V.Should().BeLessThan(expected: fg.V);
+    }
+
+    [Fact]
+    public void EnsureMinimumContrast_Should_ReturnSelf_When_Already_Passing()
+    {
+        // Arrange
+        var fg = Colors.Black;
+        var bg = Colors.White;
+
+        // Act
+        var resolved = fg.EnsureContrast(background: bg);
+
+        // Assert
+        resolved.Should().BeEquivalentTo(expectation: fg);
+    }
+
+    [Fact]
+    public void Equality_Comparison_And_Operators_Should_Work()
+    {
+        // Arrange
+        var a = new HexColor(value: "#11223344");
+        var b = new HexColor(value: "#11223344");
+        var c = new HexColor(value: "#11223345");
+
+        // Act & Assert
+        a.Equals(other: b).Should().BeTrue();
+        (a == b).Should().BeTrue();
+        (a != b).Should().BeFalse();
+        a.CompareTo(other: b).Should().Be(expected: 0);
+
+        (c > a).Should().BeTrue();
+        (a < c).Should().BeTrue();
+        (c >= a).Should().BeTrue();
+        (a <= c).Should().BeTrue();
+
+        a.GetHashCode().Should().Be(expected: b.GetHashCode());
+        a.Equals(obj: b).Should().BeTrue();
+        a.Equals(obj: c).Should().BeFalse();
+    }
+
+    [Fact]
+    public void FromHsva_Should_Wrap_And_Clamp_All_Inputs()
+    {
+        // Arrange
+        var overHue = 720.0; // wraps to 0
+        var negHue = -60.0; // wraps to 300
+        var overS = 2.0; // clamped
+        var negV = -1.0; // clamped
+        var overA = 7.0; // clamped
+
+        // Act
+        var wrap0 = HexColor.FromHsva(hue: overHue, saturation: 1, value: 1);
+        var wrap300 = HexColor.FromHsva(hue: negHue, saturation: 1, value: 1);
+        var clamped = HexColor.FromHsva(hue: 120, saturation: overS, value: negV, alpha: overA);
+
+        // Assert
+        wrap0.ToString().Should().Be(expected: "#FF0000FF");
+        wrap300.ToString().Should().Be(expected: "#FF00FFFF");
+        clamped.ToString().Should().Be(expected: "#000000FF"); // v clamped to 0 -> black, alpha clamped to 1
+    }
+
+    [Theory]
+    [InlineData(0, "#FF0000FF")] // sector <1
+    [InlineData(60, "#FFFF00FF")] // sector <2
+    [InlineData(120, "#00FF00FF")] // sector <3
+    [InlineData(180, "#00FFFFFF")] // sector <4
+    [InlineData(240, "#0000FFFF")] // sector <5
+    [InlineData(300, "#FF00FFFF")] // default
+    public void HsvaToRgba_Should_Produce_Expected_Primaries_And_Secondaries(double hue, string expected)
+    {
+        // Arrange & Act
+        var sut = HexColor.FromHsva(hue: hue, saturation: 1, value: 1);
+
+        // Assert
+        sut.ToString().Should().Be(expected: expected);
+    }
+
+    [Fact]
+    public void Implicit_Conversions_String_To_Color_And_Back_Should_Work()
+    {
+        // Arrange
+        HexColor c1 = "#01020304";
+        HexColor c2 = "RedA400"; // from registry
+
+        // Act
+        string s1 = c1;
+        string s2 = c2;
+
+        // Assert
+        s1.Should().Be(expected: "#01020304");
+        s2.Should().Be(expected: Colors.RedA400.ToString());
+    }
+
+    [Fact]
+    public void Invert_Should_Produce_Photographic_Negative()
+    {
+        // Arrange
+        var sut = Colors.Black.SetAlpha(alpha: 0x7F);
+
+        // Act
+        var negative = sut.Invert();
+
+        // Assert
+        negative.ToString().Should().Be(
+            expected: "#FFFFFFFF".Replace(oldValue: "FF", newValue: "FF").Insert(startIndex: 7, value: "7F")
+                .Remove(startIndex: 9)
+        ); // #FFFFFF7F
+
+        negative.R.Value.Should().Be(expected: 255);
+        negative.A.Value.Should().Be(expected: 0x7F); // alpha preserved
+        negative.ToString().Should().Be(expected: "#FFFFFF7F");
+    }
+
+    [Fact]
+    public void IsDark_IsLight_IsOpaque_IsTransparent_Should_Behave_AsDocumented()
+    {
+        // Arrange
+        var black = Colors.Black;
+        var white = Colors.White;
+        var transparent = Colors.Black.SetAlpha(alpha: 0);
+
+        // Act & Assert
+        black.IsDark().Should().BeTrue();
+        black.IsLight().Should().BeFalse();
+
+        white.IsLight().Should().BeTrue();
+        white.IsDark().Should().BeFalse();
+
+        white.IsOpaque().Should().BeTrue();
+        transparent.IsTransparent().Should().BeTrue();
+    }
+
+    [Fact]
+    public void Parse_And_TryParse_Should_Work_For_Valid_And_Invalid()
+    {
+        // Arrange & Act
+        var parsed = HexColor.Parse(value: "#11223344");
+
+        var ok1 = HexColor.TryParse(value: "red", result: out var fromName);
+        var ok2 = HexColor.TryParse(value: "#BADHEX", result: out var bad1);
+        var ok3 = HexColor.TryParse(value: null, result: out var bad2);
+
+        // Assert
+        parsed.ToString().Should().Be(expected: "#11223344");
+
+        ok1.Should().BeTrue();
+        fromName.ToString().Should().Be(expected: Colors.Red.ToString());
+
+        ok2.Should().BeFalse();
+        bad1.ToString().Should().Be(expected: "#00000000");
+
+        ok3.Should().BeFalse();
+        bad2.ToString().Should().Be(expected: "#00000000");
+    }
+
+    [Fact]
+    public void RgbToHsv_Should_Handle_Gray_And_Sector_Picks_With_Ties()
+    {
+        // gray => H=0,S=0,V=~0.5
+        var gray = new HexColor(
+            red: new HexByte(value: 128), green: new HexByte(value: 128), blue: new HexByte(value: 128)
+        );
+
+        gray.S.Should().Be(expected: 0);
+        gray.H.Should().Be(expected: 0);
+        gray.V.Should().BeApproximately(expectedValue: 128 / 255.0, precision: 1e-12);
+
+        // red >= green & red >= blue sector
+        var redish = new HexColor(
+            red: new HexByte(value: 200), green: new HexByte(value: 100), blue: new HexByte(value: 50)
+        );
+
+        redish.H.Should().BeGreaterThanOrEqualTo(expected: 0).And.BeLessThan(expected: 120);
+
+        // green >= red & green >= blue sector
+        var greenish = new HexColor(
+            red: new HexByte(value: 50), green: new HexByte(value: 220), blue: new HexByte(value: 60)
+        );
+
+        greenish.H.Should().BeGreaterThanOrEqualTo(expected: 120).And.BeLessThan(expected: 240);
+
+        // blue sector by elimination
+        var blueish = new HexColor(
+            red: new HexByte(value: 40), green: new HexByte(value: 30), blue: new HexByte(value: 200)
+        );
+
+        blueish.H.Should().BeGreaterThanOrEqualTo(expected: 240).And.BeLessThan(expected: 360);
+
+        // ties favor first true branch (R then G then B)
+        var tieRg = new HexColor(
+            red: new HexByte(value: 200), green: new HexByte(value: 200), blue: new HexByte(value: 0)
+        ); // R>=G and R>=B
+
+        tieRg.H.Should().BeGreaterThanOrEqualTo(expected: 0).And.BeLessThan(expected: 120);
+    }
+
+    [Fact]
+    public void SetAlpha_Should_Create_New_With_Same_RGB_And_New_A()
+    {
+        // Arrange
+        var baseColor = Colors.Red.SetAlpha(alpha: 0); // ensure starting point predictable
+
+        // Act
+        var withAlpha = baseColor.SetAlpha(alpha: 200);
+
+        // Assert
+        withAlpha.R.Should().BeEquivalentTo(expectation: baseColor.R);
+        withAlpha.G.Should().BeEquivalentTo(expectation: baseColor.G);
+        withAlpha.B.Should().BeEquivalentTo(expectation: baseColor.B);
+        withAlpha.A.Value.Should().Be(expected: 200);
+    }
+
+    [Theory]
+    [InlineData(0.25)]
+    [InlineData(0.75)]
+    public void ShiftLightness_Should_Move_Toward_Mid_With_Quantization_Tolerances(double startV)
+    {
+        // Arrange
+        var h = 210.0;
+        var s = 0.5;
+        var start = HexColor.FromHsva(hue: h, saturation: s, value: startV);
+
+        // Act
+        var shifted = start.ShiftLightness(delta: 0.25);
+
+        // Assert
+        // Moves toward mid (0.5):
+        Math.Abs(value: shifted.V - 0.5).Should().BeLessThan(expected: Math.Abs(value: startV - 0.5));
+
+        // V is quantized to 8-bit steps after HSVA->RGBA conversion:
+        var oneStep = 1.0 / 255.0; // ≈ 0.00392157
+        Math.Abs(value: shifted.V - 0.5).Should().BeLessThanOrEqualTo(expected: oneStep);
+
+        // Hue & Saturation can drift slightly due to quantization and sector math.
+        shifted.H.Should().BeApproximately(expectedValue: start.H, precision: 0.5); // allow ~±0.5° drift
+        shifted.S.Should().BeApproximately(expectedValue: start.S, precision: oneStep); // allow ±1/255 drift
+    }
+
+    [Fact]
+    public void ToAccent_Should_Match_ShiftLightness_With_AccentDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var accent = sut.ToAccent();
+        var expected = sut.ShiftLightness(delta: 0.6);
+
+        // Assert
+        accent.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToDisabled_Should_Match_Desaturate_With_DisabledDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var disabled = sut.ToDisabled();
+        var expected = sut.Desaturate(desaturateBy: 0.6);
+
+        // Assert
+        disabled.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToDragged_Should_Match_ShiftLightness_With_DraggedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var dragged = sut.ToDragged();
+        var expected = sut.ShiftLightness(delta: 0.18);
+
+        // Assert
+        dragged.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation1_Should_Match_ShiftLightness_With_Elevation1Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation1();
+        var expected = sut.ShiftLightness(delta: 0.02);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation2_Should_Match_ShiftLightness_With_Elevation2Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation2();
+        var expected = sut.ShiftLightness(delta: 0.04);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation3_Should_Match_ShiftLightness_With_Elevation3Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation3();
+        var expected = sut.ShiftLightness(delta: 0.06);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation4_Should_Match_ShiftLightness_With_Elevation4Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation4();
+        var expected = sut.ShiftLightness(delta: 0.08);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToElevation5_Should_Match_ShiftLightness_With_Elevation5Delta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var elevated = sut.ToElevation5();
+        var expected = sut.ShiftLightness(delta: 0.10);
+
+        // Assert
+        elevated.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToFocused_Should_Match_ShiftLightness_With_FocusedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var focused = sut.ToFocused();
+        var expected = sut.ShiftLightness(delta: 0.10);
+
+        // Assert
+        focused.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToForeground_Should_Match_ShiftLightness_With_ForegroundDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var foreground = sut.ToForeground();
+        var expected = sut.ShiftLightness(delta: 0.90);
+
+        // Assert
+        foreground.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToHovered_Should_Match_ShiftLightness_With_HoveredDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var hovered = sut.ToHovered();
+        var expected = sut.ShiftLightness(delta: 0.06);
+
+        // Assert
+        hovered.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToLerpLinear_Should_GammaCorrect_And_Include_Alpha()
+    {
+        // Arrange
+        var start = Colors.Black.SetAlpha(alpha: 0);
+        var end = Colors.White.SetAlpha(alpha: 255);
+
+        // Act
+        var mid = start.ToLerpLinear(end: end, factor: 0.5);
+
+        // Assert
+        // In linear light, midpoint is ~#BCBCBC and alpha half
+        mid.A.Value.Should().Be(expected: 128);
+        mid.R.Value.Should().Be(expected: 188);
+        mid.G.Value.Should().Be(expected: 188);
+        mid.B.Value.Should().Be(expected: 188);
+        mid.ToString().Should().Be(expected: "#BCBCBC80");
+    }
+
+    [Fact]
+    public void ToLerpLinearPreserveAlpha_Should_GammaCorrect_And_Keep_Alpha()
+    {
+        // Arrange
+        var start = Colors.Black.SetAlpha(alpha: 0x7F);
+        var end = Colors.White.SetAlpha(alpha: 0x20);
+
+        // Act
+        var mid = start.ToLerpLinearPreserveAlpha(end: end, factor: 0.5);
+
+        // Assert
+        mid.ToString().Should().Be(expected: "#BCBCBC7F"); // same RGB as above, preserved alpha
+    }
+
+    [Fact]
+    public void ToPressed_Should_Match_ShiftLightness_With_PressedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var pressed = sut.ToPressed();
+        var expected = sut.ShiftLightness(delta: 0.14);
+
+        // Assert
+        pressed.Should().BeEquivalentTo(expectation: expected);
+    }
+
+    [Fact]
+    public void ToRelativeLuminance_Should_Match_Known_Values_For_Black_And_White()
+    {
+        // Arrange
+        var black = Colors.Black;
+        var white = Colors.White;
+
+        // Act
+        var lb = black.ToRelativeLuminance();
+        var lw = white.ToRelativeLuminance();
+
+        // Assert
+        lb.Should().BeApproximately(expectedValue: 0.0, precision: 1e-12);
+        lw.Should().BeApproximately(expectedValue: 1.0, precision: 1e-12);
+    }
+
+    [Fact]
+    public void ToString_Should_Format_As_RRGGBBAA()
+    {
+        // Arrange
+        var sut = new HexColor(
+            red: new HexByte(value: 0x0A), green: new HexByte(value: 0x1B), blue: new HexByte(value: 0x2C),
+            alpha: new HexByte(value: 0x3D)
+        );
+
+        // Act
+        var s = sut.ToString();
+
+        // Assert
+        s.Should().Be(expected: "#0A1B2C3D");
+    }
+
+    [Fact]
+    public void ToVisited_Should_Match_Desaturate_With_VisitedDelta_When_Called()
+    {
+        // Arrange
+        var sut = Colors.Blue500;
+
+        // Act
+        var visited = sut.ToVisited();
+        var expected = sut.Desaturate(desaturateBy: 0.3);
+
+        // Assert
+        visited.Should().BeEquivalentTo(expectation: expected);
+    }
+}

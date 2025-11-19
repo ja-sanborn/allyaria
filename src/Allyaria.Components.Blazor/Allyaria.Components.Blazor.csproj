@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <IsTestProject>false</IsTestProject>
+        <Version>0.0.1</Version>
+        <AssemblyVersion>0.0.1.0</AssemblyVersion>
+        <FileVersion>0.0.1.0</FileVersion>
+        <Product>Allyaria Blazor Components</Product>
+        <Description>The basic Blazor components for Allyaria Blazor projects.</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Allyaria Blazor Components</Title>
+        <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    </PropertyGroup>
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Allyaria.Components.Blazor.UnitTests"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Allyaria.Theming.Blazor\Allyaria.Theming.Blazor.csproj"/>
+    </ItemGroup>
+</Project>

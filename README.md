@@ -1,6 +1,6 @@
 # Allyaria
 
-> *Version 1: 2025-09-28*
+> *Version 1: 2025-11-18*
 >
 > [![Tests](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ja-sanborn/allyaria/actions/workflows/tests.yml)
 >
@@ -9,164 +9,281 @@
 **Allyaria** is a *Blazor Component Library* for modern .NET apps, built with accessibility and localization at its
 core. It is flexible, customizable, and extensible, written entirely in Blazor with minimal JavaScript interop.
 
-## Theming Features
+---
 
-### AllyariaColorValue
+## Allyaria.Abstractions
 
-`AllyariaColorValue` is an immutable, framework-agnostic color type with CSS-oriented parsing, formatting, and value
-semantics.
-It supports:
+**Allyaria.Abstractions** defines the foundational contracts, validation utilities, and result-handling primitives for
+the Allyaria framework.
+It provides lightweight, dependency-free base components intended for consistent error management, input validation, and
+functional-style operation results across the entire Allyaria ecosystem.
 
-* **Parsing** from multiple formats:
+### Key Features
 
-    * Hex: `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`
-    * Functional: `rgb()`, `rgba()`, `hsv()`, `hsva()`
-    * Named colors: CSS Web color names and Material Design palette names
-* **Conversions** between RGBA and HSVA (Hue 0–360°, Saturation/Value 0–100%, Alpha 0–1)
-* **Formatting** to string forms:
+* **Structured Exception Model**  
+  Includes core exception types like `AryException`, `AryArgumentException`, and `AryInvalidOperationException` that
+  introduce structured error codes and standardized error handling semantics.
 
-    * `HexRgb`, `HexRgba`
-    * `Rgb`, `Rgba`
-    * `Hsv`, `Hsva`
-* **Equality & ordering** by canonical `#RRGGBBAA` string
+* **Result-Oriented Operations**  
+  Implements the `AryResult` and `AryResult<T>` types for modeling success and failure outcomes without relying on
+  exceptions for control flow.
 
-All numeric operations use `InvariantCulture`, ensuring consistent, predictable behavior across cultures.
+* **Validation Framework**  
+  Offers fluent and guard-based validation through `AryGuard`, `AryChecks`, `AryValidation<T>`, and
+  `AryValidationExtensions`, enabling both declarative and imperative argument validation patterns.
 
-### AllyariaStringValue
+* **Enum and String Extensions**  
+  Provides `EnumExtensions` and `StringExtensions` for transforming identifiers, formatting names, and retrieving
+  user-friendly descriptions from enums and text.
 
-`AllyariaStringValue` is an immutable, normalized wrapper for theme strings.
-It guarantees **non-null, non-empty, non-whitespace** input and stores the **trimmed** value.
+* **Generic Helpers**  
+  Includes concise extension methods like `GenericExtensions.OrDefault()` for simplifying nullable value handling.
 
-Key features:
+### Design Principles
 
-* **Normalization & validation** — throws on `null`/empty/whitespace; value is trimmed and control characters rejected.
-* **Parsing helpers** — `Parse(string)` and `TryParse(string, out AllyariaStringValue?)`.
-* **Ergonomic conversions** — implicit cast **from** `string` and **to** `string` for seamless usage.
-* **Immutable value semantics** — safe to pass around and reuse in theming/style composition.
+* **Framework-Agnostic**  
+  Works seamlessly across .NET applications, libraries, and services.
 
-### AllyariaImageValue
+* **Zero External Dependencies**  
+  Fully self-contained to ensure minimal footprint.
 
-`AllyariaImageValue` is an immutable, strongly-typed CSS image token that normalizes input into a canonical
-`url("…")`. If the input already contains a `url(...)`, only the **first** one is extracted; otherwise the raw value
-is validated, unwrapped (if quoted), escaped, and wrapped as `url("…")`.
+* **Consistency & Safety:**  
+  Promotes predictable validation, consistent exception handling, and readable naming conventions.
 
-Highlights:
+* **Performance-Oriented:**  
+  Uses caching and compiled expressions to reduce reflection and regex overhead.
 
-* **Scheme safety** — allows `http`, `https`, `data`, `blob`; blocks dangerous schemes (e.g., `javascript:`).
-* **Parsing helpers** — `Parse(string)` and `TryParse(string, out AllyariaImageValue?)`.
-* **CSS helpers** — `ToCss(property)` and background helpers:
+> For additional details on available types and interfaces, see:
+*[Abstractions API documentation](./docs/references/Abstractions)*.
 
-    * `ToCssBackground(AllyariaColorValue backgroundColor, bool stretch = true)`
-    * `ToCssVarsBackground(string prefix, AllyariaColorValue backgroundColor, bool stretch = true)`
-* **Ergonomic conversions** — implicit cast **from** `string` and **to** `string`.
+---
 
-### AllyariaPalette
+## Allyaria.Theming
 
-`AllyariaPalette` is an immutable, strongly typed palette used by the Allyaria theme engine.
-It defines background, foreground, border, hover, and disabled states with clear **precedence rules**:
+**Allyaria.Theming** provides the full styling, branding, and runtime theme-management system for the Allyaria UI
+framework. It enables strongly typed, CSS-safe style values; brand-driven theme generation; composition of custom theme
+overrides; and fully reactive theme-switching behavior at runtime.
 
-* **Background images** can be emitted with a readability overlay and precedence over background colors.
-* **Explicit overrides** beat computed defaults.
-* **Borders** are opt-in (width > 0) and may include color, style, and radius.
-* **Foreground colors** default to contrast-safe values based on the background (WCAG-aware).
-* **Hover / Disabled derivation** — helpers to create accessible variants while preserving hue.
-* **CSS variable generation** — supports normalized prefixes and consistent naming for theming.
-* **Cascade support** — the `Cascade()` method creates derived palettes by selectively overriding base values.
+### Key Features
 
-Conversion helpers are provided to:
+* **Strongly Typed CSS Value System**  
+  Includes a comprehensive set of style value types (`StyleColor`, `StyleLength`, `StyleFontWeight`, `StyleOverflow`,
+  `StyleTextAlign`, `StyleTextTransform`, etc.)—all inheriting from `StyleValueBase` and implementing `IStyleValue`.
+  Every value is validated, normalized, and guaranteed safe for CSS serialization.
 
-* **Inline CSS styles** via `ToCss()`
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
+* **Complete Theme Modeling & Composition**  
+  Themes are built from structured domain types (`Brand`, `BrandVariant`, `BrandPalette`, `BrandFont`, `BrandTheme`).
+  The system ensures consistent color tokens, spacing rules, component groupings, and variant families across each theme
+  type.
 
-This ensures consistent, accessible, and theme-driven styling across components.
+* **Navigator-Driven Customization**  
+  The `ThemeNavigator` API allows targeting specific theme slices—component types, component states, style types, and
+  theme variants. Combined with `ThemeUpdater`, this enables precise and safe theme customization with full
+  immutability.
 
-### AllyariaTypography
+* **Configurable Theme Overrides**  
+  Consumers can extend or replace parts of a theme using `IThemeConfigurator` and `ThemeConfigurator`, supporting fluent
+  `Override()` chaining. Built-in protections prevent modification of system themes, high-contrast themes, and readonly
+  component states.
 
-`AllyariaTypography` is a strongly typed struct for defining typography within the Allyaria theming system.
-It encapsulates font-related properties (family, size, weight, style, spacing, alignment, decoration, transform, etc.)
-and provides conversion helpers to:
+* **Reactive Runtime Theme Service**  
+  The `IThemingService` and its implementation `ThemingService` manage the effective and stored theme types, generate
+  global and per-component CSS, and raise `ThemeChanged` events when the active theme switches.
 
-* **Inline CSS styles** via `ToCss()`
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")`
-* **Cascade support** — the `Cascade()` method allows creating derived typography definitions by selectively overriding
-  base values.
+* **Automatic Dependency Injection Integration**  
+  `ServiceCollectionExtensions.AddAllyariaTheming()` integrates theme creation, builder execution, brand loading,
+  overrides, and service registration in a single DI-friendly extension method.
 
-Only non-null values are emitted, making it safe to compose flexible, theme-driven typography definitions without
-unnecessary noise in the resulting CSS.
+* **Safe, Declarative CSS Generation**  
+  Every component and document-level style rule is generated through the theme engine using strongly typed style values,
+  component states, and theme variants—eliminating raw CSS strings and preventing invalid output.
 
-### AllyariaStyle
+### Design Principles
 
-`AllyariaStyle` is an immutable, strongly typed record-struct that **combines a palette and typography** into a single
-style definition.
+* **Immutable & Deterministic**  
+  Themes, navigators, and updaters follow immutability rules to ensure stable, predictable theme generation.
 
-It provides:
+* **Strong Validation Guarantees**  
+  Powered by the Abstractions package (`AryArgumentException`, guard utilities, enum metadata), preventing invalid CSS,
+  illegal theme operations, and unsafe brand configurations.
 
-* **Composition** of `AllyariaPalette` (colors, backgrounds, borders) and `AllyariaTypography` (fonts, sizes, spacing).
-* **Inline CSS styles** via `ToCss()` — for base state.
-* **Inline CSS styles for hover states** via `ToCssHover()`.
-* **CSS custom properties (variables)** via `ToCssVars(string prefix = "")` — exportable tokens for base, disabled,
-  and hover states.
+* **Separation of Concerns**  
+  Style values, theme navigation, theme generation, and DI registration are cleanly separated into dedicated namespaces.
 
-This ensures consistent, accessible, theme-driven styling across components, with **value semantics** for easy equality
-checks and copy-by-value safety.
+* **Brand-Driven Theming**  
+  Themes inherit their identity from `Brand` objects—enabling custom palettes, typography, and component groups to be
+  reused or replaced per application.
 
-### ColorHelper
+* **Framework-Agnostic**  
+  Works across Blazor, ASP.NET, MAUI, desktop, and console-hosted applications—anywhere .NET DI and CSS generation
+  apply.
 
-`ColorHelper` provides WCAG-aware color utilities for the theming pipeline:
+For additional details on available tokens, styles, and composition patterns, see the
+*[Theming API documentation](./docs/references/Theming)*.
 
-* **Contrast** — `ContrastRatio(fg, bg)` computes the WCAG ratio; `EnsureMinimumContrast(fg, bg, min)` repairs color to
-  meet or best-approach a target, preserving hue when possible.
-* **Blending** — `MixSrgb(a, b, t)` mixes opaque colors in sRGB; `Blend(start, target, t)` mixes scalars.
-* **Luminance** — `RelativeLuminance(color)` returns WCAG relative luminance.
+---
 
-These helpers power `AllyariaPalette` derivations (hover/disabled) and automatic foreground selection.
+## Allyaria.Theming.Blazor
 
-### ContrastResult
+**Allyaria.Theming.Blazor** provides Blazor-specific integration for the Allyaria theming system. It exposes the
+`AryThemeProvider` root component that bridges `IThemingService` to the browser, wiring up system theme detection,
+persisted theme preferences, and document `dir`/`lang` attributes so your app reacts correctly to both user and OS-level
+theme and culture changes.
 
-`ContrastResult` is a small immutable record-struct that reports the outcome of contrast adjustment:
+### Key Features
 
-* `ForegroundColor` — the resolved (possibly repaired) opaque text color
-* `BackgroundColor` — the background used for evaluation
-* `ContrastRatio` — achieved WCAG ratio
-* `MeetsMinimum` — whether the requested minimum ratio was satisfied
+* **Root-Level Theme Provider Component**  
+  `AryThemeProvider` wraps your application UI and injects the effective theme via a Blazor `CascadingValue`, allowing
+  any descendant component to access theme information while keeping all JS interop and state management centralized.
 
-### Colors
+* **System Theme Detection & Sync**  
+  Uses a co-located JavaScript module to read system-level preferences (Dark/Light/High Contrast) and map them to
+  `ThemeType` values, automatically synchronizing the effective theme when `ThemeType.System` is selected.
 
-The `Colors` class provides a consolidated, strongly typed library of named colors for Allyaria theming.
+* **Browser-Persisted Theme Preference**  
+  Persists the stored theme type using safe `localStorage` access, restoring the user’s last choice on reload and
+  keeping `IThemingService.StoredType` in sync with the browser.
 
-* **Includes** both **CSS Web colors** and **Material Design palette colors**.
-* Each color is exposed as a static `AllyariaColorValue` property (e.g., `Colors.Red500`, `Colors.BlueA700`,
-  `Colors.White`).
-* Values are defined in canonical `#RRGGBBAA` form for consistency.
-* Properties are alphabetically organized for quick lookup.
-* Designed for convenient use in theming, palette composition, and inline style generation.
+* **Document Direction & Language Management**  
+  Reads the Blazor `CultureInfo` (via `Culture` cascading parameter or `CurrentUICulture`) to set `dir` and `lang` on
+  `document.documentElement` and toggle an `rtl` class on `<body>`, ensuring layout and typography respond correctly to
+  RTL and LTR cultures.
 
-### Styles
+* **Resilient, Minimal JS Interop**  
+  Uses targeted, defensive JS interop calls with graceful fallbacks—failures during prerendering, navigation, or storage
+  access are swallowed to avoid breaking the render loop while still keeping theme state consistent where possible.
 
-The `Styles` class provides a set of **predefined theme presets** as ready-to-use `AllyariaStyle` instances.
+* **Simple App-Level Integration**  
+  Designed to be dropped into your `App.razor` (or another root component) with a minimal setup surface:
 
-Available presets:
+```razor
+  @using Allyaria.Theming
+  @using Allyaria.Theming.Blazor
 
-* **Light** — Light UI preset (`Grey50` background, `Grey900` foreground) with sans-serif typography.
-* **Dark** — Dark UI preset (`Grey900` background, `Grey50` foreground) with sans-serif typography.
-* **HighContrast** — Maximum-contrast preset (`White` background, `Black` foreground) for accessibility.
+  <AryThemeProvider>
+      <Router AppAssembly="@typeof(App).Assembly">
+          <Found Context="routeData">
+              <RouteView RouteData="@routeData" />
+          </Found>
+          <NotFound>
+              <p>Sorry, there's nothing at this address.</p>
+          </NotFound>
+      </Router>
+  </AryThemeProvider>
+```
 
-Each preset combines an `AllyariaPalette` and `AllyariaTypography`, and supports:
+### Design Principles
 
-* **Inline CSS styles** via `ToCss()`
-* **Inline CSS styles for hover states** via `ToCssHover()`
-* **CSS custom properties (variables)** via `ToCssVars()`
+* **Blazor-First Integration**  
+  Optimized for Blazor Server and WebAssembly hosting models, with lifecycle hooks and event handling tailored
+  specifically to the Blazor render pipeline.
 
-These serve as accessible defaults while allowing extension or replacement with custom brand themes.
+* **Single Source of Theme Truth**  
+  Delegates all core theme logic to `IThemingService`, keeping the Blazor layer thin—its main responsibility is
+  connecting DI, JS interop, and DOM attributes, not duplicating theme rules.
+
+* **Culture-Aware UX**  
+  Treats culture and theme as first-class concerns, ensuring the visual experience (direction, language, contrast)
+  naturally aligns with the user’s locale and accessibility settings.
+
+* **Fail-Safe Behavior**  
+  Interop failures, storage issues, or teardown races are intentionally absorbed to avoid crashing or corrupting the UI;
+  the provider always aims to keep the app usable, even if theme detection is temporarily unavailable.
+
+For additional details on available components and integration patterns, see the
+*[Theming.Blazor API documentation](./docs/references/Theming_Blazor)*.
+
+---
+
+## Allyaria.Components.Blazor
+
+**Allyaria.Components.Blazor** provides the core UI component set for building accessible, theme-aware interfaces using
+the Allyaria design system. These components integrate directly with the Allyaria theming engine, enabling fully
+reactive styling, consistent ARIA semantics, and predictable behavior across all component states and theme modes.
+
+This library contains the foundational component base class as well as a growing collection of concrete UI
+components—such as surface containers, layout primitives, and interactive elements—all designed to function seamlessly
+with Allyaria’s theming, accessibility, and localization layers.
+
+### Key Features
+
+* **Unified Component Base Class**
+  All Allyaria Blazor components derive from a shared base (`AryComponentBase`), providing consistent ARIA attribute
+  handling, theming integration, attribute filtering, and lifecycle behavior. This ensures every component behaves
+  predictably and adheres to Allyaria accessibility expectations.
+
+* **Theme-Aware Rendering**
+  Components automatically integrate with the Allyaria theming pipeline, receiving effective theme values from
+  `IThemingService` and rendering CSS variables, component-state styles, and theme-driven class names without manual
+  wiring.
+
+* **Accessible by Default**
+  ARIA attributes—such as labels, descriptions, visibility hints, and roles—are first-class component parameters.
+  Developers can augment these attributes while still benefiting from Allyaria's default accessibility guarantees.
+
+* **Extensible, Framework-Native Components**
+  The library includes general-purpose UI elements such as surface containers, wrappers, and layout helpers. These serve
+  as building blocks for higher-level elements while remaining easy to extend in application or RCL projects.
+
+* **Predictable Attribute & Style Merging**
+  Components merge developer-supplied classes, inline styles, and arbitrary HTML attributes with Allyaria-managed
+  values (ensuring required ARIA, class, ID, and style attributes remain consistent).
+
+### Design Principles
+
+* **Blazor-Native Architecture**
+  Components are implemented using standard Razor component patterns with minimal or zero JavaScript interop.
+
+* **Accessibility-Centric**
+  Every component is built to ensure sensible ARIA defaults and predictable keyboard/tab behavior.
+
+* **Fully Theme-Integrated**
+  Style output is driven by theme rules, component state, and resolved theme type—without requiring manual CSS
+  definitions.
+
+* **Composable & Extensible**
+  Components serve as foundational building blocks for app-level or library-level UI development, easily remixed or
+  wrapped into custom controls.
+
+### Example Usage
+
+Below is a minimal example showing how a developer might use a component from this library—such as a themed surface
+container—in a Blazor page:
+
+```razor
+@page "/example"
+@using Allyaria.Components.Blazor
+
+<ArySurface Class="example-surface"
+            AriaLabel="Example surface">
+    <h2>Hello from Allyaria.Components.Blazor</h2>
+    <p>This content is rendered inside a themed Allyaria surface.</p>
+</ArySurface>
+```
+
+For additional details on available components and integration patterns, see the
+*[Components.Blazor API documentation](./docs/references/Components_Blazor)*.
+
+---
 
 ## License
 
-* **Allyaria** is licensed under the *Mozilla Public License Version 2.0*.
+**Allyaria** is licensed under the *[Mozilla Public License Version 2.0](./LICENSE)*.
+
+---
 
 ## Installation
 
-* Pending
+*Pending*
+
+---
 
 ## Contributing
 
-* Pending
+Thank you for your interest in contributing to the **Allyaria** project!
+
+We welcome bug reports, feature requests, documentation improvements, and code contributions.
+
+By contributing to **Allyaria**, you agree to abide by the *[Code of Conduct](./CODE_OF_CONDUCT.md)*.
+
+Please see *[CONTRIBUTING.md](./CONTRIBUTING.md)* for details.

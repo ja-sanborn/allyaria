@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <IsTestProject>false</IsTestProject>
+        <Version>0.0.1</Version>
+        <AssemblyVersion>0.0.1.0</AssemblyVersion>
+        <FileVersion>0.0.1.0</FileVersion>
+        <Product>Allyaria Abstractions</Product>
+        <Description>The abstract components for Allyaria projects.</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Allyaria Theming</Title>
+        <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    </PropertyGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Allyaria.Abstractions.UnitTests"/>
+    </ItemGroup>
+</Project>

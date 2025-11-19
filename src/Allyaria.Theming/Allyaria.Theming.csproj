@@ -7,8 +7,17 @@
         <FileVersion>0.0.1.0</FileVersion>
         <Product>Allyaria Theming</Product>
         <Description>The Theming components for colors and typography for Allyaria projects.</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Allyaria Theming</Title>
+        <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+    </ItemGroup>
+    <ItemGroup>
         <InternalsVisibleTo Include="Allyaria.Theming.UnitTests"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Allyaria.Abstractions\Allyaria.Abstractions.csproj"/>
     </ItemGroup>
 </Project>

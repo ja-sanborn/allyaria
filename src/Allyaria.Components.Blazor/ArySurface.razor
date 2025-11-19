@@ -1,0 +1,17 @@
+﻿@inherits AryComponentBase
+
+@if (ComponentState is not ComponentState.Hidden)
+{
+    <div aria-describedby="@AriaDescribedBy"
+         aria-hidden="@ResolvedAriaHidden"
+         aria-label="@AriaLabel"
+         aria-labelledby="@AriaLabelledBy"
+         class="@DerivedClass"
+         id="@Id"
+         role="@AriaRole"
+         style="@DerivedStyle"
+         tabindex="@ResolvedTabIndex"
+         @attributes="@GetFilteredAttributes()">
+        @ChildContent
+    </div>
+}
