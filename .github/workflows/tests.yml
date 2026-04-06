@@ -149,7 +149,7 @@ jobs:
 
       - name: Configure Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload site artifact for Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
@@ -159,4 +159,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' && always() }}
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
