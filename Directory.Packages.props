@@ -4,7 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="Allyaria.Theming" Version="0.0.1"/>
-        <PackageVersion Include="AngleSharp" Version="1.8.1" />
+        <PackageVersion Include="AngleSharp" Version="1.8.2" />
         <PackageVersion Include="AwesomeAssertions" Version="9.6.0"/>
         <PackageVersion Include="bunit" Version="2.11.3"/>
         <PackageVersion Include="coverlet.collector" Version="10.0.1">
@@ -16,7 +16,7 @@
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="[10.0.12]"/>
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[10.0.12]"/>
         <PackageVersion Include="Microsoft.Extensions.Localization" Version="[8.0.21]"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0"/>
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1"/>
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.401"/>
         <PackageVersion Include="NSubstitute" Version="6.2.0"/>
         <PackageVersion Include="xunit" Version="2.9.3"/>
